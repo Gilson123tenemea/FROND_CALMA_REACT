@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Videollamada</title>
+  <style>
+    body {
+      background-color: #1e1e1e;
+      color: white;
+      text-align: center;
+      font-family: sans-serif;
+    }
+
+    video {
+      width: 45%;
+      margin: 10px;
+      border-radius: 10px;
+      background-color: black;
+    }
+
+    #videos {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    #colgarBtn {
+      background-color: #e74c3c;
+      border: none;
+      padding: 10px 20px;
+      color: white;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    #estado {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    /* Estilo botones nuevos */
+    .toggleBtn {
+      background-color: #3498db;
+      border: none;
+      padding: 10px 20px;
+      color: white;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 10px 5px 0 5px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Videollamada</h2>
+
+  <div id="videos">
+    <video id="localVideo" autoplay muted playsinline></video>
+    <video id="remoteVideo" autoplay playsinline></video>
+  </div>
+
+  <!-- Botones nuevos -->
+  <button id="toggleCamBtn" class="toggleBtn">Desactivar Cámara</button>
+  <button id="toggleMicBtn" class="toggleBtn">Desactivar Micrófono</button>
+
+  <button id="colgarBtn">Colgar</button>
+  <div id="estado">Esperando conexión...</div>
+
+  <script>
+    const localVideo = document.getElementById("localVideo");
+    const estado = document.getElementById("estado");
+
+    let localStream;
+
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        localStream = stream;
+        localVideo.srcObject = stream;
+        estado.textContent = "Cámara activada.";
+      })
+      .catch((err) => {
+        estado.textContent = "Error accediendo a la cámara: " + err.message;
+        console.error(err);
+      });
+
+    // Botones activar/desactivar cámara y micrófono
+    const toggleCamBtn = document.getElementById("toggleCamBtn");
+    const toggleMicBtn = document.getElementById("toggleMicBtn");
+
+    toggleCamBtn.addEventListener("click", () => {
+      if (!localStream) return;
+      const videoTrack = localStream.getVideoTracks()[0];
+      if (!videoTrack) return;
+
+      if (videoTrack.enabled) {
+        videoTrack.enabled = false;
+        toggleCamBtn.textContent = "Activar Cámara";
+        estado.textContent = "Cámara desactivada.";
+      } else {
+        videoTrack.enabled = true;
+        toggleCamBtn.textContent = "Desactivar Cámara";
+        estado.textContent = "Cámara activada.";
+      }
+    });
+
+    toggleMicBtn.addEventListener("click", () => {
+      if (!localStream) return;
+      const audioTrack = localStream.getAudioTracks()[0];
+      if (!audioTrack) return;
+
+      if (audioTrack.enabled) {
+        audioTrack.enabled = false;
+        toggleMicBtn.textContent = "Activar Micrófono";
+        estado.textContent = "Micrófono desactivado.";
+      } else {
+        audioTrack.enabled = true;
+        toggleMicBtn.textContent = "Desactivar Micrófono";
+        estado.textContent = "Micrófono activado.";
+      }
+    });
+
+    document.getElementById("colgarBtn").addEventListener("click", () => {
+      const tracks = localVideo.srcObject?.getTracks();
+      tracks?.forEach(track => track.stop());
+      window.close();
+    });
+  </script>
+</body>
+</html>
