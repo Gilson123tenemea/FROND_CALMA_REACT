@@ -5,9 +5,7 @@ import {
 } from 'react-icons/fa';
 import axios from 'axios';
 import { registrarPaciente } from "../../servicios/registrarService";
-
-
-
+import { getAlergias } from '../../servicios/alergiasService';
 
 const RegistroPaciente = () => {
   const generos = ['Masculino', 'Femenino'];
@@ -34,13 +32,12 @@ const RegistroPaciente = () => {
   useEffect(() => {
     const fetchAlergias = async () => {
       try {
-        const response = await axios.get('http://localhost:8090/api/alergias/listar');
-        setAlergias(response.data);
+        const data = await getAlergias();
+        setAlergias(data);
       } catch (error) {
         console.error('Error al obtener alergias:', error);
       }
     };
-
     fetchAlergias();
   }, []);
 
