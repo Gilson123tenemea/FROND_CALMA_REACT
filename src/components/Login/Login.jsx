@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './Login.css';
 import Navbar from '../Shared/Navbar';
 import { FaFacebook, FaGoogle, FaArrowRight } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { login } from '../../servicios/LoginService'; // Importa el servicio
@@ -11,10 +11,36 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); // Hook para redirigir
+
+  // Función para validar el correo
+  const validateEmail = (email) => {
+    const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    return regex.test(email);
+  };
+
+  // Función para validar la contraseña
+  const validatePassword = (password) => {
+    return password.length >= 8; // Verifica si tiene al menos 8 caracteres
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    // Validación del correo
+    if (!validateEmail(username)) {
+      toast.error('Por favor ingresa un correo electrónico válido');
+      setLoading(false);
+      return;
+    }
+
+    // Validación de la contraseña
+    if (!validatePassword(password)) {
+      toast.error('La contraseña debe tener al menos 8 caracteres');
+      setLoading(false);
+      return;
+    }
 
     try {
       const data = await login(username, password); // Llama al servicio
@@ -22,7 +48,9 @@ const Login = () => {
       // Manejo de la respuesta exitosa
       console.log('Login exitoso:', data);
       toast.success('¡Acceso exitoso! Bienvenido.');
-      // Aquí puedes hacer más cosas, como redireccionar o guardar token
+      
+      // Si el login es exitoso, redirige al usuario
+      //navigate('/dashboard'); // Aquí rediriges al usuario donde necesites
     } catch (err) {
       console.error('Error al conectar con el servidor:', err);
       // Aquí capturamos el error y mostramos el mensaje adecuado
