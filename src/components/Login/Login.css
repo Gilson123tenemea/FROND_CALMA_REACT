@@ -12,6 +12,8 @@
     min-height: calc(100vh - 80px); /* Resta la altura del navbar */
 }
 
+
+
 .login-card {
     background-color: white;
     padding: 2.5rem;
