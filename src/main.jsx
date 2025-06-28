@@ -5,14 +5,16 @@ import './index.css';
 import Inicio from './components/Inicio/Inicio';
 import Login from './components/Login/login';
 import Registro from './components/Registro/registro';
+import ResetPassword from './components/Login/ResetPassword'; // <-- Asegúrate de importar esto correctamente
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Router>
       <Routes>
-        <Route path="/" element={<Inicio />} /> {/* Ruta principal */}
-        <Route path="/login" element={<Login />} /> {/* Ruta de login */}
-        <Route path='/registro' element ={<Registro />}/>
+        <Route path="/" element={<Inicio />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/registro" element={<Registro />} />
+        <Route path="/reset-password" element={<ResetPassword />} /> {/* <-- Esta línea FALTABA */}
       </Routes>
     </Router>
   </StrictMode>
