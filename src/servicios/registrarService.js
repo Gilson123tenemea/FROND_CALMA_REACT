@@ -23,3 +23,12 @@ export const registrarAspirante = async (payload) => {
     throw error; // lanzar error para que el componente lo capture
   }
 };
+export const registrarContratante = async (payload) => {
+  try {
+    const response = await axios.post('http://localhost:8090/api/registro/contratante', payload);
+    return response.data;
+  } catch (error) {
+    console.error('Error al registrar contratante:', error);
+    throw error;
+  }
+};

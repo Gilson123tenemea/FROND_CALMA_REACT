@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { FaUser, FaBuilding, FaIdCard, FaEnvelope, FaPhone, FaVenusMars, 
          FaCalendarAlt, FaMapMarkerAlt, FaLock, FaChevronDown, FaQuestionCircle,
-         FaMoneyBillWave, FaFileContract } from 'react-icons/fa';
+         FaMoneyBillWave, FaFileContract, FaBriefcase } from 'react-icons/fa';
 import './Registro.css';
 import { getProvincias } from '../../servicios/provinciaService';
 import { getCantonesByProvinciaId } from '../../servicios/cantonService';
 import { getParroquiasByCantonId } from '../../servicios/parroquiaService';
-import { registrarAspirante } from '../../servicios/registrarService';
+import { registrarAspirante, registrarContratante } from '../../servicios/registrarService';
 
 const Registro = () => {
   // Estados para el formulario
@@ -24,9 +24,16 @@ const Registro = () => {
     contrasena: '',
     confirmarContrasena: '',
     esRepresentante: null,
+    // Campos específicos de aspirante
     disponibilidad: '',
     aspiracionSalarial: '',
-    tipo_contrato: ''
+    tipo_contrato: '',
+    // Campos específicos de contratante
+    ocupacion: '',
+    nombreEmpresa: '',
+    rucEmpresa: '',
+    correoEmpresa: '',
+    representanteLegal: ''
   });
 
   // Estados para ubicación
@@ -40,6 +47,7 @@ const Registro = () => {
   // Datos para selects
   const generos = ['Masculino', 'Femenino', 'Otro'];
   const tiposContrato = ['Tiempo completo', 'Medio tiempo', 'Por horas', 'Por proyecto'];
+  const ocupaciones = ['Ingeniero', 'Médico', 'Abogado', 'Arquitecto', 'Comerciante', 'Educador', 'Otro'];
 
   // Cargar provincias al inicio
   useEffect(() => {
@@ -111,33 +119,30 @@ const Registro = () => {
       return;
     }
 
-    // Validar campos específicos para aspirante
-    if (formData.esRepresentante === false) {
-      if (!formData.disponibilidad) {
-        alert('Por favor indique su disponibilidad');
-        setIsSubmitting(false);
-        return;
-      }
-      if (!formData.aspiracionSalarial || isNaN(formData.aspiracionSalarial)) {
-        alert('Por favor ingrese una aspiración salarial válida');
-        setIsSubmitting(false);
-        return;
-      }
-      if (!formData.tipo_contrato) {
-        alert('Por favor seleccione un tipo de contrato');
-        setIsSubmitting(false);
-        return;
-      }
-      if (!formData.parroquia) {
-        alert('Por favor seleccione una parroquia');
-        setIsSubmitting(false);
-        return;
-      }
-    }
-
     try {
-      // Si no es representante, registrar como aspirante
       if (formData.esRepresentante === false) {
+        // Validaciones para aspirante
+        if (!formData.disponibilidad) {
+          alert('Por favor indique su disponibilidad');
+          setIsSubmitting(false);
+          return;
+        }
+        if (!formData.aspiracionSalarial || isNaN(formData.aspiracionSalarial)) {
+          alert('Por favor ingrese una aspiración salarial válida');
+          setIsSubmitting(false);
+          return;
+        }
+        if (!formData.tipo_contrato) {
+          alert('Por favor seleccione un tipo de contrato');
+          setIsSubmitting(false);
+          return;
+        }
+        if (!formData.parroquia) {
+          alert('Por favor seleccione una parroquia');
+          setIsSubmitting(false);
+          return;
+        }
+
         // Validar edad mínima
         if (formData.fechaNacimiento) {
           const birthDate = new Date(formData.fechaNacimiento);
@@ -150,7 +155,7 @@ const Registro = () => {
           }
         }
 
-        // Preparar los datos para el backend
+        // Preparar datos para aspirante
         const aspiranteData = {
           nombres: formData.nombres,
           apellidos: formData.apellidos,
@@ -166,20 +171,63 @@ const Registro = () => {
           tipo_contrato: formData.tipo_contrato
         };
 
-        // Llamar al servicio de registro de aspirante
         const response = await registrarAspirante(aspiranteData);
         console.log('Registro exitoso:', response);
-        
-        // Mostrar mensaje de éxito y redirigir
         alert('Registro como aspirante exitoso! Serás redirigido a la página de inicio de sesión.');
-        setTimeout(() => {
-          window.location.href = '/login';
-        }, 2000);
+        
       } else {
-        // Aquí iría la lógica para registrar como representante/empresa
-        console.log('Registrando como representante...');
-        // Implementar similar al de arriba pero con registrarPaciente
+        // Validaciones para contratante
+        if (!formData.ocupacion) {
+          alert('Por favor ingrese su ocupación');
+          setIsSubmitting(false);
+          return;
+        }
+        if (!formData.nombreEmpresa) {
+          alert('Por favor ingrese el nombre de la empresa');
+          setIsSubmitting(false);
+          return;
+        }
+        if (!formData.rucEmpresa || !/^\d{13}$/.test(formData.rucEmpresa)) {
+          alert('Por favor ingrese un RUC válido (13 dígitos)');
+          setIsSubmitting(false);
+          return;
+        }
+        if (!formData.correoEmpresa) {
+          alert('Por favor ingrese el correo de la empresa');
+          setIsSubmitting(false);
+          return;
+        }
+        if (!formData.parroquia) {
+          alert('Por favor seleccione una parroquia');
+          setIsSubmitting(false);
+          return;
+        }
+
+        // Preparar datos para contratante
+        const contratanteData = {
+          nombres: formData.nombres,
+          apellidos: formData.apellidos,
+          cedula: formData.cedula,
+          correo: formData.correo,
+          genero: formData.genero,
+          fechaNacimiento: formData.fechaNacimiento,
+          idParroquia: formData.parroquia,
+          contrasena: formData.contrasena,
+          ocupacion: formData.ocupacion,
+          nombreEmpresa: formData.nombreEmpresa,
+          rucEmpresa: formData.rucEmpresa,
+          correoEmpresa: formData.correoEmpresa
+        };
+
+        const response = await registrarContratante(contratanteData);
+        console.log('Registro exitoso:', response);
+        alert('Registro como contratante exitoso! Serás redirigido a la página de inicio de sesión.');
       }
+
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 2000);
+
     } catch (error) {
       console.error('Error en el registro:', error);
       alert(error.message || 'Ocurrió un error durante el registro. Por favor intente nuevamente.');
@@ -380,7 +428,7 @@ const Registro = () => {
                   <input 
                     type="radio" 
                     name="esRepresentante" 
-                    value="true"
+                    value={true}
                     checked={formData.esRepresentante === true}
                     onChange={() => setFormData(prev => ({ ...prev, esRepresentante: true }))}
                     required
@@ -390,7 +438,7 @@ const Registro = () => {
                   <input 
                     type="radio" 
                     name="esRepresentante" 
-                    value="false"
+                    value={false}
                     checked={formData.esRepresentante === false}
                     onChange={() => setFormData(prev => ({ ...prev, esRepresentante: false }))}
                     required
@@ -466,9 +514,29 @@ const Registro = () => {
               </>
             )}
 
-            {/* Campos condicionales para representante de empresa */}
+            {/* Campos condicionales para contratante (representante) */}
             {formData.esRepresentante === true && (
               <>
+                <h3 className="form-section-title">Información Laboral</h3>
+                <div className="input-group">
+                  <label htmlFor="ocupacion"><FaBriefcase className="input-icon" /> Ocupación</label>
+                  <div className="select-wrapper">
+                    <select 
+                      id="ocupacion" 
+                      name="ocupacion"
+                      value={formData.ocupacion}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">Seleccione...</option>
+                      {ocupaciones.map((ocupacion, index) => (
+                        <option key={index} value={ocupacion}>{ocupacion}</option>
+                      ))}
+                    </select>
+                    <FaChevronDown className="select-arrow" />
+                  </div>
+                </div>
+
                 <h3 className="form-section-title">Información de la Empresa</h3>
                 <div className="input-group">
                   <label htmlFor="nombreEmpresa"><FaBuilding className="input-icon" /> Nombre de la Empresa</label>
@@ -496,6 +564,18 @@ const Registro = () => {
                   />
                 </div>
                 
+                <div className="input-group">
+                  <label htmlFor="correoEmpresa"><FaEnvelope className="input-icon" /> Correo Electrónico de la Empresa</label>
+                  <input 
+                    type="email" 
+                    id="correoEmpresa" 
+                    name="correoEmpresa"
+                    value={formData.correoEmpresa}
+                    onChange={handleChange}
+                    required 
+                  />
+                </div>
+
                 <div className="input-group">
                   <label htmlFor="representanteLegal"><FaUser className="input-icon" /> Representante Legal</label>
                   <input 
