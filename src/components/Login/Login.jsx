@@ -46,7 +46,13 @@ const Login = () => {
     try {
       const data = await login(username, password);
       toast.success('¡Acceso exitoso! Bienvenido.');
-      // navigate('/dashboard');
+      if (data.rol === 'aspirante') {
+  navigate('/moduloAspirante');
+} else if (data.rol === 'contratante') {
+  navigate('/moduloContratante');
+}
+ 
+
     } catch (err) {
       if (err.message === 'Correo no encontrado') {
         toast.error('El correo no está registrado');
