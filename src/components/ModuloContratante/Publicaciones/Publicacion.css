@@ -1,0 +1,130 @@
+.card-publicacion {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+  background-color: #ffffff;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-left: 4px solid;
+}
+
+.card-publicacion:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-publicacion.activo {
+  border-left-color: #10b981;
+}
+
+.card-publicacion.inactivo {
+  border-left-color: #ef4444;
+}
+
+.publicacion-content {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.publicacion-info {
+  flex: 1;
+}
+
+.publicacion-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.publicacion-header h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.status-badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+}
+
+.status-badge.activo {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-badge.inactivo {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.publicacion-info p {
+  color: #4b5563;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.publicacion-meta {
+  display: flex;
+  gap: 1.5rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.publicacion-meta span {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.publicacion-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 120px;
+}
+
+.status-button {
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.status-button.activo {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #ef4444;
+}
+
+.status-button.inactivo {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #10b981;
+}
+
+.status-button:hover {
+  opacity: 0.9;
+}
+
+.edit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background-color: #f3f4f6;
+  color: #4b5563;
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.edit-button:hover {
+  background-color: #e5e7eb;
+}
