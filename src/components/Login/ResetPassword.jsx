@@ -7,6 +7,8 @@ const ResetPassword = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
   const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -15,9 +17,10 @@ const ResetPassword = () => {
   const hasLowerCase = /[a-z]/.test(newPassword);
   const hasNumber = /\d/.test(newPassword);
   const hasSymbol = /[@$!%*?&]/.test(newPassword);
+  const passwordsMatch = newPassword === confirmPassword;
 
   const validatePassword = () =>
-    hasMinLength && hasUpperCase && hasLowerCase && hasNumber && hasSymbol;
+    hasMinLength && hasUpperCase && hasLowerCase && hasNumber && hasSymbol && passwordsMatch;
 
   useEffect(() => {
     if (!token) {
@@ -28,7 +31,11 @@ const ResetPassword = () => {
 
   const handleReset = async () => {
     if (!validatePassword()) {
-      toast.error("La contraseña no cumple con los requisitos mínimos.");
+      if (!passwordsMatch) {
+        toast.error("❌ Las contraseñas no coinciden.");
+      } else {
+        toast.error("❌ La contraseña no cumple con los requisitos mínimos.");
+      }
       return;
     }
     setLoading(true);
@@ -53,10 +60,9 @@ const ResetPassword = () => {
         return;
       }
 
-      toast.success(
-        "✅ Contraseña actualizada correctamente. Ahora puedes iniciar sesión."
-      );
+      toast.success("✅ Contraseña actualizada correctamente. Ahora puedes iniciar sesión.");
       setNewPassword("");
+      setConfirmPassword("");
       setTimeout(() => navigate("/login"), 2000);
     } catch (error) {
       toast.error("❌ " + (error.message || "Error al restablecer contraseña"));
@@ -86,25 +92,46 @@ const ResetPassword = () => {
       <ToastContainer position="top-right" autoClose={3000} />
       <div style={styles.card}>
         <h1 style={styles.title}>Restablece tu contraseña</h1>
-        <p style={styles.subtitle}>
-          Introduce una nueva contraseña segura para continuar.
-        </p>
+        <p style={styles.subtitle}>Introduce una nueva contraseña segura para continuar.</p>
+
         <input
-          type="password"
+          type={showPassword ? "text" : "password"}
           placeholder="Nueva contraseña"
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
           style={styles.input}
           disabled={loading}
-          autoFocus
         />
+
+        <input
+          type={showPassword ? "text" : "password"}
+          placeholder="Repite la contraseña"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          style={{ ...styles.input, marginBottom: 8 }}
+          disabled={loading}
+        />
+
+        <div style={{ marginBottom: 16, fontSize: 14 }}>
+          <input
+            type="checkbox"
+            checked={showPassword}
+            onChange={() => setShowPassword((prev) => !prev)}
+            disabled={loading}
+            style={{ marginRight: 8 }}
+          />
+          Mostrar contraseñas
+        </div>
+
         <div style={{ marginBottom: 24 }}>
           <Rule condition={hasMinLength} label="Mínimo 8 caracteres" />
           <Rule condition={hasUpperCase} label="Una letra mayúscula" />
           <Rule condition={hasLowerCase} label="Una letra minúscula" />
           <Rule condition={hasNumber} label="Un número" />
           <Rule condition={hasSymbol} label="Un símbolo (@$!%*?&)" />
+          <Rule condition={passwordsMatch} label="Las contraseñas coinciden" />
         </div>
+
         <button
           onClick={handleReset}
           style={loading || !validatePassword() ? styles.buttonDisabled : styles.button}
@@ -112,6 +139,7 @@ const ResetPassword = () => {
         >
           {loading ? "Procesando..." : "Cambiar contraseña"}
         </button>
+
         <p style={styles.note}>
           ¿No solicitaste este cambio? <br />
           <span
@@ -132,16 +160,14 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    background:
-      "linear-gradient(135deg, #f0f4f8 0%, #cfe0fc 100%)",
+    background: "linear-gradient(135deg, #f0f4f8 0%, #cfe0fc 100%)",
     padding: "24px",
   },
   card: {
     background: "#fff",
     padding: "40px 48px",
     borderRadius: 12,
-    boxShadow:
-      "0 10px 20px rgba(21, 101, 192, 0.15), 0 6px 6px rgba(21, 101, 192, 0.1)",
+    boxShadow: "0 10px 20px rgba(21, 101, 192, 0.15), 0 6px 6px rgba(21, 101, 192, 0.1)",
     maxWidth: 420,
     width: "100%",
     textAlign: "center",
@@ -161,7 +187,7 @@ const styles = {
   input: {
     width: "100%",
     padding: "14px 18px",
-    marginBottom: 24,
+    marginBottom: 12,
     borderRadius: 8,
     border: "1.5px solid #90caf9",
     fontSize: 16,

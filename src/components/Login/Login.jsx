@@ -6,14 +6,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { login } from '../../servicios/LoginService';
+import LoadingScreen from '../Shared/LoadingScreen'; // Import del loading visual
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
   const navigate = useNavigate();
 
-  // Estados recuperación
   const [showRecoveryModal, setShowRecoveryModal] = useState(false);
   const [recoveryEmail, setRecoveryEmail] = useState('');
   const [recoveryLoading, setRecoveryLoading] = useState(false);
@@ -46,13 +47,24 @@ const Login = () => {
     try {
       const data = await login(username, password);
       toast.success('¡Acceso exitoso! Bienvenido.');
-      if (data.rol === 'aspirante') {
-  navigate('/moduloAspirante');
-} else if (data.rol === 'contratante') {
-  navigate('/moduloContratante');
-}
- 
+      setRedirecting(true);
 
+      const checkConnectionAndNavigate = () => {
+        if (navigator.onLine) {
+          if (data.rol === 'aspirante') {
+            navigate('/moduloAspirante');
+          } else if (data.rol === 'contratante') {
+            navigate('/moduloContratante');
+          }
+        } else {
+          toast.error('Estás sin conexión. Esperando reconexión...');
+          window.addEventListener('online', () => {
+            checkConnectionAndNavigate();
+          }, { once: true });
+        }
+      };
+
+      setTimeout(checkConnectionAndNavigate, 1000);
     } catch (err) {
       if (err.message === 'Correo no encontrado') {
         toast.error('El correo no está registrado');
@@ -75,13 +87,11 @@ const Login = () => {
     setRecoveryLoading(true);
 
     try {
-      // 1. Buscar usuario por correo
       const resUsuario = await fetch(`http://localhost:8090/api/usuarios/por-correo?correo=${recoveryEmail}`);
       if (!resUsuario.ok) throw new Error('Correo no registrado');
 
       const { userId, userType } = await resUsuario.json();
 
-      // 2. Solicitar token de recuperación
       const resToken = await fetch(`http://localhost:8090/api/password/request-reset`, {
         method: 'POST',
         headers: {
@@ -107,6 +117,8 @@ const Login = () => {
 
   return (
     <div className="login-page">
+      {redirecting && <LoadingScreen />}
+
       <Navbar />
       <div className="login-container">
         <div className="login-card">
@@ -174,7 +186,6 @@ const Login = () => {
         </div>
       </div>
 
-      {/* Modal recuperación */}
       {showRecoveryModal && (
         <div className="modal-overlay">
           <div className="modal-content">
