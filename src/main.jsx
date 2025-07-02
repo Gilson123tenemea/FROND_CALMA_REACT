@@ -12,6 +12,8 @@ import ResetPassword from './components/Login/ResetPassword';
 import ModuloAspirante from './components/ModuloAspirante/ModuloAspirante';
 import ModuloContratante from './components/ModuloContratante/ModuloContratante';
 
+import RegistroPaciente from './components/ModuloContratante/RegistroPaciente/registropaciente';
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Router>
@@ -20,6 +22,8 @@ createRoot(document.getElementById('root')).render(
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path='/registropaciente' element={<RegistroPaciente />} />
+        <Route path="/moduloContratante/registropaciente" element={<RegistroPaciente />} />
 
         {/* Rutas protegidas/redireccionadas según el rol */}
         <Route path="/moduloAspirante" element={<ModuloAspirante />} />

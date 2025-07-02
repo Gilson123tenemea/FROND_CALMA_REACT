@@ -17,6 +17,7 @@ const HeaderContratante = ({ userId }) => {
           <Link to={`/moduloContratante/nueva-publicacion?userId=${userId}`}>Crear Publicación</Link>
           <Link to={`/moduloContratante/mensajes?userId=${userId}`}>Mensajes</Link>
           <Link to={`/moduloContratante/perfil?userId=${userId}`}>Mi Perfil</Link>
+          <Link to={`/moduloContratante/registropaciente?userId=${userId}`}>Registro del paciente</Link>
         </nav>
       </div>
       <div className="header-right">
