@@ -51,11 +51,28 @@ const RegistroPaciente = () => {
     return resultado === verificador || (resultado === 10 && verificador === 0);
   };
 
+  const validarTextoSinNumeros = (texto) => {
+    return /^[A-Za-z\s]+$/.test(texto);
+  };
+
   //Estado errores mensaje
 
   const [errores, setErrores] = useState({
     cedula: '',
-
+    nombres: '',
+    apellidos: '',
+    genero: '',
+    direccion: '',
+    fechaNacimiento: '',
+    provincia: '',
+    canton: '',
+    parroquia: '',
+    alergia: '',
+    tipoSangre: '',
+    contactoEmergencia: '',
+    parentesco: '',
+    contrasena: '',
+    confirmarContrasena: ''
   });
 
 
@@ -155,19 +172,24 @@ const RegistroPaciente = () => {
     setFormulario({ ...formulario, [e.target.name]: e.target.value });
   };
 
-  const handleFotoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormulario({ ...formulario, foto: reader.result });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+const handleFotoChange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormulario({ ...formulario, foto: reader.result });  // base64
+    };
+    reader.readAsDataURL(file);
+  }
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    let nuevosErrores = {};
+    let valid = true;
+
+    //Validaciones 
 
     if (!formulario.cedula) {
       setErrores(prev => ({ ...prev, cedula: 'Ingrese la cédula' }));
@@ -178,6 +200,95 @@ const RegistroPaciente = () => {
     } else {
       setErrores(prev => ({ ...prev, cedula: '' }));
     }
+
+    // Nombres
+    if (!formulario.nombres || !validarTextoSinNumeros(formulario.nombres)) {
+      nuevosErrores.nombres = 'Ingrese el nombre correctamente';
+      valid = false;
+    }
+
+    // Apellidos
+    if (!formulario.apellidos || !validarTextoSinNumeros(formulario.apellidos)) {
+      nuevosErrores.apellidos = 'Ingrese el apellido correctamente';
+      valid = false;
+    }
+
+    // Género
+    if (!formulario.genero) {
+      nuevosErrores.genero = true;
+      valid = false;
+    }
+
+    // Dirección
+    if (!formulario.direccion) {
+      nuevosErrores.direccion = 'Ingrese la dirección correctamente';
+      valid = false;
+    }
+
+    // Fecha de nacimiento
+    if (!formulario.fechaNacimiento) {
+      nuevosErrores.fechaNacimiento = true;
+      valid = false;
+    }
+
+    // Provincia
+    if (!ubicacion.provincia) {
+      nuevosErrores.provincia = true;
+      valid = false;
+    }
+
+    // Cantón
+    if (!ubicacion.canton) {
+      nuevosErrores.canton = true;
+      valid = false;
+    }
+
+    // Parroquia
+    if (!ubicacion.parroquia) {
+      nuevosErrores.parroquia = true;
+      valid = false;
+    }
+
+    // Alergia
+    if (!formulario.alergia) {
+      nuevosErrores.alergia = true;
+      valid = false;
+    }
+
+    // Tipo de sangre
+    if (!formulario.tipoSangre) {
+      nuevosErrores.tipoSangre = true;
+      valid = false;
+    }
+
+    // Contacto emergencia
+    if (!formulario.contactoEmergencia) {
+      nuevosErrores.contactoEmergencia = 'Ingrese el contacto correctamente';
+      valid = false;
+    }
+
+    // Parentesco
+    if (!formulario.parentesco) {
+      nuevosErrores.parentesco = 'Ingrese el parentesco correctamente';
+      valid = false;
+    }
+
+    // Contraseña
+    if (!formulario.contrasena) {
+      nuevosErrores.contrasena = 'Ingrese correctamente';
+      valid = false;
+    }
+
+    // Confirmar contraseña
+    if (!formulario.confirmarContrasena) {
+      nuevosErrores.confirmarContrasena = 'Ingrese correctamente';
+      valid = false;
+    }
+    setErrores(nuevosErrores);
+    if (!valid) return;
+
+
+    ///************************************** */
 
     if (formulario.contrasena !== formulario.confirmarContrasena) {
       alert("Las contraseñas no coinciden");
@@ -227,9 +338,15 @@ const RegistroPaciente = () => {
       }
     } catch (error) {
       console.error('Error al registrar paciente:', error);
+
+      // 👉 Validación si la cédula ya existe (código 409 del backend)
+    if (error.response && error.response.status === 409) {
+      setErrores(prev => ({ ...prev, cedula: 'La cédula ya está registrada' }));
+    } else {
       alert('Error al registrar paciente');
     }
-  };
+  }
+};
 
   return (
     <div className="registro-page">
@@ -252,7 +369,7 @@ const RegistroPaciente = () => {
                     value={formulario.cedula}
                     onChange={(e) => {
                       handleChange(e);
-                      setErrores(prev => ({ ...prev, cedula: '' })); // limpiar error al escribir
+                      setErrores(prev => ({ ...prev, cedula: '' })); 
                     }}
                     className={errores.cedula ? 'input-error' : ''}
                   />
@@ -261,33 +378,30 @@ const RegistroPaciente = () => {
 
                 <div className="input-group">
                   <label><FaUser className="input-icon" /> Nombres</label>
-                  <input type="text" name="nombres" placeholder="Ingrese los nombres" required onChange={handleChange} value={formulario.nombres} />
+                  <input type="text" name="nombres" placeholder="Ingrese los nombres" value={formulario.nombres} onChange={(e) => { handleChange(e); setErrores(prev => ({ ...prev, nombres: '' })); }} className={errores.nombres ? 'input-error' : ''} /> {errores.nombres && <p className="error-text">{errores.nombres}</p>}
                 </div>
 
                 <div className="input-group">
                   <label><FaUser className="input-icon" /> Apellidos</label>
-                  <input type="text" name="apellidos" placeholder="Ingrese los apellidos" required onChange={handleChange} value={formulario.apellidos}
-                  />
+                  <input type="text" name="apellidos" placeholder="Ingrese los apellidos" value={formulario.apellidos} onChange={(e) => { handleChange(e); setErrores(prev => ({ ...prev, apellidos: '' })); }} className={errores.apellidos ? 'input-error' : ''} /> {errores.apellidos && <p className="error-text">{errores.apellidos}</p>}
+
                 </div>
 
                 <div className="input-group">
                   <label><FaVenusMars className="input-icon" /> Género</label>
                   <div className="select-wrapper">
-                    <select name="genero" required onChange={handleChange} value={formulario.genero}>
-                      <option value="">Seleccione...</option>
-                      {generos.map((g, i) => <option key={i} value={g}>{g}</option>)}
-                    </select>
+                    <select name="genero" value={formulario.genero} onChange={(e) => { handleChange(e); setErrores(prev => ({ ...prev, genero: '' })); }} className={errores.genero ? 'input-error' : ''}> <option value="">Seleccione...</option> {generos.map((g, i) => <option key={i} value={g}>{g}</option>)} </select> {errores.genero && <p className="error-text">Seleccione un género</p>}
                   </div>
                 </div>
 
                 <div className="input-group">
                   <label><FaUser className="input-icon" /> Dirección</label>
-                  <input type="text" name="direccion" placeholder="Ingrese la direccion" required onChange={handleChange} value={formulario.direccion} />
+                  <input type="text" name="direccion" placeholder="Ingrese la dirección" value={formulario.direccion} onChange={(e) => { handleChange(e); setErrores(prev => ({ ...prev, direccion: '' })); }} className={errores.direccion ? 'input-error' : ''} /> {errores.direccion && <p className="error-text">{errores.direccion}</p>}
                 </div>
 
                 <div className="input-group">
                   <label><FaCalendarAlt className="input-icon" /> Fecha de nacimiento</label>
-                  <input type="date" name="fechaNacimiento" required onChange={handleChange} value={formulario.fechaNacimiento} />
+                  <input type="date" name="fechaNacimiento" value={formulario.fechaNacimiento} onChange={(e) => { handleChange(e); setErrores(prev => ({ ...prev, fechaNacimiento: '' })); }} className={errores.fechaNacimiento ? 'input-error' : ''} /> {errores.fechaNacimiento && <p className="error-text">Seleccione una fecha</p>}
                 </div>
               </div>
 
@@ -348,95 +462,56 @@ const RegistroPaciente = () => {
             <div className="input-group">
               <label><FaUser className="input-icon" /> Provincia</label>
               <div className="select-wrapper">
-                <select name="provincia" required value={ubicacion.provincia} onChange={handleUbicacionChange}>
-                  <option value="">Seleccione...</option>
-                  {provincias.map((prov) => (
-                    <option key={prov.id_provincia} value={prov.id_provincia}>{prov.nombre}</option>
-                  ))}
-                </select>
+                <select name="provincia" value={ubicacion.provincia} onChange={(e) => { handleUbicacionChange(e); setErrores(prev => ({ ...prev, provincia: '' })); }} className={errores.provincia ? 'input-error' : ''}> <option value="">Seleccione...</option> {provincias.map(p => <option key={p.id_provincia} value={p.id_provincia}>{p.nombre}</option>)} </select> {errores.provincia && <p className="error-text">Seleccione una provincia</p>}
               </div>
             </div>
 
             <div className="input-group">
               <label><FaUser className="input-icon" /> Cantón</label>
               <div className="select-wrapper">
-                <select name="canton" required value={ubicacion.canton} onChange={handleUbicacionChange}>
-                  <option value="">Seleccione...</option>
-                  {cantones.map((cant) => (
-                    <option key={cant.id_canton} value={cant.id_canton}>{cant.nombre}</option>
-                  ))}
-                </select>
+                <select name="canton" value={ubicacion.canton} onChange={(e) => { handleUbicacionChange(e); setErrores(prev => ({ ...prev, canton: '' })); }} className={errores.canton ? 'input-error' : ''}> <option value="">Seleccione...</option> {cantones.map(c => <option key={c.id_canton} value={c.id_canton}>{c.nombre}</option>)} </select> {errores.canton && <p className="error-text">Seleccione un cantón</p>}
               </div>
             </div>
 
             <div className="input-group">
               <label><FaUser className="input-icon" /> Parroquia</label>
               <div className="select-wrapper">
-                <select name="parroquia" required value={ubicacion.parroquia} onChange={handleUbicacionChange}>
-                  <option value="">Seleccione...</option>
-                  {parroquias.map((p) => (
-                    <option key={p.id_parroquia} value={p.id_parroquia}>{p.nombre}</option>
-                  ))}
-                </select>
+                <select name="parroquia" value={ubicacion.parroquia} onChange={(e) => { handleUbicacionChange(e); setErrores(prev => ({ ...prev, parroquia: '' })); }} className={errores.parroquia ? 'input-error' : ''}> <option value="">Seleccione...</option> {parroquias.map(p => <option key={p.id_parroquia} value={p.id_parroquia}>{p.nombre}</option>)} </select> {errores.parroquia && <p className="error-text">Seleccione una parroquia</p>}
               </div>
             </div>
             <div className="input-group">
               <label><FaHeartbeat className="input-icon" /> Alergia</label>
               <div className="select-wrapper">
-                <select name="alergia" required onChange={handleChange} value={formulario.alergia}>
-                  <option value="">Seleccione...</option>
-                  {alergias.map(({ id_alergias, alergia }) => (
-                    <option key={id_alergias} value={id_alergias}>
-                      {alergia}
-                    </option>
-                  ))}
-                </select>
+                <select name="alergia" value={formulario.alergia} onChange={(e) => { handleChange(e); setErrores(prev => ({ ...prev, alergia: '' })); }} className={errores.alergia ? 'input-error' : ''}> <option value="">Seleccione...</option> {alergias.map(a => <option key={a.id_alergias} value={a.id_alergias}>{a.alergia}</option>)} </select> {errores.alergia && <p className="error-text">Seleccione una alergia</p>}
               </div>
             </div>
             <div className="input-group">
               <label><FaTint className="input-icon" /> Tipo de sangre</label>
               <div className="select-wrapper">
-                <select name="tipoSangre" required onChange={handleChange} value={formulario.tipoSangre}>
-                  <option value="">Seleccione...</option>
-                  {tiposSangre.map((t, i) => <option key={i} value={t}>{t}</option>)}
-                </select>
+                <select name="tipoSangre" value={formulario.tipoSangre} onChange={(e) => { handleChange(e); setErrores(prev => ({ ...prev, tipoSangre: '' })); }} className={errores.tipoSangre ? 'input-error' : ''}> <option value="">Seleccione...</option> {tiposSangre.map((t, i) => <option key={i} value={t}>{t}</option>)} </select> {errores.tipoSangre && <p className="error-text">Seleccione un tipo de sangre</p>}
               </div>
             </div>
 
             <div className="input-group">
               <label><FaPhone className="input-icon" /> Contacto de emergencia</label>
-              <input
-                type="text"
-                name="contactoEmergencia"
-                placeholder="Número contacto emergencia"
-                required
-                onChange={handleChange}
-                value={formulario.contactoEmergencia}
-              />
+              <input type="text" name="contactoEmergencia" placeholder="Número de contacto" value={formulario.contactoEmergencia} onChange={(e) => { handleChange(e); setErrores(prev => ({ ...prev, contactoEmergencia: '' })); }} className={errores.contactoEmergencia ? 'input-error' : ''} /> {errores.contactoEmergencia && <p className="error-text">{errores.contactoEmergencia}</p>}
             </div>
 
             <div className="input-group">
               <label><FaUser className="input-icon" /> Parentesco</label>
-              <input
-                type="text"
-                name="parentesco"
-                placeholder="Parentesco contacto emergencia"
-                required
-                onChange={handleChange}
-                value={formulario.parentesco}
-              />
+              <input type="text" name="parentesco" placeholder="Parentesco" value={formulario.parentesco} onChange={(e) => { handleChange(e); setErrores(prev => ({ ...prev, parentesco: '' })); }} className={errores.parentesco ? 'input-error' : ''} /> {errores.parentesco && <p className="error-text">{errores.parentesco}</p>}
             </div>
 
             <h3 className="form-section-title">Seguridad</h3>
 
             <div className="input-group">
               <label><FaLock className="input-icon" /> Contraseña</label>
-              <input type="password" name="contrasena" placeholder="***************" required minLength="8" onChange={handleChange} value={formulario.contrasena} />
+              <input type="password" name="contrasena" placeholder="**********" value={formulario.contrasena} onChange={(e) => { handleChange(e); setErrores(prev => ({ ...prev, contrasena: '' })); }} className={errores.contrasena ? 'input-error' : ''} /> {errores.contrasena && <p className="error-text">{errores.contrasena}</p>}
             </div>
 
             <div className="input-group">
               <label><FaLock className="input-icon" /> Confirmar Contraseña</label>
-              <input type="password" name="confirmarContrasena" placeholder="***************" required minLength="8" onChange={handleChange} value={formulario.confirmarContrasena} />
+              <input type="password" name="confirmarContrasena" placeholder="**********" value={formulario.confirmarContrasena} onChange={(e) => { handleChange(e); setErrores(prev => ({ ...prev, confirmarContrasena: '' })); }} className={errores.confirmarContrasena ? 'input-error' : ''} /> {errores.confirmarContrasena && <p className="error-text">{errores.confirmarContrasena}</p>}
             </div>
 
             <div className="terms-checkbox">

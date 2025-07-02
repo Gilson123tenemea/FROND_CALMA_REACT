@@ -16,3 +16,12 @@
   border: 2px solid red !important;
   outline: none;
 }
+.error-text {
+  color: red;
+  font-size: 0.85em;
+  margin-top: 4px;
+}
+
+.input-align-right {
+  margin-left: 40px; 
+}
