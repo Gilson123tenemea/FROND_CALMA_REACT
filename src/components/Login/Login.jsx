@@ -45,37 +45,43 @@ const Login = () => {
     }
 
     try {
-      const data = await login(username, password);
-      toast.success('¡Acceso exitoso! Bienvenido.');
-      setRedirecting(true);
+  const data = await login(username, password);
+  console.log("Datos del login:", data);
+  localStorage.setItem('userData', JSON.stringify(data));
+  toast.success('¡Acceso exitoso! Bienvenido.');
+  setRedirecting(true);
 
-      const checkConnectionAndNavigate = () => {
-        if (navigator.onLine) {
-          if (data.rol === 'aspirante') {
-            navigate('/moduloAspirante');
-          } else if (data.rol === 'contratante') {
-            navigate('/moduloContratante');
-          }
-        } else {
-          toast.error('Estás sin conexión. Esperando reconexión...');
-          window.addEventListener('online', () => {
-            checkConnectionAndNavigate();
-          }, { once: true });
-        }
-      };
-
-      setTimeout(checkConnectionAndNavigate, 1000);
-    } catch (err) {
-      if (err.message === 'Correo no encontrado') {
-        toast.error('El correo no está registrado');
-      } else if (err.message === 'Contraseña incorrecta') {
-        toast.error('La contraseña es incorrecta');
-      } else {
-        toast.error(err.message || 'Error desconocido');
+  const checkConnectionAndNavigate = () => {
+    if (navigator.onLine) {
+      if (data.rol === 'aspirante') {
+        navigate('/moduloAspirante', { state: { userId: data.usuarioId } });
+      } else if (data.rol === 'contratante') {
+        navigate('/moduloContratante', { state: { userId: data.usuarioId } });
       }
-    } finally {
-      setLoading(false);
+    } else {
+      toast.error('Estás sin conexión. Esperando reconexión...');
+      window.addEventListener('online', () => {
+        checkConnectionAndNavigate();
+      }, { once: true });
     }
+  };
+
+  setTimeout(checkConnectionAndNavigate, 1000);
+} catch (err) {
+  console.error("Error en el login:", err);
+  if (err.message === 'Correo no encontrado') {
+    toast.error('El correo no está registrado');
+  } else if (err.message === 'Contraseña incorrecta') {
+    toast.error('La contraseña es incorrecta');
+  } else if (err.message.includes('401')) {
+    toast.error('Usuario o contraseña incorrectos');
+  } else {
+    toast.error(err.message || 'Error desconocido');
+  }
+} finally {
+  setLoading(false);
+}
+
   };
 
   const handleRecovery = async () => {

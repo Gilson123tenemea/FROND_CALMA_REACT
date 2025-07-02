@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import './moduloContratante.css';
 
 const ModuloContratante = () => {
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('publicaciones');
   const [jobPosts, setJobPosts] = useState([
     {
@@ -38,6 +40,18 @@ const ModuloContratante = () => {
     salary: '',
     schedule: 'Full-time'
   });
+
+ useEffect(() => {
+  if (location.state?.userId) {
+    console.log("ID del contratante (desde state):", location.state.userId);
+  }
+
+  const userData = JSON.parse(localStorage.getItem('userData'));
+  if (userData?.usuarioId) {
+    console.log("ID del contratante (desde localStorage):", userData.usuarioId);
+  }
+}, [location.state]);
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -295,6 +309,8 @@ const ModuloContratante = () => {
                     Publicar Trabajo
                   </button>
                 </div>
+                
+
               </form>
             </div>
           )}

@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import './moduloAspirante.css'; // Ensure you have the CSS file for styling
+import React, { useState, useEffect } from 'react'; 
+import { useLocation } from 'react-router-dom'; 
+import './moduloAspirante.css'; 
 
 const ModuloAspirante = () => {
+  const location = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     location: 'Anywhere',
@@ -46,6 +48,19 @@ const ModuloAspirante = () => {
     }
   ];
 
+  useEffect(() => {
+    // Opción 1: Desde el estado de navegación (si se pasó al navegar)
+    if (location.state?.userId) {
+      console.log("ID del aspirante (desde state):", location.state.userId);
+    }
+
+    // Opción 2: Desde localStorage (como respaldo)
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    if (userData?.usuarioId) {
+      console.log("ID del aspirante (desde localStorage):", userData.usuarioId);
+    }
+  }, [location.state]);
+  
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters(prev => ({
