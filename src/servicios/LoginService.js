@@ -15,7 +15,14 @@ export const login = async (username, password) => {
       },
     });
 
-    return response.data; // Aquí nos aseguramos de devolver la respuesta completa
+     if (response.data.success) {
+      return response.data; // Devuelve TODOS los datos, incluido usuarioId, rol y usuario
+    } else {
+      throw new Error(response.data.message || 'Error desconocido');
+    }
+
+
+
   } catch (err) {
     // Verificamos si el error tiene respuesta y manejamos el mensaje específico
     if (err.response) {

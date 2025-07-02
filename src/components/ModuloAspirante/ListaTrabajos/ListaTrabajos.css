@@ -1,0 +1,39 @@
+.contenedor-trabajos {
+  padding: 2rem;
+}
+
+.contenedor-trabajos h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 1.5rem;
+}
+
+.layout-trabajos {
+  display: flex;
+}
+
+.lista-trabajos {
+  flex: 1;
+}
+
+.sin-resultados {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.sin-resultados svg {
+  margin-bottom: 1rem;
+}
+
+.sin-resultados h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #374151;
+}
