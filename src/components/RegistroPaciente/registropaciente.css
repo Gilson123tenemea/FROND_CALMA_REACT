@@ -1,0 +1,18 @@
+.input-error {
+  border: 2px solid red;
+  outline: none;
+}
+
+.error-text {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+.grupo-error {
+  border: 2px solid red;
+  border-radius: 4px;
+}
+.input-error {
+  border: 2px solid red !important;
+  outline: none;
+}
