@@ -16,7 +16,8 @@ const HeaderAspirante = ({ userId }) => {
           <Link to={`/moduloAspirante/trabajos?userId=${userId}`}>Trabajos</Link>
           <Link to={`/moduloAspirante/red?userId=${userId}`}>Mi Red</Link>
           <Link to={`/moduloAspirante/mensajes?userId=${userId}`}>Mensajes</Link>
-          <Link to={`/moduloAspirante/perfil?userId=${userId}`}>Mi Perfil</Link>
+          <Link to={`/CV/cv?userId=${userId}`}>CV</Link>
+          <Link to={`/moduloAspirante/perfilAspirante?userId=${userId}`}>Mi Perfil</Link>
         </nav>
       </div>
       <div className="header-right">

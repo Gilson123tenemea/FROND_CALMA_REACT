@@ -13,6 +13,14 @@ import ModuloAspirante from './components/ModuloAspirante/ModuloAspirante';
 import ModuloContratante from './components/ModuloContratante/ModuloContratante';
 
 import RegistroPaciente from './components/ModuloContratante/RegistroPaciente/registropaciente';
+import PerfilAspirante from './components/ModuloAspirante/PerfilAspirante/perfilAspirante';
+import CV from './components/ModuloAspirante/PerfilAspirante/perfilAspirante';
+
+import RecomendacionesForm from './components/Recomendaciones/RecomendacionesForm'; 
+import CertificadosForm from './components/Certificados/CertificadosForm';
+import HabilidadesForm from './components/Habilidades/HabilidadesForm';
+import DisponibilidadForm from './components/Disponibilidad/DisponibilidadForm';
+import CVForm from './components/CV/cv';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -24,10 +32,17 @@ createRoot(document.getElementById('root')).render(
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path='/registropaciente' element={<RegistroPaciente />} />
         <Route path="/moduloContratante/registropaciente" element={<RegistroPaciente />} />
+        <Route path="/moduloAspirante/perfilAspirante" element={<PerfilAspirante />} />
 
         {/* Rutas protegidas/redireccionadas según el rol */}
         <Route path="/moduloAspirante" element={<ModuloAspirante />} />
         <Route path="/moduloContratante" element={<ModuloContratante />} />
+        <Route path="/recomendaciones/:idCV" element={<RecomendacionesForm />} />
+         <Route path="/cv/:idCV/certificados" element={<CertificadosForm />} />
+         <Route path="/habilidades/:idCV" element={<HabilidadesForm />} />
+         <Route path="/disponibilidad/:idCV" element={<DisponibilidadForm />} />
+         <Route path="CV/cv" element={<CVForm />} />
+
       </Routes>
     </Router>
   </StrictMode>
