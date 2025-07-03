@@ -32,3 +32,13 @@ export const registrarContratante = async (payload) => {
     throw error;
   }
 };
+export const obtenerDetalleAspirante = async (idAspirante) => {
+  try {
+    const response = await axios.get(`http://localhost:8090/api/registro/aspirante/detalle/${idAspirante}`);
+    return response.data;  // retorna el objeto { success: true, aspirante: { ... } }
+  } catch (error) {
+    console.error('Error al obtener detalle del aspirante:', error);
+    throw error;
+  }
+};
+

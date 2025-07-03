@@ -1,3 +1,53 @@
+/* Loading y Error States */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  background: white;
+  border-radius: 12px;
+  margin: 20px 0;
+}
+
+.loading-spinner {
+  font-size: 1.2em;
+  color: #007bff;
+  font-weight: 500;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  padding: 40px;
+  background: white;
+  border-radius: 12px;
+  margin: 20px 0;
+  border: 1px solid #f8d7da;
+}
+
+.error-message {
+  color: #721c24;
+  font-weight: 500;
+  text-align: center;
+}
+
+.retry-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.retry-btn:hover {
+  background: #0056b3;
+}
+
 /* PerfilAspirante.css */
 
 .perfil-container {

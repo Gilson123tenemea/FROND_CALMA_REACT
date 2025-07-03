@@ -10,7 +10,7 @@ const HeaderAspirante = ({ userId }) => {
           <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
             {/* Logo SVG */}
           </svg>
-          <h2>SeniorConnect</h2>
+          <h2>C A L M A</h2>
         </div>
         <nav className="nav-links">
           <Link to={`/moduloAspirante/trabajos?userId=${userId}`}>Trabajos</Link>

@@ -11,11 +11,12 @@ const HeaderContratante = ({ userId }) => {
           <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
             {/* Logo SVG */}
           </svg>
-          <h2>SeniorConnect</h2>
+          <h2>C A L M A</h2>
         </div>
         <nav className="nav-links">
           <Link to={`/moduloContratante/publicaciones?userId=${userId}`}>Publicaciones</Link>
           <Link to={`/moduloContratante/nueva-publicacion?userId=${userId}`}>Crear Publicación</Link>
+           <Link to={`/Calificacion/calificacion?userId=${userId}`}>Calificacion</Link>
           <Link to={`/moduloContratante/mensajes?userId=${userId}`}>Mensajes</Link>
           <Link to={`/moduloContratante/perfilContratante?userId=${userId}`}>Mi Perfil</Link>
           <Link to={`/moduloContratante/registropaciente?userId=${userId}`}>Registro del paciente</Link>

@@ -20,7 +20,7 @@ import RecomendacionesForm from './components/Recomendaciones/RecomendacionesFor
 import CertificadosForm from './components/Certificados/CertificadosForm';
 import HabilidadesForm from './components/Habilidades/HabilidadesForm';
 import DisponibilidadForm from './components/Disponibilidad/DisponibilidadForm';
-
+import Calificacion from './components/Calificacion/calificacion';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -42,7 +42,7 @@ createRoot(document.getElementById('root')).render(
          <Route path="/cv/:idCV/certificados" element={<CertificadosForm />} />
          <Route path="/habilidades/:idCV" element={<HabilidadesForm />} />
          <Route path="/disponibilidad/:idCV" element={<DisponibilidadForm />} />
-         
+          <Route path="/Calificacion/calificacion" element={<Calificacion />} />
 
       </Routes>
     </Router>
