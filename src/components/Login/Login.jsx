@@ -54,7 +54,7 @@ const Login = () => {
   const checkConnectionAndNavigate = () => {
     if (navigator.onLine) {
       if (data.rol === 'aspirante') {
-        navigate('/moduloAspirante', { state: { userId: data.usuarioId } });
+        navigate('/moduloAspirante', { state: { userId: data.aspiranteId  } });
       } else if (data.rol === 'contratante') {
         navigate('/moduloContratante', { state: { userId: data.usuarioId } });
       }

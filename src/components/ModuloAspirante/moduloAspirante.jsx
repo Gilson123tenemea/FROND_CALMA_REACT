@@ -14,8 +14,8 @@ const ModuloAspirante = () => {
       setUserId(location.state.userId);
     } else {
       const userData = JSON.parse(localStorage.getItem('userData'));
-      if (userData?.usuarioId) {
-        setUserId(userData.usuarioId);
+      if (userData?.aspiranteId) {
+        setUserId(userData.aspiranteId);
       }
     }
   }, [location.state]);
