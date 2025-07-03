@@ -56,7 +56,7 @@ const Login = () => {
       if (data.rol === 'aspirante') {
         navigate('/moduloAspirante', { state: { userId: data.aspiranteId  } });
       } else if (data.rol === 'contratante') {
-        navigate('/moduloContratante', { state: { userId: data.usuarioId } });
+        navigate('/moduloContratante', { state: { userId: data.contratanteId } });
       }
     } else {
       toast.error('Estás sin conexión. Esperando reconexión...');
