@@ -15,6 +15,7 @@ import ModuloContratante from './components/ModuloContratante/ModuloContratante'
 import RegistroPaciente from './components/ModuloContratante/RegistroPaciente/registropaciente';
 import PerfilAspirante from './components/ModuloAspirante/PerfilAspirante/perfilAspirante';
 import CVForm from './components/ModuloAspirante/CV/cv';
+import PerfilContratante from './components/ModuloContratante/PerfilContratante/perfilContratante';
 
 import RecomendacionesForm from './components/Recomendaciones/RecomendacionesForm'; 
 import CertificadosForm from './components/Certificados/CertificadosForm';
@@ -34,7 +35,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/moduloContratante/registropaciente" element={<RegistroPaciente />} />
         <Route path="/moduloAspirante/perfilAspirante" element={<PerfilAspirante />} />
         <Route path="/moduloAspirante/cv" element={<CVForm />} />
-
+        <Route path="/moduloContratante/perfilContratante" element={<PerfilContratante />} />
         {/* Rutas protegidas/redireccionadas según el rol */}
         <Route path="/moduloAspirante" element={<ModuloAspirante />} />
         <Route path="/moduloContratante" element={<ModuloContratante />} />
