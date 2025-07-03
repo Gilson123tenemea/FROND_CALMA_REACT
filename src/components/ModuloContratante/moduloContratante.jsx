@@ -8,7 +8,7 @@ import './moduloContratante.css';
 const ModuloContratante = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('publicaciones');
-  const [userId, setUserId] = useState(null);
+  const [contratanteId, setUserId] = useState(null);
   const [jobPosts, setJobPosts] = useState([]);
   const [newJob, setNewJob] = useState({
     title: '',
@@ -24,8 +24,8 @@ const ModuloContratante = () => {
       setUserId(location.state.userId);
     } else {
       const userData = JSON.parse(localStorage.getItem('userData'));
-      if (userData?.usuarioId) {
-        setUserId(userData.usuarioId);
+      if (userData?.contratanteId) {
+        setUserId(userData.contratanteId);
       }
     }
 
@@ -83,13 +83,14 @@ const ModuloContratante = () => {
     ));
   };
 
-  if (!userId) {
+  if (!contratanteId) {
     return <div>Cargando...</div>;
   }
 
   return (
     <div className="modulo-contratante">
-      <HeaderContratante userId={userId} />
+      {/* Aquí se usa contratanteId en lugar de userId */}
+      <HeaderContratante userId={contratanteId} />
       
       <main className="main-content">
         <div className="tabs-container">
