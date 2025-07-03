@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { FaUser, FaEdit, FaGlobe, FaLanguage } from "react-icons/fa";
 import './cv.css';
 import { createCV } from "../../servicios/cvService";
-import { useNavigate } from "react-router-dom"; // 👈 Agregar esto
+import { useNavigate } from "react-router-dom";
 
 const CVForm = () => {
-  const navigate = useNavigate(); // 👈 Hook de navegación
+  const navigate = useNavigate();
 
   const [formulario, setFormulario] = useState({
     estado: false,
@@ -26,18 +26,24 @@ const CVForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const userData = JSON.parse(localStorage.getItem("userData"));
+    const aspiranteId = userData?.aspiranteId;
+
+    if (!aspiranteId) {
+      alert("No se pudo obtener el ID del aspirante.");
+      return;
+    }
+
     const cvData = {
       ...formulario,
       fecha_solicitud: new Date().toISOString(),
-      aspirante: { idAspirante: 1 }
+      aspirante: { idAspirante: aspiranteId }
     };
 
     try {
       const response = await createCV(cvData);
       const idCV = response.id_cv;
       alert("CV registrado exitosamente");
-
-      // 👇 Redirigir a la siguiente ventana (recomendaciones del CV creado)
       navigate(`/recomendaciones/${idCV}`);
     } catch (error) {
       console.error("Error al guardar el CV:", error);

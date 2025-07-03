@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { createHabilidad } from "../../servicios/habilidadesService";
+import './HabilidadesForm.css';
 
 const HabilidadesForm = () => {
   const { idCV } = useParams();

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { createDisponibilidad } from "../../servicios/disponibilidadService";
+import './DisponibilidadForm.css';
 
 const DisponibilidadForm = () => {
   const { idCV } = useParams();

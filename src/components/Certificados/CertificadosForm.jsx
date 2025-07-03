@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { createCertificado } from "../../servicios/certificadosService";
+import './CertificadosForm.css';
 
 const CertificadosForm = () => {
   const { idCV } = useParams();
