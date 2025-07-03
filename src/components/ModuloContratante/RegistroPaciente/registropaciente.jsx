@@ -311,7 +311,8 @@ const RegistroPaciente = () => {
       tipo_sangre: formulario.tipoSangre,
       idParroquia: parseInt(ubicacion.parroquia),
       idAlergia: parseInt(formulario.alergia),
-      foto: formulario.foto
+      foto: formulario.foto,
+      idContratante: parseInt(userId)
     };
 
     console.log(formulario.foto.length)

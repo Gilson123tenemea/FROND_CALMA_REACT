@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './HeaderContratante.css';
 
+
 const HeaderContratante = ({ userId }) => {
   return (
     <header className="header-contratante">
@@ -16,7 +17,7 @@ const HeaderContratante = ({ userId }) => {
           <Link to={`/moduloContratante/publicaciones?userId=${userId}`}>Publicaciones</Link>
           <Link to={`/moduloContratante/nueva-publicacion?userId=${userId}`}>Crear Publicación</Link>
           <Link to={`/moduloContratante/mensajes?userId=${userId}`}>Mensajes</Link>
-          <Link to={`/moduloContratante/perfil?userId=${userId}`}>Mi Perfil</Link>
+          <Link to={`/moduloContratante/perfilContratante?userId=${userId}`}>Mi Perfil</Link>
           <Link to={`/moduloContratante/registropaciente?userId=${userId}`}>Registro del paciente</Link>
         </nav>
       </div>

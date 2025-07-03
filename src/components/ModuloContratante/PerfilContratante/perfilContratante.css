@@ -324,3 +324,63 @@
     padding: 1rem;
   }
 }
+
+/* Título de sección con fondo azul */
+.info-tab {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* Contenedor general de sección */
+.section-box {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  background-color: #fff;
+}
+
+/* Subtítulos centrados con línea inferior azul */
+.sub-section-title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  border-bottom: 2px solid #007bff;
+  padding: 10px 0;
+  margin-bottom: 20px;
+}
+
+/* Diseño de campos en dos columnas */
+.grid-2-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  padding: 0 1.5rem 1.5rem;
+}
+
+/* Campo individual */
+.field-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.field-box label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.field-box .readonly-field {
+  background-color: #f0f2f5;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #333;
+}
