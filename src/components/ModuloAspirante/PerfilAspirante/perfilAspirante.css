@@ -1,0 +1,364 @@
+/* PerfilAspirante.css */
+
+.perfil-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Header del perfil */
+.perfil-header {
+  background: white;
+  border-radius: 12px;
+  padding: 40px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  position: relative;
+}
+
+.foto-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.foto-perfil {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 4px solid white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.foto-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.foto-placeholder {
+  font-size: 40px;
+  color: white;
+}
+
+.upload-foto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.foto-input {
+  display: none;
+}
+
+.upload-btn {
+  background: #007bff;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s;
+}
+
+.upload-btn:hover {
+  background: #0056b3;
+}
+
+.info-header {
+  flex: 1;
+}
+
+.nombre-completo {
+  font-size: 2.2em;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 10px 0;
+}
+
+.nombre-inputs {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.input-nombre {
+  padding: 10px 15px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 1.1em;
+  font-weight: 600;
+  min-width: 200px;
+  transition: border-color 0.2s;
+}
+
+.input-nombre:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.descripcion {
+  color: #6c757d;
+  font-size: 1.1em;
+  margin: 0 0 5px 0;
+}
+
+.ubicacion {
+  color: #8c9ba5;
+  margin: 0;
+  font-size: 0.95em;
+}
+
+.acciones {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+}
+
+.btn-editar {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn-editar:hover {
+  background: #0056b3;
+}
+
+.btn-group {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-guardar {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn-guardar:hover {
+  background: #1e7e34;
+}
+
+.btn-cancelar {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn-cancelar:hover {
+  background: #545b62;
+}
+
+/* Contenido del perfil */
+.perfil-content {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tabs {
+  background: #f8f9fa;
+  padding: 0;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.tab {
+  display: inline-block;
+  padding: 15px 25px;
+  background: #007bff;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.tab.active {
+  background: #007bff;
+  color: white;
+}
+
+/* Secciones de información */
+.info-section {
+  padding: 30px;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.info-section:last-child {
+  border-bottom: none;
+}
+
+.info-section h2 {
+  color: #2c3e50;
+  font-size: 1.4em;
+  font-weight: 600;
+  margin: 0 0 25px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #007bff;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-item label {
+  font-weight: 600;
+  color: #495057;
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  padding: 12px 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  color: #2c3e50;
+  font-weight: 500;
+  border: 2px solid transparent;
+}
+
+.info-value.readonly {
+  background: #e9ecef;
+  color: #6c757d;
+}
+
+.input-field,
+.select-field {
+  padding: 12px 15px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 1em;
+  transition: border-color 0.2s;
+  background: white;
+}
+
+.input-field:focus,
+.select-field:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.select-field {
+  cursor: pointer;
+}
+
+/* Disponibilidad */
+.disponibilidad {
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 0.9em;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.disponibilidad.disponible {
+  background: #d4edda;
+  color: #155724;
+}
+
+.disponibilidad.no-disponible {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .perfil-container {
+    padding: 10px;
+  }
+  
+  .perfil-header {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .acciones {
+    position: static;
+    margin-top: 20px;
+  }
+  
+  .nombre-inputs {
+    justify-content: center;
+  }
+  
+  .input-nombre {
+    min-width: 150px;
+  }
+  
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .info-section {
+    padding: 20px;
+  }
+  
+  .btn-group {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .btn-guardar,
+  .btn-cancelar,
+  .btn-editar {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .nombre-inputs {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .input-nombre {
+    width: 100%;
+    max-width: 250px;
+  }
+  
+  .foto-perfil {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .nombre-completo {
+    font-size: 1.8em;
+  }
+}
