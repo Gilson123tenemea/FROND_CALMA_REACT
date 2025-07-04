@@ -1,122 +1,210 @@
-.registro-page {
-  min-height: 100vh;
-  background-color: #f8fafc;
-  font-family: 'Lexend', 'Noto Sans', sans-serif;
-  padding-top: 80px; /* Para el navbar */
+/* Estilos generales mejorados */
+:root {
+  --primary-color: #4f46e5;
+  --primary-light: #6366f1;
+  --secondary-color: #f8fafc;
+  --text-color: #1e293b;
+  --light-text: #64748b;
+  --border-color: #e2e8f0;
+  --error-color: #ef4444;
+  --success-color: #10b981;
 }
 
-.registro-container {
+.registro-page {
+  min-height: 100vh;
+  background-color: var(--secondary-color);
+  font-family: 'Lexend', 'Noto Sans', sans-serif;
   display: flex;
+  flex-direction: column;
+  color: var(--text-color);
+}
+
+/* Navbar más limpio */
+.navbar {
+  width: 100%;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  padding: 2rem;
+}
+
+.navbar-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.navbar-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.navbar-link {
+  color: var(--text-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+  padding: 0.5rem 0;
+}
+
+.navbar-link:hover {
+  color: var(--primary-color);
+}
+
+.navbar-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Contenido principal más limpio */
+.registro-content {
+  flex: 1;
+  padding-top: 80px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--secondary-color);
+}
+
+/* Encabezado más minimalista */
+.registro-header {
+  width: 100%;
+  background-color: white;
+  padding: 2rem 0;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.registro-header h1 {
+  color: var(--text-color);
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.registro-header .subtitle {
+  color: var(--light-text);
+  font-size: 1rem;
+}
+
+/* Formulario más limpio */
+.registro-container {
+  width: 100%;
+  max-width: 600px; /* Más estrecho para mejor lectura */
+  padding: 0 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .registro-card {
   background-color: white;
-  padding: 2.5rem;
-  border-radius: 1rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
   width: 100%;
-  max-width: 700px;
-  animation: fadeIn 0.6s ease-out forwards;
 }
 
-h2 {
-  text-align: center;
-  margin-bottom: 0.5rem;
-  color: #101518;
-  font-size: 1.75rem;
-  font-weight: 700;
-}
-
-.subtitle {
-  text-align: center;
-  color: #64748b;
-  margin-bottom: 2rem;
-  font-size: 0.95rem;
-}
-
+/* Selector de rol mejorado */
 .role-selector {
   display: flex;
   gap: 1rem;
   margin-bottom: 2rem;
 }
 
-.role-btn {
+.role-option {
   flex: 1;
-  padding: 1.5rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 0.75rem;
-  background: white;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s;
+}
+
+.role-option input[type="radio"] {
+  display: none;
+}
+
+.role-label {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  padding: 1.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: white;
+  color: var(--text-color); /* Texto visible */
 }
 
-.role-btn:hover {
-  border-color: #c7d2fe;
+.role-label:hover {
+  border-color: var(--primary-light);
 }
 
-.role-btn.active {
-  border-color: #4f46e5;
-  background-color: #f0f4ff;
+.role-option input[type="radio"]:checked + .role-label {
+  border-color: var(--primary-color);
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
 }
 
 .role-icon {
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
-  color: #4f46e5;
+  color: inherit; /* Hereda el color del label */
 }
 
-.contratante-type {
-  margin-bottom: 1.5rem;
-}
-
-.contratante-type label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #334155;
+.role-text {
   font-weight: 500;
+  font-size: 0.95rem;
 }
 
+/* Botones de opción mejorados */
 .type-options {
   display: flex;
   gap: 1rem;
+  margin-top: 0.5rem;
 }
 
-.type-btn {
+.type-option {
   flex: 1;
+}
+
+.type-option input[type="radio"] {
+  display: none;
+}
+
+.type-label {
+  display: block;
   padding: 0.75rem;
-  border: 1px solid #e2e8f0;
+  text-align: center;
+  border: 1px solid var(--border-color);
   border-radius: 0.5rem;
-  background: white;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.2s;
+  background: white;
+  color: var(--text-color); /* Texto visible */
+  font-weight: 500;
 }
 
-.type-btn:hover {
-  border-color: #c7d2fe;
+.type-label:hover {
+  border-color: var(--primary-light);
 }
 
-.type-btn.active {
-  border-color: #4f46e5;
-  background-color: #f0f4ff;
-  color: #4f46e5;
+.type-option input[type="radio"]:checked + .type-label {
+  border-color: var(--primary-color);
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
 }
 
+/* Secciones del formulario */
 .form-section-title {
-  color: #4f46e5;
-  font-size: 1.1rem;
+  color: var(--primary-color);
+  font-size: 1.05rem;
   margin: 1.5rem 0 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid #e2e8f0;
+  font-weight: 600;
 }
 
+/* Campos de entrada más limpios */
 .input-group {
   margin-bottom: 1.25rem;
 }
@@ -124,38 +212,147 @@ h2 {
 .input-group label {
   display: block;
   margin-bottom: 0.5rem;
-  color: #334155;
+  color: var(--text-color);
   font-size: 0.9rem;
   font-weight: 500;
-}
-
-.input-icon {
-  margin-right: 0.5rem;
-  color: #64748b;
 }
 
 .input-group input,
 .input-group select {
   width: 100%;
-  padding: 0.85rem 1rem;
-  border: 1px solid #e2e8f0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
   border-radius: 0.5rem;
-  font-size: 1rem;
-  transition: all 0.3s;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  background-color: white;
+  color: var(--text-color);
 }
 
 .input-group input:focus,
 .input-group select:focus {
   outline: none;
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
 }
 
-.select-wrapper {
+/* Enlace de login */
+.login-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: var(--light-text);
+  font-size: 0.95rem;
+}
+
+.login-link a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.login-link a:hover {
+  color: var(--primary-light);
+}
+
+/* Animación sutil */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* Agrega estos estilos al final de tu CSS */
+
+/* Estilos para el checkbox de términos */
+.terms-container {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0;
+}
+
+.terms-checkbox {
   position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 }
 
-.select-arrow {
+.terms-checkbox input[type="checkbox"] {
   position: absolute;
-  right: 1
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: relative;
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  background-color: white;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  margin-right: 0.75rem;
+  transition: all 0.2s;
+}
+
+.terms-checkbox:hover .checkmark {
+  border-color: var(--primary-light);
+}
+
+.terms-checkbox input:checked ~ .checkmark {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 6px;
+  top: 2px;
+  width: 4px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.terms-checkbox input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.terms-text {
+  font-size: 0.9rem;
+  color: var(--text-color);
+}
+
+/* Botón de Crear Cuenta */
+.submit-btn {
+  width: 100%;
+  padding: 0.85rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-bottom: 1.5rem;
+}
+
+.submit-btn:hover {
+  background-color: var(--primary-light);
+}
+
+.submit-btn:disabled {
+  background-color: var(--border-color);
+  cursor: not-allowed;
 }
