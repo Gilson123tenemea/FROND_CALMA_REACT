@@ -2,20 +2,32 @@
   border: 2px solid red;
   outline: none;
 }
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1px; /* Espacio entre label, input y mensaje */
+}
 
 .error-text {
+  margin-top: 2px; /* reduce margen superior */
+  padding: 0;
+  line-height: 1;
+  font-size: 0.75rem;
   color: red;
-  font-size: 0.85rem;
-  margin-top: 4px;
+  position: relative;
+  top: -10px; /* mueve el texto hacia arriba */
 }
+
 .grupo-error {
   border: 2px solid red;
   border-radius: 4px;
 }
+
 .input-error {
   border: 2px solid red !important;
   outline: none;
 }
+
 .error-text {
   color: red;
   font-size: 0.85em;
@@ -23,5 +35,176 @@
 }
 
 .input-align-right {
-  margin-left: 40px; 
+  margin-left: 40px;
+}
+
+.ing-1 {
+  box-shadow: 1px 1px 20px rgb(3, 23, 245);
+}
+
+.registro-page {
+  width: 100vw;
+  min-height: 100vh;
+  background-color: #f0f0f0;
+  padding: 10px 70px;
+  /* Puedes aumentar o reducir según el espacio que quieras al borde */
+  box-sizing: border-box;
+  margin: 0;
+  display: flex;
+  justify-content: flex-start;
+  /* Que el contenido quede pegado al borde izquierdo */
+}
+
+.registro-container {
+  min-width: 1450px;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 100vh;
+  filter: drop-shadow(1px 1px 20px rgb(1, 42, 246));
+  padding: 30px 20px;
+  background-color: rgb(9, 11, 127);
+}
+
+.registro-card {
+  min-width: 1410px;
+  width: 100%;
+  
+  box-sizing: border-box;
+  padding: 30px 30px;
+  background-color: white;
+  /* resto... */
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr) 180px;
+  gap: 20px;
+  grid-template-columns: 1fr 1fr 240px;
+  align-items: start;
+  margin-top: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.input-group input,
+.input-group select {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.foto-container {
+  text-align: center;
+  grid-row: span 4;
+}
+
+.ing-1 {
+  width: 150px;
+  height: 150px;
+  margin: auto;
+  aspect-ratio: 4 / 3; /* Proporción fija para que no se deforme */
+  border-radius: 8px;
+  background-color: #f0f0f0;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.btn-cargar-foto {
+  padding: 8px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.full-width {
+  grid-column: span 4;
+}
+
+.form-footer {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.form-row {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.input-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 100px;
+}
+
+
+.error-text {
+  color: red;
+  font-size: 12px;
+}
+
+.foto-container {
+  text-align: right;
+  /* Alinea el contenido a la derecha */
+  justify-self: end;
+  /* Si usas grid, para que la celda se alinee a la derecha */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  align-self: flex-start;
+  /* Para que imagen y botón queden a la derecha */
+}
+
+.ing-1 {
+  width: 220px;
+  /* antes 150px */
+  height: 160px;
+  /* antes 150px */
+  margin: auto;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+  overflow: hidden;
+  margin-bottom: 12px;
+  /* un poco más espacio */
+}
+
+.btn-cargar-foto {
+  padding: 10px 16px;
+  /* antes 8px 12px */
+  font-size: 1rem;
+}
+.bajar-campo {
+  margin-top: 55px; /* o el espacio que prefieras */
+}
+.bajar-campo1 {
+  margin-top: 29px; /* o el espacio que prefieras */
+}
+.terms-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+  font-size: 0.95rem;
+  background-color: white;
+  padding: 6px 10px;
+  border-radius: 5px;
+}
+
+.terms-checkbox input[type="checkbox"] {
+  width: auto;
+  height: auto;
+  flex-shrink: 0;
+  cursor: pointer;
 }

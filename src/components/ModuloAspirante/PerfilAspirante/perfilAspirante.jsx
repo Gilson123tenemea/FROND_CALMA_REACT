@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { obtenerDetalleAspirante } from '../../../servicios/registrarService';
 import './PerfilAspirante.css';
-import { useNavigate } from 'react-router-dom'; // Importar useNavigate
+import { useNavigate } from 'react-router-dom';
 import HeaderAspirante from "../HeaderAspirante/HeaderAspirante";
 import { getProvincias } from "../../../servicios/ProvinciaService";
 import { getCantonesByProvinciaId } from "../../../servicios/CantonService";
 import { getParroquiasByCantonId } from "../../../servicios/parroquiaService";
+
 const PerfilAspirante = () => {
   const navigate = useNavigate();
+  const inputFileRef = useRef(null);
+
   const userData = JSON.parse(localStorage.getItem("userData"));
   const aspiranteId = userData?.aspiranteId;
 
@@ -38,8 +41,8 @@ const PerfilAspirante = () => {
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({ ...formData });
+  const [isAnimating, setIsAnimating] = useState(false);
 
- // Cargar provincias al inicio
   useEffect(() => {
     const cargarProvincias = async () => {
       try {
@@ -52,7 +55,6 @@ const PerfilAspirante = () => {
     cargarProvincias();
   }, []);
 
-  // Cargar cantones cuando se selecciona una provincia
   useEffect(() => {
     const cargarCantones = async () => {
       if (ubicacion.provincia) {
@@ -62,12 +64,13 @@ const PerfilAspirante = () => {
         } catch (error) {
           console.error('Error al obtener cantones:', error);
         }
+      } else {
+        setCantones([]);
       }
     };
     cargarCantones();
   }, [ubicacion.provincia]);
 
-  // Cargar parroquias cuando se selecciona un cantón
   useEffect(() => {
     const cargarParroquias = async () => {
       if (ubicacion.canton) {
@@ -77,27 +80,28 @@ const PerfilAspirante = () => {
         } catch (error) {
           console.error('Error al obtener parroquias:', error);
         }
+      } else {
+        setParroquias([]);
       }
     };
     cargarParroquias();
   }, [ubicacion.canton]);
 
-  // Función para cargar los datos del aspirante
-   const cargarDatosAspirante = async (id) => {
+  const cargarDatosAspirante = async (id) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await obtenerDetalleAspirante(id);
-      
+
       if (response.success && response.aspirante) {
         const aspirante = response.aspirante;
-        
-        const fechaFormateada = aspirante.fechaNacimiento 
+
+        const fechaFormateada = aspirante.fechaNacimiento
           ? new Date(aspirante.fechaNacimiento).toISOString().split('T')[0]
           : '';
-        
-          setUbicacion({
+
+        setUbicacion({
           provincia: aspirante.idProvincia || '',
           canton: aspirante.idCanton || '',
           parroquia: aspirante.idParroquia || ''
@@ -116,7 +120,7 @@ const PerfilAspirante = () => {
           tipo_contrato: aspirante.tipoContrato || '',
           foto: aspirante.foto ? `http://localhost:8090/static/${aspirante.foto}` : null
         };
-        
+
         setFormData(datosFormateados);
         setEditData(datosFormateados);
       } else {
@@ -125,18 +129,19 @@ const PerfilAspirante = () => {
     } catch (err) {
       console.error('Error al cargar datos del aspirante:', err);
       setError('Error al cargar los datos del aspirante');
-      navigate('/login'); // Redirigir si hay error
+      navigate('/login');
     } finally {
       setLoading(false);
+      setIsAnimating(true);
+      setTimeout(() => setIsAnimating(false), 500);
     }
   };
 
-  // Cargar datos al montar el componente
   useEffect(() => {
     if (!aspiranteId) {
       setError('No se pudo obtener el ID del aspirante');
       setLoading(false);
-      navigate('/login'); // Redirigir si no hay ID
+      navigate('/login');
       return;
     }
     cargarDatosAspirante(aspiranteId);
@@ -169,20 +174,21 @@ const PerfilAspirante = () => {
     setEditData({ ...formData });
   };
 
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setEditData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
   const handleSave = async () => {
     try {
       setLoading(true);
-      
-      // Aquí iría la lógica para actualizar en la base de datos
-      // Por ejemplo: await actualizarAspirante(userId, editData);
-      
+      // Aquí lógica para guardar (API)
       setFormData({ ...editData });
       setIsEditing(false);
-      console.log('Datos guardados:', editData);
-      
-      // Opcional: recargar datos desde la API para confirmar
-      await cargarDatosAspirante();
-      
+      await cargarDatosAspirante(aspiranteId);
     } catch (err) {
       console.error('Error al guardar datos:', err);
       setError('Error al guardar los datos');
@@ -196,323 +202,256 @@ const PerfilAspirante = () => {
     setIsEditing(false);
   };
 
-
-  const nombreProvincia = provincias.find(p => p.id_provincia === ubicacion.provincia)?.nombre || 'Cargando...';
-  const nombreCanton = cantones.find(c => c.id_canton === ubicacion.canton)?.nombre || 'Cargando...';
-  const nombreParroquia = parroquias.find(p => p.id_parroquia === ubicacion.parroquia)?.nombre || 'Cargando...';
+  const nombreProvincia = provincias.find(p => p.id_provincia === ubicacion.provincia)?.nombre || '';
+  const nombreCanton = cantones.find(c => c.id_canton === ubicacion.canton)?.nombre || '';
+  const nombreParroquia = parroquias.find(p => p.id_parroquia === ubicacion.parroquia)?.nombre || '';
 
   return (
     <>
       <HeaderAspirante userId={aspiranteId} />
-      <div className="perfil-container">
-        {loading && (
-          <div className="loading-container">
-            <div className="loading-spinner">Cargando...</div>
-          </div>
-        )}
-        
-        {error && (
-          <div className="error-container">
-            <div className="error-message">{error}</div>
-            <button onClick={cargarDatosAspirante} className="retry-btn">
-              Reintentar
-            </button>
-          </div>
-        )}
-        
-        {!loading && !error && (
-          <>
-            <div className="perfil-header">
-              <div className="foto-container">
-                <div className="foto-perfil">
-                  {(isEditing ? editData.foto : formData.foto) ? (
-                    <img 
-                      src={isEditing ? editData.foto : formData.foto} 
-                      alt="Foto de perfil" 
-                      className="foto-img"
-                    />
-                  ) : (
-                    <div className="foto-placeholder">
-                      <span>📷</span>
-                    </div>
-                  )}
+      <div className={`profile-container ${isAnimating ? 'animate' : ''}`}>
+        <main className="profile-main">
+          <div className="profile-card">
+            <div className="profile-intro">
+              <div
+                className="profile-avatar-large"
+                style={{
+                  backgroundImage: editData.foto
+                    ? `url(${editData.foto})`
+                    : 'url("https://via.placeholder.com/150")',
+                }}
+              />
+              {isEditing && (
+                <div className="upload-photo-container">
+                  <button
+                    type="button"
+                    className="submit-button"
+                    onClick={() => inputFileRef.current.click()}
+                  >
+                    Subir Foto
+                  </button>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    ref={inputFileRef}
+                    onChange={handlePhotoUpload}
+                  />
                 </div>
-                {isEditing && (
-                  <div className="upload-foto">
-                    <input
-                      type="file"
-                      id="foto-upload"
-                      accept="image/*"
-                      onChange={handlePhotoUpload}
-                      className="foto-input"
-                    />
-                    <label htmlFor="foto-upload" className="upload-btn">
-                      Subir Foto
-                    </label>
-                  </div>
-                )}
-              </div>
-              
-              <div className="info-header">
-                <h1 className="nombre-completo">
-                  {isEditing ? (
-                    <div className="nombre-inputs">
-                      <input
-                        type="text"
-                        name="nombres"
-                        value={editData.nombres}
-                        onChange={handleInputChange}
-                        placeholder="Nombres"
-                        className="input-nombre"
-                      />
-                      <input
-                        type="text"
-                        name="apellidos"
-                        value={editData.apellidos}
-                        onChange={handleInputChange}
-                        placeholder="Apellidos"
-                        className="input-nombre"
-                      />
-                    </div>
-                  ) : (
-                    `${formData.nombres} ${formData.apellidos}`
-                  )}
-                </h1>
-                <p className="descripcion">Aspirante a empleo</p>
-                <p className="ubicacion">
-                  {formData.provincia} | {formData.canton} | {formData.parroquia}
-                </p>
+              )}
+            </div>
+
+            <div className="profile-info">
+
+              <div className="profile-section">
+                <h2>Información Personal</h2>
+
+                <div className="profile-row">
+                  <label>Cédula:</label>
+                  <input
+                    type="text"
+                    name="cedula"
+                    value={isEditing ? editData.cedula : formData.cedula}
+                    readOnly={!isEditing}
+                    className="input-text"
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="profile-row">
+                  <label>Nombres:</label>
+                  <input
+                    type="text"
+                    name="nombres"
+                    value={isEditing ? editData.nombres : formData.nombres}
+                    readOnly={!isEditing}
+                    className="input-text"
+                    onChange={handleInputChange}
+                  />
+                  
+                </div>
+
+
+                <div className="profile-row">
+                  <label>Correo Electrónico:</label>
+                  <input
+                    type="email"
+                    name="correo"
+                    value={isEditing ? editData.correo : formData.correo}
+                    readOnly={!isEditing}
+                    className="input-text"
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="profile-row">
+                  <label>Género:</label>
+                  <select
+                    name="genero"
+                    value={isEditing ? editData.genero : formData.genero}
+                    disabled={!isEditing}
+                    onChange={handleInputChange}
+                    className="input-select"
+                  >
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                    <option value="Otro">Otro</option>
+                  </select>
+                </div>
+
+                <div className="profile-row">
+                  <label>Fecha de Nacimiento:</label>
+                  <input
+                    type="date"
+                    name="fechaNacimiento"
+                    value={isEditing ? editData.fechaNacimiento : formData.fechaNacimiento}
+                    readOnly={!isEditing}
+                    className="input-text"
+                    onChange={handleInputChange}
+                  />
+                </div>
               </div>
 
-              <div className="acciones">
+              <div className="profile-section">
+                <h2>Ubicación</h2>
+
+                <div className="profile-row">
+                  <label>Provincia:</label>
+                  <select
+                    name="provincia"
+                    value={ubicacion.provincia}
+                    onChange={handleUbicacionChange}
+                    disabled={!isEditing}
+                    className="input-select"
+                  >
+                    <option value="">Seleccione...</option>
+                    {provincias.map(p => (
+                      <option key={p.id_provincia} value={p.id_provincia}>{p.nombre}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="profile-row">
+                  <label>Cantón:</label>
+                  <select
+                    name="canton"
+                    value={ubicacion.canton}
+                    onChange={handleUbicacionChange}
+                    disabled={!isEditing}
+                    className="input-select"
+                  >
+                    <option value="">Seleccione...</option>
+                    {cantones.map(c => (
+                      <option key={c.id_canton} value={c.id_canton}>{c.nombre}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="profile-row">
+                  <label>Parroquia:</label>
+                  <select
+                    name="parroquia"
+                    value={ubicacion.parroquia}
+                    onChange={handleUbicacionChange}
+                    disabled={!isEditing}
+                    className="input-select"
+                  >
+                    <option value="">Seleccione...</option>
+                    {parroquias.map(p => (
+                      <option key={p.id_parroquia} value={p.id_parroquia}>{p.nombre}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="profile-section">
+                <h2>Información Laboral</h2>
+
+
+                <div className="profile-row disponibilidad-row">
+                  <label>Disponibilidad:</label>
+                  <input
+                    type="checkbox"
+                    name="disponibilidad"
+                    checked={isEditing ? editData.disponibilidad : formData.disponibilidad}
+                    disabled={!isEditing}
+                    onChange={handleInputChange}
+                  />
+                  <span className={(isEditing ? editData.disponibilidad : formData.disponibilidad) ? 'disponible' : 'no-disponible'}>
+                    {(isEditing ? editData.disponibilidad : formData.disponibilidad) ? '✓ Disponible' : '✗ No disponible'}
+                  </span>
+                </div>
+
+                <div className="profile-row">
+                  <label>Aspiración Salarial:</label>
+                  <input
+                    type="number"
+                    name="aspiracionSalarial"
+                    value={isEditing ? (editData.aspiracionSalarial || '') : (formData.aspiracionSalarial || '')}
+                    readOnly={!isEditing}
+                    className="input-text"
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="profile-row">
+                  <label>Tipo de Contrato Preferido:</label>
+                  <select
+                    name="tipo_contrato"
+                    value={isEditing ? editData.tipo_contrato : formData.tipo_contrato}
+                    disabled={!isEditing}
+                    onChange={handleInputChange}
+                    className="input-select"
+                  >
+                    <option value="Tiempo completo">Tiempo completo</option>
+                    <option value="Medio tiempo">Medio tiempo</option>
+                    <option value="Por horas">Por horas</option>
+                    <option value="Freelance">Freelance</option>
+                    <option value="Contrato temporal">Contrato temporal</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="profile-section">
+                <h2>Seguridad</h2>
+
+                <div className="profile-row">
+                  <label>Contraseña:</label>
+                  <input
+                    type="password"
+                    name="contrasena"
+                    value={editData.contrasena}
+                    readOnly={!isEditing}
+                    placeholder="Nueva contraseña"
+                    className="input-text"
+                    onChange={handleInputChange}
+                  />
+                </div>
+              </div>
+
+              <div className="profile-actions">
                 {!isEditing ? (
-                  <button onClick={handleEdit} className="btn-editar">
+                  <button className="edit-button" onClick={handleEdit}>
                     Editar Perfil
                   </button>
                 ) : (
-                  <div className="btn-group">
-                    <button onClick={handleSave} className="btn-guardar">
+                  <>
+                    <button className="save-button" onClick={handleSave}>
                       Guardar
                     </button>
-                    <button onClick={handleCancel} className="btn-cancelar">
+                    <button className="cancel-button" onClick={handleCancel}>
                       Cancelar
                     </button>
-                  </div>
+                  </>
                 )}
               </div>
             </div>
-
-            <div className="perfil-content">
-              <div className="tabs">
-                <div className="tab active">Información Personal</div>
-              </div>
-
-              <div className="info-section">
-                <h2>Datos Personales</h2>
-                
-                <div className="info-grid">
-                  <div className="info-item">
-                    <label>Cédula</label>
-                    <div className="info-value readonly">{formData.cedula}</div>
-                  </div>
-
-                  <div className="info-item">
-                    <label>Correo Electrónico</label>
-                    {isEditing ? (
-                      <input
-                        type="email"
-                        name="correo"
-                        value={editData.correo}
-                        onChange={handleInputChange}
-                        className="input-field"
-                      />
-                    ) : (
-                      <div className="info-value">{formData.correo}</div>
-                    )}
-                  </div>
-
-                  <div className="info-item">
-                    <label>Género</label>
-                    {isEditing ? (
-                      <select
-                        name="genero"
-                        value={editData.genero}
-                        onChange={handleInputChange}
-                        className="select-field"
-                      >
-                        <option value="Masculino">Masculino</option>
-                        <option value="Femenino">Femenino</option>
-                        <option value="Otro">Otro</option>
-                      </select>
-                    ) : (
-                      <div className="info-value">{formData.genero}</div>
-                    )}
-                  </div>
-
-                  <div className="info-item">
-                    <label>Fecha de Nacimiento</label>
-                    {isEditing ? (
-                      <input
-                        type="date"
-                        name="fechaNacimiento"
-                        value={editData.fechaNacimiento}
-                        onChange={handleInputChange}
-                        className="input-field"
-                      />
-                    ) : (
-                      <div className="info-value">
-                        {new Date(formData.fechaNacimiento).toLocaleDateString('es-ES')}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="info-section">
-                  <h2>Ubicación</h2>
-              
-              <div className="info-grid">
-                <div className="info-item">
-                  <label>Provincia</label>
-                  {isEditing ? (
-                    <select
-                      name="provincia"
-                      value={ubicacion.provincia}
-                      onChange={handleUbicacionChange}
-                      className="select-field"
-                    >
-                      <option value="">Seleccione...</option>
-                      {provincias.map(p => (
-                        <option key={p.id_provincia} value={p.id_provincia}>{p.nombre}</option>
-                      ))}
-                    </select>
-                  ) : (
-                    <div className="info-value">{nombreProvincia}</div>
-                  )}
-                </div>
-
-                  <div className="info-item">
-                  <label>Cantón</label>
-                  {isEditing ? (
-                    <select
-                      name="canton"
-                      value={ubicacion.canton}
-                      onChange={handleUbicacionChange}
-                      className="select-field"
-                    >
-                      <option value="">Seleccione...</option>
-                      {cantones.map(c => (
-                        <option key={c.id_canton} value={c.id_canton}>{c.nombre}</option>
-                      ))}
-                    </select>
-                  ) : (
-                    <div className="info-value">{nombreCanton}</div>
-                  )}
-                </div>
-
-                <div className="info-item">
-                  <label>Parroquia</label>
-                  {isEditing ? (
-                    <select
-                      name="parroquia"
-                      value={ubicacion.parroquia}
-                      onChange={handleUbicacionChange}
-                      className="select-field"
-                    >
-                      <option value="">Seleccione...</option>
-                      {parroquias.map(p => (
-                        <option key={p.id_parroquia} value={p.id_parroquia}>{p.nombre}</option>
-                      ))}
-                    </select>
-                  ) : (
-                    <div className="info-value">{nombreParroquia}</div>
-                  )}
-                </div>
-
-
-                </div>
-              </div>
-
-              <div className="info-section">
-                <h2>Información Laboral</h2>
-                
-                <div className="info-grid">
-                  <div className="info-item">
-                    <label>Disponibilidad</label>
-                    <div className="info-value">
-                      <span className={`disponibilidad ${formData.disponibilidad ? 'disponible' : 'no-disponible'}`}>
-                        {formData.disponibilidad ? '✓ Disponible' : '✗ No disponible'}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="info-item">
-                    <label>Aspiración Salarial</label>
-                    {isEditing ? (
-                      <input
-                        type="number"
-                        name="aspiracionSalarial"
-                        value={editData.aspiracionSalarial || ''}
-                        onChange={handleInputChange}
-                        placeholder="Ingrese monto"
-                        className="input-field"
-                      />
-                    ) : (
-                      <div className="info-value">
-                        ${formData.aspiracionSalarial ? formData.aspiracionSalarial.toLocaleString() : 'No especificado'}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="info-item">
-                    <label>Tipo de Contrato Preferido</label>
-                    {isEditing ? (
-                      <select
-                        name="tipo_contrato"
-                        value={editData.tipo_contrato}
-                        onChange={handleInputChange}
-                        className="select-field"
-                      >
-                        <option value="Tiempo completo">Tiempo completo</option>
-                        <option value="Medio tiempo">Medio tiempo</option>
-                        <option value="Por horas">Por horas</option>
-                        <option value="Freelance">Freelance</option>
-                        <option value="Contrato temporal">Contrato temporal</option>
-                      </select>
-                    ) : (
-                      <div className="info-value">{formData.tipo_contrato}</div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="info-section">
-                <h2>Seguridad</h2>
-                
-                <div className="info-grid">
-                  <div className="info-item">
-                    <label>Contraseña</label>
-                    {isEditing ? (
-                      <input
-                        type="password"
-                        name="contrasena"
-                        value={editData.contrasena}
-                        onChange={handleInputChange}
-                        placeholder="Nueva contraseña"
-                        className="input-field"
-                      />
-                    ) : (
-                      <div className="info-value">••••••••</div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
+          </div>
+        </main>
       </div>
     </>
   );
+
 };
 
 export default PerfilAspirante;
