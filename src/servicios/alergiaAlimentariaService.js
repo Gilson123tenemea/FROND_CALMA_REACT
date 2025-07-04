@@ -35,7 +35,7 @@ export const crearAlergia = async (alergia) => {
 // Actualizar una alergia alimentaria existente
 export const actualizarAlergia = async (id, alergia) => {
   try {
-    const response = await axios.put('${API_URL}/${id}', alergia);
+    const response = await axios.put(`${API_URL}/${id}`, alergia);
     return response.data;
   } catch (error) {
     throw new Error('Error al actualizar la alergia: ' + error.response?.data || error.message);
@@ -45,7 +45,7 @@ export const actualizarAlergia = async (id, alergia) => {
 
 export const eliminarAlergia = async (id) => {
   try {
-    const response = await axios.delete('${API_URL}/${id}');
+    const response = await axios.delete(`${API_URL}/${id}`);
     return response.data;
   } catch (error) {
     throw new Error('Error al eliminar la alergia: ' + error.response?.data || error.message);

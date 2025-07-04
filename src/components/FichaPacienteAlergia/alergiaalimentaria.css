@@ -1,87 +1,146 @@
-.contenedor-alergias {
-  padding: 2rem;
-  max-width: 800px;
-  margin: auto;
-  background-color: #f7f9fc;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+.container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 30px;
+    border-radius: 16px;
+    background-color: #ffffff;
+    box-shadow: 0 8px 24px rgba(0, 128, 128, 0.1);
+    border: 1px solid #cfe9f1;
 }
 
-.contenedor-alergias h2 {
-  text-align: center;
-  margin-bottom: 1rem;
+h2 {
+    text-align: center;
+    color: #2a6f97;
+    margin-bottom: 20px;
 }
 
-.formulario-alergia {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  justify-content: center;
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
 }
 
-.formulario-alergia input {
-  padding: 10px;
-  width: 60%;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+.form input {
+    padding: 14px;
+    font-size: 16px;
+    border: 1px solid #b6d9e8;
+    border-radius: 8px;
+    background-color: #f0f9ff;
+    color: #2a4d59;
+    outline: none;
+    transition: border-color 0.3s;
+    width: 100%;
 }
 
-.formulario-alergia button {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  background-color: #007bff;
-  color: white;
-  transition: background-color 0.3s ease;
+.form input:focus {
+    border-color: #88c7dc;
 }
 
-.formulario-alergia .btn-cancelar {
-  background-color: #6c757d;
+.form button {
+    align-self: flex-start;
+    padding: 12px 24px;
+    background-color: #a5dd9b;
+    color: #084c61;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-.formulario-alergia button:hover {
-  background-color: #0056b3;
+.form button:hover {
+    background-color: #90c38d;
 }
 
-.tabla-alergias {
-  width: 100%;
-  border-collapse: collapse;
+.alergias-list {
+    list-style: none;
+    padding: 0;
 }
 
-.tabla-alergias th,
-.tabla-alergias td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: center;
+.alergia-item {
+    background-color: #ecf8ff;
+    padding: 15px 20px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #d0ecf3;
+    transition: box-shadow 0.3s;
 }
 
-.tabla-alergias th {
-  background-color: #007bff;
-  color: white;
+.alergia-item:hover {
+    box-shadow: 0 4px 10px rgba(0, 128, 128, 0.1);
 }
 
-.tabla-alergias tr:nth-child(even) {
-  background-color: #f2f2f2;
+.alergia-item span {
+    font-size: 16px;
+    color: #285566;
+    flex-grow: 1;
 }
 
-.btn-editar,
-.btn-eliminar {
-  padding: 6px 10px;
-  margin: 0 5px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
+.alergia-item div {
+    opacity: 0;
+    transition: opacity 0.3s;
 }
 
-.btn-editar {
-  background-color: #ffc107;
-  color: black;
+.alergia-item:hover div {
+    opacity: 1;
 }
 
-.btn-eliminar {
-  background-color: #dc3545;
-  color: white;
+.alergia-item button {
+    margin-left: 8px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.alergia-item button:first-child {
+    background-color: #3a81b0;
+}
+
+.alergia-item button:first-child:hover {
+    background-color: #28658a;
+}
+
+.alergia-item button:last-child {
+    background-color: #7cb8f4;
+}
+
+.alergia-item button:last-child:hover {
+    background-color: #68c5e7;
+}
+
+/* Responsivo para celulares */
+@media (max-width: 600px) {
+    .form {
+        gap: 10px;
+    }
+
+    .form input {
+        font-size: 15px;
+    }
+
+    .form button {
+        width: 100%;
+        padding: 10px;
+        font-size: 15px;
+    }
+
+    .alergia-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .alergia-item div {
+        align-self: flex-end;
+        opacity: 1 !important;
+    }
 }

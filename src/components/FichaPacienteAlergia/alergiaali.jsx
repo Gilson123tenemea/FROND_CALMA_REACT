@@ -1,134 +1,83 @@
-import React, { useEffect, useState } from 'react';
-import {
-  getAlergias,
-  crearAlergia,
-  actualizarAlergia,
-  eliminarAlergia,
-} from '../../servicios/alergiaAlimentariaService';
+import React, { useState, useEffect } from 'react';
 import './alergiaalimentaria.css';
 
+const API_URL = 'http://localhost:8090/api/alergias_alimentarias';
+
 const AlergiaAlimentaria = () => {
-  const [alergias, setAlergias] = useState([]);
-  const [nuevaAlergia, setNuevaAlergia] = useState({ nombre: '' });
-  const [editando, setEditando] = useState(null);
+    const [alergias, setAlergias] = useState([]);
+    const [alergiaAlimentaria, setAlergiaAlimentaria] = useState('');
+    const [editingId, setEditingId] = useState(null);
 
-  const cargarAlergias = async () => {
-    try {
-      const datos = await getAlergias();
-      setAlergias(datos);
-    } catch (error) {
-      console.error(error.message);
-    }
-  };
+    useEffect(() => {
+        fetchAlergias();
+    }, []);
 
-  useEffect(() => {
-    cargarAlergias();
-  }, []);
+    const fetchAlergias = async () => {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        setAlergias(data);
+    };
 
-  const handleChange = (e) => {
-    setNuevaAlergia({ ...nuevaAlergia, [e.target.name]: e.target.value });
-  };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (editando) {
-        await actualizarAlergia(editando, nuevaAlergia);
-      } else {
-        await crearAlergia(nuevaAlergia);
-      }
-      setNuevaAlergia({ nombre: '' });
-      setEditando(null);
-      cargarAlergias();
-    } catch (error) {
-      console.error(error.message);
-    }
-  };
+        const method = editingId ? 'PUT' : 'POST';
+        const url = editingId ? `${API_URL}/${editingId}` : API_URL;
 
-  const handleEditar = (alergia) => {
-    setNuevaAlergia({ nombre: alergia.nombre });
-    setEditando(alergia.id_alergias_alimentarias);
-  };
+        await fetch(url, {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                alergiaAlimentaria 
+            }),
+        });
 
-  const handleEliminar = async (id) => {
-    if (window.confirm('¿Estás seguro de eliminar esta alergia?')) {
-      try {
-        await eliminarAlergia(id);
-        cargarAlergias();
-      } catch (error) {
-        console.error(error.message);
-      }
-    }
-  };
+        setAlergiaAlimentaria('');
+        setEditingId(null);
+        fetchAlergias();
+    };
 
-  return (
-    <div className="contenedor-alergias">
-      <h2>Alergias Alimentarias</h2>
+    const handleEdit = (alergia) => {
+        setAlergiaAlimentaria(alergia.alergiaAlimentaria);
+        setEditingId(alergia.id_alergias_alimentarias);
+    };
 
-      <form onSubmit={handleSubmit} className="formulario-alergia">
-        <input
-          type="text"
-          name="nombre"
-          value={nuevaAlergia.nombre}
-          onChange={handleChange}
-          placeholder="Nombre de la alergia"
-          required
-        />
-        <button type="submit">{editando ? 'Actualizar' : 'Agregar'}</button>
-        {editando && (
-          <button
-            type="button"
-            className="btn-cancelar"
-            onClick={() => {
-              setEditando(null);
-              setNuevaAlergia({ nombre: '' });
-            }}
-          >
-            Cancelar
-          </button>
-        )}
-      </form>
+    const handleDelete = async (id) => {
+        await fetch(`${API_URL}/${id}`, {
+            method: 'DELETE',
+        });
+        fetchAlergias();
+    };
 
-      <table className="tabla-alergias">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {alergias.map((alergia) => (
-            <tr key={alergia.id_alergias_alimentarias}>
-              <td>{alergia.id_alergias_alimentarias}</td>
-              <td>{alergia.nombre}</td>
-              <td>
-                <button
-                  className="btn-editar"
-                  onClick={() => handleEditar(alergia)}
-                >
-                  Editar
-                </button>
-                <button
-                  className="btn-eliminar"
-                  onClick={() =>
-                    handleEliminar(alergia.id_alergias_alimentarias)
-                  }
-                >
-                  Eliminar
-                </button>
-              </td>
-            </tr>
-          ))}
-          {alergias.length === 0 && (
-            <tr>
-              <td colSpan="3">No hay alergias registradas.</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
-  );
+    return (
+        <div className="container">
+            <h2>Alergias Alimentarias</h2>
+            <form onSubmit={handleSubmit} className="form">
+                <input
+                    type="text"
+                    placeholder="Nombre de la alergia"
+                    value={alergiaAlimentaria}
+                    onChange={(e) => setAlergiaAlimentaria(e.target.value)}
+                    required
+                />
+                <button type="submit">{editingId ? 'Actualizar' : 'Agregar'}</button>
+            </form>
+
+            <ul className="alergias-list">
+                {alergias.map((alergia) => (
+                    <li key={alergia.id_alergias_alimentarias} className="alergia-item">
+                        {alergia.alergiaAlimentaria}
+                        <div>
+                            <button onClick={() => handleEdit(alergia)}>Editar</button>
+                            <button onClick={() => handleDelete(alergia.id_alergias_alimentarias)}>Eliminar</button>
+                        </div>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
 };
 
 export default AlergiaAlimentaria;
