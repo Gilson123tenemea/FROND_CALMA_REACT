@@ -2,7 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './HeaderAspirante.css';
 
-const HeaderAspirante = ({ userId }) => {
+const HeaderAspirante = ({ userId, onOpenMensajes }) => {
+  const handleMensajesClick = (e) => {
+    e.preventDefault();
+    console.log("ID del usuario:", userId);
+    onOpenMensajes(userId);
+  };
+
   return (
     <header className="header">
       <div className="header-left">
@@ -15,7 +21,7 @@ const HeaderAspirante = ({ userId }) => {
         <nav className="nav-links">
           <Link to={`/moduloAspirante/trabajos?userId=${userId}`}>Trabajos</Link>
           <Link to={`/moduloAspirante/red?userId=${userId}`}>Mi Red</Link>
-          <Link to={`/moduloAspirante/mensajes?userId=${userId}`}>Mensajes</Link>
+          <a href="#" onClick={handleMensajesClick}>Mensajes</a>
           <Link to={`/moduloAspirante/cv?userId=${userId}`}>CV</Link>
           <Link to={`/moduloAspirante/perfilAspirante?userId=${userId}`}>Mi Perfil</Link>
         </nav>
@@ -29,7 +35,7 @@ const HeaderAspirante = ({ userId }) => {
           </div>
           <input type="text" placeholder="Buscar" />
         </div>
-        <div className="user-avatar" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/a/...")'}}></div>
+        <div className="user-avatar" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/a/...")' }}></div>
       </div>
     </header>
   );
