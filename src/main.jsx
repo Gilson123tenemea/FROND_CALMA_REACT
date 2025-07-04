@@ -17,11 +17,14 @@ import PerfilAspirante from './components/ModuloAspirante/PerfilAspirante/perfil
 import CVForm from './components/ModuloAspirante/CV/cv';
 import PerfilContratante from './components/ModuloContratante/PerfilContratante/perfilContratante';
 
-import RecomendacionesForm from './components/Recomendaciones/RecomendacionesForm'; 
+import RecomendacionesForm from './components/Recomendaciones/RecomendacionesForm';
 import CertificadosForm from './components/Certificados/CertificadosForm';
 import HabilidadesForm from './components/Habilidades/HabilidadesForm';
 import DisponibilidadForm from './components/Disponibilidad/DisponibilidadForm';
 import Calificacion from './components/Calificacion/calificacion';
+import FichaPaciente from './components/FichaPaciente/ficha';
+import FichaPacienteAlergia from './components/FichaPacienteAlergia/alergiaali';
+
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -40,10 +43,14 @@ createRoot(document.getElementById('root')).render(
         <Route path="/moduloAspirante" element={<ModuloAspirante />} />
         <Route path="/moduloContratante" element={<ModuloContratante />} />
         <Route path="/recomendaciones/:idCV" element={<RecomendacionesForm />} />
-         <Route path="/cv/:idCV/certificados" element={<CertificadosForm />} />
-         <Route path="/habilidades/:idCV" element={<HabilidadesForm />} />
-         <Route path="/disponibilidad/:idCV" element={<DisponibilidadForm />} />
-          <Route path="/Calificacion/calificacion" element={<Calificacion />} />
+        <Route path="/cv/:idCV/certificados" element={<CertificadosForm />} />
+        <Route path="/habilidades/:idCV" element={<HabilidadesForm />} />
+        <Route path="/disponibilidad/:idCV" element={<DisponibilidadForm />} />
+        <Route path="/Calificacion/calificacion" element={<Calificacion />} />
+        <Route path='/ficha' element={<FichaPaciente />} />
+        <Route path="/alergiaali" element={<FichaPacienteAlergia />} />
+
+
 
       </Routes>
     </Router>

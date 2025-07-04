@@ -6,7 +6,7 @@ const API_URL = 'http://localhost:8090/api/condicion';
 // Obtener todas las condiciones
 export const getCondiciones = async () => {
   try {
-    const response = await axios.get('${API_URL}/listar');
+    const response = await axios.get(`${API_URL}/listar`);
     return response.data;
   } catch (error) {
     throw new Error('Error al obtener las condiciones: ' + error.message);

@@ -18,7 +18,8 @@ const Navbar = () => {
         <a href="/contact">Contacto</a>
       </nav>
       <div className="auth-buttons">
-        <button>Inscribirse</button>
+       
+        <button onClick={() => navigate('/ficha')}>Inscribirse</button>
         <button onClick={() => navigate('/login')}>Ingresar</button>
         {/* 👆 Redirige a /login sin recargar la página */}
       </div>
