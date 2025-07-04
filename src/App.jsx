@@ -3,7 +3,7 @@ import { Client } from "@stomp/stompjs";
 import "./App.css";
 import { listaColores } from "./components/colores/Informacion";
 
-function App() {
+function App({ nombrePropio, destinatarioProp, onCerrarChat }) {
   const [stompCliente, setStompCliente] = useState(null);
   const [conectado, setConectado] = useState(false);
   const [mensajes, setMensajes] = useState([]);
@@ -12,6 +12,15 @@ function App() {
   const [destinatario, setDestinatario] = useState("");
   const [coloresUsuarios, setColoresUsuarios] = useState({});
   const [usuariosEscribiendo, setUsuariosEscribiendo] = useState({});
+
+  useEffect(() => {
+    if (nombrePropio) {
+      setNombre(String(nombrePropio));
+    }
+    if (destinatarioProp) {
+      setDestinatario(String(destinatarioProp));
+    }
+  }, [nombrePropio, destinatarioProp]);
 
   useEffect(() => {
     if (!nombre) return;
@@ -29,7 +38,10 @@ function App() {
       cliente.subscribe(`/tema/escribiendo/${nombre}`, (mensaje) => {
         const { nombre: nombreEscribiendo } = JSON.parse(mensaje.body);
         if (nombreEscribiendo !== nombre) {
-          setUsuariosEscribiendo((prev) => ({ ...prev, [nombreEscribiendo]: true }));
+          setUsuariosEscribiendo((prev) => ({
+            ...prev,
+            [nombreEscribiendo]: true,
+          }));
           setTimeout(() => {
             setUsuariosEscribiendo((prev) => {
               const copia = { ...prev };
@@ -56,7 +68,13 @@ function App() {
       const color = getColorByName(nombre);
       stompCliente.publish({
         destination: "/app/envio",
-        body: JSON.stringify({ nombre, contenido: mensaje, color, aspiranteId: nombre, contratistaId: destinatario }),
+        body: JSON.stringify({
+          nombre,
+          contenido: mensaje,
+          color,
+          aspiranteId: nombre,
+          contratistaId: destinatario,
+        }),
       });
       setMensaje("");
     } else {
@@ -68,7 +86,11 @@ function App() {
     if (stompCliente && conectado && nombre && destinatario) {
       stompCliente.publish({
         destination: "/app/escribiendo",
-        body: JSON.stringify({ nombre, aspiranteId: nombre, contratistaId: destinatario }),
+        body: JSON.stringify({
+          nombre,
+          aspiranteId: nombre,
+          contratistaId: destinatario,
+        }),
       });
     }
   };
@@ -93,10 +115,18 @@ function App() {
     <main className="contenedor_mjs pt-5 d-flex justify-content-center">
       <div
         className="border p-3 rounded-3 contenedor_msj_chat"
-        style={{ width: "60%", minWidth: "400px", maxWidth: "800px", height: "70vh", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+        style={{
+          width: "60%",
+          minWidth: "400px",
+          maxWidth: "800px",
+          height: "70vh",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+        }}
       >
         <article className="row mb-3">
-          <section className="col-6">
+          <section className="col-6" style={{ display: "none" }}>
             <section className="form-floating">
               <input
                 value={nombre}
@@ -110,7 +140,7 @@ function App() {
             </section>
           </section>
 
-          <section className="col-6">
+          <section className="col-6" style={{ display: "none" }}>
             <section className="form-floating">
               <input
                 value={destinatario}
@@ -125,25 +155,61 @@ function App() {
           </section>
         </article>
 
-        <article className="contenedor_msj row border rounded-3 p-2" style={{ height: "50vh", overflowY: "auto" }}>
+        <article
+          className="contenedor_msj row border rounded-3 p-2"
+          style={{ height: "50vh", overflowY: "auto" }}
+        >
           <article className="col-12 d-flex flex-column gap-2">
             {mensajes.map((msg, i) => {
               const esPropio = msg.nombre === nombre;
-              const fecha = msg.fechaEnvio ? new Date(msg.fechaEnvio).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
+              const fecha = msg.fechaEnvio
+                ? new Date(msg.fechaEnvio).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                : "";
               return (
-                <div key={i} className="p-2 rounded-2" style={{ backgroundColor: msg.color, maxWidth: "70%", alignSelf: esPropio ? "flex-end" : "flex-start", textAlign: esPropio ? "right" : "left", border: "1px solid #ccc", borderRadius: "20px", padding: "10px 15px" }}>
+                <div
+                  key={i}
+                  className="p-2 rounded-2"
+                  style={{
+                    backgroundColor: msg.color,
+                    maxWidth: "70%",
+                    alignSelf: esPropio ? "flex-end" : "flex-start",
+                    textAlign: esPropio ? "right" : "left",
+                    border: "1px solid #ccc",
+                    borderRadius: "20px",
+                    padding: "10px 15px",
+                  }}
+                >
                   <b>{msg.nombre}</b>
                   <br />
                   {msg.contenido}
                   {fecha && (
-                    <div style={{ fontSize: "12px", color: "#555", marginTop: "4px" }}>{fecha}</div>
+                    <div
+                      style={{
+                        fontSize: "12px",
+                        color: "#555",
+                        marginTop: "4px",
+                      }}
+                    >
+                      {fecha}
+                    </div>
                   )}
                 </div>
               );
             })}
 
             {Object.keys(usuariosEscribiendo).map((user, index) => (
-              <div key={`writing-${index}`} style={{ fontStyle: "italic", color: "#888", fontSize: "14px", paddingLeft: "10px" }}>
+              <div
+                key={`writing-${index}`}
+                style={{
+                  fontStyle: "italic",
+                  color: "#888",
+                  fontSize: "14px",
+                  paddingLeft: "10px",
+                }}
+              >
                 {user} está escribiendo <span className="puntos">...</span>
               </div>
             ))}
@@ -169,10 +235,7 @@ function App() {
           </section>
 
           <section className="col-4 d-grid">
-            <button
-              onClick={enviarMensaje}
-              className="btn btn-success"
-            >
+            <button onClick={enviarMensaje} className="btn btn-success">
               Enviar
             </button>
           </section>
