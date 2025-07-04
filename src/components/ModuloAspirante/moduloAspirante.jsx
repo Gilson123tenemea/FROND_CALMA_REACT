@@ -14,24 +14,23 @@ const ModuloAspirante = () => {
   const [usuariosEncontrados, setUsuariosEncontrados] = useState([]);
   const [usuarioChat, setUsuarioChat] = useState(null);
 
-  // Recuperar ID del usuario logueado al cargar
+  // Recuperar ID real del usuario logueado al cargar
   useEffect(() => {
     const obtenerIdUsuario = async (idAspirante) => {
       try {
         const response = await axios.get(`http://localhost:8090/api/usuarios/buscar_aspirante/${idAspirante}`);
-        console.log('ID del usuario:', response.data);
+        console.log('ID real del usuario:', response.data);
+        setUserId(response.data); // Guardamos el ID real que devuelve la API
       } catch (error) {
         console.error('Error al obtener el ID del usuario:', error);
       }
     };
 
     if (location.state?.userId) {
-      setUserId(location.state.userId);
       obtenerIdUsuario(location.state.userId);
     } else {
       const userData = JSON.parse(localStorage.getItem('userData'));
       if (userData?.aspiranteId) {
-        setUserId(userData.aspiranteId);
         obtenerIdUsuario(userData.aspiranteId);
       }
     }
@@ -130,7 +129,7 @@ const ModuloAspirante = () => {
           </div>
           <App
             nombrePropio={userId}
-            destinatarioProp={usuarioChat.idUsuario} 
+            destinatarioProp={usuarioChat.idUsuario}
             onCerrarChat={handleCerrarChat}
           />
         </div>

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Client } from "@stomp/stompjs";
+import axios from "axios";
 import "./App.css";
 import { listaColores } from "./components/colores/Informacion";
 
@@ -13,14 +14,41 @@ function App({ nombrePropio, destinatarioProp, onCerrarChat }) {
   const [coloresUsuarios, setColoresUsuarios] = useState({});
   const [usuariosEscribiendo, setUsuariosEscribiendo] = useState({});
 
+  const mensajesIds = useRef(new Set());
+
   useEffect(() => {
-    if (nombrePropio) {
-      setNombre(String(nombrePropio));
-    }
-    if (destinatarioProp) {
-      setDestinatario(String(destinatarioProp));
-    }
+    if (nombrePropio) setNombre(String(nombrePropio));
+    if (destinatarioProp) setDestinatario(String(destinatarioProp));
   }, [nombrePropio, destinatarioProp]);
+
+  useEffect(() => {
+    const cargarHistorial = async () => {
+      if (nombre && destinatario) {
+        try {
+          const response = await axios.get("http://localhost:8090/api/usuarios/historial", {
+            params: {
+              aspiranteId: Number(nombre),
+              contratistaId: Number(destinatario),
+            },
+          });
+
+          const mensajesFiltrados = response.data.filter((msg) => {
+            if (!mensajesIds.current.has(msg.id)) {
+              mensajesIds.current.add(msg.id);
+              return true;
+            }
+            return false;
+          });
+
+          setMensajes((prev) => [...prev, ...mensajesFiltrados]);
+        } catch (error) {
+          console.error("Error al cargar historial:", error);
+        }
+      }
+    };
+
+    cargarHistorial();
+  }, [nombre, destinatario]);
 
   useEffect(() => {
     if (!nombre) return;
@@ -31,17 +59,25 @@ function App({ nombrePropio, destinatarioProp, onCerrarChat }) {
 
     cliente.onConnect = () => {
       setConectado(true);
+
       cliente.subscribe("/tema/mensajes", (mensaje) => {
         const nuevoMsg = JSON.parse(mensaje.body);
-        setMensajes((prev) => [...prev, nuevoMsg]);
+
+        if (
+          String(nuevoMsg.aspiranteId) === String(nombre) ||
+          String(nuevoMsg.contratistaId) === String(nombre)
+        ) {
+          if (!mensajesIds.current.has(nuevoMsg.id)) {
+            mensajesIds.current.add(nuevoMsg.id);
+            setMensajes((prev) => [...prev, nuevoMsg]);
+          }
+        }
       });
+
       cliente.subscribe(`/tema/escribiendo/${nombre}`, (mensaje) => {
         const { nombre: nombreEscribiendo } = JSON.parse(mensaje.body);
         if (nombreEscribiendo !== nombre) {
-          setUsuariosEscribiendo((prev) => ({
-            ...prev,
-            [nombreEscribiendo]: true,
-          }));
+          setUsuariosEscribiendo((prev) => ({ ...prev, [nombreEscribiendo]: true }));
           setTimeout(() => {
             setUsuariosEscribiendo((prev) => {
               const copia = { ...prev };
@@ -60,6 +96,8 @@ function App({ nombrePropio, destinatarioProp, onCerrarChat }) {
     return () => {
       if (cliente) cliente.deactivate();
       setConectado(false);
+      setMensajes([]);
+      mensajesIds.current.clear();
     };
   }, [nombre]);
 
@@ -125,77 +163,82 @@ function App({ nombrePropio, destinatarioProp, onCerrarChat }) {
           justifyContent: "space-between",
         }}
       >
-        <article className="row mb-3">
-          <section className="col-6" style={{ display: "none" }}>
-            <section className="form-floating">
-              <input
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
-                id="textNombre"
-                type="text"
-                className="form-control"
-                placeholder="Tu nombre"
-              />
-              <label htmlFor="textNombre">Tu nombre</label>
-            </section>
+        {/* Campos ocultos */}
+        <article className="row mb-3" style={{ display: "none" }}>
+          <section className="col-6">
+            <input
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              id="textNombre"
+              type="hidden"
+            />
           </section>
 
-          <section className="col-6" style={{ display: "none" }}>
-            <section className="form-floating">
-              <input
-                value={destinatario}
-                onChange={(e) => setDestinatario(e.target.value)}
-                id="textDestinatario"
-                type="text"
-                className="form-control"
-                placeholder="Destinatario"
-              />
-              <label htmlFor="textDestinatario">Destinatario</label>
-            </section>
+          <section className="col-6">
+            <input
+              value={destinatario}
+              onChange={(e) => setDestinatario(e.target.value)}
+              id="textDestinatario"
+              type="hidden"
+            />
           </section>
         </article>
 
+        {/* Mensajes */}
         <article
           className="contenedor_msj row border rounded-3 p-2"
           style={{ height: "50vh", overflowY: "auto" }}
         >
-          <article className="col-12 d-flex flex-column gap-2">
+          <article className="col-12">
             {mensajes.map((msg, i) => {
               const esPropio = msg.nombre === nombre;
               const fecha = msg.fechaEnvio
-                ? new Date(msg.fechaEnvio).toLocaleTimeString([], {
+                ? new Date(msg.fechaEnvio).toLocaleString("es-EC", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
                     hour: "2-digit",
                     minute: "2-digit",
                   })
                 : "";
+
               return (
-                <div
-                  key={i}
-                  className="p-2 rounded-2"
-                  style={{
-                    backgroundColor: msg.color,
-                    maxWidth: "70%",
-                    alignSelf: esPropio ? "flex-end" : "flex-start",
-                    textAlign: esPropio ? "right" : "left",
-                    border: "1px solid #ccc",
-                    borderRadius: "20px",
-                    padding: "10px 15px",
-                  }}
-                >
-                  <b>{msg.nombre}</b>
-                  <br />
-                  {msg.contenido}
-                  {fecha && (
+                <div key={i} className="row w-100 m-0">
+                  <div
+                    className={`col-12 d-flex ${
+                      esPropio ? "justify-content-end" : "justify-content-start"
+                    }`}
+                  >
                     <div
                       style={{
-                        fontSize: "12px",
-                        color: "#555",
-                        marginTop: "4px",
+                        backgroundColor: msg.color,
+                        color: "#000",
+                        maxWidth: "60%",
+                        padding: "10px 15px",
+                        border: "1px solid #ccc",
+                        borderRadius: esPropio
+                          ? "15px 15px 0px 15px"
+                          : "15px 15px 15px 0px",
+                        textAlign: "left",
+                        wordBreak: "break-word",
                       }}
                     >
-                      {fecha}
+                      <div style={{ fontWeight: "bold", marginBottom: "4px" }}>{msg.nombre}</div>
+                      <div>{msg.contenido}</div>
+                      {fecha && (
+                        <div
+                          style={{
+                            fontSize: "12px",
+                            color: "#555",
+                            marginTop: "6px",
+                            textAlign: "right",
+                          }}
+                        >
+                          {fecha}
+                        </div>
+                      )}
                     </div>
-                  )}
+                  </div>
                 </div>
               );
             })}
@@ -216,6 +259,7 @@ function App({ nombrePropio, destinatarioProp, onCerrarChat }) {
           </article>
         </article>
 
+        {/* Entrada de mensaje */}
         <article className="row mt-3 align-items-center">
           <section className="col-8">
             <section className="form-floating">
