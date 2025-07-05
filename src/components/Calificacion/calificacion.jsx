@@ -1,26 +1,35 @@
 import React, { useState } from 'react';
 import './Calificacion.css';
 import Navbar from '../Shared/Navbar';
+import { useSearchParams } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Calificacion = ({ id_postulacion, idContratante }) => {
+  const [searchParams] = useSearchParams();
+  const userId = searchParams.get('userId');
+
   const [puntaje, setPuntaje] = useState(0);
   const [comentario, setComentario] = useState('');
-  const [mensaje, setMensaje] = useState('');
 
   const manejarEnvio = async (e) => {
     e.preventDefault();
 
+    if (!userId) {
+      toast.error('Error: No se encontró el ID del usuario.');
+      return;
+    }
 
     const nuevaCalificacion = {
       puntaje,
       comentario,
-      fecha: new Date(),
-      postulacion: { id_postulacion: id_postulacion }, 
-      contratante: { idContratante: idContratante },   
+      fecha: new Date().toISOString(),
+      postulacion: { id_postulacion: 1 },
+      contratante: { idContratante: parseInt(userId) } 
     };
-    
+
     console.log("Calificación enviada:", nuevaCalificacion);
-    
+
     try {
       const respuesta = await fetch('http://localhost:8090/api/calificaciones', {
         method: 'POST',
@@ -29,21 +38,22 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
       });
 
       if (respuesta.ok) {
-        setMensaje('✅ Calificación enviada con éxito.');
+        toast.success('Calificación enviada con éxito.');
         setPuntaje(0);
         setComentario('');
       } else {
-        setMensaje('❌ Error al enviar la calificación.');
+        toast.error('Error al enviar la calificación.');
       }
     } catch (error) {
       console.error(error);
-      setMensaje('❌ Ocurrió un error inesperado.');
+      toast.error('Ocurrió un error inesperado.');
     }
   };
 
   return (
     <div className="calificacion-form-container">
       <Navbar />
+      <ToastContainer />
 
       <form className="calificacion-form animate-fade-in" onSubmit={manejarEnvio}>
         <h2>Calificar con Estrellas</h2>
@@ -68,8 +78,6 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
         ></textarea>
 
         <button type="submit" className="btn-enviar">Enviar Calificación</button>
-
-        {mensaje && <p className="mensaje-envio">{mensaje}</p>}
       </form>
     </div>
   );
