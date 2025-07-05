@@ -46,6 +46,7 @@
 /* Grupos de entrada */
 .input-group {
   margin-bottom: 1.5rem;
+  position: relative;
 }
 
 .input-group label {
@@ -81,6 +82,21 @@
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
+/* Texto de ayuda */
+.input-hint {
+  display: flex;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-top: 0.5rem;
+}
+
+.hint-icon {
+  margin-right: 0.3rem;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
 /* Grupo de checkbox */
 .checkbox-group {
   display: flex;
@@ -88,12 +104,15 @@
 }
 
 .checkbox-group label {
+  display: flex;
+  align-items: center;
   margin-bottom: 0;
-  margin-right: 0.5rem;
+  cursor: pointer;
 }
 
 .checkbox-group input[type="checkbox"] {
   width: auto;
+  margin-right: 0.5rem;
   accent-color: #3b82f6;
 }
 
@@ -131,4 +150,98 @@
   .registro-card {
     padding: 1.5rem;
   }
+}
+
+/* ================== */
+/* ESTILOS PARA TOASTS */
+/* ================== */
+
+.Toastify__toast {
+  font-family: 'Lexend', 'Noto Sans', sans-serif;
+  padding: 12px 16px !important;
+  border-radius: 4px !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
+  color: #333 !important;
+  background: #fff !important;
+  border-left: 4px solid #4CAF50 !important;
+  min-height: auto !important;
+}
+
+.Toastify__toast-body {
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+}
+
+/* Ocultar el botón de cerrar */
+.Toastify__close-button {
+  display: none !important;
+}
+
+/* Barra de progreso */
+.Toastify__progress-bar {
+  background: rgba(0, 0, 0, 0.1) !important;
+  height: 2px !important;
+}
+
+/* Contenedor principal */
+.Toastify__toast-container {
+  width: auto !important;
+  min-width: 300px !important;
+}
+
+/* Tipos de notificaciones */
+.Toastify__toast--success {
+  border-left-color: #4CAF50 !important;
+}
+
+.Toastify__toast--error {
+  border-left-color: #F44336 !important;
+}
+
+.Toastify__toast--warning {
+  border-left-color: #FF9800 !important;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .Toastify__toast {
+    width: 90vw;
+    margin: 0 auto 6px !important;
+  }
+}
+.loading-spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3b82f6;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.input-group label:after {
+  content: '*';
+  color: #e53e3e;
+  margin-left: 4px;
+  display: none;
+}
+
+.input-group label[for]:after {
+  display: inline;
+}
+
+.input-group.checkbox-group label:after {
+  display: none;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
