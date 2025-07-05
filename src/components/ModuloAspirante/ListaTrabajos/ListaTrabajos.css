@@ -1,3 +1,20 @@
+.contenedor-trabajos h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #2563eb; /* azul vibrante */
+  margin-bottom: 2rem;
+  text-align: center;
+  letter-spacing: 1.2px;
+  text-shadow: 1px 1px 4px rgba(37, 99, 235, 0.5);
+  font-family: 'Inter', system-ui, sans-serif;
+  text-transform: uppercase;
+  border-bottom: 3px solid #2563eb;
+  padding-bottom: 0.5rem;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .contenedor-trabajos {
   padding: 2rem;
 }
@@ -30,6 +47,7 @@
 .sin-resultados svg {
   margin-bottom: 1rem;
 }
+
 
 .sin-resultados h3 {
   font-size: 1.125rem;
