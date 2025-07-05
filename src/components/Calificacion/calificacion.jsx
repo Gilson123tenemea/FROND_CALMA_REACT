@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './Calificacion.css';
 import Navbar from '../Shared/Navbar';
 
-const Calificacion = ({ postulacionId, contratanteId }) => {
+const Calificacion = ({ id_postulacion, idContratante }) => {
   const [puntaje, setPuntaje] = useState(0);
   const [comentario, setComentario] = useState('');
   const [mensaje, setMensaje] = useState('');
@@ -10,16 +10,19 @@ const Calificacion = ({ postulacionId, contratanteId }) => {
   const manejarEnvio = async (e) => {
     e.preventDefault();
 
+
     const nuevaCalificacion = {
       puntaje,
       comentario,
-      fecha: new Date(), // se puede dejar que el backend lo genere si prefieres
-      postulacion: { id: postulacionId },
-      contratante: { id: contratanteId },
+      fecha: new Date(),
+      postulacion: { id_postulacion: id_postulacion }, 
+      contratante: { idContratante: idContratante },   
     };
-
+    
+    console.log("Calificación enviada:", nuevaCalificacion);
+    
     try {
-      const respuesta = await fetch('http://localhost:8080/api/calificaciones', {
+      const respuesta = await fetch('http://localhost:8090/api/calificaciones', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(nuevaCalificacion),
