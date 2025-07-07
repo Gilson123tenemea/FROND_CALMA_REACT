@@ -2,8 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './HeaderContratante.css';
 
+const HeaderContratante = ({ userId, onOpenMensajes }) => {
+  const handleMensajesClick = (e) => {
+    e.preventDefault();
+    console.log("ID del contratante:", userId);
+    onOpenMensajes(userId);
+  };
 
-const HeaderContratante = ({ userId }) => {
   return (
     <header className="header-contratante">
       <div className="header-left">
@@ -16,8 +21,8 @@ const HeaderContratante = ({ userId }) => {
         <nav className="nav-links">
           <Link to={`/moduloContratante/publicaciones?userId=${userId}`}>Publicaciones</Link>
           <Link to={`/moduloContratante/nueva-publicacion?userId=${userId}`}>Crear Publicación</Link>
-           <Link to={`/Calificacion/calificacion?userId=${userId}`}>Calificacion</Link>
-          <Link to={`/moduloContratante/mensajes?userId=${userId}`}>Mensajes</Link>
+          <Link to={`/Calificacion/calificacion?userId=${userId}`}>Calificación</Link>
+          <a href="#" onClick={handleMensajesClick}>Mensajes</a>
           <Link to={`/moduloContratante/perfilContratante?userId=${userId}`}>Mi Perfil</Link>
           <Link to={`/moduloContratante/registropaciente?userId=${userId}`}>Registro del paciente</Link>
         </nav>
