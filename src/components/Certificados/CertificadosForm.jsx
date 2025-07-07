@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { createCertificado } from "../../servicios/certificadosService";
+import { createCertificado, getCertificadosByCVId } from "../../servicios/certificadosService";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import CVStepsNav from "../ModuloAspirante/CV/CVStepsNav";
 import './CertificadosForm.css';
 import { FaCertificate, FaUniversity, FaCalendarAlt, FaPaperclip } from "react-icons/fa";
+import { useFormPersistence } from '../../hooks/useFormPersistence';
 
 const CertificadosForm = () => {
   const { idCV } = useParams();
@@ -19,6 +20,28 @@ const CertificadosForm = () => {
   });
 
   const [certificados, setCertificados] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+    useFormPersistence(idCV, formulario, setFormulario);
+
+
+  // Cargar certificados existentes al montar el componente
+  useEffect(() => {
+    const loadCertificados = async () => {
+      setIsLoading(true);
+      try {
+        const data = await getCertificadosByCVId(idCV);
+        setCertificados(data);
+      } catch (error) {
+        toast.error(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadCertificados();
+  }, [idCV]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,16 +63,17 @@ const CertificadosForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     const certificadoData = {
       nombre_certificado: formulario.nombre_certificado,
       nombre_institucion: formulario.nombre_institucion,
       fecha: formulario.fecha,
-      cv: { id_cv: idCV },
+      cv: { id_cv: Number(idCV) },
     };
 
     const formData = new FormData();
-    formData.append("archivo", formulario.archivo);
+    if (formulario.archivo) formData.append("archivo", formulario.archivo);
     formData.append(
       "certificado",
       new Blob([JSON.stringify(certificadoData)], {
@@ -58,7 +82,7 @@ const CertificadosForm = () => {
     );
 
     try {
-      await createCertificado(formData);
+      const nuevoCertificado = await createCertificado(formData);
       
       toast.success(
         <div className="custom-toast">
@@ -75,7 +99,7 @@ const CertificadosForm = () => {
       setCertificados([
         ...certificados,
         {
-          ...certificadoData,
+          ...nuevoCertificado,
           archivo: formulario.archivo?.name || "No adjunto",
         },
       ]);
@@ -85,7 +109,7 @@ const CertificadosForm = () => {
       console.error("Error al guardar certificado:", error);
       toast.error(
         <div className="custom-toast">
-          <div>Error al registrar el certificado</div>
+          <div>{error.message || "Error al registrar el certificado"}</div>
         </div>,
         {
           position: "top-right",
@@ -94,16 +118,38 @@ const CertificadosForm = () => {
           closeButton: false,
         }
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const irASiguiente = () => {
-    navigate(`/habilidades/${idCV}`);
+    navigate(`/cv/${idCV}/habilidades`);
   };
 
   const handleBack = () => {
-    navigate(`/cv/${idCV}/recomendaciones`);
-  };
+  navigate(`/recomendaciones/${idCV}`, {
+    state: { 
+      fromCertificados: true,
+      cvId: idCV,
+      // Puedes pasar datos adicionales que necesites mantener
+      savedData: formulario 
+    },
+    replace: true
+  });
+};
+
+  if (isLoading) {
+    return (
+      <div className="registro-page">
+        <CVStepsNav idCV={idCV} currentStep="Certificados" />
+        <div className="registro-container">
+          <div className="loading-spinner"></div>
+          <h2>Cargando certificados...</h2>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="registro-page">
@@ -159,16 +205,26 @@ const CertificadosForm = () => {
           </div>
 
           <div className="button-group">
-            <button type="button" className="back-btn" onClick={handleBack}>
+            <button 
+              type="button" 
+              className="back-btn" 
+              onClick={handleBack}
+              disabled={isSubmitting}
+            >
               Regresar
             </button>
-            <button type="submit" className="submit-btn">
-              Guardar certificado
+            <button 
+              type="submit" 
+              className="submit-btn"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Guardando...' : 'Guardar certificado'}
             </button>
             <button
               type="button"
               className="next-btn"
               onClick={irASiguiente}
+              disabled={isSubmitting}
             >
               Siguiente: Habilidades
             </button>
@@ -194,7 +250,7 @@ const CertificadosForm = () => {
                       <td>{cert.nombre_certificado}</td>
                       <td>{cert.nombre_institucion}</td>
                       <td>{cert.fecha}</td>
-                      <td>{cert.archivo}</td>
+                      <td>{cert.archivo?.name || (cert.tiene_archivo ? 'Adjunto' : 'No adjunto')}</td>
                     </tr>
                   ))}
                 </tbody>

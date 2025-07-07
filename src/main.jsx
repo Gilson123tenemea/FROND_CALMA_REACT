@@ -30,28 +30,40 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Router>
       <Routes>
+        {/* Rutas públicas */}
         <Route path="/" element={<Inicio />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path='/registropaciente' element={<RegistroPaciente />} />
-        <Route path="/moduloContratante/registropaciente" element={<RegistroPaciente />} />
+
+        {/* Rutas de módulos */}
+        <Route path="/moduloAspirante/*" element={<ModuloAspirante />} />
+        <Route path="/moduloContratante/*" element={<ModuloContratante />} />
+
+        {/* Rutas de perfil */}
         <Route path="/moduloAspirante/perfilAspirante" element={<PerfilAspirante />} />
-        <Route path="/moduloAspirante/cv" element={<CVForm />} />
         <Route path="/moduloContratante/perfilContratante" element={<PerfilContratante />} />
-        {/* Rutas protegidas/redireccionadas según el rol */}
-        <Route path="/moduloAspirante" element={<ModuloAspirante />} />
-        <Route path="/moduloContratante" element={<ModuloContratante />} />
+
+        {/* Rutas de paciente */}
+        <Route path="/registropaciente" element={<RegistroPaciente />} />
+        <Route path="/moduloContratante/registropaciente" element={<RegistroPaciente />} />
+        <Route path='/ficha' element={<FichaPaciente />} />
+        <Route path="/alergiaali" element={<FichaPacienteAlergia />} />
+
+        {/* Rutas de CV */}
+        <Route path="/moduloAspirante/cv" element={<CVForm />} />
+        <Route path="/cv/:idCV" element={<CVForm editMode={false} />} />
+        <Route path="/cv/:idCV/edit" element={<CVForm editMode={true} />} />
+        
+        {/* Rutas dependientes de CV */}
+        <Route path="/cv/:idCV/recomendaciones" element={<RecomendacionesForm />} />
         <Route path="/recomendaciones/:idCV" element={<RecomendacionesForm />} />
         <Route path="/cv/:idCV/certificados" element={<CertificadosForm />} />
         <Route path="/habilidades/:idCV" element={<HabilidadesForm />} />
         <Route path="/disponibilidad/:idCV" element={<DisponibilidadForm />} />
+
+        {/* Otras rutas */}
         <Route path="/Calificacion/calificacion" element={<Calificacion />} />
-        <Route path='/ficha' element={<FichaPaciente />} />
-        <Route path="/alergiaali" element={<FichaPacienteAlergia />} />
-
-
-
       </Routes>
     </Router>
   </StrictMode>

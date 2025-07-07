@@ -14,6 +14,7 @@ const CVForm = ({ editMode = false }) => {
   const location = useLocation();
   const userData = JSON.parse(localStorage.getItem("userData"));
   const aspiranteId = userData?.aspiranteId;
+  
 
   const [formulario, setFormulario] = useState({
     estado: false,
@@ -138,8 +139,8 @@ useEffect(() => {
   };
 
   const handleVolver = () => {
-    navigate(`/ModuloAspirante`, { 
-      state: { userId: aspiranteId } 
+    navigate(`/cv/${cvId}/recomendaciones`, { 
+  state: { fromCV: true } 
     });
   };
 

@@ -1,17 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { createRecomendacion } from "../../servicios/recomendacionesService";
+import { 
+  createRecomendacion, 
+  getRecomendacionesByCVId, 
+  updateRecomendacion, 
+  deleteRecomendacion 
+} from "../../servicios/recomendacionesService";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import './RecomendacionesForm.css';
 import CVStepsNav from "../ModuloAspirante/CV/CVStepsNav";
-import { FaUserTie, FaBriefcase, FaBuilding, FaPhone, FaEnvelope, FaLink, FaCalendarAlt, FaPaperclip } from "react-icons/fa";
+import { FaUserTie, FaBriefcase, FaBuilding, FaPhone, FaEnvelope, FaLink, FaCalendarAlt, FaPaperclip, FaEdit, FaTrash } from "react-icons/fa";
+import { useLocation } from 'react-router-dom';
+import { useFormPersistence } from '../../hooks/useFormPersistence';
 
 const RecomendacionesForm = () => {
   const { idCV } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [formulario, setFormulario] = useState({
+    id_recomendacion: null,
     nombre_recomendador: "",
     cargo: "",
     empresa: "",
@@ -20,9 +29,46 @@ const RecomendacionesForm = () => {
     relacion: "",
     fecha: new Date().toISOString().slice(0, 10),
     archivo: null,
+    isEditing: false
   });
 
   const [recomendaciones, setRecomendaciones] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useFormPersistence(idCV, formulario, setFormulario, 'recomendaciones');
+
+  useEffect(() => {
+    const loadRecomendaciones = async () => {
+      setIsLoading(true);
+      try {
+        const data = await getRecomendacionesByCVId(idCV);
+        setRecomendaciones(data);
+        
+        if (!location.state?.fromCertificados) {
+          const keys = [
+            `form_recomendaciones_${idCV}`,
+            `form_recomendaciones_/recomendaciones/${idCV}`,
+            `form_recomendaciones_/cv/${idCV}/recomendaciones`
+          ];
+          
+          for (const key of keys) {
+            const savedState = localStorage.getItem(key);
+            if (savedState) {
+              setFormulario(JSON.parse(savedState));
+              break;
+            }
+          }
+        }
+      } catch (error) {
+        toast.error(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadRecomendaciones();
+  }, [idCV, location.key, location.state]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,6 +81,7 @@ const RecomendacionesForm = () => {
 
   const resetFormulario = () => {
     setFormulario({
+      id_recomendacion: null,
       nombre_recomendador: "",
       cargo: "",
       empresa: "",
@@ -43,13 +90,67 @@ const RecomendacionesForm = () => {
       relacion: "",
       fecha: new Date().toISOString().slice(0, 10),
       archivo: null,
+      isEditing: false
     });
+  };
+
+  const handleEdit = (recomendacion) => {
+    setFormulario({
+      id_recomendacion: recomendacion.id_recomendacion,
+      nombre_recomendador: recomendacion.nombre_recomendador,
+      cargo: recomendacion.cargo,
+      empresa: recomendacion.empresa,
+      telefono: recomendacion.telefono,
+      email: recomendacion.email,
+      relacion: recomendacion.relacion,
+      fecha: recomendacion.fecha,
+      archivo: null,
+      isEditing: true
+    });
+    
+    // Scroll al formulario para mejor UX
+    document.querySelector('.form-recomendaciones').scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("¿Estás seguro de que deseas eliminar esta recomendación?")) {
+      try {
+        await deleteRecomendacion(id);
+        setRecomendaciones(recomendaciones.filter(rec => rec.id_recomendacion !== id));
+        
+        toast.success(
+          <div className="custom-toast">
+            <div>Recomendación eliminada correctamente</div>
+          </div>,
+          {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeButton: false,
+          }
+        );
+      } catch (error) {
+        toast.error(
+          <div className="custom-toast">
+            <div>Error al eliminar la recomendación</div>
+          </div>,
+          {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeButton: false,
+          }
+        );
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     const recomendacionData = {
+      id_recomendacion: formulario.id_recomendacion,
       nombre_recomendador: formulario.nombre_recomendador,
       cargo: formulario.cargo,
       empresa: formulario.empresa,
@@ -70,34 +171,56 @@ const RecomendacionesForm = () => {
     );
 
     try {
-      await createRecomendacion(formData);
+      let nuevaRecomendacion;
       
-      toast.success(
-        <div className="custom-toast">
-          <div>Recomendación guardada correctamente</div>
-        </div>,
-        {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeButton: false,
-        }
-      );
-
-      setRecomendaciones([
-        ...recomendaciones,
-        {
-          ...recomendacionData,
-          archivo: formulario.archivo?.name || "No adjunto",
-        },
-      ]);
+      if (formulario.isEditing) {
+        nuevaRecomendacion = await updateRecomendacion(formulario.id_recomendacion, formData);
+        setRecomendaciones(recomendaciones.map(rec => 
+          rec.id_recomendacion === formulario.id_recomendacion ? 
+          { ...nuevaRecomendacion, archivo: formulario.archivo?.name || rec.archivo } : 
+          rec
+        ));
+        
+        toast.success(
+          <div className="custom-toast">
+            <div>Recomendación actualizada correctamente</div>
+          </div>,
+          {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeButton: false,
+          }
+        );
+      } else {
+        nuevaRecomendacion = await createRecomendacion(formData);
+        setRecomendaciones([
+          ...recomendaciones,
+          {
+            ...nuevaRecomendacion,
+            archivo: formulario.archivo?.name || "No adjunto",
+          },
+        ]);
+        
+        toast.success(
+          <div className="custom-toast">
+            <div>Recomendación guardada correctamente</div>
+          </div>,
+          {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeButton: false,
+          }
+        );
+      }
 
       resetFormulario();
     } catch (error) {
       console.error("Error al guardar:", error);
       toast.error(
         <div className="custom-toast">
-          <div>Error al registrar la recomendación</div>
+          <div>{error.message || "Error al registrar la recomendación"}</div>
         </div>,
         {
           position: "top-right",
@@ -106,6 +229,8 @@ const RecomendacionesForm = () => {
           closeButton: false,
         }
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -128,21 +253,31 @@ const RecomendacionesForm = () => {
   };
 
   const handleBack = () => {
-  // Verificamos que tengamos un idCV válido
-  if (!idCV) {
-    toast.error("No se encontró el ID del CV");
-    return;
-  }
+    if (!idCV) {
+      toast.error("No se encontró el ID del CV");
+      return;
+    }
 
-  // Navegamos a la edición del CV con el mismo ID
-  navigate(`/cv/${idCV}`, { 
-    state: { 
-      fromRecommendations: true,
-      cvId: idCV 
-    },
-    replace: true // Evita que se agregue una nueva entrada al historial
-  });
-};
+    navigate(`/cv/${idCV}`, { 
+      state: { 
+        fromRecommendations: true,
+        cvId: idCV 
+      },
+      replace: true
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <div className="registro-page">
+        <CVStepsNav idCV={idCV} currentStep="Recomendaciones" />
+        <div className="registro-container">
+          <div className="loading-spinner"></div>
+          <h2>Cargando recomendaciones...</h2>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="registro-page">
@@ -152,6 +287,8 @@ const RecomendacionesForm = () => {
         <h2>Recomendaciones para CV #{idCV}</h2>
 
         <form onSubmit={handleSubmit} className="form-recomendaciones">
+          <h3>{formulario.isEditing ? 'Editar Recomendación' : 'Agregar Nueva Recomendación'}</h3>
+          
           <div className="input-group">
             <label><FaUserTie className="input-icon" /> Nombre del recomendador</label>
             <input
@@ -242,17 +379,40 @@ const RecomendacionesForm = () => {
           </div>
 
           <div className="button-group">
-            <button type="button" className="back-btn" onClick={handleBack}>
+            <button 
+              type="button" 
+              className="back-btn" 
+              onClick={handleBack}
+              disabled={isSubmitting}
+            >
               Regresar
             </button>
-            <button type="submit" className="submit-btn">
-              Guardar recomendación
+            <button 
+              type="submit" 
+              className="submit-btn"
+              disabled={isSubmitting}
+            >
+              {isSubmitting 
+                ? 'Guardando...' 
+                : formulario.isEditing 
+                  ? 'Actualizar recomendación' 
+                  : 'Guardar recomendación'}
             </button>
+            {formulario.isEditing && (
+              <button
+                type="button"
+                className="cancel-btn"
+                onClick={resetFormulario}
+                disabled={isSubmitting}
+              >
+                Cancelar
+              </button>
+            )}
             <button
               type="button"
               className="next-btn"
               onClick={irASiguiente}
-              disabled={recomendaciones.length === 0}
+              disabled={recomendaciones.length === 0 || isSubmitting}
             >
               Siguiente: Certificados
             </button>
@@ -270,6 +430,7 @@ const RecomendacionesForm = () => {
                     <th>Cargo</th>
                     <th>Empresa</th>
                     <th>Archivo</th>
+                    <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -278,7 +439,23 @@ const RecomendacionesForm = () => {
                       <td>{rec.nombre_recomendador}</td>
                       <td>{rec.cargo}</td>
                       <td>{rec.empresa || '-'}</td>
-                      <td>{rec.archivo}</td>
+                      <td>{rec.archivo?.name || (rec.tiene_archivo ? 'Adjunto' : 'No adjunto')}</td>
+                      <td className="actions-cell">
+                        <button 
+                          onClick={() => handleEdit(rec)}
+                          className="edit-btn"
+                          title="Editar"
+                        >
+                          <FaEdit />
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(rec.id_recomendacion)}
+                          className="delete-btn"
+                          title="Eliminar"
+                        >
+                          <FaTrash />
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
