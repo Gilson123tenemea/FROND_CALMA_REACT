@@ -1,94 +1,123 @@
 .form-publicacion {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
-  background-color: #ffffff;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.form-publicacion h1 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #111827;
-  margin-bottom: 2rem;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-group label {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #374151;
-  margin-bottom: 0.5rem;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
   width: 100%;
-  padding: 0.5rem;
-  border-radius: 0.25rem;
-  border: 1px solid #d1d5db;
+  max-width: 900px;
+  margin: 2.5rem auto;
+  padding: 2.5rem 3rem;
   background-color: #ffffff;
-  outline: none;
-  transition: border-color 0.2s;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #222222;
+  box-sizing: border-box;
 }
 
-.form-group textarea {
-  min-height: 100px;
+.form-publicacion h3 {
+  margin-bottom: 2rem;
+  font-weight: 700;
+  font-size: 1.9rem;
+  color: #0a66c2; /* Azul LinkedIn */
+  text-align: center;
+}
+
+.form-publicacion label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #333333;
+}
+
+.form-publicacion input[type="text"],
+.form-publicacion input[type="date"],
+.form-publicacion input[type="number"],
+.form-publicacion select,
+.form-publicacion textarea {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
   resize: vertical;
+  box-sizing: border-box;
+  background-color: #f9fafb;
+  color: #111827;
 }
 
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  border-color: #2563eb;
+.form-publicacion input[type="text"]:focus,
+.form-publicacion input[type="date"]:focus,
+.form-publicacion input[type="number"]:focus,
+.form-publicacion select:focus,
+.form-publicacion textarea:focus {
+  border-color: #0a66c2;
+  outline: none;
+  box-shadow: 0 0 5px 1px rgba(10, 102, 194, 0.4);
+  background-color: #ffffff;
 }
 
-.form-row {
-  display: flex;
-  gap: 1.5rem;
+.form-publicacion textarea {
+  min-height: 100px;
 }
 
-.form-row .form-group {
-  flex: 1;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.cancel-button {
-  padding: 0.5rem 1rem;
-  background-color: #f3f4f6;
-  color: #374151;
-  border: 1px solid #d1d5db;
-  border-radius: 0.25rem;
+.form-publicacion input[type="checkbox"] {
+  transform: scale(1.3);
+  margin-left: 0.5rem;
   cursor: pointer;
-  transition: background-color 0.2s;
+  vertical-align: middle;
 }
 
-.cancel-button:hover {
-  background-color: #e5e7eb;
+.form-publicacion label > input[type="checkbox"] {
+  margin-left: 0.75rem;
+  vertical-align: middle;
 }
 
-.submit-button {
-  padding: 0.5rem 1rem;
-  background-color: #2563eb;
+.form-publicacion div {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.form-publicacion button {
+  background-color: #0a66c2;
   color: white;
   border: none;
-  border-radius: 0.25rem;
+  padding: 0.75rem 2.2rem;
+  font-size: 1.1rem;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  font-weight: 700;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 4px 8px rgb(10 102 194 / 0.3);
 }
 
-.submit-button:hover {
-  background-color: #1d4ed8;
+.form-publicacion button:hover {
+  background-color: #004182;
+  box-shadow: 0 6px 12px rgb(0 65 130 / 0.5);
+}
+
+.form-publicacion button + button {
+  margin-left: 1rem;
+  background-color: #e1e9f4;
+  color: #0a66c2;
+  box-shadow: none;
+}
+
+.form-publicacion button + button:hover {
+  background-color: #c3d1e8;
+}
+
+@media (max-width: 600px) {
+  .form-publicacion {
+    padding: 1.5rem 2rem;
+  }
+
+  .form-publicacion button,
+  .form-publicacion button + button {
+    width: 100%;
+    margin: 0.4rem 0 0 0;
+  }
+
+  .form-publicacion button + button {
+    margin-left: 0;
+  }
 }

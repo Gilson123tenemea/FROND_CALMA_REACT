@@ -1,55 +1,95 @@
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 .modulo-contratante {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f3f4f6;
+  background-color: #edf1f5;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
 }
 
 .main-content {
   flex: 1;
-  padding-top: 1rem;
-}
-
-.tabs-container {
-  background-color: #ffffff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  padding: 0 2rem;
-}
-
-.tabs {
   display: flex;
-  border-bottom: 1px solid #e5e7eb;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
+  padding: 2.5rem 3rem;
+  box-sizing: border-box;
 }
 
-.tab {
-  padding: 1rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-weight: 500;
-  color: #6b7280;
-  position: relative;
-  transition: color 0.2s;
+.paneles-container {
+  flex: 1;
+  display: flex;
+  gap: 2.5rem;
+  margin-top: 1.5rem;
+  height: 100%;
 }
 
-.tab:hover {
-  color: #2563eb;
-}
-
-.tab.active {
-  color: #2563eb;
-}
-
-.tab.active::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background-color: #2563eb;
-}
-
-.tab-content {
+.panel-formulario {
+  flex: 1.8; /* Más ancho */
+  background: #fafbfc;
   padding: 2rem;
+  border-radius: 16px;
+  box-shadow: inset 0 0 10px rgba(0, 102, 204, 0.05);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.panel-publicaciones {
+  flex: 1.2;
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.05);
+
+  /* Control de altura para scroll */
+  max-height: calc(230vh - 250px); /* Ajusta el valor según el espacio que quieras dejar para header y otros elementos */
+  overflow-y: auto;
+}
+
+/* Scrollbars personalizados SOLO en panel-publicaciones */
+.panel-publicaciones::-webkit-scrollbar {
+  width: 10px;
+}
+.panel-publicaciones::-webkit-scrollbar-thumb {
+  background-color: #0a66c2;
+  border-radius: 5px;
+}
+.panel-publicaciones::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+  border-radius: 5px;
+}
+
+/* Opcional: si el formulario tiene scroll, este estilo lo suaviza */
+.panel-formulario::-webkit-scrollbar-thumb {
+  background-color: rgba(10, 102, 194, 0.3);
+  border-radius: 5px;
+}
+
+/* Móvil */
+@media (max-width: 900px) {
+  .paneles-container {
+    flex-direction: column;
+    height: auto;
+  }
+  .panel-formulario,
+  .panel-publicaciones {
+    flex: none;
+    width: 100%;
+    margin-bottom: 2rem;
+    max-height: none;
+    height: auto;
+    overflow-y: visible;
+  }
 }

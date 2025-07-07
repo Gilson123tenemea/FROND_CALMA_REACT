@@ -1,34 +1,124 @@
-import React from 'react';
-import CardPublicacion from '../Publicaciones/publicaciones';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import './ListaPublicaciones.css';
 
-const ListaPublicaciones = ({ publicaciones, onToggleStatus, onCreateNew }) => {
+const ListaPublicaciones = ({ contratanteId, refrescar, onEditar }) => {
+  const [publicaciones, setPublicaciones] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filtroFecha, setFiltroFecha] = useState('');
+
+  const fetchPublicaciones = () => {
+    setLoading(true);
+    axios.get(`http://localhost:8090/api/generar/contratante/${contratanteId}`)
+      .then(res => {
+        setPublicaciones(res.data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Error al cargar publicaciones:", err);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    fetchPublicaciones();
+  }, [contratanteId, refrescar]);
+
+  const handleEditar = (idGenerar) => {
+    const publicacionSeleccionada = publicaciones.find(pub => pub.id_genera === idGenerar);
+    if (publicacionSeleccionada && onEditar) {
+      // Pasamos solo el objeto publicacionempleo para editar
+      onEditar(publicacionSeleccionada.publicacionempleo);
+    }
+  };
+
+  const handleEliminar = (idPublicacion) => {
+    if (window.confirm("¿Seguro que quieres eliminar esta publicación?")) {
+      axios.delete(`http://localhost:8090/api/publicacion_empleo/eliminar/${idPublicacion}`)
+        .then(res => {
+          alert(res.data);
+          fetchPublicaciones();
+        })
+        .catch(err => {
+          console.error("Error al eliminar publicación:", err);
+          alert("Ocurrió un error al eliminar la publicación.");
+        });
+    }
+  };
+
+  const publicacionesFiltradas = filtroFecha
+    ? publicaciones.filter(pub => {
+        const fechaPublicacion = pub.publicacionempleo.fecha_publicacion || pub.publicacionempleo.fecha_limite;
+        if (!fechaPublicacion) return false;
+        const fechaPubStr = new Date(fechaPublicacion).toISOString().slice(0, 10);
+        return fechaPubStr === filtroFecha;
+      })
+    : publicaciones;
+
+  if (loading) return <p>Cargando publicaciones...</p>;
+
   return (
     <div className="lista-publicaciones">
-      <h1>Mis Publicaciones de Trabajo</h1>
-      
-      {publicaciones.length > 0 ? (
-        publicaciones.map(publicacion => (
-          <CardPublicacion 
-            key={publicacion.id} 
-            publicacion={publicacion} 
-            onToggleStatus={onToggleStatus}
-          />
-        ))
-      ) : (
-        <div className="no-posts">
-          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#999" viewBox="0 0 256 256">
-            <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm-16-56a8,8,0,0,1-16,0V120a8,8,0,0,1,16,0Zm32,0a8,8,0,0,1-16,0V120a8,8,0,0,1,16,0Z"></path>
-          </svg>
-          <h3>No tienes publicaciones aún</h3>
-          <p>Crea tu primera publicación para encontrar al cuidador ideal</p>
-          <button 
-            className="create-first-post"
-            onClick={onCreateNew}
+      <h3>📋 Mis Publicaciones</h3>
+
+      <div className="filtro-fecha-container">
+        <label htmlFor="filtro-fecha" className="filtro-fecha-label">
+          Filtrar por fecha de publicación:
+        </label>
+        <input
+          id="filtro-fecha"
+          type="date"
+          value={filtroFecha}
+          onChange={(e) => setFiltroFecha(e.target.value)}
+          className="filtro-fecha-input"
+          aria-label="Seleccionar fecha para filtrar publicaciones"
+        />
+        {filtroFecha && (
+          <button
+            onClick={() => setFiltroFecha('')}
+            className="filtro-fecha-limpiar"
+            aria-label="Limpiar filtro de fecha"
           >
-            Crear Publicación
+            Limpiar filtro
           </button>
-        </div>
+        )}
+      </div>
+
+      {publicacionesFiltradas.length === 0 ? (
+        <p>No tienes publicaciones para esta fecha.</p>
+      ) : (
+        <ul>
+          {publicacionesFiltradas.map(pub => (
+            <li key={pub.id_genera} className="lista-publicacion-item">
+              <div className="info-publicacion">
+                <h4>💼 {pub.publicacionempleo.titulo}</h4>
+                <p>📝 <strong>Descripción:</strong> {pub.publicacionempleo.descripcion}</p>
+                <p>⏳ <strong>Fecha Límite:</strong> {pub.publicacionempleo.fecha_limite ? new Date(pub.publicacionempleo.fecha_limite).toLocaleDateString() : 'N/A'}</p>
+                <p>🕒 <strong>Jornada:</strong> {pub.publicacionempleo.jornada || 'N/A'}</p>
+                <p>💰 <strong>Salario:</strong> ${pub.publicacionempleo.salario_estimado?.toLocaleString() || '0'}</p>
+                <p>📍 <strong>Parroquia:</strong> {pub.publicacionempleo.parroquia?.nombre || 'N/A'}</p>
+                <p>📊 <strong>Estado:</strong> {pub.publicacionempleo.estado || 'N/A'}</p>
+                <p>⚡ <strong>Disponibilidad inmediata:</strong> {pub.publicacionempleo.disponibilidad_inmediata ? 'Sí' : 'No'}</p>
+              </div>
+              <div className="acciones-publicacion">
+                <button
+                  className="btn btn-editar"
+                  onClick={() => handleEditar(pub.id_genera)}
+                  aria-label={`Editar publicación ${pub.publicacionempleo.titulo}`}
+                >
+                  ✏️ Editar
+                </button>
+                <button
+                  className="btn btn-eliminar"
+                  onClick={() => handleEliminar(pub.publicacionempleo.id_postulacion_empleo)}
+                  aria-label={`Eliminar publicación ${pub.publicacionempleo.titulo}`}
+                >
+                  🗑️ Eliminar
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );

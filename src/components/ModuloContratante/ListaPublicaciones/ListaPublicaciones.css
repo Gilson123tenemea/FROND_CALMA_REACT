@@ -1,55 +1,30 @@
-.lista-publicaciones {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-.lista-publicaciones h1 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #111827;
+.lista-publicacion-item {
+  background: #fff;
+  border: 1.5px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.08);
+  padding: 1.4rem 1.8rem;
   margin-bottom: 1.5rem;
-}
 
-.no-posts {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem;
-  text-align: center;
-  color: #6b7280;
-  background-color: #ffffff;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  flex-direction: column; /* cambio aquí para que los botones bajen */
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-.no-posts svg {
-  margin-bottom: 1rem;
+.lista-publicacion-item:hover {
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.15);
+  border-color: #0078d7;
 }
 
-.no-posts h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #374151;
+.info-publicacion {
+  flex: none; /* para que no se estire innecesariamente */
+  padding-right: 0; /* elimina padding a la derecha porque ya no es fila */
+  margin-bottom: 1.2rem; /* espacio debajo del texto antes de botones */
 }
 
-.no-posts p {
-  margin-bottom: 1.5rem;
-  max-width: 400px;
-}
-
-.create-first-post {
-  padding: 0.5rem 1rem;
-  background-color: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 0.25rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.create-first-post:hover {
-  background-color: #1d4ed8;
+.acciones-publicacion {
+  display: flex;
+  flex-direction: row; /* botones en fila */
+  gap: 0.7rem;
+  min-width: auto; /* quita min-width para que sea flexible */
 }
