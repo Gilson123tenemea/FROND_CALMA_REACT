@@ -1,125 +1,319 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './Inicio.css';
 import Navbar from '../Shared/Navbar';
 
 const Inicio = () => {
+  useEffect(() => {
+
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js';
+    script.onload = () => {
+      window.particlesJS('particles-js', {
+        particles: {
+          number: { value: 80, density: { enable: true, value_area: 800 } },
+          color: { value: "#3b82f6" },
+          shape: { type: "circle" },
+          opacity: { value: 0.5, random: true },
+          size: { value: 3, random: true },
+          line_linked: { enable: true, distance: 150, color: "#3b82f6", opacity: 0.4, width: 1 },
+          move: { enable: true, speed: 3, direction: "none", random: true, straight: false, out_mode: "out" }
+        },
+        interactivity: {
+          detect_on: "canvas",
+          events: {
+            onhover: { enable: true, mode: "repulse" },
+            onclick: { enable: true, mode: "push" }
+          }
+        }
+      });
+    };
+    document.body.appendChild(script);
+  }, []);
+
   return (
     <div className="inicio-container">
+      {/* Fondo de partículas futurista */}
+      <div id="particles-js" className="particles-background"></div>
+
       <Navbar />
-      
-      {/* Hero Banner */}
-      <section className="hero-banner animate-fade-in">
-        <div className="hero-content">
-          <h1>Conectando a las personas mayores con oportunidades</h1>
-          <p>C A L M A es una plataforma que conecta a adultos mayores con cuidadores capacitados, y genera empleo para profesionales en cuidado geriátrico.</p>
-          <div className="hero-buttons">
-            <button className="btn-primary">Explorar Trabajos</button>
-            <button className="btn-secondary">Leer Mas</button>
+      {/* Nueva sección con imagen, texto y botones */}
+      <section className="image-content-section">
+        {/* Hero Banner con video de fondo */}
+        <section className="hero-banner">
+          {/* ... tu contenido existente del hero banner ... */}
+        </section>
+
+
+        <div className="container1">
+          {/* Partículas encima de todo */}
+          <div className="particles-on-top"></div>
+          <div className="content-wrapper-hero">
+
+            {/* Contenedor de imagen FULL WIDTH */}
+            <div className="image-full-width-container">
+              {/* Borde superior */}
+              <div className="top-border-full"></div>
+
+              {/* Imagen que ocupa todo el ancho */}
+              <img
+                src="https://i.pinimg.com/736x/58/d5/d0/58d5d0a69849d43398e1ca13fc03c9f5.jpg"
+                alt="Profesional de cuidado geriátrico ayudando a un adulto mayor"
+                className="hero-image-full-width"
+              />
+            </div>
+
+            {/* Contenedor del texto (se mantiene con el ancho máximo original) */}
+            <div className="text-column-full" style={{ maxWidth: '1200px', margin: '0 auto', padding: '3rem 2rem' }}>
+              <h2>Transforma vidas a través del cuidado geriátrico</h2>
+              <p>
+                En <strong>C A L M A</strong>, no solo ofrecemos empleo, creamos historias de conexión humana entre profesionales apasionados y adultos mayores que necesitan tu compasión y experiencia.
+              </p>
+
+              <div className="section-stats">
+                <div className="stat-item">
+                  <div className="stat-number">500+</div>
+                  <div className="stat-label">conexiones exitosas</div>
+                </div>
+                <div className="stat-item">
+                  <div className="stat-text">Desde 2018 transformando vidas</div>
+                </div>
+              </div>
+
+              <div className="section-buttons">
+                <button className="btn-primary btn-hover-effect">
+                  <span>Encuentra tu vocación</span>
+                  <svg className="btn-icon" viewBox="0 0 24 24">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </button>
+                <button className="btn-secondary btn-hover-effect">
+                  <span>Conoce nuestras historias</span>
+                </button>
+              </div>
+            </div>
+
           </div>
         </div>
+
+
       </section>
 
-      {/* Features Section */}
-      <section className="features-section">
-        <div className="features-container">
-          <h2 className="section-title">Conectando generaciones con cuidado y vocación</h2>
+      {/* Sección de Impacto con testimonios */}
+      <section className="impact-section">
+        <div className="section-header">
+          <h2 className="section-title">
+            <span className="title-decoration"></span>
+            Más que un trabajo, <span className="highlight-text">un propósito de vida</span>
+          </h2>
           <p className="section-subtitle">
-            C A L M A es una plataforma diseñada para conectar a personas de la tercera edad con cuidadores capacitados, y al mismo tiempo brindar oportunidades laborales a profesionales con conocimientos en cuidado geriátrico. Su objetivo es facilitar el acceso a atención de calidad y promover el empleo digno en el sector del cuidado.
+            Cada día, profesionales como tú están encontrando en el cuidado geriátrico una carrera llena de significado y crecimiento personal.
           </p>
-          
-          <div className="features-grid">
-            <div className="feature-card animate-slide-up">
-              <div className="feature-icon">
-                <BriefcaseIcon />
-              </div>
-              <h3>Oportunidades de trabajo</h3>
-              <p>Cuidadores confiables para quienes más lo necesitan</p>
+        </div>
+
+        <div className="impact-grid">
+          <div className="impact-card slide-in-left">
+            <div className="card-image">
+              <img src="https://images.unsplash.com/photo-1583394293214-28ded15ee548?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Cuidador y adulto mayor" />
+              <div className="image-overlay"></div>
             </div>
-            
-            <div className="feature-card animate-slide-up" style={{animationDelay: '0.2s'}}>
-              <div className="feature-icon">
-                <CommunityIcon />
+            <div className="card-content">
+              <h3>María G. <span className="profession">Cuidadora profesional</span></h3>
+              <p className="testimonial">
+                "Después de 15 años en enfermería, encontré en C A L M A la oportunidad de conectar verdaderamente con mis pacientes. Ahora no solo cuido su salud, soy parte de su familia."
+              </p>
+              <div className="stats">
+                <div className="stat-item">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                  </svg>
+                  <span>4 años en CALMA</span>
+                </div>
+                <div className="stat-item">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                  </svg>
+                  <span>12 conexiones</span>
+                </div>
               </div>
-              <h3>Apoyo comunitario</h3>
-              <p>Conéctese con cuidadores comprometidos y reciba el apoyo que usted o su ser querido necesita.</p>
             </div>
-            
-            <div className="feature-card animate-slide-up" style={{animationDelay: '0.4s'}}>
-              <div className="feature-icon">
-                <NetworkIcon />
+          </div>
+
+          <div className="impact-card slide-in-right">
+            <div className="card-image">
+              <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Cuidadora sonriente" />
+              <div className="image-overlay"></div>
+            </div>
+            <div className="card-content">
+              <h3>Carlos M. <span className="profession">Gerontólogo</span></h3>
+              <p className="testimonial">
+                "CALMA me permitió especializarme en demencia senil. La plataforma conecta con familias que valoran mi expertise y me da herramientas para seguir creciendo."
+              </p>
+              <div className="stats">
+                <div className="stat-item">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                  </svg>
+                  <span>2 años en CALMA</span>
+                </div>
+                <div className="stat-item">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                  </svg>
+                  <span>8 conexiones</span>
+                </div>
               </div>
-              <h3>Conexiones con empleadores</h3>
-              <p>Interactúe con empleadores que valoren la experiencia y las habilidades de los profesionales senior.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Sección de características con animaciones */}
+      <section className="features-section">
+        <div className="floating-shapes">
+          <div className="shape circle"></div>
+          <div className="shape triangle"></div>
+          <div className="shape square"></div>
+        </div>
+
+        <div className="section-header">
+          <h2 className="section-title">
+            <span className="title-decoration"></span>
+            Por qué <span className="highlight-text">elegir CALMA</span>
+          </h2>
+          <p className="section-subtitle">
+            Plataforma diseñada para profesionales que buscan más que un empleo: crecimiento, reconocimiento y conexiones significativas.
+          </p>
+        </div>
+
+        <div className="features-grid">
+          <div className="feature-card feature-1">
+            <div className="feature-icon floating-animation">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 3L1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z" />
+              </svg>
+            </div>
+            <h3>Red profesional especializada</h3>
+            <p>Conecta con familias y centros que valoran tu formación en geriatría. Accede a oportunidades que no encontrarás en portales generales.</p>
+            <div className="feature-link">
+              <span>Explorar red</span>
+              <svg viewBox="0 0 24 24">
+                <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+              </svg>
+            </div>
+          </div>
+
+          <div className="feature-card feature-2">
+            <div className="feature-icon floating-animation">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
+              </svg>
+            </div>
+            <h3>Certificaciones reconocidas</h3>
+            <p>Accede a cursos de especialización avalados por asociaciones geriátricas que aumentarán tu valor profesional.</p>
+            <div className="feature-link">
+              <span>Ver certificaciones</span>
+              <svg viewBox="0 0 24 24">
+                <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+              </svg>
+            </div>
+          </div>
+
+          <div className="feature-card feature-3">
+            <div className="feature-icon floating-animation">
+              <svg viewBox="0 0 24 24">
+                <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+              </svg>
+            </div>
+            <h3>Contratos transparentes</h3>
+            <p>Acuerdos claros con condiciones laborales justas. Sabrás exactamente lo que ofrecen antes de contactar.</p>
+            <div className="feature-link">
+              <span>Conoce beneficios</span>
+              <svg viewBox="0 0 24 24">
+                <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Sección de estadísticas impactantes */}
+      <section className="stats-section">
+        <div className="stats-container">
+          <div className="stat-item">
+            <div className="stat-number" data-count="98">0</div>
+            <div className="stat-label">Satisfacción profesional</div>
+          </div>
+          <div className="stat-item">
+            <div className="stat-number" data-count="2500">0</div>
+            <div className="stat-label">Conexiones exitosas</div>
+          </div>
+          <div className="stat-item">
+            <div className="stat-number" data-count="120">0</div>
+            <div className="stat-label">Especialistas certificados</div>
+          </div>
+          <div className="stat-item">
+            <div className="stat-number" data-count="85">0</div>
+            <div className="stat-label">Retención anual</div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section con efecto parallax */}
       <section className="cta-section">
+        <div className="parallax-background"></div>
         <div className="cta-container">
-          <h2>Únase a C A L M A hoy</h2>
-          <p>Empieza tu viaje hacia nuevas oportunidades y conexiones. Regístrate ahora para explorar las posibilidades.</p>
-          <button className="btn-cta">Empezar</button>
+          <h2>Tu vocación merece <span className="highlight-text">el mejor escenario</span></h2>
+          <p>
+            Regístrate hoy y descubre cómo podemos ayudarte a encontrar oportunidades que valoren tu experiencia y compasión en el cuidado geriátrico.
+          </p>
+          <button className="btn-cta btn-hover-effect">
+            <span>Comienza ahora</span>
+            <svg className="btn-icon" viewBox="0 0 24 24">
+              <path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z" />
+            </svg>
+          </button>
         </div>
       </section>
 
-      {/* Footer */}
+      {/* Footer premium */}
       <footer className="footer">
-        <div className="footer-content">
+        <div className="footer-cta">
+          <div className="cta-content">
+            <h3>Únase a C A L M A hoy</h3>
+            <p>Empieza tu viaje hacia nuevas oportunidades y conexiones. Registrate ahora para explorar las posibilidades.</p>
+            <button className="btn-primary btn-hover-effect">
+              <span>Empezar</span>
+            </button>
+          </div>
+        </div>
+
+        <div className="footer-separator"></div>
+
+        <div className="footer-links-container">
           <div className="footer-links">
-            <a href="#about">Sobre Nosotros</a>
-            <a href="#contact">Contacto</a>
-            <a href="#privacy">Politicas de Privacidad</a>
-            <a href="#terms">Condiciones de servicio</a>
+            <div className="footer-column">
+              <h4>Sobre Nosotros</h4>
+            </div>
+            <div className="footer-column">
+              <h4>Contacto</h4>
+            </div>
+            <div className="footer-column">
+              <h4>Políticas de Privacidad</h4>
+            </div>
+            <div className="footer-column">
+              <h4>Condiciones de servicio</h4>
+            </div>
           </div>
-          <div className="footer-social">
-            <TwitterIcon />
-            <FacebookIcon />
-            <InstagramIcon />
+        </div>
+
+        <div className="footer-bottom">
+          <div className="copyright">
+            ©2024 C A L M A. Reservados todos los derechos.
           </div>
-          <p className="footer-copyright">©2024 C A L M A. Reservados todos los derechos.</p>
         </div>
       </footer>
     </div>
   );
 };
-
-// Componentes de íconos
-const BriefcaseIcon = () => (
-  <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M10 2h4a2 2 0 0 1 2 2v2h4a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4V4a2 2 0 0 1 2-2ZM9 6h6V4h-4v2Zm11 4H4v9h16v-9Z"/>
-  </svg>
-);
-
-const CommunityIcon = () => (
-  <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A1.5 1.5 0 0 0 18.54 8H17c-.8 0-1.5.7-1.5 1.5v5c0 .8.7 1.5 1.5 1.5h1v6h2zm-12.5 0v-6h1c.8 0 1.5-.7 1.5-1.5v-5C10 8.7 9.3 8 8.5 8H7.04c-.8 0-1.5.4-1.9 1.06L2.5 16H5v6h2.5zM12.5 11.5c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5S11 9.17 11 10s.67 1.5 1.5 1.5z"/>
-  </svg>
-);
-
-const NetworkIcon = () => (
-  <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-  </svg>
-);
-
-const TwitterIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>
-  </svg>
-);
-
-const FacebookIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-  </svg>
-);
-
-const InstagramIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-  </svg>
-);
 
 export default Inicio;
