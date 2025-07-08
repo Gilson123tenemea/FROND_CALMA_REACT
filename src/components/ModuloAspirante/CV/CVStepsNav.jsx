@@ -16,97 +16,40 @@ const CVStepsNav = ({ idCV, currentStep }) => {
   const navigate = useNavigate();
   const currentIndex = pasos.findIndex(p => p.nombre === currentStep);
 
-  // Verificar si el CV está guardado
   const isCVSaved = () => {
-  try {
-    const savedCVs = JSON.parse(localStorage.getItem('savedCVs') || '{}');
-    return !!savedCVs[idCV];
-  } catch (error) {
-    console.error("Error al leer localStorage:", error);
-    return false;
-  }
-};
+    try {
+      const savedCVs = JSON.parse(localStorage.getItem('savedCVs') || '{}');
+      return !!savedCVs[idCV];
+    } catch {
+      return false;
+    }
+  };
 
   const handleStepClick = (step, path) => {
     const clickedIndex = pasos.findIndex(p => p.nombre === step.nombre);
-    
-    // Si es el paso de CV y no está guardado, mostrar error
-    if (currentStep === "CV" && !isCVSaved() && clickedIndex > 0) {
+
+    if (!isCVSaved() && clickedIndex > 0) {
       toast.warning(
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <div style={{ fontWeight: 'bold' }}>Debes guardar el CV primero</div>
-          <div>Completa y guarda la información básica del CV antes de continuar</div>
-        </div>,
-        {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeButton: false,
-          pauseOnHover: true,
-          draggable: true,
-          style: {
-            minWidth: '300px',
-            padding: '12px 16px',
-            borderLeft: '4px solid #FFC107',
-            borderRadius: '4px',
-            boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-          }
-        }
+        <>
+          <strong>Debes guardar el CV primero</strong>
+          <div>Completa y guarda la información básica antes de continuar.</div>
+        </>,
+        { autoClose: 3000 }
       );
       return;
     }
-    
+
     if (clickedIndex <= currentIndex) {
       navigate(path);
     } else if (clickedIndex === currentIndex + 1) {
-      const isCurrentStepComplete = true;
-      
-      if (isCurrentStepComplete) {
-        navigate(path);
-      } else {
-        toast.warning(
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontWeight: 'bold' }}>Acción requerida</div>
-            <div>Completa los campos en {currentStep}</div>
-          </div>,
-          {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeButton: false,
-            pauseOnHover: true,
-            draggable: true,
-            style: {
-              minWidth: '300px',
-              padding: '12px 16px',
-              borderLeft: '4px solid #FFC107',
-              borderRadius: '4px',
-              boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-            }
-          }
-        );
-      }
+      navigate(path);
     } else {
       toast.info(
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <div style={{ fontWeight: 'bold' }}>Siguiente paso</div>
-          <div>Completa primero: {pasos[currentIndex].nombre}</div>
-        </div>,
-        {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeButton: false,
-          pauseOnHover: true,
-          draggable: true,
-          style: {
-            minWidth: '300px',
-            padding: '12px 16px',
-            borderLeft: '4px solid #17A2B8',
-            borderRadius: '4px',
-            boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-          }
-        }
+        <>
+          <strong>Completa primero:</strong>
+          <div>{pasos[currentIndex].nombre}</div>
+        </>,
+        { autoClose: 3000 }
       );
     }
   };
@@ -118,7 +61,7 @@ const CVStepsNav = ({ idCV, currentStep }) => {
           <React.Fragment key={i}>
             <div
               className={`step ${p.nombre === currentStep ? 'active' : ''} 
-                         ${i < currentIndex ? 'completed' : ''}`}
+                          ${i < currentIndex ? 'completed' : ''}`}
               onClick={() => handleStepClick(p, p.path(idCV))}
             >
               {p.nombre}
@@ -127,41 +70,8 @@ const CVStepsNav = ({ idCV, currentStep }) => {
           </React.Fragment>
         ))}
       </div>
-      
-      <ToastContainer 
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={true}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        closeButton={({ closeToast }) => (
-          <button 
-            onClick={closeToast}
-            style={{
-              position: 'absolute',
-              right: '8px',
-              top: '8px',
-              background: 'transparent',
-              border: 'none',
-              fontSize: '16px',
-              color: '#666',
-              cursor: 'pointer'
-            }}
-          >
-            ×
-          </button>
-        )}
-        toastStyle={{
-          margin: "8px",
-          fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-          position: 'relative',
-          padding: '16px 32px 16px 16px'
-        }}
-      />
+
+      <ToastContainer />
     </>
   );
 };

@@ -14,7 +14,6 @@ const CVForm = ({ editMode = false }) => {
   const location = useLocation();
   const userData = JSON.parse(localStorage.getItem("userData"));
   const aspiranteId = userData?.aspiranteId;
-  
 
   const [formulario, setFormulario] = useState({
     estado: false,
@@ -28,43 +27,43 @@ const CVForm = ({ editMode = false }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-// En el useEffect de CVForm.js
-useEffect(() => {
-  const loadCVData = async () => {
-    if (idCV) {
-      setIsLoading(true);
-      try {
-        const cvData = await getCVById(idCV);
-        
-        if (!cvData) {
-          toast.error("No se encontró el CV solicitado");
+  // En el useEffect de CVForm.js
+  useEffect(() => {
+    const loadCVData = async () => {
+      if (idCV) {
+        setIsLoading(true);
+        try {
+          const cvData = await getCVById(idCV);
+
+          if (!cvData) {
+            toast.error("No se encontró el CV solicitado");
+            navigate('/ModuloAspirante');
+            return;
+          }
+
+          setFormulario({
+            estado: cvData.estado || false,
+            experiencia: cvData.experiencia || '',
+            zona_trabajo: cvData.zona_trabajo || '',
+            idiomas: cvData.idiomas || '',
+            informacion_opcional: cvData.informacion_opcional || '',
+          });
+          setIsEditing(true);
+        } catch (error) {
+          console.error("Error al cargar CV:", error);
+          toast.error("Error al cargar el CV");
           navigate('/ModuloAspirante');
-          return;
+        } finally {
+          setIsLoading(false);
         }
-
-        setFormulario({
-          estado: cvData.estado || false,
-          experiencia: cvData.experiencia || '',
-          zona_trabajo: cvData.zona_trabajo || '',
-          idiomas: cvData.idiomas || '',
-          informacion_opcional: cvData.informacion_opcional || '',
-        });
-        setIsEditing(true);
-      } catch (error) {
-        console.error("Error al cargar CV:", error);
-        toast.error("Error al cargar el CV");
-        navigate('/ModuloAspirante');
-      } finally {
-        setIsLoading(false);
       }
-    }
-  };
+    };
 
-  // Solo cargamos datos si estamos en modo edición
-  if (location.pathname.includes('/edit') || location.state?.fromRecommendations) {
-    loadCVData();
-  }
-}, [idCV, navigate, location]);
+    // Solo cargamos datos si estamos en modo edición
+    if (location.pathname.includes('/edit') || location.state?.fromRecommendations) {
+      loadCVData();
+    }
+  }, [idCV, navigate, location]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -113,7 +112,7 @@ useEffect(() => {
         response = await createCV(cvData);
         cvId = response.id_cv; // Obtenemos el nuevo ID si es creación
       }
-      
+
       // Guardar en localStorage
       const savedCVs = JSON.parse(localStorage.getItem('savedCVs')) || {};
       savedCVs[cvId] = true;
@@ -139,8 +138,8 @@ useEffect(() => {
   };
 
   const handleVolver = () => {
-    navigate(`/cv/${cvId}/recomendaciones`, { 
-  state: { fromCV: true } 
+    navigate(`/cv/${cvId}/recomendaciones`, {
+      state: { fromCV: true }
     });
   };
 
@@ -168,8 +167,8 @@ useEffect(() => {
           <div className="registro-card">
             <h2>{isEditing ? 'Editar CV' : 'Registro de CV'}</h2>
             <p className="subtitle">
-              {isEditing 
-                ? 'Modifica los campos que necesites actualizar' 
+              {isEditing
+                ? 'Modifica los campos que necesites actualizar'
                 : 'Completa los campos para registrar un CV'}
             </p>
 
@@ -182,7 +181,7 @@ useEffect(() => {
                   value={formulario.experiencia}
                   onChange={handleChange}
                   required
-                  placeholder="Ej: 5 años como desarrollador web"
+                  placeholder="Ej: 5 años cuidando adultos mayores con Alzheimer"
                   disabled={isSubmitting}
                 />
                 <div className="input-hint">
@@ -199,7 +198,7 @@ useEffect(() => {
                   value={formulario.zona_trabajo}
                   onChange={handleChange}
                   required
-                  placeholder="Ej: Ciudad de México, Remoto, Híbrido"
+                  placeholder="Ej: Zona norte de la ciudad, Disponibilidad 24/7"
                   disabled={isSubmitting}
                 />
                 <div className="input-hint">
@@ -216,7 +215,7 @@ useEffect(() => {
                   value={formulario.idiomas}
                   onChange={handleChange}
                   required
-                  placeholder="Ej: Español (nativo), Inglés (avanzado)"
+                  placeholder="Ej: Español (nativo), Lengua de señas (intermedio)"
                   disabled={isSubmitting}
                 />
                 <div className="input-hint">
@@ -232,7 +231,7 @@ useEffect(() => {
                   name="informacion_opcional"
                   value={formulario.informacion_opcional}
                   onChange={handleChange}
-                  placeholder="Ej: Certificaciones, habilidades especiales"
+                  placeholder="Ej: Certificado en primeros auxilios, Movilización de pacientes"
                   disabled={isSubmitting}
                 />
                 <div className="input-hint">
@@ -241,31 +240,20 @@ useEffect(() => {
                 </div>
               </div>
 
-              <div className="input-group checkbox-group">
-                <label htmlFor="estado">
-                  <input
-                    type="checkbox"
-                    name="estado"
-                    id="estado"
-                    checked={formulario.estado}
-                    onChange={handleChange}
-                    disabled={isSubmitting}
-                  />
-                  Estado activo (disponible para ofertas)
-                </label>
+              <div className="input-group checkbox-group" style={{ display: 'none' }}>
+                <input
+                  type="checkbox"
+                  name="estado"
+                  id="estado"
+                  checked={true}
+                  readOnly
+                  hidden
+                />
               </div>
 
               <div className="button-group">
-                <button 
-                  type="button" 
-                  onClick={handleVolver} 
-                  className="back-btn"
-                  disabled={isSubmitting}
-                >
-                  Volver
-                </button>
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className="submit-btn"
                   disabled={isSubmitting}
                 >

@@ -1,9 +1,7 @@
-/* Estilos para el formulario de recomendaciones */
-
-/* Contenedor principal */
+/* Estilos mejorados para el formulario de recomendaciones - Estilo cuidado */
 .registro-page {
   min-height: 100vh;
-  background-color: #f8fafc;
+  background-color: #f8f5f0;
   font-family: 'Lexend', 'Noto Sans', sans-serif;
   display: flex;
   flex-direction: column;
@@ -15,28 +13,36 @@
   width: 100%;
   max-width: 900px;
   background-color: white;
-  border-radius: 0.75rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 3rem;
   margin-top: 1rem;
+  border: 1px solid #e0d5c3;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* Títulos */
 h2 {
-  color: #1e293b;
-  font-size: 1.8rem;
-  font-weight: 700;
+  color: #5E4B2E;
+  font-size: 2rem;
+  font-weight: 600;
   margin-bottom: 1.5rem;
   text-align: center;
+  letter-spacing: -0.5px;
 }
 
 h3 {
-  color: #1e293b;
-  font-size: 1.4rem;
-  margin: 2rem 0 1rem;
+  color: #5E4B2E;
+  font-size: 1.5rem;
+  margin: 2rem 0 1.5rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
+  font-weight: 500;
 }
 
 /* Formulario */
@@ -44,23 +50,26 @@ h3 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
+  padding: 1.5rem 0;
 }
 
 .input-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  position: relative;
 }
 
 .input-group label {
   display: flex;
   align-items: center;
-  color: #1e293b;
+  color: #5E4B2E;
   font-weight: 500;
   margin-bottom: 0.5rem;
+  font-size: 1rem;
   gap: 0.5rem;
 }
 
 .input-icon {
-  color: #3b82f6;
+  color: #A49062;
   font-size: 1rem;
 }
 
@@ -69,24 +78,50 @@ input[type="email"],
 input[type="date"],
 input[type="file"] {
   width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid #e0d5c3;
+  border-radius: 6px;
   font-size: 1rem;
-  color: #1e293b;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  color: #5E4B2E;
+  transition: all 0.2s ease;
+  background-color: #FFFCF9;
 }
 
 input[type="text"]:focus,
 input[type="email"]:focus,
 input[type="date"]:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #A49062;
+  box-shadow: 0 0 0 2px rgba(164, 144, 98, 0.1);
+  background-color: white;
 }
 
 .file-input {
   padding: 0.5rem;
+  background-color: white;
+}
+
+.file-info {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #7D6B58;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.clear-file-btn {
+  background: none;
+  border: none;
+  color: #A49062;
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.clear-file-btn:hover {
+  background-color: #f3f0ea;
 }
 
 /* Botones */
@@ -94,75 +129,194 @@ input[type="date"]:focus {
   grid-column: 1 / -1;
   display: flex;
   gap: 1rem;
-  margin-top: 1rem;
-}
-
-.back-btn {
-  background-color: #e2e8f0;
-  color: #1e293b;
-}
-
-.submit-btn {
-  background-color: #3b82f6;
-  color: white;
-}
-
-.next-btn {
-  background-color: #4caf50;
-  color: white;
-}
-
-.next-btn:disabled {
-  background-color: #94a3b8;
-  cursor: not-allowed;
-  opacity: 0.7;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 .button-group button {
   flex: 1;
-  padding: 0.75rem;
+  min-width: 180px;
+  padding: 0.9rem 1.5rem;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 6px;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-.button-group button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+.back-btn {
+  background-color: #f3f0ea;
+  color: #5E4B2E;
 }
 
-/* Tabla de recomendaciones */
+.back-btn:hover:not(:disabled) {
+  background-color: #e0d5c3;
+}
+
+.submit-btn {
+  background-color: #d4e8c8;
+  color: #2D3748;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background-color: #c0d8b4;
+}
+
+.next-btn {
+  background-color: #c8e0d4;
+  color: #2D3748;
+}
+
+.next-btn:hover:not(:disabled) {
+  background-color: #b4d0c0;
+}
+
+.cancel-btn {
+  background-color: #f3f0ea;
+  color: #5E4B2E;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background-color: #e0d5c3;
+}
+
+.button-group button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+  background-color: #f3f0ea !important;
+  color: #9E9E9E !important;
+}
+
+/* Lista de recomendaciones */
 .recomendaciones-list {
-  margin-top: 2rem;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e0d5c3;
 }
 
 .table-container {
   overflow-x: auto;
+  margin-top: 1.5rem;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 1rem;
+  background-color: white;
 }
 
 th, td {
-  padding: 0.75rem;
+  padding: 1rem;
   text-align: left;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e0d5c3;
 }
 
 th {
-  background-color: #f1f5f9;
-  font-weight: 600;
-  color: #1e293b;
+  background-color: #f3f0ea;
+  font-weight: 500;
+  color: #5E4B2E;
+  position: sticky;
+  top: 0;
 }
 
 tr:hover {
-  background-color: #f8fafc;
+  background-color: #faf8f5;
+}
+
+.actions-cell {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.edit-btn, .delete-btn {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.edit-btn {
+  background-color: #f3f0ea;
+  color: #5E4B2E;
+}
+
+.edit-btn:hover {
+  background-color: #e0d5c3;
+}
+
+.delete-btn {
+  background-color: #f8e8e8;
+  color: #c88;
+}
+
+.delete-btn:hover {
+  background-color: #f0d0d0;
+}
+
+.download-link {
+  background: none;
+  border: none;
+  color: #5E4B2E;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.download-link:hover {
+  background-color: #f3f0ea;
+}
+
+/* Loading spinner */
+.loading-spinner {
+  border: 3px solid #f3f0ea;
+  border-top: 3px solid #A49062;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Notificaciones */
+.custom-toast {
+  font-family: 'Lexend', 'Noto Sans', sans-serif;
+  color: #5E4B2E;
+}
+
+.Toastify__toast {
+  font-family: 'Lexend', 'Noto Sans', sans-serif;
+  padding: 12px 16px !important;
+  border-radius: 6px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+  color: #5E4B2E !important;
+  background: #FFFCF9 !important;
+  border-left: 4px solid #A49062 !important;
+  min-height: auto !important;
 }
 
 /* Responsive */
@@ -171,47 +325,43 @@ tr:hover {
     grid-template-columns: 1fr;
   }
   
+  .registro-container {
+    padding: 2rem;
+  }
+  
   .button-group {
     flex-direction: column;
+  }
+  
+  .button-group button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .registro-page {
+    padding: 1rem;
   }
   
   .registro-container {
     padding: 1.5rem;
   }
-}
-
-/* Estilos para notificaciones (igual que en CV) */
-.Toastify__toast {
-  font-family: 'Lexend', 'Noto Sans', sans-serif;
-  padding: 12px 16px !important;
-  border-radius: 4px !important;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
-  color: #333 !important;
-  background: #fff !important;
-  border-left: 4px solid #4CAF50 !important;
-  min-height: auto !important;
-}
-
-.Toastify__toast-body {
-  padding: 0 !important;
-  margin: 0 !important;
-  font-size: 14px !important;
-  line-height: 1.4 !important;
-}
-
-.Toastify__close-button {
-  display: none !important;
-}
-
-.Toastify__progress-bar {
-  background: rgba(0, 0, 0, 0.1) !important;
-  height: 2px !important;
-}
-
-.Toastify__toast--error {
-  border-left-color: #F44336 !important;
-}
-
-.Toastify__toast--warning {
-  border-left-color: #FF9800 !important;
+  
+  h2 {
+    font-size: 1.6rem;
+  }
+  
+  h3 {
+    font-size: 1.2rem;
+  }
+  
+  .actions-cell {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .edit-btn, .delete-btn {
+    width: 100%;
+    padding: 0.25rem;
+  }
 }

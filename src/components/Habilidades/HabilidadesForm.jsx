@@ -1,15 +1,17 @@
-import React, { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { createHabilidad } from "../../servicios/habilidadesService";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { createHabilidad, getHabilidadesByCVId } from "../../servicios/habilidadesService";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import CVStepsNav from "../ModuloAspirante/CV/CVStepsNav";
 import { FaCode, FaChartLine, FaSave, FaArrowLeft } from "react-icons/fa";
 import './HabilidadesForm.css';
+import { useFormPersistence } from '../../hooks/useFormPersistence';
 
 const HabilidadesForm = () => {
   const { idCV } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [formulario, setFormulario] = useState({
     descripcion: "",
@@ -17,6 +19,25 @@ const HabilidadesForm = () => {
   });
 
   const [habilidades, setHabilidades] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const loadHabilidades = async () => {
+      setIsLoading(true);
+      try {
+        const data = await getHabilidadesByCVId(idCV);
+        setHabilidades(data);
+      } catch (error) {
+        toast.error(error.message || "Error al cargar habilidades");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadHabilidades();
+  }, [idCV]);
+
+  useFormPersistence(idCV, formulario, setFormulario, 'habilidades');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,18 +47,8 @@ const HabilidadesForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formulario.descripcion) {
-      toast.warning(
-        <div className="custom-toast">
-          <div>Por favor ingresa una descripción para la habilidad</div>
-        </div>,
-        {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeButton: false,
-        }
-      );
+    if (!formulario.descripcion.trim()) {
+      toast.warning("Por favor ingresa una descripción para la habilidad");
       return;
     }
 
@@ -47,45 +58,40 @@ const HabilidadesForm = () => {
     };
 
     try {
-      await createHabilidad(habilidadData);
+      const nuevaHabilidad = await createHabilidad(habilidadData);
       
-      toast.success(
-        <div className="custom-toast">
-          <div>Habilidad guardada correctamente</div>
-        </div>,
-        {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeButton: false,
-        }
-      );
-
-      setHabilidades([...habilidades, habilidadData]);
+      toast.success("Habilidad guardada correctamente");
+      setHabilidades([...habilidades, nuevaHabilidad]);
       setFormulario({ descripcion: "", nivel: "Básico" });
     } catch (error) {
       console.error("Error al guardar:", error);
-      toast.error(
-        <div className="custom-toast">
-          <div>Error al registrar la habilidad</div>
-        </div>,
-        {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeButton: false,
-        }
-      );
+      toast.error(error.message || "Error al registrar la habilidad");
     }
   };
 
   const irASiguiente = () => {
-    navigate(`/disponibilidad/${idCV}`);
+    navigate(`/cv/${idCV}/disponibilidad`, {
+      state: { fromHabilidades: true }
+    });
   };
 
   const handleBack = () => {
-    navigate(`/cv/${idCV}/certificados`);
+    navigate(`/cv/${idCV}/certificados`, {
+      state: { fromHabilidades: true }
+    });
   };
+
+  if (isLoading) {
+    return (
+      <div className="registro-page">
+        <CVStepsNav idCV={idCV} currentStep="Habilidades" />
+        <div className="registro-container">
+          <div className="loading-spinner"></div>
+          <h2>Cargando habilidades...</h2>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="registro-page">

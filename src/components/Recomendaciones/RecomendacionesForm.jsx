@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { 
-  createRecomendacion, 
-  getRecomendacionesByCVId, 
-  updateRecomendacion, 
-  deleteRecomendacion 
+import {
+  createRecomendacion,
+  getRecomendacionesByCVId,
+  updateRecomendacion,
+  deleteRecomendacion,
+  downloadRecomendacionFile
 } from "../../servicios/recomendacionesService";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import './RecomendacionesForm.css';
 import CVStepsNav from "../ModuloAspirante/CV/CVStepsNav";
-import { FaUserTie, FaBriefcase, FaBuilding, FaPhone, FaEnvelope, FaLink, FaCalendarAlt, FaPaperclip, FaEdit, FaTrash } from "react-icons/fa";
+import { FaUserTie, FaBriefcase, FaBuilding, FaPhone, FaEnvelope, FaLink, FaCalendarAlt, FaPaperclip, FaEdit, FaTrash, FaDownload } from "react-icons/fa";
 import { useLocation } from 'react-router-dom';
 import { useFormPersistence } from '../../hooks/useFormPersistence';
 
@@ -29,6 +30,7 @@ const RecomendacionesForm = () => {
     relacion: "",
     fecha: new Date().toISOString().slice(0, 10),
     archivo: null,
+    archivoNombre: "",
     isEditing: false
   });
 
@@ -44,14 +46,14 @@ const RecomendacionesForm = () => {
       try {
         const data = await getRecomendacionesByCVId(idCV);
         setRecomendaciones(data);
-        
+
         if (!location.state?.fromCertificados) {
           const keys = [
             `form_recomendaciones_${idCV}`,
             `form_recomendaciones_/recomendaciones/${idCV}`,
             `form_recomendaciones_/cv/${idCV}/recomendaciones`
           ];
-          
+
           for (const key of keys) {
             const savedState = localStorage.getItem(key);
             if (savedState) {
@@ -76,7 +78,11 @@ const RecomendacionesForm = () => {
   };
 
   const handleFileChange = (e) => {
-    setFormulario({ ...formulario, archivo: e.target.files[0] });
+    setFormulario({
+      ...formulario,
+      archivo: e.target.files[0],
+      archivoNombre: e.target.files[0]?.name || ""
+    });
   };
 
   const resetFormulario = () => {
@@ -90,34 +96,43 @@ const RecomendacionesForm = () => {
       relacion: "",
       fecha: new Date().toISOString().slice(0, 10),
       archivo: null,
+      archivoNombre: "",
       isEditing: false
     });
   };
 
-  const handleEdit = (recomendacion) => {
-    setFormulario({
-      id_recomendacion: recomendacion.id_recomendacion,
-      nombre_recomendador: recomendacion.nombre_recomendador,
-      cargo: recomendacion.cargo,
-      empresa: recomendacion.empresa,
-      telefono: recomendacion.telefono,
-      email: recomendacion.email,
-      relacion: recomendacion.relacion,
-      fecha: recomendacion.fecha,
-      archivo: null,
-      isEditing: true
-    });
-    
-    // Scroll al formulario para mejor UX
-    document.querySelector('.form-recomendaciones').scrollIntoView({ behavior: 'smooth' });
-  };
+  const handleEdit = async (recomendacion) => {
+  setFormulario({
+    id_recomendacion: recomendacion.id_recomendacion,
+    nombre_recomendador: recomendacion.nombre_recomendador,
+    cargo: recomendacion.cargo,
+    empresa: recomendacion.empresa,
+    telefono: recomendacion.telefono,
+    email: recomendacion.email,
+    relacion: recomendacion.relacion,
+    fecha: recomendacion.fecha,
+    archivo: null,
+    archivoNombre: recomendacion.nombre_archivo || "",
+    isEditing: true
+  });
+  
+  document.querySelector('.form-recomendaciones').scrollIntoView({ behavior: 'smooth' });
+};
 
+  const handleDownload = async (id, fileName) => {
+    try {
+      await downloadRecomendacionFile(id, fileName);
+      toast.success("Archivo descargado correctamente");
+    } catch (error) {
+      toast.error("Error al descargar el archivo: " + error.message);
+    }
+  };
   const handleDelete = async (id) => {
     if (window.confirm("¿Estás seguro de que deseas eliminar esta recomendación?")) {
       try {
         await deleteRecomendacion(id);
         setRecomendaciones(recomendaciones.filter(rec => rec.id_recomendacion !== id));
-        
+
         toast.success(
           <div className="custom-toast">
             <div>Recomendación eliminada correctamente</div>
@@ -149,6 +164,13 @@ const RecomendacionesForm = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
+    // Validación básica
+    if (!formulario.nombre_recomendador || !formulario.cargo) {
+      toast.error("Nombre y cargo son campos requeridos");
+      setIsSubmitting(false);
+      return;
+    }
+
     const recomendacionData = {
       id_recomendacion: formulario.id_recomendacion,
       nombre_recomendador: formulario.nombre_recomendador,
@@ -162,7 +184,9 @@ const RecomendacionesForm = () => {
     };
 
     const formData = new FormData();
-    if (formulario.archivo) formData.append("archivo", formulario.archivo);
+    if (formulario.archivo) {
+      formData.append("archivo", formulario.archivo);
+    }
     formData.append(
       "recomendacion",
       new Blob([JSON.stringify(recomendacionData)], {
@@ -172,15 +196,15 @@ const RecomendacionesForm = () => {
 
     try {
       let nuevaRecomendacion;
-      
+
       if (formulario.isEditing) {
         nuevaRecomendacion = await updateRecomendacion(formulario.id_recomendacion, formData);
-        setRecomendaciones(recomendaciones.map(rec => 
-          rec.id_recomendacion === formulario.id_recomendacion ? 
-          { ...nuevaRecomendacion, archivo: formulario.archivo?.name || rec.archivo } : 
-          rec
+        setRecomendaciones(recomendaciones.map(rec =>
+          rec.id_recomendacion === formulario.id_recomendacion ?
+            { ...nuevaRecomendacion, archivo: formulario.archivoNombre || rec.archivo } :
+            rec
         ));
-        
+
         toast.success(
           <div className="custom-toast">
             <div>Recomendación actualizada correctamente</div>
@@ -198,10 +222,10 @@ const RecomendacionesForm = () => {
           ...recomendaciones,
           {
             ...nuevaRecomendacion,
-            archivo: formulario.archivo?.name || "No adjunto",
+            archivo: formulario.archivoNombre || "No adjunto",
           },
         ]);
-        
+
         toast.success(
           <div className="custom-toast">
             <div>Recomendación guardada correctamente</div>
@@ -217,14 +241,19 @@ const RecomendacionesForm = () => {
 
       resetFormulario();
     } catch (error) {
-      console.error("Error al guardar:", error);
+      console.error("Error completo al guardar:", {
+        message: error.message,
+        response: error.response?.data,
+        stack: error.stack
+      });
+
       toast.error(
         <div className="custom-toast">
-          <div>{error.message || "Error al registrar la recomendación"}</div>
+          <div>{error.response?.data?.message || error.message || "Error al registrar la recomendación"}</div>
         </div>,
         {
           position: "top-right",
-          autoClose: 3000,
+          autoClose: 5000,
           hideProgressBar: false,
           closeButton: false,
         }
@@ -258,10 +287,10 @@ const RecomendacionesForm = () => {
       return;
     }
 
-    navigate(`/cv/${idCV}`, { 
-      state: { 
+    navigate(`/cv/${idCV}`, {
+      state: {
         fromRecommendations: true,
-        cvId: idCV 
+        cvId: idCV
       },
       replace: true
     });
@@ -288,7 +317,7 @@ const RecomendacionesForm = () => {
 
         <form onSubmit={handleSubmit} className="form-recomendaciones">
           <h3>{formulario.isEditing ? 'Editar Recomendación' : 'Agregar Nueva Recomendación'}</h3>
-          
+
           <div className="input-group">
             <label><FaUserTie className="input-icon" /> Nombre del recomendador</label>
             <input
@@ -376,26 +405,38 @@ const RecomendacionesForm = () => {
               accept=".pdf,.jpg,.png"
               className="file-input"
             />
+            {formulario.archivoNombre && (
+              <div className="file-info">
+                Archivo seleccionado: {formulario.archivoNombre}
+                <button
+                  type="button"
+                  className="clear-file-btn"
+                  onClick={() => setFormulario({ ...formulario, archivo: null, archivoNombre: "" })}
+                >
+                  Limpiar
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="button-group">
-            <button 
-              type="button" 
-              className="back-btn" 
+            <button
+              type="button"
+              className="back-btn"
               onClick={handleBack}
               disabled={isSubmitting}
             >
               Regresar
             </button>
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="submit-btn"
               disabled={isSubmitting}
             >
-              {isSubmitting 
-                ? 'Guardando...' 
-                : formulario.isEditing 
-                  ? 'Actualizar recomendación' 
+              {isSubmitting
+                ? 'Guardando...'
+                : formulario.isEditing
+                  ? 'Actualizar recomendación'
                   : 'Guardar recomendación'}
             </button>
             {formulario.isEditing && (
@@ -439,16 +480,27 @@ const RecomendacionesForm = () => {
                       <td>{rec.nombre_recomendador}</td>
                       <td>{rec.cargo}</td>
                       <td>{rec.empresa || '-'}</td>
-                      <td>{rec.archivo?.name || (rec.tiene_archivo ? 'Adjunto' : 'No adjunto')}</td>
+                      <td>
+                        {rec.tiene_archivo ? (
+                          <div className="file-download-container">
+                            <button
+                              className="download-link"
+                              onClick={() => handleDownload(rec.id_recomendacion, rec.nombre_archivo)}
+                            >
+                              <FaDownload /> {rec.nombre_archivo || 'Descargar'}
+                            </button>
+                          </div>
+                        ) : 'No adjunto'}
+                      </td>
                       <td className="actions-cell">
-                        <button 
+                        <button
                           onClick={() => handleEdit(rec)}
                           className="edit-btn"
                           title="Editar"
                         >
                           <FaEdit />
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleDelete(rec.id_recomendacion)}
                           className="delete-btn"
                           title="Eliminar"

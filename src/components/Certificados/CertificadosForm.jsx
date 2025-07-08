@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { createCertificado, getCertificadosByCVId } from "../../servicios/certificadosService";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import CVStepsNav from "../ModuloAspirante/CV/CVStepsNav";
+import { FaCertificate, FaUniversity, FaCalendarAlt, FaPaperclip, FaArrowLeft, FaSave } from "react-icons/fa";
 import './CertificadosForm.css';
-import { FaCertificate, FaUniversity, FaCalendarAlt, FaPaperclip } from "react-icons/fa";
 import { useFormPersistence } from '../../hooks/useFormPersistence';
 
 const CertificadosForm = () => {
   const { idCV } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [formulario, setFormulario] = useState({
     nombre_certificado: "",
@@ -23,10 +24,7 @@ const CertificadosForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-    useFormPersistence(idCV, formulario, setFormulario);
-
-
-  // Cargar certificados existentes al montar el componente
+  // Cargar certificados existentes
   useEffect(() => {
     const loadCertificados = async () => {
       setIsLoading(true);
@@ -34,7 +32,7 @@ const CertificadosForm = () => {
         const data = await getCertificadosByCVId(idCV);
         setCertificados(data);
       } catch (error) {
-        toast.error(error.message);
+        toast.error(error.message || "Error al cargar certificados");
       } finally {
         setIsLoading(false);
       }
@@ -42,6 +40,8 @@ const CertificadosForm = () => {
 
     loadCertificados();
   }, [idCV]);
+
+  useFormPersistence(idCV, formulario, setFormulario, 'certificados');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,65 +59,44 @@ const CertificadosForm = () => {
       fecha: new Date().toISOString().slice(0, 10),
       archivo: null,
     });
+    // Limpiar el input de archivo
+    const fileInput = document.querySelector('input[type="file"]');
+    if (fileInput) fileInput.value = '';
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
+    if (!formulario.nombre_certificado.trim() || !formulario.nombre_institucion.trim()) {
+      toast.warning("Por favor complete todos los campos obligatorios");
+      setIsSubmitting(false);
+      return;
+    }
+
     const certificadoData = {
-      nombre_certificado: formulario.nombre_certificado,
-      nombre_institucion: formulario.nombre_institucion,
+      nombre_certificado: formulario.nombre_certificado.trim(),
+      nombre_institucion: formulario.nombre_institucion.trim(),
       fecha: formulario.fecha,
       cv: { id_cv: Number(idCV) },
     };
 
-    const formData = new FormData();
-    if (formulario.archivo) formData.append("archivo", formulario.archivo);
-    formData.append(
-      "certificado",
-      new Blob([JSON.stringify(certificadoData)], {
-        type: "application/json",
-      })
-    );
-
     try {
-      const nuevoCertificado = await createCertificado(formData);
-      
-      toast.success(
-        <div className="custom-toast">
-          <div>Certificado guardado correctamente</div>
-        </div>,
-        {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeButton: false,
-        }
+      const formData = new FormData();
+      if (formulario.archivo) formData.append("archivo", formulario.archivo);
+      formData.append(
+        "certificado",
+        new Blob([JSON.stringify(certificadoData)], { type: "application/json" })
       );
 
-      setCertificados([
-        ...certificados,
-        {
-          ...nuevoCertificado,
-          archivo: formulario.archivo?.name || "No adjunto",
-        },
-      ]);
-
+      const nuevoCertificado = await createCertificado(formData);
+      
+      toast.success("Certificado guardado correctamente");
+      setCertificados([...certificados, nuevoCertificado]);
       resetFormulario();
     } catch (error) {
       console.error("Error al guardar certificado:", error);
-      toast.error(
-        <div className="custom-toast">
-          <div>{error.message || "Error al registrar el certificado"}</div>
-        </div>,
-        {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeButton: false,
-        }
-      );
+      toast.error(error.message || "Error al registrar el certificado");
     } finally {
       setIsSubmitting(false);
     }
@@ -128,16 +107,8 @@ const CertificadosForm = () => {
   };
 
   const handleBack = () => {
-  navigate(`/recomendaciones/${idCV}`, {
-    state: { 
-      fromCertificados: true,
-      cvId: idCV,
-      // Puedes pasar datos adicionales que necesites mantener
-      savedData: formulario 
-    },
-    replace: true
-  });
-};
+    navigate(`/cv/${idCV}/recomendaciones`);
+  };
 
   if (isLoading) {
     return (
@@ -211,20 +182,20 @@ const CertificadosForm = () => {
               onClick={handleBack}
               disabled={isSubmitting}
             >
-              Regresar
+              <FaArrowLeft /> Regresar
             </button>
             <button 
               type="submit" 
               className="submit-btn"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Guardando...' : 'Guardar certificado'}
+              <FaSave /> {isSubmitting ? 'Guardando...' : 'Guardar certificado'}
             </button>
             <button
               type="button"
               className="next-btn"
               onClick={irASiguiente}
-              disabled={isSubmitting}
+              disabled={isSubmitting || certificados.length === 0}
             >
               Siguiente: Habilidades
             </button>
@@ -249,8 +220,8 @@ const CertificadosForm = () => {
                     <tr key={index}>
                       <td>{cert.nombre_certificado}</td>
                       <td>{cert.nombre_institucion}</td>
-                      <td>{cert.fecha}</td>
-                      <td>{cert.archivo?.name || (cert.tiene_archivo ? 'Adjunto' : 'No adjunto')}</td>
+                      <td>{new Date(cert.fecha).toLocaleDateString()}</td>
+                      <td>{cert.tiene_archivo ? 'Adjunto' : 'No adjunto'}</td>
                     </tr>
                   ))}
                 </tbody>
