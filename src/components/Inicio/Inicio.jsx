@@ -4,7 +4,6 @@ import Navbar from '../Shared/Navbar';
 
 const Inicio = () => {
   useEffect(() => {
-
     const script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js';
     script.onload = () => {
@@ -36,39 +35,18 @@ const Inicio = () => {
       <div id="particles-js" className="particles-background"></div>
 
       <Navbar />
-      {/* Nueva sección con imagen, texto y botones */}
+      
+      {/* ELIMINÉ LA SECCIÓN DUPLICADA - Solo mantengo una */}
       <section className="image-content-section">
-        {/* Hero Banner con video de fondo */}
-        <section className="hero-banner">
-          {/* ... tu contenido existente del hero banner ... */}
-        </section>
-
-
         <div className="container1">
-          {/* Partículas encima de todo */}
-          <div className="particles-on-top"></div>
-          <div className="content-wrapper-hero">
-
-            {/* Contenedor de imagen FULL WIDTH */}
-            <div className="image-full-width-container">
-              {/* Borde superior */}
-              <div className="top-border-full"></div>
-
-              {/* Imagen que ocupa todo el ancho */}
-              <img
-                src="https://i.pinimg.com/736x/58/d5/d0/58d5d0a69849d43398e1ca13fc03c9f5.jpg"
-                alt="Profesional de cuidado geriátrico ayudando a un adulto mayor"
-                className="hero-image-full-width"
-              />
-            </div>
-
-            {/* Contenedor del texto (se mantiene con el ancho máximo original) */}
-            <div className="text-column-full" style={{ maxWidth: '1200px', margin: '0 auto', padding: '3rem 2rem' }}>
-              <h2>Transforma vidas a través del cuidado geriátrico</h2>
+          {/* Hero Banner único */}
+          <div className="hero-banner">
+            <div className="hero-content">
+              <h1>Transforma vidas a través del cuidado geriátrico</h1>
               <p>
                 En <strong>C A L M A</strong>, no solo ofrecemos empleo, creamos historias de conexión humana entre profesionales apasionados y adultos mayores que necesitan tu compasión y experiencia.
               </p>
-
+              
               <div className="section-stats">
                 <div className="stat-item">
                   <div className="stat-number">500+</div>
@@ -79,7 +57,7 @@ const Inicio = () => {
                 </div>
               </div>
 
-              <div className="section-buttons">
+              <div className="hero-buttons">
                 <button className="btn-primary btn-hover-effect">
                   <span>Encuentra tu vocación</span>
                   <svg className="btn-icon" viewBox="0 0 24 24">
@@ -91,12 +69,10 @@ const Inicio = () => {
                 </button>
               </div>
             </div>
-
           </div>
         </div>
-
-
       </section>
+
 
       {/* Sección de Impacto con testimonios */}
       <section className="impact-section">
