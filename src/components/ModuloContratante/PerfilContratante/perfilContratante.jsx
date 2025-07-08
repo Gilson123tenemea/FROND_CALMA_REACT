@@ -43,7 +43,6 @@ const PerfilContratante = () => {
   const [isAnimating, setIsAnimating] = useState(false);
 
   // Estado para la foto y referencia al input oculto
-  const [foto, setFoto] = useState(null);
   const inputFileRef = useRef(null);
 
   const handleCheckboxEmpresa = (e) => {
@@ -58,6 +57,8 @@ const PerfilContratante = () => {
     }));
   };
 
+
+
   // Animación inicial
   useEffect(() => {
     setIsAnimating(true);
@@ -65,63 +66,7 @@ const PerfilContratante = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  useEffect(() => {
-    const cargarDatosContratanteYEmpresa = async () => {
-      if (!idContratante) return;
 
-      try {
-        const resContratante = await fetch(`http://localhost:8090/api/registro/contratante/detalle/${idContratante}`);
-        const jsonContratante = await resContratante.json();
-        if (jsonContratante.success) {
-          const data = jsonContratante.contratante;
-
-          setFormData({
-            cedula: data.cedula || '',
-            nombre: data.nombre || '',
-            apellido: data.apellido || '',
-            correo: data.correo || '',
-            fechaNacimiento: data.fechaNacimiento
-              ? new Date(data.fechaNacimiento).toISOString().slice(0, 10)
-              : '',
-            genero: data.genero || '',
-            ocupacion: data.ocupacion || '',
-            contraseña: '',
-          });
-
-          setUbicacion({
-            provincia: data.idProvincia || '',
-            canton: data.idCanton || '',
-            parroquia: data.idParroquia || '',
-          });
-        } else {
-          console.error('Error al cargar datos:', jsonContratante.message);
-        }
-
-        const resEmpresa = await fetch(`http://localhost:8090/api/registro/empresa/contratante/${idContratante}`);
-        const jsonEmpresa = await resEmpresa.json();
-        if (jsonEmpresa.success) {
-          const empresa = jsonEmpresa.empresa;
-          setEmpresaData({
-            nombreEmpresa: empresa.nombreEmpresa || '',
-            rucEmpresa: empresa.rucEmpresa || '',
-            correoEmpresa: empresa.correoEmpresa || '',
-          });
-          setRepresentaEmpresa(true);
-        } else {
-          setEmpresaData({
-            nombreEmpresa: '',
-            rucEmpresa: '',
-            correoEmpresa: '',
-          });
-          setRepresentaEmpresa(false);
-        }
-      } catch (error) {
-        console.error('Error cargando datos del contratante o empresa:', error);
-      }
-    };
-
-    cargarDatosContratanteYEmpresa();
-  }, [idContratante]);
 
   useEffect(() => {
     const cargarProvincias = async () => {
@@ -194,6 +139,7 @@ const PerfilContratante = () => {
       try {
         const resContratante = await fetch(`http://localhost:8090/api/registro/contratante/detalle/${idContratante}`);
         const jsonContratante = await resContratante.json();
+
         if (jsonContratante.success) {
           const data = jsonContratante.contratante;
 
@@ -219,11 +165,10 @@ const PerfilContratante = () => {
 
           // Imagen del usuario (foto)
           if (data.foto) {
-            setFoto(`http://localhost:8090/static/${data.foto}`);
+            setFoto(`http://localhost:8090/api/registro/${data.foto}`);
           } else {
             setFoto(null);
           }
-
         } else {
           console.error('Error al cargar datos:', jsonContratante.message);
         }
@@ -263,18 +208,18 @@ const PerfilContratante = () => {
       [name]: value
     }));
   };
+
+  const [foto, setFoto] = useState(null);
   const handleFotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFormulario({ ...formulario, foto: reader.result });  // base64 string
+        setFoto(reader.result); // base64
       };
       reader.readAsDataURL(file);
     }
   };
-
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -283,8 +228,6 @@ const PerfilContratante = () => {
       [name]: value
     }));
   };
-
-  
 
   // Función para abrir selector archivo
   const handleClickSubirFoto = () => {
@@ -298,183 +241,202 @@ const PerfilContratante = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setArchivoFoto(file);          // Guardas el archivo real
-      setFoto(URL.createObjectURL(file)); // Solo para mostrar preview
+      setArchivoFoto(file); // guardar archivo por si lo quieres usar
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFoto(reader.result); // base64 aquí
+      };
+      reader.readAsDataURL(file);
     }
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setIsAnimating(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsAnimating(true);
 
-  const dataToSend = {
-    nombre: formData.nombre,
-    apellido: formData.apellido,
-    correo: formData.correo,
-    fechaNacimiento: formData.fechaNacimiento,
-    genero: formData.genero,
-    ocupacion: formData.ocupacion,
-    idParroquia: ubicacion.parroquia,
-  };
+    const dataToSend = {
+      nombre: formData.nombre,
+      apellido: formData.apellido,
+      correo: formData.correo,
+      fechaNacimiento: formData.fechaNacimiento,
+      genero: formData.genero,
+      ocupacion: formData.ocupacion,
+      idParroquia: ubicacion.parroquia,
+      foto: foto || null,
+    };
 
-  if (representaEmpresa) {
-    dataToSend.nombreEmpresa = empresaData.nombreEmpresa;
-    dataToSend.rucEmpresa = empresaData.rucEmpresa;
-    dataToSend.correoEmpresa = empresaData.correoEmpresa;
-  }
 
-  try {
-    const response = await fetch(`http://localhost:8090/api/registro/contratante/${idContratante}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',  // importante: JSON
-      },
-      body: JSON.stringify(dataToSend),
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-      alert('Datos actualizados con éxito!');
-      setModoEdicion(false);
-    } else {
-      alert('Error al actualizar: ' + result.message);
+    if (representaEmpresa) {
+      dataToSend.nombreEmpresa = empresaData.nombreEmpresa;
+      dataToSend.rucEmpresa = empresaData.rucEmpresa;
+      dataToSend.correoEmpresa = empresaData.correoEmpresa;
     }
-  } catch (error) {
-    alert('Error en la conexión: ' + error.message);
-  }
 
-  setIsAnimating(false);
-};
+    try {
+      const response = await fetch(`http://localhost:8090/api/registro/contratante/${idContratante}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',  // importante: JSON
+        },
+        body: JSON.stringify(dataToSend),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert('Datos actualizados con éxito!');
+        setModoEdicion(false);
+        const resContratante = await fetch(`http://localhost:8090/api/registro/contratante/detalle/${idContratante}`);
+        const jsonContratante = await resContratante.json();
+        if (jsonContratante.success) {
+          const fotoNombre = jsonContratante.contratante.foto;
+        }
+      } else {
+        alert('Error al actualizar: ' + result.message);
+      }
+    } catch (error) {
+      alert('Error en la conexión: ' + error.message);
+    }
+
+    setIsAnimating(false);
+  };
 
   return (
     <>
       <HeaderContratante userId={idContratante} />
-      <div className={`profile-container ${isAnimating ? 'animate' : ''}`}>
+      <div className={` ${isAnimating ? 'animate' : ''}`}>
         <main className="profile-main">
-          <div className="profile-card">
+          <div className="profile-container">
             <div className="profile-intro">
               <div
                 className="profile-avatar-large"
                 style={{
                   backgroundImage: foto
                     ? `url(${foto})`
-                    : 'url("URL_imagen_por_defecto_o_placeholder")',
+                    : 'url("https://cdn.shopify.com/s/files/1/0229/0839/articles/bancos_de_imagenes_gratis.jpg")',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  width: '460px',
+                  height: '290px',
+                  border: '2px solid #ccc',
                 }}
               ></div>
-              {modoEdicion && (
-                <div style={{ marginTop: '10px' }}>
-                  <button
-                    type="button"
-                    className="submit-button"
-                    onClick={handleClickSubirFoto}
-                  >
-                    Subir Foto
-                  </button>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    ref={inputFileRef}
-                    onChange={handleFileChange}
-                  />
-                </div>
-              )}
 
               <div className="profile-info">
                 <h1 className="profile-name">{formData.nombre} {formData.apellido}</h1>
                 <p className="profile-title">{formData.ocupacion}</p>
+
+                {modoEdicion && (
+                  <div style={{ marginTop: '10px' }}>
+                    <button
+                      type="button"
+                      className="submit-buttonv1"
+                      onClick={handleClickSubirFoto}
+                    >
+                      Subir Foto
+                    </button>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      ref={inputFileRef}
+                      onChange={handleFileChange}
+                    />
+                  </div>
+                )}
               </div>
             </div>
 
-            <form onSubmit={handleSubmit}>
-              <div className="section-box">
-                <div className="info-tab">Información Personal</div>
-                <h3 className="sub-section-title">Datos Personales</h3>
-
-                <div className="grid-2-columns">
-                  <div className="field-box">
-                    <label>Cédula</label>
-                    <input
-                      type="text"
-                      name="cedula"
-                      value={formData.cedula}
-                      onChange={handleChange}
-                      className="form-input"
-                      disabled
-                    />
-                  </div>
-                  <div className="field-box">
-                    <label>Nombre</label>
-                    <input
-                      type="text"
-                      name="nombre"
-                      value={formData.nombre}
-                      onChange={handleChange}
-                      className="form-input"
-                      disabled={!modoEdicion}
-                    />
-                  </div>
-                  <div className="field-box">
-                    <label>Apellido</label>
-                    <input
-                      type="text"
-                      name="apellido"
-                      value={formData.apellido}
-                      onChange={handleChange}
-                      className="form-input"
-                      disabled={!modoEdicion}
-                    />
-                  </div>
-                  <div className="field-box">
-                    <label>Correo Electrónico</label>
-                    <input
-                      type="email"
-                      name="correo"
-                      value={formData.correo}
-                      onChange={handleChange}
-                      className="form-input"
-                      disabled={!modoEdicion}
-                    />
-                  </div>
-                  <div className="field-box">
-                    <label>Fecha de Nacimiento</label>
-                    <input
-                      type="date"
-                      name="fechaNacimiento"
-                      value={formData.fechaNacimiento}
-                      onChange={handleChange}
-                      className="form-input"
-                      disabled
-                    />
-                  </div>
-                  <div className="field-box">
-                    <label>Género</label>
-                    <select
-                      name="genero"
-                      value={formData.genero}
-                      onChange={handleChange}
-                      className="form-input"
-                      disabled={!modoEdicion}
-                    >
-                      <option value="">Seleccione...</option>
-                      <option value="Masculino">Masculino</option>
-                      <option value="Femenino">Femenino</option>
-                      <option value="Otro">Otro</option>
-                    </select>
-                  </div>
-                  <div className="field-box">
-                    <label>Ocupación</label>
-                    <input
-                      type="text"
-                      name="ocupacion"
-                      value={formData.ocupacion}
-                      onChange={handleChange}
-                      className="form-input"
-                      disabled={!modoEdicion}
-                    />
-                  </div>
+            {/* 🔻 AHORA va fuera del bloque anterior */}
+            <div className="profile-datos-rightinit">
+              <h3 className="sub-section-principal">Información Personal</h3>
+              <div className="grid-2-columns">
+                <div className="field-box">
+                  <label>Cédula</label>
+                  <input
+                    type="text"
+                    name="cedula"
+                    value={formData.cedula}
+                    onChange={handleChange}
+                    className="form-input"
+                    disabled
+                  />
                 </div>
+                <div className="field-box">
+                  <label>Nombre</label>
+                  <input
+                    type="text"
+                    name="nombre"
+                    value={formData.nombre}
+                    onChange={handleChange}
+                    className="form-input"
+                    disabled={!modoEdicion}
+                  />
+                </div>
+                <div className="field-box">
+                  <label>Apellido</label>
+                  <input
+                    type="text"
+                    name="apellido"
+                    value={formData.apellido}
+                    onChange={handleChange}
+                    className="form-input"
+                    disabled={!modoEdicion}
+                  />
+                </div>
+                <div className="field-box">
+                  <label>Correo Electrónico</label>
+                  <input
+                    type="email"
+                    name="correo"
+                    value={formData.correo}
+                    onChange={handleChange}
+                    className="form-input"
+                    disabled={!modoEdicion}
+                  />
+                </div>
+                <div className="field-box">
+                  <label>Fecha de Nacimiento</label>
+                  <input
+                    type="date"
+                    name="fechaNacimiento"
+                    value={formData.fechaNacimiento}
+                    onChange={handleChange}
+                    className="form-input"
+                    disabled
+                  />
+                </div>
+                <div className="field-box">
+                  <label>Género</label>
+                  <select
+                    name="genero"
+                    value={formData.genero}
+                    onChange={handleChange}
+                    className="form-input"
+                    disabled={!modoEdicion}
+                  >
+                    <option value="">Seleccione...</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                    <option value="Otro">Otro</option>
+                  </select>
+                </div>
+                <div className="field-box">
+                  <label>Ocupación</label>
+                  <input
+                    type="text"
+                    name="ocupacion"
+                    value={formData.ocupacion}
+                    onChange={handleChange}
+                    className="form-input"
+                    disabled={!modoEdicion}
+                  />
+                </div>
+              </div>
+            </div>
+            <form onSubmit={handleSubmit}>
+              <div className="datos-personales-box">
 
                 <h3 className="sub-section-title">Ubicación</h3>
                 <div className="grid-2-columns">
@@ -527,7 +489,7 @@ const handleSubmit = async (e) => {
 
                 {representaEmpresa && (
                   <>
-                    <h3 className="sub-section-title">Datos de la Empresa</h3>
+                    <h3 className="sub-section-empresas">Datos de la Empresa</h3>
                     <div className="grid-2-columns">
                       <div className="field-box">
                         <label>Nombre de la Empresa</label>
