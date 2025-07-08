@@ -4,7 +4,6 @@ import {
   FaCalendarAlt, FaLock, FaTint, FaHeartbeat
 } from 'react-icons/fa';
 import { registrarPaciente } from "../../../servicios/registrarService";
-import { getAlergias } from '../../../servicios/alergiasService';
 import { getProvincias } from '../../../servicios/ProvinciaService';
 import { getCantonesByProvinciaId } from '../../../servicios/CantonService';
 import { getParroquiasByCantonId } from "../../../servicios/parroquiaService";
@@ -12,16 +11,18 @@ import './registropaciente.css';
 import HeaderContratante from "../HeaderContratante/HeaderContratante";
 import { useSearchParams } from 'react-router-dom';
 
+
+
 const RegistroPaciente = () => {
   const generos = ['Masculino', 'Femenino'];
   const tiposSangre = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
   const [searchParams] = useSearchParams();
   const userId = searchParams.get('userId');
+  const alergias = ["Ninguna", "Otra", "Penicilina", "Ibuprofeno", "Sulfas", "Naproxeno", "Diclofenaco", "Soya", "Gluten", "Caspa de perro", "Caspa de gato", "Rinitis", "Dermatitis", "Urticaria", "Eczema", "Anafilaxia", "Conjuntivitis", "Angioedema", "Hipersensibilidad", "Atopia", "Vasculitis"];
 
   const [provincias, setProvincias] = useState([]);
   const [cantones, setCantones] = useState([]);
   const [parroquias, setParroquias] = useState([]);
-  const [alergias, setAlergias] = useState([]);
 
   const [ubicacion, setUbicacion] = useState({
     provincia: '',
@@ -29,6 +30,11 @@ const RegistroPaciente = () => {
     parroquia: ''
   });
 
+
+  const [alergiasSeleccionadas, setAlergiasSeleccionadas] = useState([]);
+  const [alergiaPersonalizada, setAlergiaPersonalizada] = useState('');
+
+  const [alergiaSeleccionada, setAlergiaSeleccionada] = useState("");
   //Validaciones
 
   const validarCedulaEcuatoriana = (cedula) => {
@@ -75,8 +81,7 @@ const RegistroPaciente = () => {
     tipoSangre: '',
     contactoEmergencia: '',
     parentesco: '',
-    contrasena: '',
-    confirmarContrasena: ''
+    foto: '',
   });
 
 
@@ -141,20 +146,6 @@ const RegistroPaciente = () => {
     cargarParroquias();
   }, [ubicacion.canton]);
 
-
-
-  useEffect(() => {
-    const fetchAlergias = async () => {
-      try {
-        const data = await getAlergias();
-        console.log('Alergias recibidas:', data); // <-- verifica aquí
-        setAlergias(data);
-      } catch (error) {
-        console.error('Error al obtener alergias:', error);
-      }
-    };
-    fetchAlergias();
-  }, []);
 
 
   const handleUbicacionChange = (e) => {
@@ -240,11 +231,7 @@ const RegistroPaciente = () => {
       valid = false;
     }
 
-    // Alergia
-    if (!formulario.alergia) {
-      nuevosErrores.alergia = 'Seleccione una alergia';
-      valid = false;
-    }
+
 
     // Tipo de sangre
     if (!formulario.tipoSangre) {
@@ -264,27 +251,16 @@ const RegistroPaciente = () => {
       valid = false;
     }
 
-    // Contraseña
-    if (!formulario.contrasena) {
-      nuevosErrores.contrasena = 'Ingrese una contraseña';
+    if (!formulario.foto) {
+      nuevosErrores.foto = 'Debe cargar una imagen';
+      valid = false;
+    }
+    if (alergiasSeleccionadas.length === 0) {
+      nuevosErrores.alergia = 'Seleccione al menos una alergia o "Ninguna"';
       valid = false;
     }
 
-    // Confirmar contraseña
-    if (!formulario.confirmarContrasena) {
-      nuevosErrores.confirmarContrasena = 'Confirme la contraseña';
-      valid = false;
-    }
 
-    // Coincidencia de contraseñas
-    if (
-      formulario.contrasena &&
-      formulario.confirmarContrasena &&
-      formulario.contrasena !== formulario.confirmarContrasena
-    ) {
-      nuevosErrores.confirmarContrasena = 'Las contraseñas no coinciden';
-      valid = false;
-    }
 
     // Asignar errores al estado
     setErrores(nuevosErrores);
@@ -301,7 +277,7 @@ const RegistroPaciente = () => {
       parentesco: formulario.parentesco,
       tipo_sangre: formulario.tipoSangre,
       idParroquia: parseInt(ubicacion.parroquia),
-      idAlergia: parseInt(formulario.alergia),
+      alergia: alergiasSeleccionadas.join(', '),
       foto: formulario.foto,
       idContratante: parseInt(userId)
     };
@@ -324,11 +300,14 @@ const RegistroPaciente = () => {
           parroquia: '',
           tipoSangre: '',
           alergia: '',
-          contrasena: '',
-          confirmarContrasena: '',
           foto: ''
         });
         setUbicacion({ provincia: '', canton: '', parroquia: '' });
+
+        setAlergiasSeleccionadas([]);
+        setAlergiaPersonalizada('');
+        setAlergiaSeleccionada('');
+
       } else {
         alert(data.message || 'No se pudo registrar al paciente.');
       }
@@ -348,13 +327,14 @@ const RegistroPaciente = () => {
     <>
       <HeaderContratante userId={userId} />
       <div className="registro-page">
-        <div className="registro-container">
+        <div className="">
           <div className="registro-card">
-            <h2>Registro de Paciente</h2>
+            <h2>Registro Paciente</h2>
             <p className="subtitle">Por favor completa tus datos</p>
             <form onSubmit={handleSubmit}>
 
-              <h3 className="form-section-title">Información Personal</h3>
+              <h3 className="form-section-title"></h3>
+              <h3></h3>
 
               <div style={{ display: 'flex', gap: '30px', marginBottom: '15px' }}>
                 <div style={{ flex: 1 }}>
@@ -375,7 +355,7 @@ const RegistroPaciente = () => {
                   </div>
                   <div style={{ display: 'flex', gap: '30px', marginBottom: '15px' }}>
                     <div style={{ flex: 1 }}>
-                      <div className="input-group bajar-campo1">
+                      <div className="input-group">
                         <label><FaUser className="input-icon" /> Dirección</label>
                         <input
                           type="text"
@@ -411,7 +391,7 @@ const RegistroPaciente = () => {
                     {errores.nombres && <p className="error-text">{errores.nombres}</p>}
                   </div>
                   <div style={{ flex: 1 }}>
-                    <div className="bajar-campo input-group">
+                    <div className="input-group">
                       <label><FaUser className="input-icon" /> Parentesco</label>
                       <input
                         type="text"
@@ -446,7 +426,7 @@ const RegistroPaciente = () => {
                   </div>
 
                   <div style={{ flex: 1 }}>
-                    <div className="bajar-campo input-group">
+                    <div className="input-group">
                       <label><FaCalendarAlt className="input-icon" /> Fecha de nacimiento</label>
                       <input
                         type="date"
@@ -458,7 +438,7 @@ const RegistroPaciente = () => {
                         }}
                         className={errores.fechaNacimiento ? 'input-error' : ''}
                       />
-                      {errores.fechaNacimiento && <p className="error-text">Seleccione una fecha</p>}
+                      {errores.fechaNacimiento && <p className="error-text">{errores.fechaNacimiento}</p>}
                     </div>
                   </div>
                 </div>
@@ -472,7 +452,7 @@ const RegistroPaciente = () => {
                       <img
                         src={formulario.foto}
                         alt="Foto cargada"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
                       />
                     ) : (
                       <div style={{
@@ -505,12 +485,13 @@ const RegistroPaciente = () => {
                   >
                     Cargar Foto
                   </button>
+                  {errores.foto && <p className="error-foto">{errores.foto}</p>}
                 </div>
 
               </div>
               <div style={{ display: 'flex', gap: '30px', marginBottom: '15px' }}>
                 <div style={{ flex: 1 }}>
-                  <div className="input-group">
+                  <div className="input-groupv2">
                     <label><FaPhone className="input-icon" /> Contacto de emergencia</label>
                     <input
                       type="text"
@@ -527,7 +508,7 @@ const RegistroPaciente = () => {
                   </div>
                 </div>
                 <div style={{ flex: 1 }}>
-                  <div className="input-group">
+                  <div className="input-groupv3">
                     <label><FaVenusMars className="input-icon" /> Género</label>
                     <div className="select-wrapper">
                       <select
@@ -548,7 +529,7 @@ const RegistroPaciente = () => {
                     {errores.genero && <p className="error-text">Seleccione un género</p>}
                   </div>
                 </div>
-                <div className="input-group">
+                <div className="input-groupv4">
                   <label><FaTint className="input-icon" /> Tipo de sangre</label>
                   <div className="select-wrapper">
                     <select
@@ -640,64 +621,125 @@ const RegistroPaciente = () => {
                   </div>
                 </div>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '15px' }}>
-                <div style={{ flex: '0 0 440px' /* ancho fijo pequeño */ }}>
-                  <div className="input-group">
-                    <label><FaHeartbeat className="input-icon" /> Alergia</label>
-                    <div className="select-wrapper">
-                      <select
-                        name="alergia"
-                        value={formulario.alergia}
-                        onChange={(e) => {
-                          handleChange(e);
-                          setErrores(prev => ({ ...prev, alergia: '' }));
-                        }}
-                        className={errores.alergia ? 'input-error' : ''}
-                      >
-                        <option value="">Seleccione...</option>
-                        {alergias.map(a => (
-                          <option key={a.id_alergias} value={a.id_alergias}>{a.alergia}</option>
-                        ))}
-                      </select>
-                    </div>
-                    {errores.alergia && <p className="error-text">Seleccione una alergia</p>}
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', maxWidth: '700px' }}>
+                {/* Combo de alergias */}
+                <div className="input-group" style={{ flex: '0 0 320px' }}>
+                  <label><FaHeartbeat className="input-icon" /> Alergia</label>
+                  <select
+                    name="alergia"
+                    value={alergiaSeleccionada}
+                    onChange={(e) => {
+                      const nuevaAlergia = e.target.value;
+                      if (nuevaAlergia === "Otra") {
+                        setAlergiaSeleccionada("Otra");
+                      } else {
+                        setAlergiaSeleccionada("");
+                        if (nuevaAlergia === "Ninguna") {
+                          setAlergiasSeleccionadas(["Ninguna"]);
+                        } else {
+                          if (alergiasSeleccionadas.includes("Ninguna")) return;
+                          if (nuevaAlergia && !alergiasSeleccionadas.includes(nuevaAlergia)) {
+                            setAlergiasSeleccionadas([...alergiasSeleccionadas, nuevaAlergia]);
+                          }
+                        }
+                      }
+                    }}
+                    disabled={alergiasSeleccionadas.includes("Ninguna")}
+                    style={{ width: '100%', padding: '8px', borderRadius: '5px', border: '1px solid #ccc' }}
+                  >
+                    <option value="">Seleccione...</option>
+                    {alergias.map((a, i) => (
+                      <option key={i} value={a}>{a}</option>
+                    ))}
+                  </select>
+                  {errores.alergia && <p className="error-text">Seleccione al menos una alergia o "Ninguna"</p>}
+
+                </div>
+
+
+                {/* Input + botón a la derecha, solo si "Otra" está seleccionado */}
+                {alergiaSeleccionada === "Otra" && (
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-end', flex: '1', marginTop: '30px' }}>
+                    <input
+                      type="text"
+                      placeholder="Escribe tu alergia"
+                      value={alergiaPersonalizada}
+                      onChange={(e) => setAlergiaPersonalizada(e.target.value)}
+                      style={{
+                        flex: 1,
+                        padding: '8px',
+                        borderRadius: '5px',
+                        border: '1px solid #ccc',
+                        fontSize: '1rem'
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!alergiaPersonalizada.trim()) {
+                          alert('Por favor, escribe una alergia');
+                          return;
+                        }
+                        if (!alergiasSeleccionadas.includes(alergiaPersonalizada.trim())) {
+                          setAlergiasSeleccionadas([...alergiasSeleccionadas, alergiaPersonalizada.trim()]);
+                        }
+                        setAlergiaPersonalizada('');
+                        setAlergiaSeleccionada('');
+                      }}
+                      style={{
+                        padding: '8px 20px',
+                        backgroundColor: '#0a3d62',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '5px',
+                        cursor: 'pointer',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      Guardar
+                    </button>
                   </div>
-                </div>
+                )}
+
+                {/* Lista de alergias seleccionadas debajo (ocupa toda la fila) */}
               </div>
-              <h3 className="form-section-title">Seguridad</h3>
 
-              <div style={{ display: 'flex', gap: '30px', marginBottom: '15px' }}>
-                <div style={{ flex: 1 }} className="input-group">
-                  <label><FaLock className="input-icon" /> Contraseña</label>
-                  <input
-                    type="password"
-                    name="contrasena"
-                    placeholder="**********"
-                    value={formulario.contrasena}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setErrores(prev => ({ ...prev, contrasena: '' }));
+              {/* Lista abajo, con margenes separados */}
+              <div className="alergias-container" style={{ marginTop: '-17px', maxWidth: '700px' }}>
+                {alergiasSeleccionadas.map((alergia, index) => (
+                  <div
+                    key={index}
+                    className="alergia-tag"
+                    style={{
+                      padding: '5px 12px',
+                      margin: '7px 8px 0 0',
+                      backgroundColor: '#0a3d62',
+                      color: 'white',
+                      borderRadius: '10px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      whiteSpace: 'nowrap',
                     }}
-                    className={errores.contrasena ? 'input-error' : ''}
-                  />
-                  {errores.contrasena && <p className="error-text">{errores.contrasena}</p>}
-                </div>
-
-                <div style={{ flex: 1 }} className="input-group">
-                  <label><FaLock className="input-icon" /> Confirmar Contraseña</label>
-                  <input
-                    type="password"
-                    name="confirmarContrasena"
-                    placeholder="**********"
-                    value={formulario.confirmarContrasena}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setErrores(prev => ({ ...prev, confirmarContrasena: '' }));
-                    }}
-                    className={errores.confirmarContrasena ? 'input-error' : ''}
-                  />
-                  {errores.confirmarContrasena && <p className="error-text">{errores.confirmarContrasena}</p>}
-                </div>
+                  >
+                    {alergia}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setAlergiasSeleccionadas(alergiasSeleccionadas.filter((a) => a !== alergia))
+                      }
+                      style={{
+                        marginLeft: '10px',
+                        background: 'none',
+                        color: 'red',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
               </div>
 
               {/* Fila 9: Términos y botón */}
