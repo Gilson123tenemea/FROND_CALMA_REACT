@@ -326,20 +326,20 @@ const RegistroPaciente = () => {
   return (
     <>
       <HeaderContratante userId={userId} />
-      <div className="registro-page">
+      <div className="registro-page-paci">
         <div className="">
-          <div className="registro-card">
+          <div className="registro-card-paci">
             <h2>Registro Paciente</h2>
             <p className="subtitle">Por favor completa tus datos</p>
             <form onSubmit={handleSubmit}>
 
-              <h3 className="form-section-title"></h3>
+              <h3 className="form-section-title-paci"></h3>
               <h3></h3>
 
               <div style={{ display: 'flex', gap: '30px', marginBottom: '15px' }}>
                 <div style={{ flex: 1 }}>
-                  <div className="input-group">
-                    <label><FaIdCard className="input-icon" /> Cédula</label>
+                  <div className="input-group-paci">
+                    <label><FaIdCard className="input-icon-paci" /> Cédula</label>
                     <input
                       type="text"
                       name="cedula"
@@ -349,14 +349,14 @@ const RegistroPaciente = () => {
                         handleChange(e);
                         setErrores(prev => ({ ...prev, cedula: '' }));
                       }}
-                      className={errores.cedula ? 'input-error' : ''}
+                      className={errores.cedula ? 'input-error-paci' : ''}
                     />
-                    {errores.cedula && <p className="error-text">{errores.cedula}</p>}
+                    {errores.cedula && <p className="error-text-paci">{errores.cedula}</p>}
                   </div>
                   <div style={{ display: 'flex', gap: '30px', marginBottom: '15px' }}>
                     <div style={{ flex: 1 }}>
-                      <div className="input-group">
-                        <label><FaUser className="input-icon" /> Dirección</label>
+                      <div className="input-group-paci">
+                        <label><FaUser className="input-icon-paci" /> Dirección</label>
                         <input
                           type="text"
                           name="direccion"
@@ -366,17 +366,17 @@ const RegistroPaciente = () => {
                             handleChange(e);
                             setErrores(prev => ({ ...prev, direccion: '' }));
                           }}
-                          className={errores.direccion ? 'input-error' : ''}
+                          className={errores.direccion ? 'input-error-paci' : ''}
                         />
-                        {errores.direccion && <p className="error-text">{errores.direccion}</p>}
+                        {errores.direccion && <p className="error-text-paci">{errores.direccion}</p>}
                       </div>
                     </div>
 
                   </div>
                 </div>
                 <div style={{ flex: 1 }}>
-                  <div className="input-group">
-                    <label><FaUser className="input-icon" /> Nombres</label>
+                  <div className="input-group-paci">
+                    <label><FaUser className="input-icon-paci" /> Nombres</label>
                     <input
                       type="text"
                       name="nombres"
@@ -386,13 +386,13 @@ const RegistroPaciente = () => {
                         handleChange(e);
                         setErrores(prev => ({ ...prev, nombres: '' }));
                       }}
-                      className={errores.nombres ? 'input-error' : ''}
+                      className={errores.nombres ? 'input-error-paci' : ''}
                     />
-                    {errores.nombres && <p className="error-text">{errores.nombres}</p>}
+                    {errores.nombres && <p className="error-text-paci">{errores.nombres}</p>}
                   </div>
                   <div style={{ flex: 1 }}>
-                    <div className="input-group">
-                      <label><FaUser className="input-icon" /> Parentesco</label>
+                    <div className="input-group-paci">
+                      <label><FaUser className="input-icon-paci" /> Parentesco</label>
                       <input
                         type="text"
                         name="parentesco"
@@ -402,15 +402,15 @@ const RegistroPaciente = () => {
                           handleChange(e);
                           setErrores(prev => ({ ...prev, parentesco: '' }));
                         }}
-                        className={errores.parentesco ? 'input-error' : ''}
+                        className={errores.parentesco ? 'input-error-paci' : ''}
                       />
-                      {errores.parentesco && <p className="error-text">{errores.parentesco}</p>}
+                      {errores.parentesco && <p className="error-text-paci">{errores.parentesco}</p>}
                     </div>
                   </div>
                 </div>
                 <div style={{ flex: 1 }}>
-                  <div className="input-group">
-                    <label><FaUser className="input-icon" /> Apellidos</label>
+                  <div className="input-group-paci">
+                    <label><FaUser className="input-icon-paci" /> Apellidos</label>
                     <input
                       type="text"
                       name="apellidos"
@@ -420,14 +420,14 @@ const RegistroPaciente = () => {
                         handleChange(e);
                         setErrores(prev => ({ ...prev, apellidos: '' }));
                       }}
-                      className={errores.apellidos ? 'input-error' : ''}
+                      className={errores.apellidos ? 'input-error-paci' : ''}
                     />
-                    {errores.apellidos && <p className="error-text">{errores.apellidos}</p>}
+                    {errores.apellidos && <p className="error-text-paci">{errores.apellidos}</p>}
                   </div>
 
                   <div style={{ flex: 1 }}>
-                    <div className="input-group">
-                      <label><FaCalendarAlt className="input-icon" /> Fecha de nacimiento</label>
+                    <div className="input-group-paci">
+                      <label><FaCalendarAlt className="input-icon-paci" /> Fecha de nacimiento</label>
                       <input
                         type="date"
                         name="fechaNacimiento"
@@ -436,9 +436,9 @@ const RegistroPaciente = () => {
                           handleChange(e);
                           setErrores(prev => ({ ...prev, fechaNacimiento: '' }));
                         }}
-                        className={errores.fechaNacimiento ? 'input-error' : ''}
+                        className={errores.fechaNacimiento ? 'input-error-paci' : ''}
                       />
-                      {errores.fechaNacimiento && <p className="error-text">{errores.fechaNacimiento}</p>}
+                      {errores.fechaNacimiento && <p className="error-text-paci">{errores.fechaNacimiento}</p>}
                     </div>
                   </div>
                 </div>
@@ -446,8 +446,8 @@ const RegistroPaciente = () => {
 
 
                 {/* Foto a la derecha */}
-                <div className="foto-container">
-                  <div className="ing-1">
+                <div className="foto-container-paci">
+                  <div className="ing-1-paci">
                     {formulario.foto ? (
                       <img
                         src={formulario.foto}
@@ -481,18 +481,18 @@ const RegistroPaciente = () => {
                   <button
                     type="button"
                     onClick={() => document.getElementById('fotoPaciente').click()}
-                    className="btn-cargar-foto"
+                    className="btn-cargar-foto-paci"
                   >
                     Cargar Foto
                   </button>
-                  {errores.foto && <p className="error-foto">{errores.foto}</p>}
+                  {errores.foto && <p className="error-foto-paci">{errores.foto}</p>}
                 </div>
 
               </div>
               <div style={{ display: 'flex', gap: '30px', marginBottom: '15px' }}>
                 <div style={{ flex: 1 }}>
-                  <div className="input-groupv2">
-                    <label><FaPhone className="input-icon" /> Contacto de emergencia</label>
+                  <div className="input-groupv2-paci">
+                    <label><FaPhone className="input-icon-paci" /> Contacto de emergencia</label>
                     <input
                       type="text"
                       name="contactoEmergencia"
@@ -502,15 +502,15 @@ const RegistroPaciente = () => {
                         handleChange(e);
                         setErrores(prev => ({ ...prev, contactoEmergencia: '' }));
                       }}
-                      className={errores.contactoEmergencia ? 'input-error' : ''}
+                      className={errores.contactoEmergencia ? 'input-error-paci' : ''}
                     />
-                    {errores.contactoEmergencia && <p className="error-text">{errores.contactoEmergencia}</p>}
+                    {errores.contactoEmergencia && <p className="error-text-paci">{errores.contactoEmergencia}</p>}
                   </div>
                 </div>
                 <div style={{ flex: 1 }}>
-                  <div className="input-groupv3">
-                    <label><FaVenusMars className="input-icon" /> Género</label>
-                    <div className="select-wrapper">
+                  <div className="input-groupv3-paci">
+                    <label><FaVenusMars className="input-icon-paci" /> Género</label>
+                    <div className="select-wrapper-paci">
                       <select
                         name="genero"
                         value={formulario.genero}
@@ -518,7 +518,7 @@ const RegistroPaciente = () => {
                           handleChange(e);
                           setErrores(prev => ({ ...prev, genero: '' }));
                         }}
-                        className={errores.genero ? 'input-error' : ''}
+                        className={errores.genero ? 'input-error-paci' : ''}
                       >
                         <option value="">Seleccione...</option>
                         {generos.map((g, i) => (
@@ -526,12 +526,12 @@ const RegistroPaciente = () => {
                         ))}
                       </select>
                     </div>
-                    {errores.genero && <p className="error-text">Seleccione un género</p>}
+                    {errores.genero && <p className="error-text-paci">Seleccione un género</p>}
                   </div>
                 </div>
-                <div className="input-groupv4">
-                  <label><FaTint className="input-icon" /> Tipo de sangre</label>
-                  <div className="select-wrapper">
+                <div className="input-groupv4-paci">
+                  <label><FaTint className="input-icon-paci" /> Tipo de sangre</label>
+                  <div className="select-wrapper-paci">
                     <select
                       name="tipoSangre"
                       value={formulario.tipoSangre}
@@ -539,7 +539,7 @@ const RegistroPaciente = () => {
                         handleChange(e);
                         setErrores(prev => ({ ...prev, tipoSangre: '' }));
                       }}
-                      className={errores.tipoSangre ? 'input-error' : ''}
+                      className={errores.tipoSangre ? 'input-error-paci' : ''}
                     >
                       <option value="">Seleccione...</option>
                       {tiposSangre.map((t, i) => (
@@ -547,15 +547,15 @@ const RegistroPaciente = () => {
                       ))}
                     </select>
                   </div>
-                  {errores.tipoSangre && <p className="error-text">Seleccione un tipo de sangre</p>}
+                  {errores.tipoSangre && <p className="error-text-paci">Seleccione un tipo de sangre</p>}
                 </div>
               </div>
 
               <div style={{ display: 'flex', gap: '30px', marginBottom: '15px' }}>
                 <div style={{ flex: 1 }}>
-                  <div className="input-group">
-                    <label><FaUser className="input-icon" /> Provincia</label>
-                    <div className="select-wrapper">
+                  <div className="input-group-paci">
+                    <label><FaUser className="input-icon-paci" /> Provincia</label>
+                    <div className="select-wrapper-paci">
                       <select
                         name="provincia"
                         value={ubicacion.provincia}
@@ -563,7 +563,7 @@ const RegistroPaciente = () => {
                           handleUbicacionChange(e);
                           setErrores(prev => ({ ...prev, provincia: '' }));
                         }}
-                        className={errores.provincia ? 'input-error' : ''}
+                        className={errores.provincia ? 'input-error-paci' : ''}
                       >
                         <option value="">Seleccione...</option>
                         {provincias.map(p => (
@@ -571,14 +571,14 @@ const RegistroPaciente = () => {
                         ))}
                       </select>
                     </div>
-                    {errores.provincia && <p className="error-text">Seleccione una provincia</p>}
+                    {errores.provincia && <p className="error-text-paci">Seleccione una provincia</p>}
                   </div>
                 </div>
 
                 <div style={{ flex: 1 }}>
-                  <div className="input-group">
-                    <label><FaUser className="input-icon" /> Cantón</label>
-                    <div className="select-wrapper">
+                  <div className="input-group-paci">
+                    <label><FaUser className="input-icon-paci" /> Cantón</label>
+                    <div className="select-wrapper-paci">
                       <select
                         name="canton"
                         value={ubicacion.canton}
@@ -586,7 +586,7 @@ const RegistroPaciente = () => {
                           handleUbicacionChange(e);
                           setErrores(prev => ({ ...prev, canton: '' }));
                         }}
-                        className={errores.canton ? 'input-error' : ''}
+                        className={errores.canton ? 'input-error-paci' : ''}
                       >
                         <option value="">Seleccione...</option>
                         {cantones.map(c => (
@@ -594,14 +594,14 @@ const RegistroPaciente = () => {
                         ))}
                       </select>
                     </div>
-                    {errores.canton && <p className="error-text">Seleccione un cantón</p>}
+                    {errores.canton && <p className="error-text-paci">Seleccione un cantón</p>}
                   </div>
                 </div>
 
                 <div style={{ flex: 1 }}>
-                  <div className="input-group">
-                    <label><FaUser className="input-icon" /> Parroquia</label>
-                    <div className="select-wrapper">
+                  <div className="input-group-paci">
+                    <label><FaUser className="input-icon-paci" /> Parroquia</label>
+                    <div className="select-wrapper-paci">
                       <select
                         name="parroquia"
                         value={ubicacion.parroquia}
@@ -609,7 +609,7 @@ const RegistroPaciente = () => {
                           handleUbicacionChange(e);
                           setErrores(prev => ({ ...prev, parroquia: '' }));
                         }}
-                        className={errores.parroquia ? 'input-error' : ''}
+                        className={errores.parroquia ? 'input-error-paci' : ''}
                       >
                         <option value="">Seleccione...</option>
                         {parroquias.map(p => (
@@ -617,14 +617,14 @@ const RegistroPaciente = () => {
                         ))}
                       </select>
                     </div>
-                    {errores.parroquia && <p className="error-text">Seleccione una parroquia</p>}
+                    {errores.parroquia && <p className="error-text-paci">Seleccione una parroquia</p>}
                   </div>
                 </div>
               </div>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', maxWidth: '700px' }}>
                 {/* Combo de alergias */}
-                <div className="input-group" style={{ flex: '0 0 320px' }}>
-                  <label><FaHeartbeat className="input-icon" /> Alergia</label>
+                <div className="input-group-paci" style={{ flex: '0 0 320px' }}>
+                  <label><FaHeartbeat className="input-icon-paci" /> Alergia</label>
                   <select
                     name="alergia"
                     value={alergiaSeleccionada}
@@ -652,7 +652,7 @@ const RegistroPaciente = () => {
                       <option key={i} value={a}>{a}</option>
                     ))}
                   </select>
-                  {errores.alergia && <p className="error-text">Seleccione al menos una alergia o "Ninguna"</p>}
+                  {errores.alergia && <p className="error-text-paci">Seleccione al menos una alergia o "Ninguna"</p>}
 
                 </div>
 
@@ -705,11 +705,11 @@ const RegistroPaciente = () => {
               </div>
 
               {/* Lista abajo, con margenes separados */}
-              <div className="alergias-container" style={{ marginTop: '-17px', maxWidth: '700px' }}>
+              <div className="alergias-container-paci" style={{ marginTop: '-17px', maxWidth: '700px' }}>
                 {alergiasSeleccionadas.map((alergia, index) => (
                   <div
                     key={index}
-                    className="alergia-tag"
+                    className="alergia-tag-paci"
                     style={{
                       padding: '5px 12px',
                       margin: '7px 8px 0 0',
@@ -743,15 +743,15 @@ const RegistroPaciente = () => {
               </div>
 
               {/* Fila 9: Términos y botón */}
-              <div className="terms-checkbox" style={{ marginBottom: '15px' }}>
+              <div className="terms-checkbox-paci" style={{ marginBottom: '15px' }}>
                 <input type="checkbox" id="terminos" required />
                 <label htmlFor="terminos">Acepto los términos y condiciones</label>
               </div>
 
-              <button type="submit" className="submit-btn">Registrar Paciente</button>
+              <button type="submit" className="submit-btn-paci">Registrar Paciente</button>
             </form>
 
-            <div className="login-link" style={{ marginTop: '20px' }}>
+            <div className="login-link-paci" style={{ marginTop: '20px' }}>
               ¿Ya tienes una cuenta? <a href="/login">Inicia sesión aquí</a>
             </div>
           </div>
