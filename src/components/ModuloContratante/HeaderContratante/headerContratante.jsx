@@ -36,7 +36,7 @@ const HeaderContratante = ({ userId, onOpenMensajes }) => {
           </div>
           <input type="text" placeholder="Buscar" />
         </div>
-        <div className="user-avatar"></div>
+        <div className="user-avatar" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/a/...")' }}></div>
       </div>
     </header>
   );
