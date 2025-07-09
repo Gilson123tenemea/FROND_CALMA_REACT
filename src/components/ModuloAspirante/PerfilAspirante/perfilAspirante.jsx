@@ -26,7 +26,7 @@ const PerfilAspirante = () => {
   const [formData, setFormData] = useState({
     nombres: '',
     apellidos: '',
-    cedula: '',
+    cedula: '', 
     correo: '',
     genero: '',
     fechaNacimiento: '',
@@ -70,6 +70,8 @@ const PerfilAspirante = () => {
     };
     cargarCantones();
   }, [ubicacion.provincia]);
+
+  
 
   useEffect(() => {
     const cargarParroquias = async () => {
@@ -182,20 +184,48 @@ const PerfilAspirante = () => {
     }));
   };
 
-  const handleSave = async () => {
-    try {
-      setLoading(true);
-      // Aquí lógica para guardar (API)
-      setFormData({ ...editData });
+const handleSave = async () => {
+  try {
+    setLoading(true);
+
+    const dataToSend = {
+      nombres: editData.nombres,
+      apellidos: editData.apellidos,
+      cedula: editData.cedula,
+      correo: editData.correo,
+      genero: editData.genero,
+      fechaNacimiento: editData.fechaNacimiento,
+      idParroquia: ubicacion.parroquia,
+      foto: editData.foto && editData.foto.startsWith('data:') ? editData.foto : "",
+      aspiracionSalarial: parseFloat(editData.aspiracionSalarial) || 0,
+      disponibilidad: editData.disponibilidad,
+      tipo_contrato: editData.tipo_contrato,
+      contrasena: editData.contrasena,
+    };
+
+    const response = await fetch(`http://localhost:8090/api/registro/aspirante/${aspiranteId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(dataToSend),
+    });
+
+    const result = await response.json();
+    console.log("Respuesta PUT:", result); // 👈 Te ayuda a depurar
+
+    if (result.success) {
+      alert("Datos modificados correctamente");
       setIsEditing(false);
-      await cargarDatosAspirante(aspiranteId);
-    } catch (err) {
-      console.error('Error al guardar datos:', err);
-      setError('Error al guardar los datos');
-    } finally {
-      setLoading(false);
+      await cargarDatosAspirante(aspiranteId); // recarga datos actualizados
+    } else {
+      alert("Error al modificar: " + result.message);
     }
-  };
+  } catch (err) {
+    console.error('Error al guardar datos:', err);
+    alert("Error al guardar los datos");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleCancel = () => {
     setEditData({ ...formData });
@@ -206,251 +236,152 @@ const PerfilAspirante = () => {
   const nombreCanton = cantones.find(c => c.id_canton === ubicacion.canton)?.nombre || '';
   const nombreParroquia = parroquias.find(p => p.id_parroquia === ubicacion.parroquia)?.nombre || '';
 
-  return (
-    <>
-      <HeaderAspirante userId={aspiranteId} />
-      <div className={`profile-container ${isAnimating ? 'animate' : ''}`}>
-        <main className="profile-main">
-          <div className="profile-card">
-            <div className="profile-intro">
-              <div
-                className="profile-avatar-large"
-                style={{
-                  backgroundImage: editData.foto
-                    ? `url(${editData.foto})`
-                    : 'url("https://via.placeholder.com/150")',
-                }}
-              />
-              {isEditing && (
-                <div className="upload-photo-container">
-                  <button
-                    type="button"
-                    className="submit-button"
-                    onClick={() => inputFileRef.current.click()}
-                  >
-                    Subir Foto
-                  </button>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    ref={inputFileRef}
-                    onChange={handlePhotoUpload}
-                  />
-                </div>
-              )}
+return (
+  <>
+    <HeaderAspirante userId={aspiranteId} />
+    <div className={`profile-container ${isAnimating ? 'animate' : ''}`}>
+      <main className="profile-main">
+        <div className="profile-intro">
+          <div
+            className="profile-avatar-large"
+            style={{
+              backgroundImage: editData.foto
+                ? `url(${editData.foto})`
+                : 'url("https://via.placeholder.com/150")',
+            }}
+          />
+          <div className="profile-info">
+            <h1 className="profile-name">
+              {formData.nombres} {formData.apellidos}
+            </h1>
+            <p className="profile-title">{formData.ocupacion}</p>
+            {isEditing && (
+              <div style={{ marginTop: '10px' }}>
+                <button
+                  type="button"
+                  className="submit-buttonv1"
+                  onClick={() => inputFileRef.current.click()}
+                >
+                  Subir Foto
+                </button>
+                <input
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  ref={inputFileRef}
+                  onChange={handlePhotoUpload}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+        <form onSubmit={handleSave}>
+          <div className="datos-personales-box">
+            <h3 className="sub-section-title">Información Personal</h3>
+            <div className="grid-2-columns">
+              <div className="field-box">
+                <label>Cédula</label>
+                <input
+                  type="text"
+                  name="cedula"
+                  value={formData.cedula}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  disabled={!isEditing}
+                />
+              </div>
+              <div className="field-box">
+                <label>Nombres</label>
+                <input
+                  type="text"
+                  name="nombres"
+                  value={formData.nombres}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  disabled={!isEditing}
+                />
+              </div>
+              <div className="field-box">
+                <label>Apellidos</label>
+                <input
+                  type="text"
+                  name="apellidos"
+                  value={formData.apellidos}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  disabled={!isEditing}
+                />
+              </div>
+              <div className="field-box">
+                <label>Correo Electrónico</label>
+                <input
+                  type="email"
+                  name="correo"
+                  value={formData.correo}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  disabled={!isEditing}
+                />
+              </div>
+              <div className="field-box">
+                <label>Fecha de Nacimiento</label>
+                <input
+                  type="date"
+                  name="fechaNacimiento"
+                  value={formData.fechaNacimiento}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  disabled={!isEditing}
+                />
+              </div>
+              <div className="field-box">
+                <label>Género</label>
+                <select
+                  name="genero"
+                  value={formData.genero}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  disabled={!isEditing}
+                >
+                  <option value="Masculino">Masculino</option>
+                  <option value="Femenino">Femenino</option>
+                  <option value="Otro">Otro</option>
+                </select>
+              </div>
+              <div className="field-box">
+                <label>Ocupación</label>
+                <input
+                  type="text"
+                  name="ocupacion"
+                  value={formData.ocupacion}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  disabled={!isEditing}
+                />
+              </div>
             </div>
-
-            <div className="profile-info">
-
-              <div className="profile-section">
-                <h2>Información Personal</h2>
-
-                <div className="profile-row">
-                  <label>Cédula:</label>
-                  <input
-                    type="text"
-                    name="cedula"
-                    value={isEditing ? editData.cedula : formData.cedula}
-                    readOnly={!isEditing}
-                    className="input-text"
-                    onChange={handleInputChange}
-                  />
-                </div>
-
-                <div className="profile-row">
-                  <label>Nombres:</label>
-                  <input
-                    type="text"
-                    name="nombres"
-                    value={isEditing ? editData.nombres : formData.nombres}
-                    readOnly={!isEditing}
-                    className="input-text"
-                    onChange={handleInputChange}
-                  />
-                  
-                </div>
-
-
-                <div className="profile-row">
-                  <label>Correo Electrónico:</label>
-                  <input
-                    type="email"
-                    name="correo"
-                    value={isEditing ? editData.correo : formData.correo}
-                    readOnly={!isEditing}
-                    className="input-text"
-                    onChange={handleInputChange}
-                  />
-                </div>
-
-                <div className="profile-row">
-                  <label>Género:</label>
-                  <select
-                    name="genero"
-                    value={isEditing ? editData.genero : formData.genero}
-                    disabled={!isEditing}
-                    onChange={handleInputChange}
-                    className="input-select"
-                  >
-                    <option value="Masculino">Masculino</option>
-                    <option value="Femenino">Femenino</option>
-                    <option value="Otro">Otro</option>
-                  </select>
-                </div>
-
-                <div className="profile-row">
-                  <label>Fecha de Nacimiento:</label>
-                  <input
-                    type="date"
-                    name="fechaNacimiento"
-                    value={isEditing ? editData.fechaNacimiento : formData.fechaNacimiento}
-                    readOnly={!isEditing}
-                    className="input-text"
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-
-              <div className="profile-section">
-                <h2>Ubicación</h2>
-
-                <div className="profile-row">
-                  <label>Provincia:</label>
-                  <select
-                    name="provincia"
-                    value={ubicacion.provincia}
-                    onChange={handleUbicacionChange}
-                    disabled={!isEditing}
-                    className="input-select"
-                  >
-                    <option value="">Seleccione...</option>
-                    {provincias.map(p => (
-                      <option key={p.id_provincia} value={p.id_provincia}>{p.nombre}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="profile-row">
-                  <label>Cantón:</label>
-                  <select
-                    name="canton"
-                    value={ubicacion.canton}
-                    onChange={handleUbicacionChange}
-                    disabled={!isEditing}
-                    className="input-select"
-                  >
-                    <option value="">Seleccione...</option>
-                    {cantones.map(c => (
-                      <option key={c.id_canton} value={c.id_canton}>{c.nombre}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="profile-row">
-                  <label>Parroquia:</label>
-                  <select
-                    name="parroquia"
-                    value={ubicacion.parroquia}
-                    onChange={handleUbicacionChange}
-                    disabled={!isEditing}
-                    className="input-select"
-                  >
-                    <option value="">Seleccione...</option>
-                    {parroquias.map(p => (
-                      <option key={p.id_parroquia} value={p.id_parroquia}>{p.nombre}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="profile-section">
-                <h2>Información Laboral</h2>
-
-
-                <div className="profile-row disponibilidad-row">
-                  <label>Disponibilidad:</label>
-                  <input
-                    type="checkbox"
-                    name="disponibilidad"
-                    checked={isEditing ? editData.disponibilidad : formData.disponibilidad}
-                    disabled={!isEditing}
-                    onChange={handleInputChange}
-                  />
-                  <span className={(isEditing ? editData.disponibilidad : formData.disponibilidad) ? 'disponible' : 'no-disponible'}>
-                    {(isEditing ? editData.disponibilidad : formData.disponibilidad) ? '✓ Disponible' : '✗ No disponible'}
-                  </span>
-                </div>
-
-                <div className="profile-row">
-                  <label>Aspiración Salarial:</label>
-                  <input
-                    type="number"
-                    name="aspiracionSalarial"
-                    value={isEditing ? (editData.aspiracionSalarial || '') : (formData.aspiracionSalarial || '')}
-                    readOnly={!isEditing}
-                    className="input-text"
-                    onChange={handleInputChange}
-                  />
-                </div>
-
-                <div className="profile-row">
-                  <label>Tipo de Contrato Preferido:</label>
-                  <select
-                    name="tipo_contrato"
-                    value={isEditing ? editData.tipo_contrato : formData.tipo_contrato}
-                    disabled={!isEditing}
-                    onChange={handleInputChange}
-                    className="input-select"
-                  >
-                    <option value="Tiempo completo">Tiempo completo</option>
-                    <option value="Medio tiempo">Medio tiempo</option>
-                    <option value="Por horas">Por horas</option>
-                    <option value="Freelance">Freelance</option>
-                    <option value="Contrato temporal">Contrato temporal</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="profile-section">
-                <h2>Seguridad</h2>
-
-                <div className="profile-row">
-                  <label>Contraseña:</label>
-                  <input
-                    type="password"
-                    name="contrasena"
-                    value={editData.contrasena}
-                    readOnly={!isEditing}
-                    placeholder="Nueva contraseña"
-                    className="input-text"
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-
-              <div className="profile-actions">
-                {!isEditing ? (
-                  <button className="edit-button" onClick={handleEdit}>
-                    Editar Perfil
-                  </button>
-                ) : (
-                  <>
-                    <button className="save-button" onClick={handleSave}>
-                      Guardar
-                    </button>
-                    <button className="cancel-button" onClick={handleCancel}>
-                      Cancelar
-                    </button>
-                  </>
-                )}
-              </div>
+            <div className="datos-personales-box > div:last-child">
+              <button
+                type="submit"
+                className="submit-button"
+                disabled={!isEditing}
+              >
+                Guardar Cambios
+              </button>
+              <button
+                type="button"
+                className="submit-buttonv1"
+                onClick={handleEdit}
+              >
+                Editar Perfil
+              </button>
             </div>
           </div>
-        </main>
-      </div>
-    </>
-  );
+        </form>
+      </main>
+    </div>
+  </>
+);
 
 };
 
