@@ -5,19 +5,30 @@ html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   background-color: #F5F5F5;
 }
+html, body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden; /* 👈 evita scroll horizontal */
+  font-family: 'Segoe UI', sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
 
 /* Página de registro */
 .registro-page-paci {
-  width: 100vw;
-  min-height: 100vh;
-  background-color: #F5F5F5;
-  padding: 20px;
-  box-sizing: border-box;
-  margin: 0;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  padding: 40px 20px;
+  background-color: #f5f7fa;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
+
 
 /* Contenedor principal */
 .registro-container-paci {
@@ -34,16 +45,13 @@ html {
 
 /* Tarjeta de registro */
 .registro-card-paci {
-  min-width: 1710px;   /* ancho mínimo para que se vea ancho */
   width: 100%;
-  box-sizing: border-box;
-  padding: 40px;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  border: 1px solid #9E9E9E;
+  max-width: 1280px;
+  padding: 30px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
-
 /* Títulos */
 .registro-card-paci h2 {
   color: #2c3e50;
