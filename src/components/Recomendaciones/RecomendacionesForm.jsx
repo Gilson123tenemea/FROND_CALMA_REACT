@@ -31,6 +31,8 @@ const RecomendacionesForm = () => {
     fecha: new Date().toISOString().slice(0, 10),
     archivo: null,
     archivoNombre: "",
+    archivoExistente: false,
+    nombreArchivoExistente: "",
     isEditing: false
   });
 
@@ -97,27 +99,35 @@ const RecomendacionesForm = () => {
       fecha: new Date().toISOString().slice(0, 10),
       archivo: null,
       archivoNombre: "",
+      archivoExistente: false,
+      nombreArchivoExistente: "",
       isEditing: false
     });
+    const fileInput = document.querySelector('.file-input');
+    if (fileInput) {
+      fileInput.value = '';
+    }
   };
 
   const handleEdit = async (recomendacion) => {
-  setFormulario({
-    id_recomendacion: recomendacion.id_recomendacion,
-    nombre_recomendador: recomendacion.nombre_recomendador,
-    cargo: recomendacion.cargo,
-    empresa: recomendacion.empresa,
-    telefono: recomendacion.telefono,
-    email: recomendacion.email,
-    relacion: recomendacion.relacion,
-    fecha: recomendacion.fecha,
-    archivo: null,
-    archivoNombre: recomendacion.nombre_archivo || "",
-    isEditing: true
-  });
-  
-  document.querySelector('.form-recomendaciones').scrollIntoView({ behavior: 'smooth' });
-};
+    setFormulario({
+      id_recomendacion: recomendacion.id_recomendacion,
+      nombre_recomendador: recomendacion.nombre_recomendador,
+      cargo: recomendacion.cargo,
+      empresa: recomendacion.empresa,
+      telefono: recomendacion.telefono,
+      email: recomendacion.email,
+      relacion: recomendacion.relacion,
+      fecha: recomendacion.fecha,
+      archivo: null,
+      archivoNombre: "",
+      archivoExistente: recomendacion.tiene_archivo,
+      nombreArchivoExistente: recomendacion.nombre_archivo || "",
+      isEditing: true
+    });
+
+    document.querySelector('.form-recomendaciones').scrollIntoView({ behavior: 'smooth' });
+  };
 
   const handleDownload = async (id, fileName) => {
     try {
@@ -127,6 +137,7 @@ const RecomendacionesForm = () => {
       toast.error("Error al descargar el archivo: " + error.message);
     }
   };
+
   const handleDelete = async (id) => {
     if (window.confirm("¿Estás seguro de que deseas eliminar esta recomendación?")) {
       try {
@@ -171,6 +182,13 @@ const RecomendacionesForm = () => {
       return;
     }
 
+    // Validación de archivo solo para nuevas recomendaciones
+    if (!formulario.isEditing && !formulario.archivo) {
+      toast.error("Debes subir un archivo de recomendación");
+      setIsSubmitting(false);
+      return;
+    }
+
     const recomendacionData = {
       id_recomendacion: formulario.id_recomendacion,
       nombre_recomendador: formulario.nombre_recomendador,
@@ -181,6 +199,7 @@ const RecomendacionesForm = () => {
       relacion: formulario.relacion,
       fecha: formulario.fecha,
       cv: { id_cv: Number(idCV) },
+      conservarArchivo: formulario.isEditing && !formulario.archivo // Indica al backend que conserve el archivo existente
     };
 
     const formData = new FormData();
@@ -200,9 +219,18 @@ const RecomendacionesForm = () => {
       if (formulario.isEditing) {
         nuevaRecomendacion = await updateRecomendacion(formulario.id_recomendacion, formData);
         setRecomendaciones(recomendaciones.map(rec =>
-          rec.id_recomendacion === formulario.id_recomendacion ?
-            { ...nuevaRecomendacion, archivo: formulario.archivoNombre || rec.archivo } :
-            rec
+          rec.id_recomendacion === formulario.id_recomendacion ? {
+            ...rec,
+            nombre_recomendador: formulario.nombre_recomendador,
+            cargo: formulario.cargo,
+            empresa: formulario.empresa,
+            telefono: formulario.telefono,
+            email: formulario.email,
+            relacion: formulario.relacion,
+            fecha: formulario.fecha,
+            nombre_archivo: formulario.archivo ? formulario.archivo.name : rec.nombre_archivo,
+            tiene_archivo: formulario.archivo ? true : rec.tiene_archivo
+          } : rec
         ));
 
         toast.success(
@@ -313,13 +341,13 @@ const RecomendacionesForm = () => {
       <CVStepsNav idCV={idCV} currentStep="Recomendaciones" />
 
       <div className="registro-container">
-        <h2>Recomendaciones para CV #{idCV}</h2>
+       
 
         <form onSubmit={handleSubmit} className="form-recomendaciones">
-          <h3>{formulario.isEditing ? 'Editar Recomendación' : 'Agregar Nueva Recomendación'}</h3>
+          <h2>{formulario.isEditing ? 'Editar Recomendación' : 'Agregar Nueva Recomendación'}</h2>
 
           <div className="input-group">
-            <label><FaUserTie className="input-icon" /> Nombre del recomendador</label>
+            <label><FaUserTie className="input-icon" /> Nombre del recomendador *</label>
             <input
               type="text"
               name="nombre_recomendador"
@@ -397,37 +425,64 @@ const RecomendacionesForm = () => {
           </div>
 
           <div className="input-group">
-            <label><FaPaperclip className="input-icon" /> Archivo (Opcional)</label>
+            <label>
+              <FaPaperclip className="input-icon" />
+              Archivo {formulario.isEditing ? '(Opcional - Cambiar)' : '(Requerido)'}
+            </label>
             <input
               type="file"
               name="archivo"
               onChange={handleFileChange}
               accept=".pdf,.jpg,.png"
               className="file-input"
+              required={!formulario.isEditing}
             />
-            {formulario.archivoNombre && (
+            {formulario.archivoNombre ? (
               <div className="file-info">
-                Archivo seleccionado: {formulario.archivoNombre}
+                <span className="file-name">
+                  Nuevo archivo seleccionado: {formulario.archivoNombre}
+                </span>
                 <button
                   type="button"
                   className="clear-file-btn"
-                  onClick={() => setFormulario({ ...formulario, archivo: null, archivoNombre: "" })}
+                  onClick={() => setFormulario({
+                    ...formulario,
+                    archivo: null,
+                    archivoNombre: ""
+                  })}
                 >
                   Limpiar
                 </button>
+              </div>
+            ) : formulario.nombreArchivoExistente && (
+              <div className="file-info">
+                Archivo actual: {formulario.nombreArchivoExistente}
+                {formulario.isEditing && (
+                  <button
+                    className="download-link"
+                    onClick={() => handleDownload(formulario.id_recomendacion, formulario.nombreArchivoExistente)}
+                    style={{ marginLeft: '10px' }}
+                  >
+                    <FaDownload /> Descargar
+                  </button>
+                )}
               </div>
             )}
           </div>
 
           <div className="button-group">
-            <button
-              type="button"
-              className="back-btn"
-              onClick={handleBack}
-              disabled={isSubmitting}
-            >
-              Regresar
-            </button>
+            {/* Mostrar botón Regresar solo cuando no esté en modo edición */}
+            {!formulario.isEditing && (
+              <button
+                type="button"
+                className="back-btn"
+                onClick={handleBack}
+                disabled={isSubmitting}
+              >
+                Regresar
+              </button>
+            )}
+
             <button
               type="submit"
               className="submit-btn"
@@ -439,6 +494,8 @@ const RecomendacionesForm = () => {
                   ? 'Actualizar recomendación'
                   : 'Guardar recomendación'}
             </button>
+
+            {/* Mostrar botón Cancelar solo en modo edición */}
             {formulario.isEditing && (
               <button
                 type="button"
@@ -449,14 +506,18 @@ const RecomendacionesForm = () => {
                 Cancelar
               </button>
             )}
-            <button
-              type="button"
-              className="next-btn"
-              onClick={irASiguiente}
-              disabled={recomendaciones.length === 0 || isSubmitting}
-            >
-              Siguiente: Certificados
-            </button>
+
+            {/* Mostrar botón Siguiente solo cuando no esté en modo edición */}
+            {!formulario.isEditing && (
+              <button
+                type="button"
+                className="next-btn"
+                onClick={irASiguiente}
+                disabled={recomendaciones.length === 0 || isSubmitting}
+              >
+                Siguiente: Certificados
+              </button>
+            )}
           </div>
         </form>
 
