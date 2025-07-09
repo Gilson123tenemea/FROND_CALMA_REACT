@@ -4,7 +4,7 @@ import FiltrosTrabajos from "../FiltrosTrabajos/filtrosTrabajos";
 import CardTrabajo from "../CardTrabajo/cardTrabajo";
 import './ListaTrabajos.css';
 
-const ListaTrabajos = ({ userId }) => {
+const ListaTrabajos = ({ idAspirante }) => {
   const [trabajos, setTrabajos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -68,7 +68,6 @@ const ListaTrabajos = ({ userId }) => {
     setFilters(prev => ({ ...prev, rangoSalario: rango }));
   };
 
-  // Solo filtramos por salario en este caso
   const trabajosFiltrados = trabajos.filter(trabajo => {
     const salario = trabajo.salario || 0;
     const [min, max] = filters.rangoSalario;
@@ -80,8 +79,6 @@ const ListaTrabajos = ({ userId }) => {
       <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Trabajos Disponibles</h1>
 
       <div className="layout-trabajos" style={{ display: 'flex', gap: '20px' }}>
-       
-
         <div className="lista-trabajos" style={{ flex: 3 }}>
           {loading && <p style={{ textAlign: 'center' }}>Cargando trabajos...</p>}
           {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
@@ -94,7 +91,11 @@ const ListaTrabajos = ({ userId }) => {
           )}
 
           {!loading && trabajosFiltrados.length > 0 && trabajosFiltrados.map(trabajo => (
-            <CardTrabajo key={trabajo.id} trabajo={trabajo} userId={userId} />
+            <CardTrabajo
+              key={trabajo.id}
+              trabajo={trabajo}
+              idAspirante={idAspirante} // ✅ pasamos el ID correcto para postular
+            />
           ))}
         </div>
       </div>

@@ -8,32 +8,41 @@ import './ModuloAspirante.css';
 
 const ModuloAspirante = () => {
   const location = useLocation();
-  const [userId, setUserId] = useState(null);
+  const [idAspirante, setIdAspirante] = useState(null); // Para postulaciones
+  const [userId, setUserId] = useState(null);           // Para chat
   const [showPanelUsuarios, setShowPanelUsuarios] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [usuariosEncontrados, setUsuariosEncontrados] = useState([]);
   const [usuarioChat, setUsuarioChat] = useState(null);
 
-  // Recuperar ID real del usuario logueado al cargar
   useEffect(() => {
-    const obtenerIdUsuario = async (idAspirante) => {
-      try {
-        const response = await axios.get(`http://localhost:8090/api/usuarios/buscar_aspirante/${idAspirante}`);
-        console.log('ID real del usuario:', response.data);
-        setUserId(response.data); // Guardamos el ID real que devuelve la API
-      } catch (error) {
-        console.error('Error al obtener el ID del usuario:', error);
-      }
-    };
+    const aspiranteIdFromState = location.state?.aspiranteId;
+    const aspiranteId = aspiranteIdFromState || JSON.parse(localStorage.getItem('userData'))?.aspiranteId;
 
-    if (location.state?.userId) {
-      obtenerIdUsuario(location.state.userId);
-    } else {
-      const userData = JSON.parse(localStorage.getItem('userData'));
-      if (userData?.aspiranteId) {
-        obtenerIdUsuario(userData.aspiranteId);
-      }
+    console.log('location.state:', location.state);
+    console.log('aspiranteId calculado:', aspiranteId);
+
+    if (!aspiranteId) {
+      console.warn('No se encontró idAspirante ni en location.state ni en localStorage.');
+      return;
     }
+
+    setIdAspirante(aspiranteId);
+
+    axios.get(`http://localhost:8090/api/usuarios/buscar_aspirante/${aspiranteId}`)
+      .then((response) => {
+        console.log('Respuesta API buscar_aspirante:', response.data);
+        // Ajusta aquí según cómo venga el ID en la respuesta
+        const idUsuario = response.data?.id || response.data?.idUsuario || response.data;
+        if (!idUsuario) {
+          console.error('Respuesta inesperada: no contiene ID de usuario.');
+          return;
+        }
+        setUserId(idUsuario);
+      })
+      .catch((error) => {
+        console.error('Error al obtener el ID del usuario:', error);
+      });
   }, [location.state]);
 
   const handleAbrirPanelUsuarios = () => {
@@ -71,7 +80,8 @@ const ModuloAspirante = () => {
     setUsuarioChat(null);
   };
 
-  if (!userId) return <div>Cargando...</div>;
+  if (!idAspirante) return <div>Cargando datos del aspirante...</div>;
+  if (!userId) return <div>Cargando datos del usuario para chat...</div>;
 
   return (
     <div className="modulo-aspirante-container">
@@ -79,8 +89,8 @@ const ModuloAspirante = () => {
 
       <main className="main-content">
         <Routes>
-          <Route path="/" element={<ListaTrabajos userId={userId} />} />
-          <Route path="/trabajos" element={<ListaTrabajos userId={userId} />} />
+          <Route path="/" element={<ListaTrabajos idAspirante={idAspirante} />} />
+          <Route path="/trabajos" element={<ListaTrabajos idAspirante={idAspirante} />} />
         </Routes>
       </main>
 
