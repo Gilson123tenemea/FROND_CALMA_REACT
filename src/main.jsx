@@ -39,7 +39,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-                <Route path="/ver-cv/:idCV" element={<CVCompletoView />} />
+        <Route path="/ver-cv/:idCV" element={<CVCompletoView />} />
 
 
         {/* Rutas de módulos */}
