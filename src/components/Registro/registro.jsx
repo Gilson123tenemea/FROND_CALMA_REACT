@@ -390,7 +390,7 @@ const Registro = () => {
       <Navbar />
 
       <div className="registro-container">
-        <div className="registro-card">
+        <div className="">
           <h2>Crear Cuenta en CALMA</h2>
           <p className="subtitle">Complete sus datos para registrarse</p>
 
@@ -419,94 +419,97 @@ const Registro = () => {
               {/* Sección de datos personales comunes */}
               <h3 className="form-section-title">Información Personal</h3>
 
-              <div className="input-group">
-                <label htmlFor="nombres"><FaUser className="input-icon" /> Nombres</label>
-                <input
-                  type="text"
-                  id="nombres"
-                  name="nombres"
-                  value={formData.nombres}
-                  onChange={handleChange}
-                  className={errors.nombres ? 'input-error' : ''}
-                />
-                {errors.nombres && <span className="error-message">{errors.nombres}</span>}
-              </div>
-
-              <div className="input-group">
-                <label htmlFor="apellidos"><FaUser className="input-icon" /> Apellidos</label>
-                <input
-                  type="text"
-                  id="apellidos"
-                  name="apellidos"
-                  value={formData.apellidos}
-                  onChange={handleChange}
-                  className={errors.apellidos ? 'input-error' : ''}
-                />
-                {errors.apellidos && <span className="error-message">{errors.apellidos}</span>}
-              </div>
-
-              <div className="input-group">
-                <label htmlFor="cedula"><FaIdCard className="input-icon" /> Cédula</label>
-                <input
-                  type="text"
-                  id="cedula"
-                  name="cedula"
-                  value={formData.cedula}
-                  onChange={handleChange}
-                  className={errors.cedula ? 'input-error' : ''}
-                  maxLength="10"
-                />
-                {errors.cedula && <span className="error-message">{errors.cedula}</span>}
-              </div>
-
-              <div className="input-group">
-                <label htmlFor="correo"><FaEnvelope className="input-icon" /> Correo Electrónico</label>
-                <input
-                  type="email"
-                  id="correo"
-                  name="correo"
-                  value={formData.correo}
-                  onChange={handleChange}
-                  className={errors.correo ? 'input-error' : ''}
-                />
-                {errors.correo && <span className="error-message">{errors.correo}</span>}
-              </div>
-
-              <div className="input-group">
-                <label htmlFor="celular"><FaPhone className="input-icon" /> Celular</label>
-                <input
-                  type="tel"
-                  id="celular"
-                  name="celular"
-                  value={formData.celular}
-                  onChange={handleChange}
-                  className={errors.celular ? 'input-error' : ''}
-                  maxLength="10"
-                />
-                {errors.celular && <span className="error-message">{errors.celular}</span>}
-              </div>
-
-              <div className="input-group">
-                <label htmlFor="genero"><FaVenusMars className="input-icon" /> Género</label>
-                <div className="select-wrapper">
-                  <select
-                    id="genero"
-                    name="genero"
-                    value={formData.genero}
+              <div className="input-row">
+                <div className="input-group">
+                  <label htmlFor="cedula"><FaIdCard className="input-icon" /> Cédula</label>
+                  <input
+                    type="text"
+                    id="cedula"
+                    name="cedula"
+                    value={formData.cedula}
                     onChange={handleChange}
-                    className={errors.genero ? 'input-error' : ''}
-                  >
-                    <option value="">Seleccione...</option>
-                    {generos.map((genero, index) => (
-                      <option key={index} value={genero}>{genero}</option>
-                    ))}
-                  </select>
-                  <FaChevronDown className="select-arrow" />
+                    className={errors.cedula ? 'input-error' : ''}
+                    maxLength="10"
+                  />
+                  {errors.cedula && <span className="error-message">{errors.cedula}</span>}
                 </div>
-                {errors.genero && <span className="error-message">{errors.genero}</span>}
+
+                <div className="input-group">
+                  <label htmlFor="nombres"><FaUser className="input-icon" /> Nombres</label>
+                  <input
+                    type="text"
+                    id="nombres"
+                    name="nombres"
+                    value={formData.nombres}
+                    onChange={handleChange}
+                    className={errors.nombres ? 'input-error' : ''}
+                  />
+                  {errors.nombres && <span className="error-message">{errors.nombres}</span>}
+                </div>
+                <div className="input-group">
+                  <label htmlFor="apellidos"><FaUser className="input-icon" /> Apellidos</label>
+                  <input
+                    type="text"
+                    id="apellidos"
+                    name="apellidos"
+                    value={formData.apellidos}
+                    onChange={handleChange}
+                    className={errors.apellidos ? 'input-error' : ''}
+                  />
+                  {errors.apellidos && <span className="error-message">{errors.apellidos}</span>}
+                </div>
               </div>
 
-              <div className="input-group">
+              <div className="input-row">
+                <div className="input-group">
+                  <label htmlFor="correo"><FaEnvelope className="input-icon" /> Correo Electrónico</label>
+                  <input
+                    type="email"
+                    id="correo"
+                    name="correo"
+                    value={formData.correo}
+                    onChange={handleChange}
+                    className={errors.correo ? 'input-error' : ''}
+                  />
+                  {errors.correo && <span className="error-message">{errors.correo}</span>}
+                </div>
+
+                <div className="input-group">
+                  <label htmlFor="celular"><FaPhone className="input-icon" /> Celular</label>
+                  <input
+                    type="tel"
+                    id="celular"
+                    name="celular"
+                    value={formData.celular}
+                    onChange={handleChange}
+                    className={errors.celular ? 'input-error' : ''}
+                    maxLength="10"
+                  />
+                  {errors.celular && <span className="error-message">{errors.celular}</span>}
+                </div>
+
+                <div className="input-group">
+                  <label htmlFor="genero"><FaVenusMars className="input-icon" /> Género</label>
+                  <div className="select-wrapper">
+                    <select
+                      id="genero"
+                      name="genero"
+                      value={formData.genero}
+                      onChange={handleChange}
+                      className={errors.genero ? 'input-error' : ''}
+                    >
+                      <option value="">Seleccione...</option>
+                      {generos.map((genero, index) => (
+                        <option key={index} value={genero}>{genero}</option>
+                      ))}
+                    </select>
+                    <FaChevronDown className="select-arrow" />
+                  </div>
+                  {errors.genero && <span className="error-message">{errors.genero}</span>}
+                </div>
+              </div>
+
+              <div className="input-groupv2">
                 <label htmlFor="fechaNacimiento"><FaCalendarAlt className="input-icon" /> Fecha de Nacimiento</label>
                 <input
                   type="date"
