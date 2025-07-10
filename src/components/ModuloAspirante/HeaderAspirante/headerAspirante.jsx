@@ -23,6 +23,8 @@ const HeaderAspirante = ({ userId, onOpenMensajes }) => {
           <Link to={`/moduloAspirante/red?userId=${userId}`}>Mi Red</Link>
           <a href="#" onClick={handleMensajesClick}>Mensajes</a>
           <Link to={`/moduloAspirante/cv?userId=${userId}`}>CV</Link>
+                    <Link to={`/ver-cv/${userId}`}>Ver CV Completo</Link> {/* Nuevo enlace */}
+
           <Link to={`/moduloAspirante/perfilAspirante?userId=${userId}`}>Mi Perfil</Link>
         </nav>
       </div>

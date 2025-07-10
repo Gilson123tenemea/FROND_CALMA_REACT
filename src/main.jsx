@@ -24,6 +24,8 @@ import DisponibilidadForm from './components/Disponibilidad/DisponibilidadForm';
 import Calificacion from './components/Calificacion/calificacion';
 import FichaPaciente from './components/FichaPaciente/ficha';
 import FichaPacienteAlergia from './components/FichaPacienteAlergia/alergiaali';
+import CVCompletoView from './components/ModuloAspirante/CV/CVCompletoView';
+
 
 // ✅ Importación del componente Postulaciones
 import Postulaciones from './components/ModuloContratante/Postulaciones/Postulaciones';
@@ -37,6 +39,8 @@ createRoot(document.getElementById('root')).render(
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/ver-cv/:idCV" element={<CVCompletoView />} />
+
 
         {/* Rutas de módulos */}
         <Route path="/moduloAspirante/*" element={<ModuloAspirante />} />
@@ -77,3 +81,4 @@ createRoot(document.getElementById('root')).render(
     </Router>
   </StrictMode>
 );
+
