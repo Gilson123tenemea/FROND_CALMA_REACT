@@ -1,54 +1,56 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8090/api/alergias_alimentarias';
+const API_URL = 'http://localhost:8090/api/alergias-alimentarias';
 
-
-export const getAlergias = async () => {
+export const getAlergiasAlimentarias = async () => {
   try {
     const response = await axios.get(API_URL);
     return response.data;
   } catch (error) {
-    throw new Error('Error al obtener las alergias alimentarias: ' + error.message);
+    throw new Error('Error al obtener alergias alimentarias: ' + error.message);
   }
 };
 
-// Obtener una alergia alimentaria por ID
-export const getAlergiaById = async (id) => {
+export const getAlergiaAlimentariaById = async (id) => {
   try {
     const response = await axios.get(`${API_URL}/${id}`);
     return response.data;
   } catch (error) {
-    throw new Error('Error al obtener la alergia: ' + error.message);
+    throw new Error('Error al obtener alergia alimentaria: ' + error.message);
   }
 };
 
-// Crear una nueva alergia alimentaria
-export const crearAlergia = async (alergia) => {
+export const getAlergiasAlimentariasByFicha = async (idFicha) => {
+  try {
+    const response = await axios.get(`${API_URL}/ficha/${idFicha}`);
+    return response.data;
+  } catch (error) {
+    throw new Error('Error al obtener alergias alimentarias por ficha: ' + error.message);
+  }
+};
+
+export const createAlergiaAlimentaria = async (alergia) => {
   try {
     const response = await axios.post(API_URL, alergia);
     return response.data;
   } catch (error) {
-    throw new Error('Error al crear la alergia: ' + error.response?.data || error.message);
+    throw new Error('Error al crear alergia alimentaria: ' + error.message);
   }
 };
 
-// Actualizar una alergia alimentaria existente
-export const actualizarAlergia = async (id, alergia) => {
+export const updateAlergiaAlimentaria = async (id, alergia) => {
   try {
     const response = await axios.put(`${API_URL}/${id}`, alergia);
     return response.data;
   } catch (error) {
-    throw new Error('Error al actualizar la alergia: ' + error.response?.data || error.message);
+    throw new Error('Error al actualizar alergia alimentaria: ' + error.message);
   }
 };
 
-
-export const eliminarAlergia = async (id) => {
+export const deleteAlergiaAlimentaria = async (id) => {
   try {
-    const response = await axios.delete(`${API_URL}/${id}`);
-    return response.data;
+    await axios.delete(`${API_URL}/${id}`);
   } catch (error) {
-    throw new Error('Error al eliminar la alergia: ' + error.response?.data || error.message);
+    throw new Error('Error al eliminar alergia alimentaria: ' + error.message);
   }
 };
-

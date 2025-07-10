@@ -3,19 +3,19 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { 
-  getAlergiaAlimentariaById, 
-  createAlergiaAlimentaria, 
-  updateAlergiaAlimentaria,
-  deleteAlergiaAlimentaria 
-} from '../../servicios/alergiaAlimentariaService';
-import './alergiaalimentaria.css';
+  getTemaConversacionById, 
+  createTemaConversacion, 
+  updateTemaConversacion,
+  deleteTemaConversacion 
+} from '../../servicios/temaConversacionService';
+import './tema.css';
 
-const AlergiaAlimentariaForm = () => {
-  const { id_ficha_paciente, id_alergias_alimentarias } = useParams();
+const TemaForm = () => {
+  const { id_ficha_paciente, idTemaConversacion } = useParams();
   const navigate = useNavigate();
   
-  const [alergia, setAlergia] = useState({
-    alergiaAlimentaria: '',
+  const [tema, setTema] = useState({
+    tema: '',
     fichaPaciente: { id_ficha_paciente }
   });
 
@@ -24,28 +24,28 @@ const AlergiaAlimentariaForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    const loadAlergia = async () => {
-      if (id_alergias_alimentarias && id_alergias_alimentarias !== 'nuevo') {
+    const loadTema = async () => {
+      if (idTemaConversacion && idTemaConversacion !== 'nuevo') {
         setIsLoading(true);
         try {
-          const alergiaData = await getAlergiaAlimentariaById(id_alergias_alimentarias);
-          setAlergia(alergiaData);
+          const temaData = await getTemaConversacionById(idTemaConversacion);
+          setTema(temaData);
           setIsEditing(true);
         } catch (error) {
-          console.error("Error al cargar alergia:", error);
-          toast.error("Error al cargar alergia");
-          navigate(`/fichas/${id_ficha_paciente}/alergias-alimentarias`);
+          console.error("Error al cargar tema:", error);
+          toast.error("Error al cargar tema de conversación");
+          navigate(`/fichas/${id_ficha_paciente}/temas`);
         } finally {
           setIsLoading(false);
         }
       }
     };
-    loadAlergia();
-  }, [id_alergias_alimentarias, id_ficha_paciente, navigate]);
+    loadTema();
+  }, [idTemaConversacion, id_ficha_paciente, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setAlergia(prev => ({
+    setTema(prev => ({
       ...prev,
       [name]: value
     }));
@@ -55,38 +55,38 @@ const AlergiaAlimentariaForm = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    if (!alergia.alergiaAlimentaria) {
-      toast.error("El nombre de la alergia es requerido");
+    if (!tema.tema) {
+      toast.error("El tema de conversación es requerido");
       setIsSubmitting(false);
       return;
     }
 
     try {
       if (isEditing) {
-        await updateAlergiaAlimentaria(id_alergias_alimentarias, alergia);
-        toast.success("Alergia actualizada correctamente");
+        await updateTemaConversacion(idTemaConversacion, tema);
+        toast.success("Tema de conversación actualizado correctamente");
       } else {
-        await createAlergiaAlimentaria(alergia);
-        toast.success("Alergia agregada correctamente");
+        await createTemaConversacion(tema);
+        toast.success("Tema de conversación agregado correctamente");
       }
-      navigate(`/fichas/${id_ficha_paciente}/alergias-alimentarias`);
+      navigate(`/fichas/${id_ficha_paciente}/temas`);
     } catch (error) {
-      console.error("Error al guardar alergia:", error);
-      toast.error(error.message || "Error al guardar alergia");
+      console.error("Error al guardar tema:", error);
+      toast.error(error.message || "Error al guardar tema de conversación");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleDelete = async () => {
-    if (window.confirm("¿Estás seguro de eliminar esta alergia?")) {
+    if (window.confirm("¿Estás seguro de eliminar este tema de conversación?")) {
       try {
-        await deleteAlergiaAlimentaria(id_alergias_alimentarias);
-        toast.success("Alergia eliminada correctamente");
-        navigate(`/fichas/${id_ficha_paciente}/alergias-alimentarias`);
+        await deleteTemaConversacion(idTemaConversacion);
+        toast.success("Tema de conversación eliminado correctamente");
+        navigate(`/fichas/${id_ficha_paciente}/temas`);
       } catch (error) {
-        console.error("Error al eliminar alergia:", error);
-        toast.error("Error al eliminar alergia");
+        console.error("Error al eliminar tema:", error);
+        toast.error("Error al eliminar tema de conversación");
       }
     }
   };
@@ -95,25 +95,25 @@ const AlergiaAlimentariaForm = () => {
     return (
       <div className="loading-container">
         <div className="loading-spinner"></div>
-        <p>Cargando alergia...</p>
+        <p>Cargando tema...</p>
       </div>
     );
   }
 
   return (
     <div className="form-container">
-      <h2>{isEditing ? 'Editar Alergia Alimentaria' : 'Agregar Nueva Alergia Alimentaria'}</h2>
+      <h2>{isEditing ? 'Editar Tema de Conversación' : 'Agregar Nuevo Tema de Conversación'}</h2>
       
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label>Nombre de la Alergia*</label>
+          <label>Tema de Conversación*</label>
           <input
             type="text"
-            name="alergiaAlimentaria"
-            value={alergia.alergiaAlimentaria}
+            name="tema"
+            value={tema.tema}
             onChange={handleChange}
             required
-            placeholder="Ej: Alergia a los frutos secos"
+            placeholder="Ej: Fútbol, Política"
           />
         </div>
 
@@ -140,7 +140,7 @@ const AlergiaAlimentariaForm = () => {
           <button 
             type="button"
             className="btn-secondary"
-            onClick={() => navigate(`/fichas/${id_ficha_paciente}/alergias-alimentarias`)}
+            onClick={() => navigate(`/fichas/${id_ficha_paciente}/temas`)}
             disabled={isSubmitting}
           >
             Cancelar
@@ -151,4 +151,4 @@ const AlergiaAlimentariaForm = () => {
   );
 };
 
-export default AlergiaAlimentariaForm;
+export default TemaForm;

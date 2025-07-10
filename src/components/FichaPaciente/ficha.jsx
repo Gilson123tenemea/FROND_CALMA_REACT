@@ -1,184 +1,359 @@
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {
+  getFichaById,
+  createFicha,
+  updateFicha
+} from '../../servicios/ficha';
+import FichaStepsNav from './FichaStepsNav';
 import './ficha.css';
-import React, { useEffect, useState } from 'react';
-import { crearFicha } from '../../servicios/fichaPacienteService';
-import { getAlergias } from '../../servicios/alergiaAlimentariaService';
-import { getTemasConversacion } from '../../servicios/temaConversacionService';
-import { getIntereses } from '../../servicios/interesesPersonalesService';
-import { getEnfermedades } from '../../servicios/enfermedadAnteriorService';
-import { getCondiciones } from '../../servicios/condicionService';
-import { getListaMedicamentos } from '../../servicios/medicacionService';
-import { useNavigate } from 'react-router-dom';
 
-const pasos = [
-  'Información General',
-  'Medicamentos y Condiciones',
-  'Comunicación y Dieta',
-  'Rutinas y Observaciones',
-  'Relaciones y Registros'
-];
-
-const opciones = {
-  nivel_conciencia: [
-    'Alerta', 'Somnoliento', 'Estuporoso', 'Coma', 'Confuso', 'Orientado', 'Desorientado'
-  ],
-  estado_animo: [
-    'Tranquilo', 'Ansioso', 'Agitado', 'Eufórico', 'Deprimido', 'Irritable', 'Apatía'
-  ],
-  diagnostico_mental: [
-    'Sin diagnóstico', 'Ansiedad', 'Depresión', 'Esquizofrenia', 'Bipolaridad', 'Trastorno de la personalidad'
-  ],
-  autonomia: [
-    'Total', 'Parcial', 'Dependiente', 'Necesita supervisión'
-  ],
-  tipo_dieta: [
-    'Normal', 'Hipocalórica', 'Hiperproteica', 'Vegetariana', 'Vegana', 'Blanda', 'Líquida', 'Diabética', 'Baja en sodio'
-  ]
-};
-
-const FichaPacienteForm = () => {
-  const [form, setForm] = useState({
-    diagnostico_me_actual: '', condiciones_fisicas: '', medicacion: false, requiere_inyecciones: false,
-    ayuda_toma_medicina: false, nivel_conciencia: '', estado_animo: '', diagnostico_mental: '', autonomia: '',
-    comunicacion: false, lenguale_señas: false, otras_comunicaciones: '', tipo_dieta: '', alimentacion_asistida: '',
-    hora_levantarse: '', hora_acostarse: '', frecuencia_siestas: '', frecuencia_baño: '', rutina_medica: '',
-    acompañado: false, observaciones: '', caidas: '', fecha_registro: new Date(), paciente: null,
-    listamedicamentos: '', alergiasalimenarias: '', temaconversacion: '', interesespersonales: '',
-    enfermedadanterior: '', condicion: ''
-  });
-
-  const [listas, setListas] = useState({ medicamentos: [], alergias: [], temas: [], intereses: [], enfermedades: [], condiciones: [] });
-  const [paso, setPaso] = useState(0);
+const FichaPacienteForm = ({ editMode = false }) => {
+  const { id_ficha_paciente } = useParams();
   const navigate = useNavigate();
 
+  const [formulario, setFormulario] = useState({
+    diagnostico_me_actual: '',
+    condiciones_fisicas: '',
+    nivel_conciencia: '',
+    estado_animo: '',
+    diagnostico_mental: '',
+    autonomia: '',
+    comunicacion: false,
+    otras_comunicaciones: '',
+    tipo_dieta: '',
+    alimentacion_asistida: '',
+    hora_levantarse: '',
+    hora_acostarse: '',
+    frecuencia_siestas: '',
+    frecuencia_baño: '',
+    rutina_medica: '',
+    usapanal: false,
+    acompañado: false,
+    observaciones: '',
+    caidas: '',
+    fecha_registro: new Date().toISOString().split('T')[0],
+    paciente: { id_paciente: '' }
+  });
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   useEffect(() => {
-    Promise.all([
-      getListaMedicamentos(), getAlergias(), getTemasConversacion(), getIntereses(), getEnfermedades(), getCondiciones()
-    ]).then(([medicamentos, alergias, temas, intereses, enfermedades, condiciones]) => {
-      setListas({ medicamentos, alergias, temas, intereses, enfermedades, condiciones });
-    });
-  }, []);
+    const loadFichaData = async () => {
+      if (id_ficha_paciente) {
+        setIsLoading(true);
+        try {
+          const fichaData = await getFichaById(id_ficha_paciente);
+          setFormulario(fichaData);
+          setIsEditing(true);
+        } catch (error) {
+          console.error("Error al cargar ficha:", error);
+          toast.error("Error al cargar la ficha");
+          navigate('/fichas');
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+    loadFichaData();
+  }, [id_ficha_paciente, navigate]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setForm(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+    setFormulario(prev => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+
+    const dataToSend = { ...formulario };
+    if (!dataToSend.paciente.id_paciente) {
+      dataToSend.paciente = null;
+    }
+
     try {
-      await crearFicha({
-        ...form,
-        listamedicamentos: { idListaMedicamentos: form.listamedicamentos },
-        alergiasalimenarias: { id_alergias_alimentarias: form.alergiasalimenarias },
-        temaconversacion: { idTemaConversacion: form.temaconversacion },
-        interesespersonales: { idInteresesPersonales: form.interesespersonales },
-        enfermedadanterior: { idEnfermedadAnterior: form.enfermedadanterior },
-        condicion: { idCondicion: form.condicion },
-        paciente: null
-      });
-      alert('Ficha creada exitosamente');
-      setForm({
-        diagnostico_me_actual: '', condiciones_fisicas: '', medicacion: false, requiere_inyecciones: false,
-        ayuda_toma_medicina: false, nivel_conciencia: '', estado_animo: '', diagnostico_mental: '', autonomia: '',
-        comunicacion: false, lenguale_señas: false, otras_comunicaciones: '', tipo_dieta: '', alimentacion_asistida: '',
-        hora_levantarse: '', hora_acostarse: '', frecuencia_siestas: '', frecuencia_baño: '', rutina_medica: '',
-        acompañado: false, observaciones: '', caidas: '', fecha_registro: new Date(), paciente: null,
-        listamedicamentos: '', alergiasalimenarias: '', temaconversacion: '', interesespersonales: '',
-        enfermedadanterior: '', condicion: ''
-      });
-      setPaso(0);
-    } catch (err) {
-      console.error(err);
+      if (isEditing) {
+        await updateFicha(id_ficha_paciente, dataToSend);
+        toast.success("Ficha actualizada correctamente");
+      } else {
+        const nuevaFicha = await createFicha(dataToSend);
+        toast.success("Ficha creada correctamente");
+        navigate(`/fichas/${nuevaFicha.id_ficha_paciente}/medicamentos`);
+      }
+    } catch (error) {
+      console.error("Error al guardar ficha:", error);
+      toast.error(error.message || "Error al guardar la ficha");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const renderSelect = (label, name, items, idField, textField, addRoute) => (
-    <div className="form-group">
-      <label>{label}</label>
-      <div className="select-with-button">
-        <select name={name} value={form[name]} onChange={handleChange} required>
-          <option value="">Seleccione...</option>
-          {items.map(item => (
-            <option key={item[idField]} value={item[idField]}>{item[textField]}</option>
-          ))}
-        </select>
-        <button type="button" onClick={() => navigate(addRoute)}>Agregar</button>
+  if (isLoading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Cargando ficha...</p>
       </div>
-    </div>
-  );
-
-  const renderCombo = (label, name) => (
-    <div className="form-group">
-      <label>{label}</label>
-      <select name={name} value={form[name]} onChange={handleChange} required>
-        <option value="">Seleccione...</option>
-        {opciones[name].map((val, idx) => (
-          <option key={idx} value={val}>{val}</option>
-        ))}
-      </select>
-    </div>
-  );
-
-  const cards = [
-    <div className="card" key="general">
-      <div className="form-group"><label>Diagnóstico Médico Actual</label><input name="diagnostico_me_actual" value={form.diagnostico_me_actual} onChange={handleChange} /></div>
-      <div className="form-group"><label>Condiciones Físicas</label><input name="condiciones_fisicas" value={form.condiciones_fisicas} onChange={handleChange} /></div>
-      {renderCombo('Nivel de Conciencia', 'nivel_conciencia')}
-      {renderCombo('Estado de Ánimo', 'estado_animo')}
-      {renderCombo('Diagnóstico Mental', 'diagnostico_mental')}
-      {renderCombo('Autonomía', 'autonomia')}
-    </div>,
-    <div className="card" key="medicamentos">
-      <div className="checkbox-group"><input type="checkbox" name="medicacion" checked={form.medicacion} onChange={handleChange} /><label>Usa Medicación</label></div>
-      <div className="checkbox-group"><input type="checkbox" name="requiere_inyecciones" checked={form.requiere_inyecciones} onChange={handleChange} /><label>Requiere Inyecciones</label></div>
-      <div className="checkbox-group"><input type="checkbox" name="ayuda_toma_medicina" checked={form.ayuda_toma_medicina} onChange={handleChange} /><label>Ayuda para Tomar Medicina</label></div>
-      {renderSelect('Medicamentos', 'listamedicamentos', listas.medicamentos, 'idListaMedicamentos', 'nombremedicamento', '/agregar-medicamento')}
-      {renderSelect('Alergia Alimentaria', 'alergiasalimenarias', listas.alergias, 'id_alergias_alimentarias', 'alergiaAlimentaria', '/alergiaali')}
-      {renderSelect('Condición Médica', 'condicion', listas.condiciones, 'idCondicion', 'condicionesFisicas', '/agregar-condicion')}
-    </div>,
-    <div className="card" key="comunicacion">
-      <div className="checkbox-group"><input type="checkbox" name="comunicacion" checked={form.comunicacion} onChange={handleChange} /><label>Se Comunica</label></div>
-      <div className="checkbox-group"><input type="checkbox" name="lenguale_señas" checked={form.lenguale_señas} onChange={handleChange} /><label>Usa Lenguaje de Señas</label></div>
-      <div className="form-group"><label>Otras Comunicaciones</label><input name="otras_comunicaciones" value={form.otras_comunicaciones} onChange={handleChange} /></div>
-      {renderCombo('Tipo de Dieta', 'tipo_dieta')}
-      <div className="form-group"><label>Alimentación Asistida</label><input name="alimentacion_asistida" value={form.alimentacion_asistida} onChange={handleChange} /></div>
-    </div>,
-    <div className="card" key="rutina">
-      <div className="form-group"><label>Hora de Levantarse</label><input type="time" name="hora_levantarse" value={form.hora_levantarse} onChange={handleChange} /></div>
-      <div className="form-group"><label>Hora de Acostarse</label><input type="time" name="hora_acostarse" value={form.hora_acostarse} onChange={handleChange} /></div>
-      <div className="form-group"><label>Frecuencia de Siestas</label><input name="frecuencia_siestas" value={form.frecuencia_siestas} onChange={handleChange} /></div>
-      <div className="form-group"><label>Frecuencia de Baño</label><input name="frecuencia_baño" value={form.frecuencia_baño} onChange={handleChange} /></div>
-      <div className="form-group"><label>Rutina Médica</label><input name="rutina_medica" value={form.rutina_medica} onChange={handleChange} /></div>
-      <div className="checkbox-group"><input type="checkbox" name="acompañado" checked={form.acompañado} onChange={handleChange} /><label>Acompañado</label></div>
-    </div>,
-    <div className="card" key="social">
-      <div className="form-group"><label>Observaciones</label><input name="observaciones" value={form.observaciones} onChange={handleChange} /></div>
-      <div className="form-group"><label>Caídas</label><input name="caidas" value={form.caidas} onChange={handleChange} /></div>
-      {renderSelect('Tema de Conversación', 'temaconversacion', listas.temas, 'idTemaConversacion', 'tema', '/agregar-tema')}
-      {renderSelect('Interés Personal', 'interesespersonales', listas.intereses, 'idInteresesPersonales', 'interesPersonal', '/agregar-interes')}
-      {renderSelect('Enfermedad Anterior', 'enfermedadanterior', listas.enfermedades, 'idEnfermedadAnterior', 'nombre_enf', '/agregar-enfermedad')}
-    </div>
-  ];
+    );
+  }
 
   return (
-    <div className="ficha-form-container">
-      <form className="ficha-form" onSubmit={handleSubmit}>
-        <div className="steps-nav">
-          {pasos.map((p, i) => (
-            <div key={i} className={i === paso ? 'active' : ''} onClick={() => setPaso(i)}>{p}</div>
-          ))}
-        </div>
-        {cards[paso]}
-        <div className="navigation-buttons">
-          {paso > 0 && <button type="button" onClick={() => setPaso(paso - 1)}>Atrás</button>}
-          {paso < cards.length - 1 && (
-            <button type="button" onClick={() => setPaso(paso + 1)}>Siguiente</button>
-          )}
-        </div>
-        {paso === cards.length - 1 && (
-          <button type="submit">Guardar Ficha</button>
-        )}
-      </form>
+    <div className="ficha-page">
+      <FichaStepsNav id_ficha_paciente={id_ficha_paciente} currentStep="ficha" />
+
+      <div className="ficha-form-container">
+        <h2>{isEditing ? 'Editar Ficha de Paciente' : 'Crear Nueva Ficha'}</h2>
+
+        <form onSubmit={handleSubmit}>
+          <div className="form-section">
+            <h3>Datos Generales</h3>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Diagnóstico Médico Actual</label>
+                <textarea
+                  name="diagnostico_me_actual"
+                  value={formulario.diagnostico_me_actual}
+                  onChange={handleChange}
+                  rows={4}
+                />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Condiciones Físicas</label>
+                <input
+                  type="text"
+                  name="condiciones_fisicas"
+                  value={formulario.condiciones_fisicas}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Nivel de Conciencia</label>
+                <input
+                  type="text"
+                  name="nivel_conciencia"
+                  value={formulario.nivel_conciencia}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Estado de Ánimo</label>
+                <input
+                  type="text"
+                  name="estado_animo"
+                  value={formulario.estado_animo}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Diagnóstico Mental</label>
+                <input
+                  type="text"
+                  name="diagnostico_mental"
+                  value={formulario.diagnostico_mental}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Autonomía</label>
+                <input
+                  type="text"
+                  name="autonomia"
+                  value={formulario.autonomia}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group checkbox-group">
+                <label>
+                  <input
+                    type="checkbox"
+                    name="comunicacion"
+                    checked={formulario.comunicacion}
+                    onChange={handleChange}
+                  />
+                  Comunicación
+                </label>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Otras formas de comunicación</label>
+                <input
+                  type="text"
+                  name="otras_comunicaciones"
+                  value={formulario.otras_comunicaciones}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Tipo de dieta</label>
+                <input
+                  type="text"
+                  name="tipo_dieta"
+                  value={formulario.tipo_dieta}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Alimentación Asistida</label>
+                <input
+                  type="text"
+                  name="alimentacion_asistida"
+                  value={formulario.alimentacion_asistida}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Hora de levantarse</label>
+                <input
+                  type="time"
+                  name="hora_levantarse"
+                  value={formulario.hora_levantarse}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Hora de acostarse</label>
+                <input
+                  type="time"
+                  name="hora_acostarse"
+                  value={formulario.hora_acostarse}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Frecuencia de siestas</label>
+                <input
+                  type="text"
+                  name="frecuencia_siestas"
+                  value={formulario.frecuencia_siestas}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Frecuencia de baño</label>
+                <input
+                  type="text"
+                  name="frecuencia_baño"
+                  value={formulario.frecuencia_baño}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Rutina médica</label>
+                <input
+                  type="text"
+                  name="rutina_medica"
+                  value={formulario.rutina_medica}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group checkbox-group">
+                <label>
+                  <input
+                    type="checkbox"
+                    name="usapanal"
+                    checked={formulario.usapanal}
+                    onChange={handleChange}
+                  />
+                  Usa pañal
+                </label>
+              </div>
+
+              <div className="form-group checkbox-group">
+                <label>
+                  <input
+                    type="checkbox"
+                    name="acompañado"
+                    checked={formulario.acompañado}
+                    onChange={handleChange}
+                  />
+                  Acompañado
+                </label>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Observaciones</label>
+                <textarea
+                  name="observaciones"
+                  value={formulario.observaciones}
+                  onChange={handleChange}
+                  rows={3}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Historial de caídas</label>
+                <textarea
+                  name="caidas"
+                  value={formulario.caidas}
+                  onChange={handleChange}
+                  rows={2}
+                />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Fecha de Registro</label>
+                <input
+                  type="date"
+                  name="fecha_registro"
+                  value={formulario.fecha_registro}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="form-actions">
+            <button
+              type="submit"
+              className="btn-primary"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Guardando...' : isEditing ? 'Actualizar Ficha' : 'Guardar y Continuar'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

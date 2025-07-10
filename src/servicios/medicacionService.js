@@ -1,48 +1,56 @@
-
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8090/api/lista_medicamentos';
+const API_URL = 'http://localhost:8090/api/lista-medicamentos';
 
-export const getListaMedicamentos = async () => {
-    try {
-        const response = await axios.get(`${API_URL}/listarmed`);
-        return response.data;
-    } catch (error) {
-        throw new Error('Error al obtener la lista de medicamentos: ' + error.message);
-    }
+export const getMedicamentos = async () => {
+  try {
+    const response = await axios.get(API_URL);
+    return response.data;
+  } catch (error) {
+    throw new Error('Error al obtener medicamentos: ' + error.message);
+  }
 };
 
 export const getMedicamentoById = async (id) => {
-    try {
-        const response = await axios.get(`${API_URL}/listarmed/${id}`);
-        return response.data;
-    } catch (error) {
-        throw new Error('Error al obtener el medicamento: ' + error.message);
-    }
+  try {
+    const response = await axios.get(`${API_URL}/${id}`);
+    return response.data;
+  } catch (error) {
+    throw new Error('Error al obtener medicamento: ' + error.message);
+  }
 };
 
-export const crearMedicamento = async (medicamento) => {
-    try {
-        const response = await axios.post(`${API_URL}/crearmed`, medicamento);
-        return response.data;
-    } catch (error) {
-        throw new Error('Error al crear el medicamento: ' + error.response?.data || error.message);
-    }
+export const getMedicamentosByFicha = async (idFicha) => {
+  try {
+    const response = await axios.get(`${API_URL}/ficha/${idFicha}`);
+    return response.data;
+  } catch (error) {
+    throw new Error('Error al obtener medicamentos por ficha: ' + error.message);
+  }
 };
 
-export const actualizarMedicamento = async (id, medicamento) => {
-    try {
-        const response = await axios.put(`${API_URL}/actualizarmed/${id}`, medicamento);
-        return response.data;
-    } catch (error) {
-        throw new Error('Error al actualizar el medicamento: ' + error.response?.data || error.message);
-    }
+export const createMedicamento = async (medicamento) => {
+  try {
+    const response = await axios.post(API_URL, medicamento);
+    return response.data;
+  } catch (error) {
+    throw new Error('Error al crear medicamento: ' + error.message);
+  }
 };
 
-export const eliminarMedicamento = async (id) => {
-    try {
-        await axios.delete(`${API_URL}/eliminarmed/${id}`);
-    } catch (error) {
-        throw new Error('Error al eliminar el medicamento: ' + error.response?.data || error.message);
-    }
+export const updateMedicamento = async (id, medicamento) => {
+  try {
+    const response = await axios.put(`${API_URL}/${id}`, medicamento);
+    return response.data;
+  } catch (error) {
+    throw new Error('Error al actualizar medicamento: ' + error.message);
+  }
+};
+
+export const deleteMedicamento = async (id) => {
+  try {
+    await axios.delete(`${API_URL}/${id}`);
+  } catch (error) {
+    throw new Error('Error al eliminar medicamento: ' + error.message);
+  }
 };

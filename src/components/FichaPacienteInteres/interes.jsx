@@ -3,19 +3,19 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { 
-  getAlergiaAlimentariaById, 
-  createAlergiaAlimentaria, 
-  updateAlergiaAlimentaria,
-  deleteAlergiaAlimentaria 
-} from '../../servicios/alergiaAlimentariaService';
-import './alergiaalimentaria.css';
+  getInteresById, 
+  createInteres, 
+  updateInteres,
+  deleteInteres 
+} from '../../servicios/interesesPersonalesService';
+import './intereses.css';
 
-const AlergiaAlimentariaForm = () => {
-  const { id_ficha_paciente, id_alergias_alimentarias } = useParams();
+const InteresForm = () => {
+  const { id_ficha_paciente, idInteresesPersonales } = useParams();
   const navigate = useNavigate();
   
-  const [alergia, setAlergia] = useState({
-    alergiaAlimentaria: '',
+  const [interes, setInteres] = useState({
+    interesPersonal: '',
     fichaPaciente: { id_ficha_paciente }
   });
 
@@ -24,28 +24,28 @@ const AlergiaAlimentariaForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    const loadAlergia = async () => {
-      if (id_alergias_alimentarias && id_alergias_alimentarias !== 'nuevo') {
+    const loadInteres = async () => {
+      if (idInteresesPersonales && idInteresesPersonales !== 'nuevo') {
         setIsLoading(true);
         try {
-          const alergiaData = await getAlergiaAlimentariaById(id_alergias_alimentarias);
-          setAlergia(alergiaData);
+          const interesData = await getInteresById(idInteresesPersonales);
+          setInteres(interesData);
           setIsEditing(true);
         } catch (error) {
-          console.error("Error al cargar alergia:", error);
-          toast.error("Error al cargar alergia");
-          navigate(`/fichas/${id_ficha_paciente}/alergias-alimentarias`);
+          console.error("Error al cargar interés:", error);
+          toast.error("Error al cargar interés personal");
+          navigate(`/fichas/${id_ficha_paciente}/intereses`);
         } finally {
           setIsLoading(false);
         }
       }
     };
-    loadAlergia();
-  }, [id_alergias_alimentarias, id_ficha_paciente, navigate]);
+    loadInteres();
+  }, [idInteresesPersonales, id_ficha_paciente, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setAlergia(prev => ({
+    setInteres(prev => ({
       ...prev,
       [name]: value
     }));
@@ -55,38 +55,38 @@ const AlergiaAlimentariaForm = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    if (!alergia.alergiaAlimentaria) {
-      toast.error("El nombre de la alergia es requerido");
+    if (!interes.interesPersonal) {
+      toast.error("El interés personal es requerido");
       setIsSubmitting(false);
       return;
     }
 
     try {
       if (isEditing) {
-        await updateAlergiaAlimentaria(id_alergias_alimentarias, alergia);
-        toast.success("Alergia actualizada correctamente");
+        await updateInteres(idInteresesPersonales, interes);
+        toast.success("Interés personal actualizado correctamente");
       } else {
-        await createAlergiaAlimentaria(alergia);
-        toast.success("Alergia agregada correctamente");
+        await createInteres(interes);
+        toast.success("Interés personal agregado correctamente");
       }
-      navigate(`/fichas/${id_ficha_paciente}/alergias-alimentarias`);
+      navigate(`/fichas/${id_ficha_paciente}/intereses`);
     } catch (error) {
-      console.error("Error al guardar alergia:", error);
-      toast.error(error.message || "Error al guardar alergia");
+      console.error("Error al guardar interés:", error);
+      toast.error(error.message || "Error al guardar interés personal");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleDelete = async () => {
-    if (window.confirm("¿Estás seguro de eliminar esta alergia?")) {
+    if (window.confirm("¿Estás seguro de eliminar este interés personal?")) {
       try {
-        await deleteAlergiaAlimentaria(id_alergias_alimentarias);
-        toast.success("Alergia eliminada correctamente");
-        navigate(`/fichas/${id_ficha_paciente}/alergias-alimentarias`);
+        await deleteInteres(idInteresesPersonales);
+        toast.success("Interés personal eliminado correctamente");
+        navigate(`/fichas/${id_ficha_paciente}/intereses`);
       } catch (error) {
-        console.error("Error al eliminar alergia:", error);
-        toast.error("Error al eliminar alergia");
+        console.error("Error al eliminar interés:", error);
+        toast.error("Error al eliminar interés personal");
       }
     }
   };
@@ -95,25 +95,25 @@ const AlergiaAlimentariaForm = () => {
     return (
       <div className="loading-container">
         <div className="loading-spinner"></div>
-        <p>Cargando alergia...</p>
+        <p>Cargando interés...</p>
       </div>
     );
   }
 
   return (
     <div className="form-container">
-      <h2>{isEditing ? 'Editar Alergia Alimentaria' : 'Agregar Nueva Alergia Alimentaria'}</h2>
+      <h2>{isEditing ? 'Editar Interés Personal' : 'Agregar Nuevo Interés Personal'}</h2>
       
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label>Nombre de la Alergia*</label>
+          <label>Interés Personal*</label>
           <input
             type="text"
-            name="alergiaAlimentaria"
-            value={alergia.alergiaAlimentaria}
+            name="interesPersonal"
+            value={interes.interesPersonal}
             onChange={handleChange}
             required
-            placeholder="Ej: Alergia a los frutos secos"
+            placeholder="Ej: Música clásica, Pintura"
           />
         </div>
 
@@ -140,7 +140,7 @@ const AlergiaAlimentariaForm = () => {
           <button 
             type="button"
             className="btn-secondary"
-            onClick={() => navigate(`/fichas/${id_ficha_paciente}/alergias-alimentarias`)}
+            onClick={() => navigate(`/fichas/${id_ficha_paciente}/intereses`)}
             disabled={isSubmitting}
           >
             Cancelar
@@ -151,4 +151,4 @@ const AlergiaAlimentariaForm = () => {
   );
 };
 
-export default AlergiaAlimentariaForm;
+export default InteresForm;

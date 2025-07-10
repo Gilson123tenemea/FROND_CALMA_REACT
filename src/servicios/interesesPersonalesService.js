@@ -1,54 +1,56 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8090/api/intereses';
+const API_URL = 'http://localhost:8090/api/intereses-personales';
 
-
-// Obtener todos los intereses personales
 export const getIntereses = async () => {
   try {
-    const response = await axios.get(`${API_URL}/listar`);
+    const response = await axios.get(API_URL);
     return response.data;
   } catch (error) {
     throw new Error('Error al obtener intereses personales: ' + error.message);
   }
 };
 
-// Obtener un interés personal por ID
 export const getInteresById = async (id) => {
   try {
-    const response = await axios.get(`${API_URL}/listar/${id}`);
+    const response = await axios.get(`${API_URL}/${id}`);
     return response.data;
   } catch (error) {
-    throw new Error('Error al obtener el interés personal: ' + error.message);
+    throw new Error('Error al obtener interés personal: ' + error.message);
   }
 };
 
-// Crear nuevo interés personal
-export const crearInteres = async (interes) => {
+export const getInteresesByFicha = async (idFicha) => {
   try {
-    const response = await axios.post(`${API_URL}/crear`, interes);
+    const response = await axios.get(`${API_URL}/ficha/${idFicha}`);
     return response.data;
   } catch (error) {
-    throw new Error('Error al crear el interés personal: ' + error.response?.data || error.message);
+    throw new Error('Error al obtener intereses personales por ficha: ' + error.message);
   }
 };
 
-// Actualizar un interés personal existente
-export const actualizarInteres = async (id, interes) => {
+export const createInteres = async (interes) => {
   try {
-    const response = await axios.put(`${API_URL}/actualizar/${id}`, interes);
+    const response = await axios.post(API_URL, interes);
     return response.data;
   } catch (error) {
-    throw new Error('Error al actualizar el interés personal: ' + error.response?.data || error.message);
+    throw new Error('Error al crear interés personal: ' + error.message);
   }
 };
 
-// Eliminar un interés personal
-export const eliminarInteres = async (id) => {
+export const updateInteres = async (id, interes) => {
   try {
-    const response = await axios.delete(`${API_URL}/eliminar/${id}`);
+    const response = await axios.put(`${API_URL}/${id}`, interes);
     return response.data;
   } catch (error) {
-    throw new Error('Error al eliminar el interés personal: ' + error.response?.data || error.message);
+    throw new Error('Error al actualizar interés personal: ' + error.message);
+  }
+};
+
+export const deleteInteres = async (id) => {
+  try {
+    await axios.delete(`${API_URL}/${id}`);
+  } catch (error) {
+    throw new Error('Error al eliminar interés personal: ' + error.message);
   }
 };

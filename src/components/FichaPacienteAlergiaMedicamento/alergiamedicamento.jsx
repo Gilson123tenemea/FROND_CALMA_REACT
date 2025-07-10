@@ -3,19 +3,19 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { 
-  getAlergiaAlimentariaById, 
-  createAlergiaAlimentaria, 
-  updateAlergiaAlimentaria,
-  deleteAlergiaAlimentaria 
-} from '../../servicios/alergiaAlimentariaService';
-import './alergiaalimentaria.css';
+  getAlergiaMedicamentoById, 
+  createAlergiaMedicamento, 
+  updateAlergiaMedicamento,
+  deleteAlergiaMedicamento 
+} from '../../servicios/alergiamed';
+import './alergiamedicamento.css';
 
-const AlergiaAlimentariaForm = () => {
-  const { id_ficha_paciente, id_alergias_alimentarias } = useParams();
+const AlergiaMedicamentoForm = () => {
+  const { id_ficha_paciente, id_alergiamed } = useParams();
   const navigate = useNavigate();
   
   const [alergia, setAlergia] = useState({
-    alergiaAlimentaria: '',
+    nombremedicamento: '',
     fichaPaciente: { id_ficha_paciente }
   });
 
@@ -25,23 +25,23 @@ const AlergiaAlimentariaForm = () => {
 
   useEffect(() => {
     const loadAlergia = async () => {
-      if (id_alergias_alimentarias && id_alergias_alimentarias !== 'nuevo') {
+      if (id_alergiamed && id_alergiamed !== 'nuevo') {
         setIsLoading(true);
         try {
-          const alergiaData = await getAlergiaAlimentariaById(id_alergias_alimentarias);
+          const alergiaData = await getAlergiaMedicamentoById(id_alergiamed);
           setAlergia(alergiaData);
           setIsEditing(true);
         } catch (error) {
           console.error("Error al cargar alergia:", error);
-          toast.error("Error al cargar alergia");
-          navigate(`/fichas/${id_ficha_paciente}/alergias-alimentarias`);
+          toast.error("Error al cargar alergia a medicamento");
+          navigate(`/fichas/${id_ficha_paciente}/alergias-medicamentos`);
         } finally {
           setIsLoading(false);
         }
       }
     };
     loadAlergia();
-  }, [id_alergias_alimentarias, id_ficha_paciente, navigate]);
+  }, [id_alergiamed, id_ficha_paciente, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,38 +55,38 @@ const AlergiaAlimentariaForm = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    if (!alergia.alergiaAlimentaria) {
-      toast.error("El nombre de la alergia es requerido");
+    if (!alergia.nombremedicamento) {
+      toast.error("El nombre del medicamento es requerido");
       setIsSubmitting(false);
       return;
     }
 
     try {
       if (isEditing) {
-        await updateAlergiaAlimentaria(id_alergias_alimentarias, alergia);
-        toast.success("Alergia actualizada correctamente");
+        await updateAlergiaMedicamento(id_alergiamed, alergia);
+        toast.success("Alergia a medicamento actualizada correctamente");
       } else {
-        await createAlergiaAlimentaria(alergia);
-        toast.success("Alergia agregada correctamente");
+        await createAlergiaMedicamento(alergia);
+        toast.success("Alergia a medicamento agregada correctamente");
       }
-      navigate(`/fichas/${id_ficha_paciente}/alergias-alimentarias`);
+      navigate(`/fichas/${id_ficha_paciente}/alergias-medicamentos`);
     } catch (error) {
       console.error("Error al guardar alergia:", error);
-      toast.error(error.message || "Error al guardar alergia");
+      toast.error(error.message || "Error al guardar alergia a medicamento");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleDelete = async () => {
-    if (window.confirm("¿Estás seguro de eliminar esta alergia?")) {
+    if (window.confirm("¿Estás seguro de eliminar esta alergia a medicamento?")) {
       try {
-        await deleteAlergiaAlimentaria(id_alergias_alimentarias);
-        toast.success("Alergia eliminada correctamente");
-        navigate(`/fichas/${id_ficha_paciente}/alergias-alimentarias`);
+        await deleteAlergiaMedicamento(id_alergiamed);
+        toast.success("Alergia a medicamento eliminada correctamente");
+        navigate(`/fichas/${id_ficha_paciente}/alergias-medicamentos`);
       } catch (error) {
         console.error("Error al eliminar alergia:", error);
-        toast.error("Error al eliminar alergia");
+        toast.error("Error al eliminar alergia a medicamento");
       }
     }
   };
@@ -102,18 +102,18 @@ const AlergiaAlimentariaForm = () => {
 
   return (
     <div className="form-container">
-      <h2>{isEditing ? 'Editar Alergia Alimentaria' : 'Agregar Nueva Alergia Alimentaria'}</h2>
+      <h2>{isEditing ? 'Editar Alergia a Medicamento' : 'Agregar Nueva Alergia a Medicamento'}</h2>
       
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label>Nombre de la Alergia*</label>
+          <label>Nombre del Medicamento*</label>
           <input
             type="text"
-            name="alergiaAlimentaria"
-            value={alergia.alergiaAlimentaria}
+            name="nombremedicamento"
+            value={alergia.nombremedicamento}
             onChange={handleChange}
             required
-            placeholder="Ej: Alergia a los frutos secos"
+            placeholder="Ej: Penicilina"
           />
         </div>
 
@@ -140,7 +140,7 @@ const AlergiaAlimentariaForm = () => {
           <button 
             type="button"
             className="btn-secondary"
-            onClick={() => navigate(`/fichas/${id_ficha_paciente}/alergias-alimentarias`)}
+            onClick={() => navigate(`/fichas/${id_ficha_paciente}/alergias-medicamentos`)}
             disabled={isSubmitting}
           >
             Cancelar
@@ -151,4 +151,4 @@ const AlergiaAlimentariaForm = () => {
   );
 };
 
-export default AlergiaAlimentariaForm;
+export default AlergiaMedicamentoForm;
