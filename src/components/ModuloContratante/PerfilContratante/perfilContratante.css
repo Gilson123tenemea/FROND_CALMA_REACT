@@ -42,7 +42,7 @@
   padding: 0;
   box-sizing: border-box;
 }
-.profile-container  {
+.profile-container-contrat {
   max-width: 900px;
   margin: 30px auto;
   background: #fff;
@@ -61,7 +61,7 @@ body {
 }
 
 /* Header Styles */
-.profile-header {
+.profile-header-contrat {
   background: linear-gradient(135deg, var(--header-bg) 0%, #FFF8C4 100%);
   border-bottom: 2px solid var(--border-light);
   padding: var(--spacing-lg) var(--spacing-xl);
@@ -71,32 +71,32 @@ body {
   z-index: 100;
 }
 
-.logo-container {
+.logo-container-contrat {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
 }
 
-.logo-container h2 {
+.logo-container-contrat h2 {
   font-family: 'Poppins', sans-serif;
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--dark-text);
   letter-spacing: -0.02em;
 }
-.profile-intro {
+.profile-intro-contrat {
   flex: 1 1 250px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.profile-nav {
+.profile-nav-contrat {
   display: flex;
   align-items: center;
   gap: var(--spacing-xl);
 }
 
-.profile-nav a {
+.profile-nav-contrat a {
   color: var(--dark-text);
   font-size: 0.9rem;
   font-weight: 500;
@@ -107,20 +107,20 @@ body {
   position: relative;
 }
 
-.profile-nav a:hover {
+.profile-nav-contrat a:hover {
   background-color: rgba(255, 255, 255, 0.7);
   transform: translateY(-1px);
 }
 
 /* Main Container */
-.profile-main {
+.profile-main-contrat {
   min-height: 100vh;
   padding: var(--spacing-xl);
   display: flex;
   justify-content: center;
 }
 
-.profile-container {
+.profile-container-contrat {
   max-width: 1400px;
   width: 100%;
   background: var(--white);
@@ -131,7 +131,7 @@ body {
 }
 
 /* Animation */
-.profile-container.animate {
+.profile-container-contrat.animate {
   animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -147,7 +147,7 @@ body {
 }
 
 /* Profile Header Section */
-.profile-intro {
+.profile-intro-contrat {
   background: linear-gradient(135deg, var(--white) 0%, #FAFBFC 100%);
   padding: var(--spacing-xxl) var(--spacing-xl);
   border-bottom: 1px solid var(--border-light);
@@ -157,7 +157,7 @@ body {
   position: relative;
 }
 
-.profile-intro::after {
+.profile-intro-contrat::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -167,7 +167,7 @@ body {
   background: linear-gradient(90deg, var(--primary-button), var(--add-button));
 }
 
-.profile-avatar-large {
+.profile-avatar-large-contrat {
   width: 180px;
   height: 180px;
   border-radius: var(--border-radius-xl);
@@ -180,16 +180,16 @@ body {
   transition: all 0.3s ease;
 }
 
-.profile-avatar-large:hover {
+.profile-avatar-large-contrat:hover {
   transform: scale(1.02);
   box-shadow: 0 12px 48px var(--shadow-strong);
 }
 
-.profile-info {
+.profile-info-contrat {
   flex: 1;
 }
 
-.profile-name {
+.profile-name-contrat {
   font-family: 'Poppins', sans-serif;
   font-size: 1.5rem;
   font-weight: 500;
@@ -198,7 +198,7 @@ body {
   letter-spacing: -0.02em;
 }
 
-.profile-title {
+.profile-title-contrat {
   font-size: 1.2rem;
   color: var(--medium-text);
   font-weight: 500;
@@ -207,7 +207,7 @@ body {
 }
 
 /* Button Styles */
-.submit-button {
+.submit-button-contrat {
   background: linear-gradient(135deg, var(--primary-button) 0%, #357ABD 100%);
   color: var(--white);
   border: none;
@@ -223,19 +223,19 @@ body {
   
 }
 
-.submit-button:hover {
+.submit-button-contrat:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(74, 144, 226, 0.4);
 }
 
-.submit-button:disabled {
+.submit-button-contrat:disabled {
   background: var(--border-color);
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
 }
 
-.submit-buttonv1 {
+.submit-buttonv1-contrat {
   background: linear-gradient(135deg, var(--add-button) 0%, #8FB09E 100%);
   color: var(--white);
   border: none;
@@ -250,12 +250,12 @@ body {
   margin-left: 60px;
 }
 
-.submit-buttonv1:hover {
+.submit-buttonv1-contrat:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(168, 203, 183, 0.4);
 }
 
-.delete-button {
+.delete-button-contrat {
   background: linear-gradient(135deg, var(--delete-button) 0%, #F299B7 100%);
   color: var(--white);
   border: none;
@@ -268,17 +268,17 @@ body {
   box-shadow: 0 2px 8px rgba(245, 181, 196, 0.3);
 }
 
-.delete-button:hover {
+.delete-button-contrat:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(245, 181, 196, 0.4);
 }
 
 /* Form Sections */
-.datos-personales-box {
+.datos-personales-box-contrat {
   padding: var(--spacing-xl);
 }
 
-.profile-datos-rightinit {
+.profile-datos-rightinit-contrat {
   background: var(--white);
   border-radius: var(--border-radius-lg);
   padding: var(--spacing-xl);
@@ -288,9 +288,9 @@ body {
 }
 
 /* Section Titles */
-.sub-section-title,
-.sub-section-empresas,
-.sub-section-principal {
+.sub-section-title-contrat,
+.sub-section-empresas-contrat,
+.sub-section-principal-contrat {
   font-family: 'Poppins', sans-serif;
   font-size: 1.4rem;
   font-weight: 600;
@@ -301,9 +301,9 @@ body {
   padding-bottom: var(--spacing-sm);
 }
 
-.sub-section-title::after,
-.sub-section-empresas::after,
-.sub-section-principal::after {
+.sub-section-title-contrat::after,
+.sub-section-empresas-contrat::after,
+.sub-section-principal-contrat::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -316,7 +316,7 @@ body {
 }
 
 /* Grid Layout */
-.grid-2-columns {
+.grid-2-columns-contrat {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: var(--spacing-lg);
@@ -324,12 +324,12 @@ body {
 }
 
 /* Field Boxes */
-.field-box {
+.field-box-contrat {
   display: flex;
   flex-direction: column;
 }
 
-.field-box label {
+.field-box-contrat label {
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--dark-text);
@@ -337,7 +337,7 @@ body {
   letter-spacing: 0.01em;
 }
 
-.form-input {
+.form-input-contrat {
   width: 100%;
   padding: var(--spacing-md);
   border: 2px solid var(--border-light);
@@ -348,14 +348,14 @@ body {
   font-family: inherit;
 }
 
-.form-input:focus {
+.form-input-contrat:focus {
   outline: none;
   border-color: var(--primary-button);
   box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
   transform: translateY(-1px);
 }
 
-.form-input:disabled {
+.form-input-contrat:disabled {
   background-color: #FAFBFC;
   color: var(--medium-text);
   cursor: not-allowed;
@@ -363,7 +363,7 @@ body {
 }
 
 /* Select Styling */
-select.form-input {
+select.form-input-contrat {
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5H7z' fill='%23666'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -373,7 +373,7 @@ select.form-input {
 }
 
 /* Button Container */
-.datos-personales-box > div:last-child {
+.datos-personales-box-contrat > div:last-child {
   display: flex;
   gap: var(--spacing-md);
   justify-content: center;
@@ -383,14 +383,14 @@ select.form-input {
   border-top: 1px solid var(--border-light);
 }
 
-.datos-personales-box > div:last-child .submit-button {
+.datos-personales-box-contrat > div:last-child .submit-button {
   flex: 1;
   max-width: 200px;
   text-align: center;
 }
 
 /* Empresa Section */
-.empresa-section {
+.empresa-section-contrat {
   background: linear-gradient(135deg, #F8FDFA 0%, #F0F9F3 100%);
   border-radius: var(--border-radius-lg);
   padding: var(--spacing-xl);
@@ -400,98 +400,98 @@ select.form-input {
 
 /* Responsive Design */
 @media (max-width: 1200px) {
-  .profile-container {
+  .profile-container-contrat {
     margin: var(--spacing-md);
   }
   
-  .profile-intro {
+  .profile-intro-contrat {
     flex-direction: column;
     text-align: center;
     gap: var(--spacing-lg);
   }
   
-  .profile-name {
+  .profile-name-contrat {
     font-size: 2rem;
   }
 }
 
 @media (max-width: 768px) {
-  .profile-main {
+  .profile-main-contrat {
     padding: var(--spacing-md);
   }
   
-  .profile-header {
+  .profile-header-contrat {
     padding: var(--spacing-md);
   }
   
-  .profile-intro {
+  .profile-intro-contrat {
     padding: var(--spacing-lg);
   }
   
-  .profile-avatar-large {
+  .profile-avatar-large-contrat {
     width: 120px;
     height: 120px;
   }
   
-  .profile-name {
+  .profile-name-contrat {
     font-size: 1.75rem;
   }
   
-  .grid-2-columns {
+  .grid-2-columns-contrat {
     grid-template-columns: 1fr;
     gap: var(--spacing-md);
   }
   
-  .datos-personales-box > div:last-child {
+  .datos-personales-box-contrat > div:last-child {
     flex-direction: column;
   }
   
-  .datos-personales-box > div:last-child .submit-button {
+  .datos-personales-box-contrat > div:last-child .submit-button {
     max-width: none;
     width: 100%;
   }
 }
 
 @media (max-width: 480px) {
-  .profile-header {
+  .profile-header-contrat {
     flex-direction: column;
     gap: var(--spacing-md);
   }
   
-  .profile-nav {
+  .profile-nav-contrat {
     width: 100%;
     justify-content: space-around;
   }
   
-  .profile-intro {
+  .profile-intro-contrat {
     padding: var(--spacing-md);
   }
   
-  .profile-avatar-large {
+  .profile-avatar-large-contrat {
     width: 100px;
     height: 100px;
   }
   
-  .profile-name {
+  .profile-name-contrat {
     font-size: 1.5rem;
   }
   
-  .profile-title {
+  .profile-title-contrat {
     font-size: 1rem;
   }
 }
 
 /* Loading and Animation States */
-.loading {
+.loading-contrat {
   opacity: 0.7;
   pointer-events: none;
 }
 
-.loading .submit-button {
+.loading-contrat .submit-button {
   position: relative;
 }
 
-.loading .submit-button::after {
+.loading-contrat .submit-button::after {
   content: '';
   position: absolute;
   top: 50%;
@@ -511,20 +511,20 @@ select.form-input {
 }
 
 /* Custom Scrollbar */
-::-webkit-scrollbar {
+::-webkit-scrollbar-contrat {
   width: 8px;
 }
 
-::-webkit-scrollbar-track {
+::-webkit-scrollbar-track-contrat {
   background: var(--background);
 }
 
-::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb-contrat {
   background: var(--border-color);
   border-radius: 4px;
 }
 
-::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb-contrat:hover {
   background: var(--medium-text);
 }
 
@@ -538,14 +538,14 @@ select:focus-visible {
 
 /* Print Styles */
 @media print {
-  .profile-header,
-  .submit-button,
-  .submit-buttonv1,
-  .delete-button {
+  .profile-header-contrat,
+  .submit-button-contrat,
+  .submit-buttonv1-contrat,
+  .delete-button-contrat {
     display: none;
   }
   
-  .profile-container {
+  .profile-container-contrat {
     box-shadow: none;
     border: 1px solid var(--border-color);
   }

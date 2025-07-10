@@ -306,11 +306,11 @@ const PerfilContratante = () => {
     <>
       <HeaderContratante userId={idContratante} />
       <div className={` ${isAnimating ? 'animate' : ''}`}>
-        <main className="profile-main">
-          <div className="profile-container">
-            <div className="profile-intro">
+        <main className="profile-main-contrat">
+          <div className="profile-container-contrat">
+            <div className="profile-intro-contrat">
               <div
-                className="profile-avatar-large"
+                className="profile-avatar-large-contrat"
                 style={{
                   backgroundImage: foto
                     ? `url(${foto})`
@@ -323,15 +323,15 @@ const PerfilContratante = () => {
                 }}
               ></div>
 
-              <div className="profile-info">
-                <h1 className="profile-name">{formData.nombre} {formData.apellido}</h1>
-                <p className="profile-title">{formData.ocupacion}</p>
+              <div className="profile-info-contrat">
+                <h1 className="profile-name-contrat">{formData.nombre} {formData.apellido}</h1>
+                <p className="profile-title-contrat">{formData.ocupacion}</p>
 
                 {modoEdicion && (
                   <div style={{ marginTop: '10px' }}>
                     <button
                       type="button"
-                      className="submit-buttonv1"
+                      className="submit-buttonv1-contrat"
                       onClick={handleClickSubirFoto}
                     >
                       Subir Foto
@@ -349,71 +349,71 @@ const PerfilContratante = () => {
             </div>
 
             {/* 🔻 AHORA va fuera del bloque anterior */}
-            <div className="profile-datos-rightinit">
-              <h3 className="sub-section-principal">Información Personal</h3>
-              <div className="grid-2-columns">
-                <div className="field-box">
+            <div className="profile-datos-rightinit-contrat">
+              <h3 className="sub-section-principal-contrat">Información Personal</h3>
+              <div className="grid-2-columns-contrat">
+                <div className="field-box-contrat">
                   <label>Cédula</label>
                   <input
                     type="text"
                     name="cedula"
                     value={formData.cedula}
                     onChange={handleChange}
-                    className="form-input"
+                    className="form-input-contrat"
                     disabled
                   />
                 </div>
-                <div className="field-box">
+                <div className="field-box-contrat">
                   <label>Nombre</label>
                   <input
                     type="text"
                     name="nombre"
                     value={formData.nombre}
                     onChange={handleChange}
-                    className="form-input"
+                    className="form-input-contrat"
                     disabled={!modoEdicion}
                   />
                 </div>
-                <div className="field-box">
+                <div className="field-box-contrat">
                   <label>Apellido</label>
                   <input
                     type="text"
                     name="apellido"
                     value={formData.apellido}
                     onChange={handleChange}
-                    className="form-input"
+                    className="form-input-contrat"
                     disabled={!modoEdicion}
                   />
                 </div>
-                <div className="field-box">
+                <div className="field-box-contrat">
                   <label>Correo Electrónico</label>
                   <input
                     type="email"
                     name="correo"
                     value={formData.correo}
                     onChange={handleChange}
-                    className="form-input"
+                    className="form-input-contrat"
                     disabled={!modoEdicion}
                   />
                 </div>
-                <div className="field-box">
+                <div className="field-box-contrat">
                   <label>Fecha de Nacimiento</label>
                   <input
                     type="date"
                     name="fechaNacimiento"
                     value={formData.fechaNacimiento}
                     onChange={handleChange}
-                    className="form-input"
+                    className="form-input-contrat"
                     disabled
                   />
                 </div>
-                <div className="field-box">
+                <div className="field-box-contrat">
                   <label>Género</label>
                   <select
                     name="genero"
                     value={formData.genero}
                     onChange={handleChange}
-                    className="form-input"
+                    className="form-input-contrat"
                     disabled={!modoEdicion}
                   >
                     <option value="">Seleccione...</option>
@@ -422,31 +422,31 @@ const PerfilContratante = () => {
                     <option value="Otro">Otro</option>
                   </select>
                 </div>
-                <div className="field-box">
+                <div className="field-box-contrat">
                   <label>Ocupación</label>
                   <input
                     type="text"
                     name="ocupacion"
                     value={formData.ocupacion}
                     onChange={handleChange}
-                    className="form-input"
+                    className="form-input-contrat"
                     disabled={!modoEdicion}
                   />
                 </div>
               </div>
             </div>
             <form onSubmit={handleSubmit}>
-              <div className="datos-personales-box">
+              <div className="datos-personales-box-contrat">
 
-                <h3 className="sub-section-title">Ubicación</h3>
-                <div className="grid-2-columns">
-                  <div className="field-box">
+                <h3 className="sub-section-title-contrat">Ubicación</h3>
+                <div className="grid-2-columns-contrat">
+                  <div className="field-box-contrat">
                     <label>Provincia</label>
                     <select
                       name="provincia"
                       value={ubicacion.provincia}
                       onChange={handleUbicacionChange}
-                      className="form-input"
+                      className="form-input-contrat"
                       disabled={!modoEdicion}
                     >
                       <option value="">Seleccione...</option>
@@ -455,13 +455,13 @@ const PerfilContratante = () => {
                       ))}
                     </select>
                   </div>
-                  <div className="field-box">
+                  <div className="field-box-contrat">
                     <label>Cantón</label>
                     <select
                       name="canton"
                       value={ubicacion.canton}
                       onChange={handleUbicacionChange}
-                      className="form-input"
+                      className="form-input-contrat"
                       disabled={!modoEdicion}
                     >
                       <option value="">Seleccione...</option>
@@ -470,13 +470,13 @@ const PerfilContratante = () => {
                       ))}
                     </select>
                   </div>
-                  <div className="field-box">
+                  <div className="field-box-contrat">
                     <label>Parroquia</label>
                     <select
                       name="parroquia"
                       value={ubicacion.parroquia}
                       onChange={handleUbicacionChange}
-                      className="form-input"
+                      className="form-input-contrat"
                       disabled={!modoEdicion}
                     >
                       <option value="">Seleccione...</option>
@@ -489,38 +489,38 @@ const PerfilContratante = () => {
 
                 {representaEmpresa && (
                   <>
-                    <h3 className="sub-section-empresas">Datos de la Empresa</h3>
-                    <div className="grid-2-columns">
-                      <div className="field-box">
+                    <h3 className="sub-section-empresas-contrat">Datos de la Empresa</h3>
+                    <div className="grid-2-columns-contrat">
+                      <div className="field-box-contrat">
                         <label>Nombre de la Empresa</label>
                         <input
                           type="text"
                           name="nombreEmpresa"
                           value={empresaData.nombreEmpresa}
                           onChange={handleEmpresaChange}
-                          className="form-input"
+                          className="form-input-contrat"
                           disabled
                         />
                       </div>
-                      <div className="field-box">
+                      <div className="field-box-contrat">
                         <label>RUC</label>
                         <input
                           type="text"
                           name="rucEmpresa"
                           value={empresaData.rucEmpresa}
                           onChange={handleEmpresaChange}
-                          className="form-input"
+                          className="form-input-contrat"
                           disabled
                         />
                       </div>
-                      <div className="field-box">
+                      <div className="field-box-contrat">
                         <label>Correo Empresa</label>
                         <input
                           type="email"
                           name="correoEmpresa"
                           value={empresaData.correoEmpresa}
                           onChange={handleEmpresaChange}
-                          className="form-input"
+                          className="form-input-contrat"
                           disabled
                         />
                       </div>
