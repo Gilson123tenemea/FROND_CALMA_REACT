@@ -25,10 +25,16 @@ import Calificacion from './components/Calificacion/calificacion';
 import FichaPaciente from './components/FichaPaciente/ficha';
 import FichaPacienteAlergia from './components/FichaPacienteAlergia/alergiaali';
 import CVCompletoView from './components/ModuloAspirante/CV/CVCompletoView';
+import Soluciones from './components/Login/Soluciones';
+import Servicios from './components/Login/Servicios';
+import SobreNosotros from './components/Login/SobreNosotros';
+import Empleo from './components/Login/Empleo';
+import Contacto from './components/Login/Contacto';
 
 
 // ✅ Importación del componente Postulaciones
 import Postulaciones from './components/ModuloContratante/Postulaciones/Postulaciones';
+import { i } from 'framer-motion/client';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -71,6 +77,11 @@ createRoot(document.getElementById('root')).render(
         <Route path="/disponibilidad/:idCV" element={<DisponibilidadForm />} />
         <Route path="/certificados/:idCV" element={<CertificadosForm />} />
         <Route path="/disponibilidad/:idCV" element={<DisponibilidadForm />} />
+        <Route path="/solution" element={<Soluciones />} />
+        <Route path="/services" element={<Servicios />} />
+        <Route path="/about" element={<SobreNosotros />} />
+        <Route path="/empleo" element={<Empleo />} />
+        <Route path="/contact" element={<Contacto />} />
 
         {/* Otras rutas */}
         <Route path="/Calificacion/calificacion" element={<Calificacion />} />

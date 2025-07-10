@@ -206,37 +206,51 @@ const CVCompletoView = () => {
           </div>
         </div>
 
-        {/* Sección de Disponibilidad */}
-        {cvData.disponibilidad && (
+        {/* Sección de Disponibilidad - Versión mejorada */}
+        {cvData.disponibilidades && cvData.disponibilidades.length > 0 && (
           <div className="cv-view-section disponibilidad-section">
-            <h2><FaCalendarAlt /> Disponibilidad</h2>
+            <h2><FaCalendarAlt /> Disponibilidad ({cvData.disponibilidades.length})</h2>
             
-            <div className="disponibilidad-details">
-              <div className="disponibilidad-detail">
-                <span className="detail-icon"><FaCalendarAlt /></span>
-                <span className="detail-label">Días disponibles:</span>
-                <span className="detail-value">{cvData.disponibilidad.dias_disponibles || 'No especificado'}</span>
-              </div>
-              
-              <div className="disponibilidad-detail">
-                <span className="detail-icon"><FaClock /></span>
-                <span className="detail-label">Horario preferido:</span>
-                <span className="detail-value">{cvData.disponibilidad.horario_preferido || 'No especificado'}</span>
-              </div>
-              
-              <div className="disponibilidad-detail">
-                <span className="detail-icon"><FaBusinessTime /></span>
-                <span className="detail-label">Tipo de jornada:</span>
-                <span className="detail-value">{cvData.disponibilidad.tipo_jornada || 'No especificado'}</span>
-              </div>
-              
-              <div className="disponibilidad-detail">
-                <span className="detail-icon"><FaPlane /></span>
-                <span className="detail-label">Disponibilidad para viajar:</span>
-                <span className="detail-value">
-                  {cvData.disponibilidad.disponibilidad_viaje ? 'Sí' : 'No'}
-                </span>
-              </div>
+            <div className="disponibilidades-list">
+              {cvData.disponibilidades.map((disp, index) => (
+                <div key={index} className="disponibilidad-item">
+                  <div className="disponibilidad-grid">
+                    <div className="disponibilidad-detail">
+                      <span className="detail-icon"><FaCalendarAlt /></span>
+                      <div>
+                        <span className="detail-label">Días disponibles:</span>
+                        <span className="detail-value">{disp.dias_disponibles || 'No especificado'}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="disponibilidad-detail">
+                      <span className="detail-icon"><FaClock /></span>
+                      <div>
+                        <span className="detail-label">Horario preferido:</span>
+                        <span className="detail-value">{disp.horario_preferido || 'No especificado'}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="disponibilidad-detail">
+                      <span className="detail-icon"><FaBusinessTime /></span>
+                      <div>
+                        <span className="detail-label">Tipo de jornada:</span>
+                        <span className="detail-value">{disp.tipo_jornada || 'No especificado'}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="disponibilidad-detail">
+                      <span className="detail-icon"><FaPlane /></span>
+                      <div>
+                        <span className="detail-label">Disponibilidad para viajar:</span>
+                        <span className="detail-value">
+                          {disp.disponibilidad_viaje ? 'Sí' : 'No'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}

@@ -1,12 +1,22 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './HeaderAspirante.css';
 
 const HeaderAspirante = ({ userId, onOpenMensajes }) => {
+  const navigate = useNavigate();
+
   const handleMensajesClick = (e) => {
     e.preventDefault();
     console.log("ID del usuario:", userId);
     onOpenMensajes(userId);
+  };
+
+  const handleLogout = () => {
+    // Aquí tu lógica para cerrar sesión
+    console.log("Cerrando sesión...");
+    localStorage.clear(); // limpia el almacenamiento local
+    sessionStorage.clear(); // limpia la sesión también por si acaso
+    navigate('/login'); // redirige al login
   };
 
   return (
@@ -23,21 +33,15 @@ const HeaderAspirante = ({ userId, onOpenMensajes }) => {
           <Link to={`/moduloAspirante/red?userId=${userId}`}>Mi Red</Link>
           <a href="#" onClick={handleMensajesClick}>Mensajes</a>
           <Link to={`/moduloAspirante/cv?userId=${userId}`}>CV</Link>
-                    <Link to={`/ver-cv/${userId}`}>Ver CV Completo</Link> {/* Nuevo enlace */}
-
+          <Link to={`/ver-cv/${userId}`}>Ver CV Completo</Link>
           <Link to={`/moduloAspirante/perfilAspirante?userId=${userId}`}>Mi Perfil</Link>
         </nav>
       </div>
+
       <div className="header-right">
-        <div className="search-bar">
-          <div className="search-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-              <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
-            </svg>
-          </div>
-          <input type="text" placeholder="Buscar" />
-        </div>
-        <div className="user-avatar" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/a/...")' }}></div>
+        <button className="logout-button" onClick={handleLogout}>
+          Cerrar sesión
+        </button>
       </div>
     </header>
   );
