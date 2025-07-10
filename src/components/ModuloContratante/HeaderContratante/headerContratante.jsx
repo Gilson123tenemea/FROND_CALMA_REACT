@@ -25,6 +25,9 @@ const HeaderContratante = ({ userId, onOpenMensajes }) => {
           <a href="#" onClick={handleMensajesClick}>Mensajes</a>
           <Link to={`/moduloContratante/perfilContratante?userId=${userId}`}>Mi Perfil</Link>
           <Link to={`/moduloContratante/registropaciente?userId=${userId}`}>Registro del paciente</Link>
+
+          {/* ✅ Nuevo link para Ver Postulaciones */}
+          <Link to={`/postulaciones/${userId}`}>Ver Postulaciones</Link>
         </nav>
       </div>
       <div className="header-right">

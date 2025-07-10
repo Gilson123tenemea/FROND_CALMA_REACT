@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './index.css';
 
 import Inicio from './components/Inicio/Inicio';
-import Login from './components/Login/Login'; // Asegúrate que esté con mayúscula si el archivo es Login.jsx
+import Login from './components/Login/Login';
 import Registro from './components/Registro/Registro';
 import ResetPassword from './components/Login/ResetPassword';
 
@@ -25,6 +25,8 @@ import Calificacion from './components/Calificacion/calificacion';
 import FichaPaciente from './components/FichaPaciente/ficha';
 import FichaPacienteAlergia from './components/FichaPacienteAlergia/alergiaali';
 
+// ✅ Importación del componente Postulaciones
+import Postulaciones from './components/ModuloContratante/Postulaciones/Postulaciones';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -55,7 +57,6 @@ createRoot(document.getElementById('root')).render(
         <Route path="/cv/:idCV" element={<CVForm editMode={false} />} />
         <Route path="/cv/:idCV/edit" element={<CVForm editMode={true} />} />
         
-        
         {/* Rutas dependientes de CV */}
         <Route path="/cv/:idCV/certificados" element={<CertificadosForm />} />     
         <Route path="/cv/:idCV/recomendaciones" element={<RecomendacionesForm />} />
@@ -67,10 +68,11 @@ createRoot(document.getElementById('root')).render(
         <Route path="/certificados/:idCV" element={<CertificadosForm />} />
         <Route path="/disponibilidad/:idCV" element={<DisponibilidadForm />} />
 
-
-
         {/* Otras rutas */}
         <Route path="/Calificacion/calificacion" element={<Calificacion />} />
+
+        {/* ✅ Ruta nueva para ver postulaciones del contratante */}
+        <Route path="/postulaciones/:userId" element={<Postulaciones />} />
       </Routes>
     </Router>
   </StrictMode>
