@@ -1,0 +1,539 @@
+/* src/components/SobreNosotros.css */
+
+.nosotros-page {
+    padding-top: 100px;
+    background: linear-gradient(135deg, #fff 0%, #fff 100%);
+    min-height: 100vh;
+  }
+  
+  .nosotros-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  /* Hero Section */
+  .nosotros-hero {
+    text-align: center;
+    margin-bottom: 60px;
+    background: linear-gradient(135deg, #6a4fcf, #4a3d8f);
+    color: white;
+    padding: 80px 40px;
+    border-radius: 25px;
+    box-shadow: 0 15px 35px rgba(106, 79, 207, 0.3);
+  }
+  
+  .nosotros-titulo {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .nosotros-subtitulo {
+    font-size: 1.3rem;
+    opacity: 0.9;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  
+  /* Misión y Visión */
+  .mision-vision {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 60px;
+  }
+  
+  .mision, .vision {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .mision:hover, .vision:hover {
+    transform: translateY(-5px);
+  }
+  
+  .mision h2, .vision h2 {
+    font-size: 1.8rem;
+    color: #4a3d8f;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+  
+  .mision p, .vision p {
+    color: #555;
+    line-height: 1.7;
+    font-size: 1.1rem;
+  }
+  
+  /* Estadísticas */
+  .estadisticas {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+  
+  .estadisticas h2 {
+    font-size: 2.5rem;
+    color: #4a3d8f;
+    margin-bottom: 40px;
+    font-weight: 600;
+  }
+  
+  .estadisticas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+  }
+  
+  .stat-card {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  }
+  
+  .stat-icono {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    display: block;
+  }
+  
+  .stat-numero {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #6a4fcf;
+    margin-bottom: 10px;
+  }
+  
+  .stat-label {
+    color: #555;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+  
+  /* Metodología */
+  .metodologia {
+    background: white;
+    padding: 50px;
+    border-radius: 25px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin-bottom: 60px;
+  }
+  
+  .metodologia h2 {
+    font-size: 2.3rem;
+    color: #4a3d8f;
+    margin-bottom: 30px;
+    text-align: center;
+    font-weight: 600;
+  }
+  
+  .metodologia-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  
+  .metodologia-info h3 {
+    font-size: 1.5rem;
+    color: #6a4fcf;
+    margin-bottom: 15px;
+  }
+  
+  .metodologia-info p {
+    color: #555;
+    line-height: 1.7;
+    margin-bottom: 25px;
+  }
+  
+  .scrum-beneficios h4 {
+    color: #4a3d8f;
+    margin-bottom: 15px;
+  }
+  
+  .scrum-beneficios ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .scrum-beneficios li {
+    padding: 5px 0;
+    color: #555;
+  }
+  
+  .scrum-cycle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+  
+  .cycle-step {
+    background: linear-gradient(135deg, #6a4fcf, #4a3d8f);
+    color: white;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    font-weight: 600;
+    transition: transform 0.3s ease;
+  }
+  
+  .cycle-step:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Equipo */
+  .equipo {
+    margin-bottom: 60px;
+  }
+  
+  .equipo h2 {
+    font-size: 2.5rem;
+    color: #4a3d8f;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+  
+  .equipo-descripcion {
+    text-align: center;
+    color: #555;
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .equipo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+  }
+  
+  .miembro-card {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+  }
+  
+  .miembro-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    border-color: #6a4fcf;
+  }
+  
+  .miembro-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .miembro-icono {
+    font-size: 2.5rem;
+    margin-right: 20px;
+    background: linear-gradient(135deg, #6a4fcf, #4a3d8f);
+    padding: 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 70px;
+    height: 70px;
+  }
+  
+  .miembro-info h3 {
+    font-size: 1.4rem;
+    color: #4a3d8f;
+    margin-bottom: 5px;
+    font-weight: 600;
+  }
+  
+  .miembro-rol {
+    color: #6a4fcf;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  
+  .miembro-especialidad {
+    color: #777;
+    font-size: 0.9rem;
+  }
+  
+  .miembro-descripcion {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  
+  .miembro-btn {
+    background: linear-gradient(135deg, #6a4fcf, #4a3d8f);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    width: 100%;
+  }
+  
+  .miembro-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(106, 79, 207, 0.4);
+  }
+  
+  .miembro-skills {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #f0f0f0;
+    animation: slideDown 0.3s ease;
+  }
+  
+  .miembro-skills h4 {
+    color: #4a3d8f;
+    margin-bottom: 15px;
+  }
+  
+  .skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .skill-tag {
+    background: linear-gradient(135deg, #6a4fcf, #4a3d8f);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  /* Valores */
+  .valores {
+    margin-bottom: 60px;
+  }
+  
+  .valores h2 {
+    font-size: 2.5rem;
+    color: #4a3d8f;
+    text-align: center;
+    margin-bottom: 40px;
+    font-weight: 600;
+  }
+  
+  .valores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+  }
+  
+  .valor-card {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  
+  .valor-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .valor-icono {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    display: block;
+  }
+  
+  .valor-card h3 {
+    font-size: 1.4rem;
+    color: #4a3d8f;
+    margin-bottom: 15px;
+    font-weight: 600;
+  }
+  
+  .valor-card p {
+    color: #555;
+    line-height: 1.6;
+  }
+  
+  /* Tecnologías */
+  .tecnologias {
+    background: white;
+    padding: 50px;
+    border-radius: 25px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin-bottom: 60px;
+  }
+  
+  .tecnologias h2 {
+    font-size: 2.3rem;
+    color: #4a3d8f;
+    text-align: center;
+    margin-bottom: 40px;
+    font-weight: 600;
+  }
+  
+  .tech-categories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+  }
+  
+  .tech-category h3 {
+    font-size: 1.3rem;
+    color: #6a4fcf;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+  
+  .tech-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .tech-item {
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    color: #4a3d8f;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: 500;
+    border: 2px solid #6a4fcf;
+    transition: all 0.3s ease;
+  }
+  
+  .tech-item:hover {
+    background: linear-gradient(135deg, #6a4fcf, #4a3d8f);
+    color: white;
+    transform: translateY(-2px);
+  }
+  
+  /* Call to Action */
+  .nosotros-cta {
+    background: linear-gradient(135deg, #6a4fcf, #4a3d8f);
+    color: white;
+    text-align: center;
+    padding: 60px 40px;
+    border-radius: 25px;
+    box-shadow: 0 15px 35px rgba(106, 79, 207, 0.3);
+  }
+  
+  .nosotros-cta h3 {
+    font-size: 2.2rem;
+    color: #f0f0f0;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+  
+  .nosotros-cta p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    opacity: 0.9;
+  }
+  
+  .cta-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .btn-primary, .btn-secondary {
+    padding: 15px 30px;
+    border: none;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 180px;
+  }
+  
+  .btn-primary {
+    background: white;
+    color: #6a4fcf;
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+  }
+  
+  .btn-secondary {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+  }
+  
+  .btn-secondary:hover {
+    background: white;
+    color: #6a4fcf;
+    transform: translateY(-2px);
+  }
+  
+  /* Animaciones */
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .nosotros-titulo {
+      font-size: 2.5rem;
+    }
+    
+    .nosotros-subtitulo {
+      font-size: 1.1rem;
+    }
+    
+    .mision-vision {
+      grid-template-columns: 1fr;
+    }
+    
+    .metodologia-content {
+      grid-template-columns: 1fr;
+    }
+    
+    .equipo-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .tech-categories {
+      grid-template-columns: 1fr;
+    }
+    
+    .cta-buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .btn-primary, .btn-secondary {
+      width: 100%;
+      max-width: 300px;
+    }
+  }

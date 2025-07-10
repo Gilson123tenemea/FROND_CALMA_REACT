@@ -131,18 +131,6 @@ const Login = () => {
         <div className="login-card">
           <h2>Bienvenido a CALMA</h2>
           <p className="subtitle">Inicia sesión para continuar</p>
-
-          <div className="social-buttons">
-            <button className="social-btn google-btn">
-              <FaGoogle className="social-icon" />
-              Continuar con Google
-            </button>
-            <button className="social-btn facebook-btn">
-              <FaFacebook className="social-icon" />
-              Continuar con Facebook
-            </button>
-          </div>
-
           <div className="divider"><span>o</span></div>
 
           <form onSubmit={handleLogin}>

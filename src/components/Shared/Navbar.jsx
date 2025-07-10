@@ -1,27 +1,44 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Importa el hook
+import { useNavigate } from 'react-router-dom';
 import './Navbar.css';
+import logo from '../../assets/logo.jpeg';
+
 
 const Navbar = () => {
-  const navigate = useNavigate(); // Inicializa el hook
+  const navigate = useNavigate();
+
+  const handleLogoClick = () => {
+    navigate('/');
+  };
 
   return (
     <header className="navbar">
-      <div className="logo">
-        <svg>{/* Icono SVG */}</svg>
-        <h2>C A L M A</h2>
+      <div className="logo-container">
+        <div className="logo-icon">
+          <div className="logo-icon">
+            <img src={logo} alt="Logo de Calma" className="logo-img" />
+          </div>
+        </div>
+        <button className="logo-button" onClick={handleLogoClick}>
+          CALMA
+        </button>
       </div>
-      <nav>
-        <a href="/">Inicio</a>
-        <a href="/about">Sobre Nosotros</a>
+
+      <nav className="nav-menu">
+        <a href="/solution">Soluciones</a>
+        <a href="/about">¿Por qué Calma?</a>
         <a href="/services">Servicios</a>
+        <a href="/empleo">Empleo</a>
         <a href="/contact">Contacto</a>
       </nav>
+
       <div className="auth-buttons">
-       
-        <button onClick={() => navigate('/ficha')}>Inscribirse</button>
-        <button onClick={() => navigate('/login')}>Ingresar</button>
-        {/* 👆 Redirige a /login sin recargar la página */}
+        <button className="btn-signup" onClick={() => navigate('/ficha')}>
+          Inscribirse
+        </button>
+        <button className="btn-login" onClick={() => navigate('/login')}>
+          Ingresar
+        </button>
       </div>
     </header>
   );
