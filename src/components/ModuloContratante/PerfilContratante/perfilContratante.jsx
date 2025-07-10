@@ -5,7 +5,8 @@ import { useSearchParams } from 'react-router-dom';
 import { getProvincias } from "../../../servicios/ProvinciaService";
 import { getCantonesByProvinciaId } from "../../../servicios/CantonService";
 import { getParroquiasByCantonId } from "../../../servicios/parroquiaService";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const PerfilContratante = () => {
   const [searchParams] = useSearchParams();
   const idContratante = searchParams.get('userId');  // Usamos userId como idContratante
@@ -285,7 +286,7 @@ const PerfilContratante = () => {
       const result = await response.json();
 
       if (result.success) {
-        alert('Datos actualizados con éxito!');
+        toast.success('Datos actualizados con éxito!');
         setModoEdicion(false);
         const resContratante = await fetch(`http://localhost:8090/api/registro/contratante/detalle/${idContratante}`);
         const jsonContratante = await resContratante.json();
@@ -293,10 +294,10 @@ const PerfilContratante = () => {
           const fotoNombre = jsonContratante.contratante.foto;
         }
       } else {
-        alert('Error al actualizar: ' + result.message);
+        +        toast.error('Error al actualizar: ' + result.message);
       }
     } catch (error) {
-      alert('Error en la conexión: ' + error.message);
+      toast.alert('Error en la conexión: ' + result.message);
     }
 
     setIsAnimating(false);
@@ -304,7 +305,13 @@ const PerfilContratante = () => {
 
   return (
     <>
+
       <HeaderContratante userId={idContratante} />
+      <div className={` ${isAnimating ? 'animate' : ''}`}>
+        {/* ... todo tu contenido ... */}
+      </div>
+      <ToastContainer position="top-right" autoClose={3000} />
+
       <div className={` ${isAnimating ? 'animate' : ''}`}>
         <main className="profile-main-contrat">
           <div className="profile-container-contrat">

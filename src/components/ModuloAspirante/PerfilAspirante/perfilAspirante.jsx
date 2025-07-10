@@ -6,6 +6,8 @@ import HeaderAspirante from "../HeaderAspirante/HeaderAspirante";
 import { getProvincias } from "../../../servicios/ProvinciaService";
 import { getCantonesByProvinciaId } from "../../../servicios/CantonService";
 import { getParroquiasByCantonId } from "../../../servicios/parroquiaService";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const PerfilAspirante = () => {
   const navigate = useNavigate();
@@ -194,53 +196,50 @@ const PerfilAspirante = () => {
     }));
   };
 
-  const handleSave = async () => {
-    try {
-      setLoading(true);
+const handleSave = async (e) => {
+  e.preventDefault(); // 👈 EVITA que recargue la página
 
-      const dataToSend = {
-        nombres: editData.nombres,
-        apellidos: editData.apellidos,
-        cedula: editData.cedula,
-        correo: editData.correo,
-        genero: editData.genero,
-        fechaNacimiento: editData.fechaNacimiento,
-        idParroquia: ubicacion.parroquia,
-        foto: editData.foto && editData.foto.startsWith('data:') ? editData.foto : "",
-        aspiracionSalarial: parseFloat(editData.aspiracionSalarial) || 0,
-        disponibilidad: editData.disponibilidad,
-        tipo_contrato: editData.tipo_contrato,
-        contrasena: editData.contrasena,
-      };
+  try {
+    setLoading(true);
 
-      const response = await fetch(`http://localhost:8090/api/registro/aspirante/${aspiranteId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dataToSend),
-      });
+    const dataToSend = {
+      nombres: editData.nombres,
+      apellidos: editData.apellidos,
+      cedula: editData.cedula,
+      correo: editData.correo,
+      genero: editData.genero,
+      fechaNacimiento: editData.fechaNacimiento,
+      idParroquia: ubicacion.parroquia,
+      foto: editData.foto && editData.foto.startsWith('data:') ? editData.foto : "",
+      aspiracionSalarial: parseFloat(editData.aspiracionSalarial) || 0,
+      disponibilidad: editData.disponibilidad,
+      tipo_contrato: editData.tipo_contrato,
+      contrasena: editData.contrasena,
+    };
 
-      const result = await response.json();
-      console.log("Respuesta PUT:", result);
+    const response = await fetch(`http://localhost:8090/api/registro/aspirante/${aspiranteId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(dataToSend),
+    });
 
-      if (response.ok && result.success) {
-        alert("Datos modificados correctamente");
-        setIsEditing(false);
-        try {
-          await cargarDatosAspirante(aspiranteId);
-        } catch (innerErr) {
-          console.warn("Error al recargar datos:", innerErr);
-        }
-      } else {
-        alert("Error al modificar: " + (result.message || "Respuesta inesperada"));
-      }
-    } catch (err) {
-      console.error('Error en catch al guardar datos:', err);
-      alert("Datos modificados correctamente");
-    } finally {
-      setLoading(false);
+    const result = await response.json();
+    console.log("Respuesta PUT:", result);
+
+    if (response.ok && result.success) {
+      toast.success('Datos actualizados con éxito!');
+      setIsEditing(false);
+      await cargarDatosAspirante(aspiranteId);
+    } else {
+      toast.error('Error al modificar: ' + result.message);
     }
-  };
-
+  } catch (err) {
+    console.error('Error en catch al guardar datos:', err);
+    toast.error('Error inesperado al guardar');
+  } finally {
+    setLoading(false);
+  }
+};
 
 
   const handleCancel = () => {
@@ -257,6 +256,11 @@ const PerfilAspirante = () => {
   return (
     <>
       <HeaderAspirante userId={aspiranteId} />
+      <div className={` ${isAnimating ? 'animate' : ''}`}>
+        {/* ... todo tu contenido ... */}
+      </div>
+      <ToastContainer position="top-right" autoClose={3000} />
+
       <div className={`profile-container-aspirante ${isAnimating ? 'animate' : ''}`}>
         <main className="profile-main-aspirante">
           <div className="profile-intro-aspirante">
