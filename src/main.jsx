@@ -55,12 +55,19 @@ createRoot(document.getElementById('root')).render(
         <Route path="/cv/:idCV" element={<CVForm editMode={false} />} />
         <Route path="/cv/:idCV/edit" element={<CVForm editMode={true} />} />
         
+        
         {/* Rutas dependientes de CV */}
+        <Route path="/cv/:idCV/certificados" element={<CertificadosForm />} />     
         <Route path="/cv/:idCV/recomendaciones" element={<RecomendacionesForm />} />
+        <Route path="/cv/:idCV/habilidades" element={<HabilidadesForm />} />
+        <Route path="/cv/:idCV/disponibilidad" element={<DisponibilidadForm />} />
         <Route path="/recomendaciones/:idCV" element={<RecomendacionesForm />} />
-        <Route path="/cv/:idCV/certificados" element={<CertificadosForm />} />
         <Route path="/habilidades/:idCV" element={<HabilidadesForm />} />
         <Route path="/disponibilidad/:idCV" element={<DisponibilidadForm />} />
+        <Route path="/certificados/:idCV" element={<CertificadosForm />} />
+        <Route path="/disponibilidad/:idCV" element={<DisponibilidadForm />} />
+
+
 
         {/* Otras rutas */}
         <Route path="/Calificacion/calificacion" element={<Calificacion />} />
