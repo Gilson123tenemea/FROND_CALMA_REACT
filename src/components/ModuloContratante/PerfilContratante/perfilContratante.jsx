@@ -251,10 +251,90 @@ const PerfilContratante = () => {
       reader.readAsDataURL(file);
     }
   };
+  const validarSoloLetras = (texto) => /^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/.test(texto);
+
+  const [errores, setErrores] = useState({
+    nombres: '',
+    apellidos: '',
+    genero: '',
+    provincia: '',
+    canton: '',
+    parroquia: '',
+    correo: '',
+    ocupacion: '',
+  });
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsAnimating(true);
+    let nuevosErrores = {};
+    let valid = true;
+
+    // Nombres
+    if (!formData.nombre.trim()) {
+      nuevosErrores.nombres = 'Campo vacío';
+      valid = false;
+    } else if (!validarSoloLetras(formData.nombre)) {
+      nuevosErrores.nombres = 'No se permite el ingreso de números';
+      valid = false;
+    }
+
+    // Apellidos
+    if (!formData.apellido.trim()) {
+      nuevosErrores.apellidos = 'Campo vacío';
+      valid = false;
+    } else if (!validarSoloLetras(formData.apellido)) {
+      nuevosErrores.apellidos = 'No se permite el ingreso de números';
+      valid = false;
+    }
+
+    // Género
+    if (!formData.genero) {
+      nuevosErrores.genero = 'Debe seleccionar su género';
+      valid = false;
+    }
+
+    // Provincia
+    if (!ubicacion.provincia) {
+      nuevosErrores.provincia = 'Debe seleccionar su provincia';
+      valid = false;
+    }
+
+    // Cantón
+    if (!ubicacion.canton) {
+      nuevosErrores.canton = 'Debe seleccionar su cantón';
+      valid = false;
+    }
+
+    // Parroquia
+    if (!ubicacion.parroquia) {
+      nuevosErrores.parroquia = 'Debe seleccionar su parroquia';
+      valid = false;
+    }
+
+    // Correo
+    if (!formData.correo.trim()) {
+      nuevosErrores.correo = 'El correo es obligatorio';
+      valid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)) {
+      nuevosErrores.correo = 'Correo inválido';
+      valid = false;
+    }
+
+    // Ocupación
+    if (!formData.ocupacion.trim()) {
+      nuevosErrores.ocupacion = 'La ocupación es obligatoria';
+      valid = false;
+    }
+
+    if (!valid) {
+      setErrores(nuevosErrores); // <--- ¡Primero actualiza los errores!
+      toast.error("Complete correctamente su información");
+      return;
+    }
+
+    setErrores(nuevosErrores);
 
     const dataToSend = {
       nombre: formData.nombre,
@@ -331,9 +411,12 @@ const PerfilContratante = () => {
               ></div>
 
               <div className="profile-info-contrat">
-                <h1 className="profile-name-contrat">{formData.nombre} {formData.apellido}</h1>
-                <p className="profile-title-contrat">{formData.ocupacion}</p>
-
+                <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                  <h1 className="profile-name-contrat">{formData.nombre} {formData.apellido}</h1>
+                  <p className="profile-title-contrat" style={{ textAlign: 'left', marginLeft: '1rem', display: 'inline-block' }}>
+                    {formData.ocupacion}
+                  </p>
+                </div>
                 {modoEdicion && (
                   <div style={{ marginTop: '10px' }}>
                     <button
@@ -377,9 +460,10 @@ const PerfilContratante = () => {
                     name="nombre"
                     value={formData.nombre}
                     onChange={handleChange}
-                    className="form-input-contrat"
+                    className={`form-input-contrat ${errores.nombres ? 'input-error-contrat' : ''}`}
                     disabled={!modoEdicion}
                   />
+                  {errores.nombres && <p className="error-text-contrat">{errores.nombres}</p>}
                 </div>
                 <div className="field-box-contrat">
                   <label>Apellido</label>
@@ -388,9 +472,10 @@ const PerfilContratante = () => {
                     name="apellido"
                     value={formData.apellido}
                     onChange={handleChange}
-                    className="form-input-contrat"
+                    className={`form-input-contrat ${errores.apellidos ? 'input-error-contrat' : ''}`}
                     disabled={!modoEdicion}
                   />
+                  {errores.apellidos && <p className="error-text-contrat">{errores.apellidos}</p>}
                 </div>
                 <div className="field-box-contrat">
                   <label>Correo Electrónico</label>
@@ -399,9 +484,10 @@ const PerfilContratante = () => {
                     name="correo"
                     value={formData.correo}
                     onChange={handleChange}
-                    className="form-input-contrat"
+                    className={`form-input-contrat ${errores.correo ? 'input-error-contrat' : ''}`}
                     disabled={!modoEdicion}
                   />
+                  {errores.correo && <p className="error-text-contrat">{errores.correo}</p>}
                 </div>
                 <div className="field-box-contrat">
                   <label>Fecha de Nacimiento</label>
@@ -420,14 +506,14 @@ const PerfilContratante = () => {
                     name="genero"
                     value={formData.genero}
                     onChange={handleChange}
-                    className="form-input-contrat"
+                    className={`form-input-contrat ${errores.genero ? 'input-error-contrat' : ''}`}
                     disabled={!modoEdicion}
                   >
                     <option value="">Seleccione...</option>
                     <option value="Masculino">Masculino</option>
                     <option value="Femenino">Femenino</option>
-                    <option value="Otro">Otro</option>
                   </select>
+                  {errores.genero && <p className="error-text-contrat">{errores.genero}</p>}
                 </div>
                 <div className="field-box-contrat">
                   <label>Ocupación</label>
@@ -436,9 +522,10 @@ const PerfilContratante = () => {
                     name="ocupacion"
                     value={formData.ocupacion}
                     onChange={handleChange}
-                    className="form-input-contrat"
+                    className={`form-input-contrat ${errores.ocupacion ? 'input-error-contrat' : ''}`}
                     disabled={!modoEdicion}
                   />
+                  {errores.ocupacion && <p className="error-text-contrat">{errores.ocupacion}</p>}
                 </div>
               </div>
             </div>
@@ -453,7 +540,7 @@ const PerfilContratante = () => {
                       name="provincia"
                       value={ubicacion.provincia}
                       onChange={handleUbicacionChange}
-                      className="form-input-contrat"
+                      className={`form-input-contrat ${errores.provincia ? 'input-error-contrat' : ''}`}
                       disabled={!modoEdicion}
                     >
                       <option value="">Seleccione...</option>
@@ -461,6 +548,7 @@ const PerfilContratante = () => {
                         <option key={p.id_provincia} value={p.id_provincia}>{p.nombre}</option>
                       ))}
                     </select>
+                    {errores.provincia && <p className="error-text-contrat">{errores.provincia}</p>}
                   </div>
                   <div className="field-box-contrat">
                     <label>Cantón</label>
@@ -468,7 +556,7 @@ const PerfilContratante = () => {
                       name="canton"
                       value={ubicacion.canton}
                       onChange={handleUbicacionChange}
-                      className="form-input-contrat"
+                      className={`form-input-contrat ${errores.canton ? 'input-error-contrat' : ''}`}
                       disabled={!modoEdicion}
                     >
                       <option value="">Seleccione...</option>
@@ -476,6 +564,7 @@ const PerfilContratante = () => {
                         <option key={c.id_canton} value={c.id_canton}>{c.nombre}</option>
                       ))}
                     </select>
+                    {errores.canton && <p className="error-text-contrat">{errores.canton}</p>}
                   </div>
                   <div className="field-box-contrat">
                     <label>Parroquia</label>
@@ -483,7 +572,7 @@ const PerfilContratante = () => {
                       name="parroquia"
                       value={ubicacion.parroquia}
                       onChange={handleUbicacionChange}
-                      className="form-input-contrat"
+                      className={`form-input-contrat ${errores.parroquia ? 'input-error-contrat' : ''}`}
                       disabled={!modoEdicion}
                     >
                       <option value="">Seleccione...</option>
@@ -491,6 +580,7 @@ const PerfilContratante = () => {
                         <option key={p.id_parroquia} value={p.id_parroquia}>{p.nombre}</option>
                       ))}
                     </select>
+                    {errores.parroquia && <p className="error-text-contrat">{errores.parroquia}</p>}
                   </div>
                 </div>
 

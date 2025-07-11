@@ -59,6 +59,25 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.error-text-contrat {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: 4px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.error-text-contrat::before {
+  content: "⚠";
+  color: #e74c3c;
+}
+.input-error-contrat {
+  border: 2px solid #F5B5C4 !important;
+  box-shadow: 0 0 0 3px rgba(245, 181, 196, 0.2) !important;
+  background-color: #fef7f7 !important;
+}
 
 /* Header Styles */
 .profile-header-contrat {
@@ -88,7 +107,7 @@ body {
   flex: 1 1 250px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: center;  /* ✅ Esto centra el nombre y la ocupación */
 }
 .profile-nav-contrat {
   display: flex;
