@@ -2,7 +2,7 @@
 body {
   font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
-  color: #1e293b;
+  color: #ffffff;
   background-color: #f8fafc;
   margin: 0;
   padding: 0;
@@ -12,9 +12,9 @@ body {
 .ficha-page,
 .list-container,
 .form-container {
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 28px;
 }
 
 /* Navegación de pasos mejorada */
@@ -35,7 +35,7 @@ body {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #0f766e, #059669, #0891b2, #0284c7);
+  background: linear-gradient(90deg, #62849e, #388dcd, #0891b2, #0284c7);
   background-size: 200% 100%;
   animation: gradient-flow 6s ease infinite;
 }
@@ -133,12 +133,12 @@ body {
 .ficha-steps-nav li:hover .step-content .step-icon {
   transform: scale(1.05);
   box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  background: linear-gradient(1deg, #e2e8f0 0%, #cbd5e1 100%);
 }
 
 .ficha-steps-nav li.active {
-  background: linear-gradient(135deg, #0891b2 0%, #0284c7 100%);
-  box-shadow: 0 4px 20px rgba(8, 145, 178, 0.3);
+  background: linear-gradient(135deg, #4352a6 0%, #234e93 80%);
+  box-shadow: 0 4px 20px rgba(45, 148, 174, 0.3);
   transform: translateY(-1px);
 }
 
@@ -149,7 +149,7 @@ body {
 .ficha-steps-nav li.active .step-content .step-icon {
   transform: scale(1.1);
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  color: #0891b2;
+  color: #14596a;
   box-shadow: 0 4px 16px rgba(255,255,255,0.2);
   border-color: #ffffff;
 }
@@ -159,7 +159,7 @@ body {
 }
 
 .ficha-steps-nav li.completed {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  background: linear-gradient(135deg, hsl(99, 88%, 84%) 0%, #148e6b 100%);
 }
 
 .ficha-steps-nav li.completed .step-content {
@@ -168,7 +168,7 @@ body {
 
 .ficha-steps-nav li.completed .step-content .step-icon {
   background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
-  color: #059669;
+  color: #000000;
   box-shadow: 0 4px 16px rgba(5, 150, 105, 0.2);
   border-color: #ffffff;
 }
@@ -198,12 +198,12 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 28px;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  background: linear-gradient(135deg, #4352a6 0%, #234e93 80%);
   color: #ffffff;
   padding: 24px 32px;
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-  border: 1px solid #334155;
+  box-shadow: 0 8px 32px rgba(255, 255, 255, 0.15);
+  border: 1px solid #1e2a3b;
 }
 
 .header-actions h2 {
@@ -228,7 +228,7 @@ body {
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   padding: 32px;
   border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  box-shadow: 0 4px 24px rgba(43, 88, 140, 0.06);
   border: 1px solid #e2e8f0;
   transition: all 0.3s ease;
 }
@@ -239,7 +239,7 @@ body {
 }
 
 .form-section h3 {
-  color: #0f172a;
+  color: #293e6f;
   font-size: 1.3rem;
   font-weight: 700;
   margin-bottom: 24px;
@@ -278,26 +278,7 @@ body {
 }
 
 /* Iconos profesionales para labels médicos */
-.form-group label[for*="diagnostico_me_actual"]::before { content: '🩺'; filter: grayscale(30%); }
-.form-group label[for*="condiciones_fisicas"]::before { content: '⚕️'; filter: grayscale(30%); }
-.form-group label[for*="nivel_conciencia"]::before { content: '🧠'; filter: grayscale(30%); }
-.form-group label[for*="estado_animo"]::before { content: '💭'; filter: grayscale(30%); }
-.form-group label[for*="diagnostico_mental"]::before { content: '🧠'; filter: grayscale(30%); }
-.form-group label[for*="autonomia"]::before { content: '🚶'; filter: grayscale(30%); }
-.form-group label[for*="comunicacion"]::before { content: '💬'; filter: grayscale(30%); }
-.form-group label[for*="otras_comunicaciones"]::before { content: '📢'; filter: grayscale(30%); }
-.form-group label[for*="tipo_dieta"]::before { content: '🍽️'; filter: grayscale(30%); }
-.form-group label[for*="alimentacion_asistida"]::before { content: '🥄'; filter: grayscale(30%); }
-.form-group label[for*="hora_levantarse"]::before { content: '🌅'; filter: grayscale(30%); }
-.form-group label[for*="hora_acostarse"]::before { content: '🌙'; filter: grayscale(30%); }
-.form-group label[for*="frecuencia_siestas"]::before { content: '😴'; filter: grayscale(30%); }
-.form-group label[for*="frecuencia_baño"]::before { content: '🛁'; filter: grayscale(30%); }
-.form-group label[for*="rutina_medica"]::before { content: '⚕️'; filter: grayscale(30%); }
-.form-group label[for*="usapanal"]::before { content: '🩹'; filter: grayscale(30%); }
-.form-group label[for*="acompañado"]::before { content: '👥'; filter: grayscale(30%); }
-.form-group label[for*="observaciones"]::before { content: '📝'; filter: grayscale(30%); }
-.form-group label[for*="caidas"]::before { content: '⚠️'; filter: grayscale(30%); }
-.form-group label[for*="fecha_registro"]::before { content: '📅'; filter: grayscale(30%); }
+
 
 /* Campos de formulario */
 .form-group input[type="text"],
@@ -357,8 +338,8 @@ body {
 }
 
 .checkbox-group:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  border-color: #2b5a93;
+  box-shadow: 0 2px 8px rgba(4, 6, 17, 0.04);
 }
 
 .checkbox-group input[type="checkbox"] {
@@ -421,7 +402,7 @@ body {
 
 /* Botones */
 .btn-primary {
-  background: linear-gradient(135deg, #0891b2 0%, #0284c7 100%);
+  background: linear-gradient(135deg, #4282b6 0%, #3964da 100%);
   color: #ffffff;
   border: none;
   padding: 12px 24px;
@@ -772,4 +753,21 @@ body {
 .btn-danger:focus-visible {
   outline: 2px solid #0891b2;
   outline-offset: 2px;
+}
+.form-section {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.titulo-ficha {
+  color: white;
 }

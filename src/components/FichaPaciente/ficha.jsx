@@ -17,12 +17,10 @@ const FichaPacienteForm = ({ editMode = false }) => {
   const [formulario, setFormulario] = useState({
     diagnostico_me_actual: '',
     condiciones_fisicas: '',
-    nivel_conciencia: '',
     estado_animo: '',
-    diagnostico_mental: '',
-    autonomia: '',
     comunicacion: false,
     otras_comunicaciones: '',
+    caidas: '',
     tipo_dieta: '',
     alimentacion_asistida: '',
     hora_levantarse: '',
@@ -33,7 +31,6 @@ const FichaPacienteForm = ({ editMode = false }) => {
     usapanal: false,
     acompañado: false,
     observaciones: '',
-    caidas: '',
     fecha_registro: new Date().toISOString().split('T')[0],
     paciente: { id_paciente: '' }
   });
@@ -43,19 +40,8 @@ const FichaPacienteForm = ({ editMode = false }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Opciones para los combos
-  const opcionesNivelConciencia = [
-    { value: '', label: 'Seleccione nivel de conciencia' },
-    { value: 'alerta', label: 'Alerta' },
-    { value: 'somnoliento', label: 'Somnoliento' },
-    { value: 'estuporoso', label: 'Estuporoso' },
-    { value: 'comatoso', label: 'Comatoso' },
-    { value: 'confuso', label: 'Confuso' },
-    { value: 'desorientado', label: 'Desorientado' },
-    { value: 'normal', label: 'Normal' }
-  ];
-
   const opcionesEstadoAnimo = [
-    { value: '', label: 'Seleccione estado de ánimo' },
+    { value: '', label: 'Seleccione estado de ánimo ' },
     { value: 'alegre', label: 'Alegre' },
     { value: 'triste', label: 'Triste' },
     { value: 'ansioso', label: 'Ansioso' },
@@ -65,19 +51,6 @@ const FichaPacienteForm = ({ editMode = false }) => {
     { value: 'agitado', label: 'Agitado' },
     { value: 'apático', label: 'Apático' },
     { value: 'normal', label: 'Normal' }
-  ];
-
-  const opcionesDiagnosticoMental = [
-    { value: '', label: 'Seleccione diagnóstico mental' },
-    { value: 'demencia', label: 'Demencia' },
-    { value: 'alzheimer', label: 'Alzheimer' },
-    { value: 'depresion', label: 'Depresión' },
-    { value: 'ansiedad', label: 'Ansiedad' },
-    { value: 'esquizofrenia', label: 'Esquizofrenia' },
-    { value: 'trastorno_bipolar', label: 'Trastorno Bipolar' },
-    { value: 'deterioro_cognitivo', label: 'Deterioro Cognitivo' },
-    { value: 'ninguno', label: 'Ninguno' },
-    { value: 'otro', label: 'Otro' }
   ];
 
   const opcionesAutonomia = [
@@ -116,12 +89,10 @@ const FichaPacienteForm = ({ editMode = false }) => {
         setFormulario({
           diagnostico_me_actual: fichaData.diagnostico_me_actual || '',
           condiciones_fisicas: fichaData.condiciones_fisicas || '',
-          nivel_conciencia: fichaData.nivel_conciencia || '',
           estado_animo: fichaData.estado_animo || '',
-          diagnostico_mental: fichaData.diagnostico_mental || '',
-          autonomia: fichaData.autonomia || '',
           comunicacion: fichaData.comunicacion || false,
           otras_comunicaciones: fichaData.otras_comunicaciones || '',
+          caidas: fichaData.caidas || '',
           tipo_dieta: fichaData.tipo_dieta || '',
           alimentacion_asistida: fichaData.alimentacion_asistida || '',
           hora_levantarse: fichaData.hora_levantarse || '',
@@ -132,7 +103,6 @@ const FichaPacienteForm = ({ editMode = false }) => {
           usapanal: fichaData.usapanal || false,
           acompañado: fichaData.acompañado || false,
           observaciones: fichaData.observaciones || '',
-          caidas: fichaData.caidas || '',
           fecha_registro: fichaData.fecha_registro?.split('T')[0] || '',
           paciente: fichaData.paciente ? { id_paciente: fichaData.paciente.id_paciente } : { id_paciente: '' }
         });
@@ -233,27 +203,11 @@ const FichaPacienteForm = ({ editMode = false }) => {
                   placeholder="Ej: Movilidad reducida, artritis..."
                 />
               </div>
-
-              <div className="form-group">
-                <label htmlFor="nivel_conciencia">Nivel de Conciencia</label>
-                <select
-                  id="nivel_conciencia"
-                  name="nivel_conciencia"
-                  value={formulario.nivel_conciencia}
-                  onChange={handleChange}
-                >
-                  {opcionesNivelConciencia.map(opcion => (
-                    <option key={opcion.value} value={opcion.value}>
-                      {opcion.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
             </div>
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="estado_animo">Estado de Ánimo</label>
+                <label htmlFor="estado_animo">Estado de Ánimo que presenta el paciente frecuentemente</label>
                 <select
                   id="estado_animo"
                   name="estado_animo"
@@ -269,14 +223,14 @@ const FichaPacienteForm = ({ editMode = false }) => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="diagnostico_mental">Diagnóstico Mental</label>
+                <label htmlFor="caidas">Riesgo de caídas</label>
                 <select
-                  id="diagnostico_mental"
-                  name="diagnostico_mental"
-                  value={formulario.diagnostico_mental}
+                  id="caidas"
+                  name="caidas"
+                  value={formulario.caidas}
                   onChange={handleChange}
                 >
-                  {opcionesDiagnosticoMental.map(opcion => (
+                  {opcionesCaidas.map(opcion => (
                     <option key={opcion.value} value={opcion.value}>
                       {opcion.label}
                     </option>
@@ -286,22 +240,6 @@ const FichaPacienteForm = ({ editMode = false }) => {
             </div>
 
             <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="autonomia">Autonomía</label>
-                <select
-                  id="autonomia"
-                  name="autonomia"
-                  value={formulario.autonomia}
-                  onChange={handleChange}
-                >
-                  {opcionesAutonomia.map(opcion => (
-                    <option key={opcion.value} value={opcion.value}>
-                      {opcion.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
               <div className="form-group">
                 <div className="checkbox-group">
                   <input
@@ -311,8 +249,21 @@ const FichaPacienteForm = ({ editMode = false }) => {
                     checked={formulario.comunicacion}
                     onChange={handleChange}
                   />
-                  <label htmlFor="comunicacion">Comunicación Efectiva</label>
+                  <label htmlFor="comunicacion">Presenta dificuldades de Cominucación</label>
                 </div>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="otras_comunicaciones">Describa la forma de comunicación</label>
+                <input
+                  type="text"
+                  id="otras_comunicaciones"
+                  name="otras_comunicaciones"
+                  value={formulario.otras_comunicaciones}
+                  onChange={handleChange}
+                  placeholder="Ej: Lenguaje de señas, gestos..."
+                  disabled={!formulario.comunicacion}
+                />
               </div>
             </div>
           </div>
@@ -321,18 +272,6 @@ const FichaPacienteForm = ({ editMode = false }) => {
             <h3>Alimentación y Rutinas</h3>
 
             <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="otras_comunicaciones">Otras formas de comunicación</label>
-                <input
-                  type="text"
-                  id="otras_comunicaciones"
-                  name="otras_comunicaciones"
-                  value={formulario.otras_comunicaciones}
-                  onChange={handleChange}
-                  placeholder="Ej: Lenguaje de señas, gestos..."
-                />
-              </div>
-
               <div className="form-group">
                 <label htmlFor="tipo_dieta">Tipo de dieta</label>
                 <select
@@ -348,11 +287,9 @@ const FichaPacienteForm = ({ editMode = false }) => {
                   ))}
                 </select>
               </div>
-            </div>
 
-            <div className="form-row">
               <div className="form-group">
-                <label htmlFor="alimentacion_asistida">Alimentación Asistida</label>
+                <label htmlFor="alimentacion_asistida">Requiere Alimentación Asistida</label>
                 <input
                   type="text"
                   id="alimentacion_asistida"
@@ -362,7 +299,9 @@ const FichaPacienteForm = ({ editMode = false }) => {
                   placeholder="Descripción de la asistencia necesaria..."
                 />
               </div>
+            </div>
 
+            <div className="form-row">
               <div className="form-group">
                 <label htmlFor="hora_levantarse">Hora de levantarse</label>
                 <input
@@ -441,7 +380,9 @@ const FichaPacienteForm = ({ editMode = false }) => {
                   <label htmlFor="usapanal">Usa pañal</label>
                 </div>
               </div>
+            </div>
 
+            <div className="form-row">
               <div className="form-group">
                 <div className="checkbox-group">
                   <input
@@ -454,9 +395,7 @@ const FichaPacienteForm = ({ editMode = false }) => {
                   <label htmlFor="acompañado">Requiere acompañamiento</label>
                 </div>
               </div>
-            </div>
 
-            <div className="form-row">
               <div className="form-group">
                 <label htmlFor="observaciones">Observaciones</label>
                 <textarea
@@ -467,22 +406,6 @@ const FichaPacienteForm = ({ editMode = false }) => {
                   rows={3}
                   placeholder="Observaciones adicionales sobre el paciente..."
                 />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="caidas">Riesgo de caídas</label>
-                <select
-                  id="caidas"
-                  name="caidas"
-                  value={formulario.caidas}
-                  onChange={handleChange}
-                >
-                  {opcionesCaidas.map(opcion => (
-                    <option key={opcion.value} value={opcion.value}>
-                      {opcion.label}
-                    </option>
-                  ))}
-                </select>
               </div>
             </div>
 
