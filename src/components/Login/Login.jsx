@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import './Login.css';
 import Navbar from '../Shared/Navbar';
-import { FaFacebook, FaGoogle, FaArrowRight } from 'react-icons/fa';
+import { FaFacebook, FaGoogle, FaArrowRight, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { login } from '../../servicios/LoginService';
-import LoadingScreen from '../Shared/LoadingScreen'; // Import del loading visual
+import LoadingScreen from '../Shared/LoadingScreen';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -14,12 +14,11 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  const navigate = useNavigate();
-
   const [showRecoveryModal, setShowRecoveryModal] = useState(false);
   const [recoveryEmail, setRecoveryEmail] = useState('');
   const [recoveryLoading, setRecoveryLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const validateEmail = (email) => {
     const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
@@ -146,20 +145,27 @@ const Login = () => {
               />
             </div>
 
-            <div className="input-group">
+            <div className="login-input-group">
               <label htmlFor="password">Contraseña</label>
-              <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Ingresa tu contraseña"
-                required
-                onFocus={() => setShowPassword(true)}
-                onBlur={() => setShowPassword(false)}
-              />
+              <div className="login-input-with-icon">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Ingresa tu contraseña"
+                  required
+                />
+                <button
+                  type="button"
+                  className="login-password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
             </div>
-
             <div className="forgot-password">
               <button
                 type="button"

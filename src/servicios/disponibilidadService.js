@@ -14,10 +14,16 @@ axios.interceptors.response.use(
 export const getDisponibilidadesByCVId = async (cvId) => {
   try {
     const response = await axios.get(`${API_URL}/cv/${cvId}`);
-    return response.data;
+    if (response.data && Array.isArray(response.data)) {
+      return response.data;
+    }
+    throw new Error('Formato de respuesta inesperado');
   } catch (error) {
     console.error(`Error al obtener disponibilidades para CV ${cvId}:`, error);
-    throw new Error('No se pudieron cargar las disponibilidades');
+    const errorMsg = error.response?.data?.message || 
+                   error.message || 
+                   'Error al cargar disponibilidades';
+    throw new Error(errorMsg);
   }
 };
 
@@ -34,10 +40,13 @@ export const createDisponibilidad = async (data) => {
 export const updateDisponibilidad = async (id, data) => {
   try {
     const response = await axios.put(`${API_URL}/${id}`, data);
-    return response.data;
+    return response.data; // Ahora recibe un DTO consistente
   } catch (error) {
-    console.error(`Error al actualizar disponibilidad con ID ${id}:`, error.response?.data || error);
-    throw new Error(error.response?.data?.message || 'No se pudo actualizar la disponibilidad');
+    console.error(`Error al actualizar disponibilidad con ID ${id}:`, error);
+    const errorMsg = error.response?.data?.message || 
+                   error.message || 
+                   'Error al actualizar disponibilidad';
+    throw new Error(errorMsg);
   }
 };
 
