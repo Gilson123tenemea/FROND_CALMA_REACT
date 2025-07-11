@@ -79,8 +79,78 @@ const PerfilAspirante = () => {
     cargarCantones();
   }, [ubicacion.provincia]);
 
+  const validarCampos = (data) => {
+    const errores = {};
+
+    // Validar nombres (solo letras y no vacío)
+    if (!data.nombres.trim()) {
+      errores.nombres = 'El nombre es obligatorio';
+    } else if (!/^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/.test(data.nombres)) {
+      errores.nombres = 'El nombre solo puede contener letras';
+    }
+
+    // Validar apellidos (igual que nombres)
+    if (!data.apellidos.trim()) {
+      errores.apellidos = 'El apellido es obligatorio';
+    } else if (!/^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/.test(data.apellidos)) {
+      errores.apellidos = 'El apellido solo puede contener letras';
+    }
+
+    // Validar cédula (que no esté vacía y que tenga solo números)
+    if (!data.cedula.trim()) {
+      errores.cedula = 'La cédula es obligatoria';
+    } else if (!/^\d+$/.test(data.cedula)) {
+      errores.cedula = 'La cédula solo debe contener números';
+    }
+
+    // Validar correo con regex simple
+    if (!data.correo.trim()) {
+      errores.correo = 'El correo es obligatorio';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.correo)) {
+      errores.correo = 'Correo inválido';
+    }
+
+    // Validar fecha de nacimiento (no vacía y no mayor que hoy)
+    if (!data.fechaNacimiento) {
+      errores.fechaNacimiento = 'La fecha de nacimiento es obligatoria';
+    } else if (new Date(data.fechaNacimiento) > new Date()) {
+      errores.fechaNacimiento = 'La fecha de nacimiento no puede ser futura';
+    }
+
+    // Validar género
+    if (!data.genero) {
+      errores.genero = 'El género es obligatorio';
+    }
+
+    // Validar provincia, cantón y parroquia
+    if (!ubicacion.provincia) {
+      errores.provincia = 'La provincia es obligatoria';
+    }
+    if (!ubicacion.canton) {
+      errores.canton = 'El cantón es obligatorio';
+    }
+    if (!ubicacion.parroquia) {
+      errores.parroquia = 'La parroquia es obligatoria';
+    }
+
+    // Validar aspiración salarial (no vacía, solo números y mayor o igual a cero)
+    if (data.aspiracionSalarial === null || data.aspiracionSalarial === '' || isNaN(data.aspiracionSalarial)) {
+      errores.aspiracionSalarial = 'La aspiración salarial es obligatoria y debe ser un número válido';
+    } else if (parseFloat(data.aspiracionSalarial) < 0) {
+      errores.aspiracionSalarial = 'La aspiración salarial no puede ser negativa';
+    }
+    // Validar tipo de contrato
+    if (!data.tipo_contrato) {
+      errores.tipo_contrato = 'El tipo de contrato es obligatorio';
+    }
+
+    return errores;
+  };
 
 
+  const validarSoloLetras = texto => /^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/.test(texto);
+
+  const [errores, setErrores] = useState({});
   useEffect(() => {
     const cargarParroquias = async () => {
       if (ubicacion.canton) {
@@ -187,6 +257,16 @@ const PerfilAspirante = () => {
     setIsEditing(true);
     setEditData({ ...formData });
   };
+  const handleChange = e => {
+    const { name, value, type, checked } = e.target;
+    if (name === 'provincia' || name === 'canton' || name === 'parroquia') {
+      setUbicacion(prev => ({ ...prev, [name]: value }));
+    } else if (type === 'checkbox') {
+      setFormData(prev => ({ ...prev, [name]: checked }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -196,50 +276,60 @@ const PerfilAspirante = () => {
     }));
   };
 
-const handleSave = async (e) => {
-  e.preventDefault(); // 👈 EVITA que recargue la página
+  const handleSave = async (e) => {
+    e.preventDefault(); // 👈 EVITA que recargue la página
 
-  try {
-    setLoading(true);
+    const erroresValidacion = validarCampos(editData);
 
-    const dataToSend = {
-      nombres: editData.nombres,
-      apellidos: editData.apellidos,
-      cedula: editData.cedula,
-      correo: editData.correo,
-      genero: editData.genero,
-      fechaNacimiento: editData.fechaNacimiento,
-      idParroquia: ubicacion.parroquia,
-      foto: editData.foto && editData.foto.startsWith('data:') ? editData.foto : "",
-      aspiracionSalarial: parseFloat(editData.aspiracionSalarial) || 0,
-      disponibilidad: editData.disponibilidad,
-      tipo_contrato: editData.tipo_contrato,
-      contrasena: editData.contrasena,
-    };
-
-    const response = await fetch(`http://localhost:8090/api/registro/aspirante/${aspiranteId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(dataToSend),
-    });
-
-    const result = await response.json();
-    console.log("Respuesta PUT:", result);
-
-    if (response.ok && result.success) {
-      toast.success('Datos actualizados con éxito!');
-      setIsEditing(false);
-      await cargarDatosAspirante(aspiranteId);
+    if (Object.keys(erroresValidacion).length > 0) {
+      setErrores(erroresValidacion);
+      toast.error('Por favor corrige los errores en el formulario');
+      return; // No continuar si hay errores
     } else {
-      toast.error('Error al modificar: ' + result.message);
+      setErrores({}); // limpiar errores si ya está bien
     }
-  } catch (err) {
-    console.error('Error en catch al guardar datos:', err);
-    toast.error('Error inesperado al guardar');
-  } finally {
-    setLoading(false);
-  }
-};
+
+    try {
+      setLoading(true);
+
+      const dataToSend = {
+        nombres: editData.nombres,
+        apellidos: editData.apellidos,
+        cedula: editData.cedula,
+        correo: editData.correo,
+        genero: editData.genero,
+        fechaNacimiento: editData.fechaNacimiento,
+        idParroquia: ubicacion.parroquia,
+        foto: editData.foto && editData.foto.startsWith('data:') ? editData.foto : "",
+        aspiracionSalarial: parseFloat(editData.aspiracionSalarial) || 0,
+        disponibilidad: editData.disponibilidad,
+        tipo_contrato: editData.tipo_contrato,
+        contrasena: editData.contrasena,
+      };
+
+      const response = await fetch(`http://localhost:8090/api/registro/aspirante/${aspiranteId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dataToSend),
+      });
+
+      const result = await response.json();
+      console.log("Respuesta PUT:", result);
+
+      if (response.ok && result.success) {
+        toast.success('Datos actualizados con éxito!');
+        setIsEditing(false);
+        await cargarDatosAspirante(aspiranteId);
+      } else {
+        toast.error('Error al modificar: ' + result.message);
+      }
+    } catch (err) {
+      console.error('Error en catch al guardar datos:', err);
+      toast.error('Error inesperado al guardar');
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   const handleCancel = () => {
@@ -317,9 +407,10 @@ const handleSave = async (e) => {
                     name="nombres"
                     value={isEditing ? editData.nombres : formData.nombres}
                     onChange={handleInputChange}
-                    className="form-input-aspirante"
+                    className={`form-input-aspirante ${errores.nombres ? 'input-error-aspirante' : ''}`}
                     disabled={!isEditing}
                   />
+                  {errores.nombres && <p className="error-text-aspirante">{errores.nombres}</p>}
                 </div>
                 <div className="field-box-aspirante">
                   <label>Apellidos</label>
@@ -328,9 +419,10 @@ const handleSave = async (e) => {
                     name="apellidos"
                     value={isEditing ? editData.apellidos : formData.apellidos}
                     onChange={handleInputChange}
-                    className="form-input-aspirante"
+                    className={`form-input-aspirante ${errores.apellidos ? 'input-error-aspirante' : ''}`}
                     disabled={!isEditing}
                   />
+                  {errores.apellidos && <p className="error-text-aspirante">{errores.apellidos}</p>}
                 </div>
                 <div className="field-box-aspirante">
                   <label>Correo Electrónico</label>
@@ -339,9 +431,10 @@ const handleSave = async (e) => {
                     name="correo"
                     value={isEditing ? editData.correo : formData.correo}
                     onChange={handleInputChange}
-                    className="form-input-aspirante"
+                    className={`form-input-aspirante ${errores.correo ? 'input-error-aspirante' : ''}`}
                     disabled={!isEditing}
                   />
+                  {errores.correo && <p className="error-text-aspirante">{errores.correo}</p>}
                 </div>
                 <div className="field-box-aspirante">
                   <label>Fecha de Nacimiento</label>
@@ -351,7 +444,7 @@ const handleSave = async (e) => {
                     value={isEditing ? editData.fechaNacimiento : formData.fechaNacimiento}
                     onChange={handleInputChange}
                     className="form-input-aspirante"
-                    disabled={!isEditing}
+                    disabled
                   />
                 </div>
                 <div className="field-box-aspirante">
@@ -360,13 +453,14 @@ const handleSave = async (e) => {
                     name="genero"
                     value={isEditing ? editData.genero : formData.genero}
                     onChange={handleInputChange}
-                    className="form-input-aspirante"
+                    className={`form-input-aspirante ${errores.genero ? 'input-error-aspirante' : ''}`}
                     disabled={!isEditing}
-                  >
+                  ><option value="">Seleccione...</option>
                     <option value="Masculino">Masculino</option>
                     <option value="Femenino">Femenino</option>
                     <option value="Otro">Otro</option>
                   </select>
+                  {errores.genero && <p className="error-text-aspirante">{errores.genero}</p>}
                 </div>
                 <div className="profile-row-aspirante">
                   <label>Provincia:</label>
@@ -375,13 +469,14 @@ const handleSave = async (e) => {
                     value={ubicacion.provincia}
                     onChange={handleUbicacionChange}
                     disabled={!isEditing}
-                    className="input-select-aspirante"
+                    className={`input-select-aspirante ${errores.provincia ? 'input-error-aspirante' : ''}`}
                   >
                     <option value="">Seleccione...</option>
                     {provincias.map(p => (
                       <option key={p.id_provincia} value={p.id_provincia}>{p.nombre}</option>
                     ))}
                   </select>
+                  {errores.provincia && <p className="error-text-aspirante">{errores.provincia}</p>}
                 </div>
 
                 <div className="profile-row-aspirante">
@@ -391,13 +486,14 @@ const handleSave = async (e) => {
                     value={ubicacion.canton}
                     onChange={handleUbicacionChange}
                     disabled={!isEditing}
-                    className="input-select-aspirante"
+                    className={`input-select-aspirante ${errores.canton ? 'input-error-aspirante' : ''}`}
                   >
                     <option value="">Seleccione...</option>
                     {cantones.map(c => (
                       <option key={c.id_canton} value={c.id_canton}>{c.nombre}</option>
                     ))}
                   </select>
+                  {errores.canton && <p className="error-text-aspirante">{errores.canton}</p>}
                 </div>
 
                 <div className="profile-row-aspirante">
@@ -407,13 +503,14 @@ const handleSave = async (e) => {
                     value={ubicacion.parroquia}
                     onChange={handleUbicacionChange}
                     disabled={!isEditing}
-                    className="input-select-aspirante"
+                    className={`input-select-aspirante ${errores.parroquia ? 'input-error-aspirante' : ''}`}
                   >
                     <option value="">Seleccione...</option>
                     {parroquias.map(p => (
                       <option key={p.id_parroquia} value={p.id_parroquia}>{p.nombre}</option>
                     ))}
                   </select>
+                  {errores.parroquia && <p className="error-text-aspirante">{errores.parroquia}</p>}
                 </div>
 
               </div>
@@ -442,9 +539,10 @@ const handleSave = async (e) => {
                     name="aspiracionSalarial"
                     value={isEditing ? (editData.aspiracionSalarial || '') : (formData.aspiracionSalarial || '')}
                     readOnly={!isEditing}
-                    className="input-text-aspirante"
+                    className={`input-text-aspirante ${errores.aspiracionSalarial ? 'input-error-aspirante' : ''}`}
                     onChange={handleInputChange}
                   />
+                  {errores.aspiracionSalarial && <p className="error-text-aspirante">{errores.aspiracionSalarial}</p>}
                 </div>
 
                 <div className="profile-row-aspirante">
@@ -454,14 +552,15 @@ const handleSave = async (e) => {
                     value={isEditing ? editData.tipo_contrato : formData.tipo_contrato}
                     disabled={!isEditing}
                     onChange={handleInputChange}
-                    className="input-select-aspirante-aspirante"
-                  >
+                    className={`input-select-aspirante-aspirante ${errores.tipo_contrato ? 'input-error-aspirante' : ''}`}
+                  ><option value="">Seleccione...</option>
                     <option value="Tiempo completo">Tiempo completo</option>
                     <option value="Medio tiempo">Medio tiempo</option>
                     <option value="Por horas">Por horas</option>
                     <option value="Freelance">Freelance</option>
                     <option value="Contrato temporal">Contrato temporal</option>
                   </select>
+                  {errores.tipo_contrato && <p className="error-text-aspirante">{errores.tipo_contrato}</p>}
                 </div>
               </div>
 
