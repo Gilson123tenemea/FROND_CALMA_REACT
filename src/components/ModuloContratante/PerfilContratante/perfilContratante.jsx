@@ -374,7 +374,7 @@ const PerfilContratante = () => {
           const fotoNombre = jsonContratante.contratante.foto;
         }
       } else {
-        +        toast.error('Error al actualizar: ' + result.message);
+           
       }
     } catch (error) {
       toast.alert('Error en la conexión: ' + result.message);
