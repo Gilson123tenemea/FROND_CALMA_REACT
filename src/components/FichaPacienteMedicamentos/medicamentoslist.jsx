@@ -6,8 +6,7 @@ import {
   getMedicamentosByFicha,
   deleteMedicamento 
 } from '../../servicios/medicacionService';
-import FichaStepsNav from '../../FichaPaciente/fichastepsNav';
-
+import FichaStepsNav from '../FichaPaciente/fichastepsNav';
 import './medicaciones.css';
 
 const MedicamentosList = () => {

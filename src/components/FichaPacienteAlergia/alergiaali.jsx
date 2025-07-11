@@ -13,10 +13,10 @@ import './alergiaalimentaria.css';
 const AlergiaAlimentariaForm = () => {
   const { id_ficha_paciente, id_alergias_alimentarias } = useParams();
   const navigate = useNavigate();
-  
+
   const [alergia, setAlergia] = useState({
     alergiaAlimentaria: '',
-    fichaPaciente: { id_ficha_paciente }
+    fichaPaciente: { id_ficha_paciente: Number(id_ficha_paciente) }
   });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -29,7 +29,10 @@ const AlergiaAlimentariaForm = () => {
         setIsLoading(true);
         try {
           const alergiaData = await getAlergiaAlimentariaById(id_alergias_alimentarias);
-          setAlergia(alergiaData);
+          setAlergia({
+            alergiaAlimentaria: alergiaData.alergiaAlimentaria || '',
+            fichaPaciente: alergiaData.fichaPaciente || { id_ficha_paciente: Number(id_ficha_paciente) }
+          });
           setIsEditing(true);
         } catch (error) {
           console.error("Error al cargar alergia:", error);
@@ -110,7 +113,7 @@ const AlergiaAlimentariaForm = () => {
           <input
             type="text"
             name="alergiaAlimentaria"
-            value={alergia.alergiaAlimentaria}
+            value={alergia.alergiaAlimentaria ?? ''}
             onChange={handleChange}
             required
             placeholder="Ej: Alergia a los frutos secos"

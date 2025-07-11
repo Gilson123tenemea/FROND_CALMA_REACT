@@ -7,7 +7,7 @@ import {
   createFicha,
   updateFicha
 } from '../../servicios/ficha';
-import FichaStepsNav from './FichaStepsNav';
+import FichaStepsNav from './fichastepsNav';
 import './ficha.css';
 
 const FichaPacienteForm = ({ editMode = false }) => {
@@ -42,25 +42,114 @@ const FichaPacienteForm = ({ editMode = false }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Opciones para los combos
+  const opcionesNivelConciencia = [
+    { value: '', label: 'Seleccione nivel de conciencia' },
+    { value: 'alerta', label: 'Alerta' },
+    { value: 'somnoliento', label: 'Somnoliento' },
+    { value: 'estuporoso', label: 'Estuporoso' },
+    { value: 'comatoso', label: 'Comatoso' },
+    { value: 'confuso', label: 'Confuso' },
+    { value: 'desorientado', label: 'Desorientado' },
+    { value: 'normal', label: 'Normal' }
+  ];
+
+  const opcionesEstadoAnimo = [
+    { value: '', label: 'Seleccione estado de ánimo' },
+    { value: 'alegre', label: 'Alegre' },
+    { value: 'triste', label: 'Triste' },
+    { value: 'ansioso', label: 'Ansioso' },
+    { value: 'deprimido', label: 'Deprimido' },
+    { value: 'irritable', label: 'Irritable' },
+    { value: 'calmado', label: 'Calmado' },
+    { value: 'agitado', label: 'Agitado' },
+    { value: 'apático', label: 'Apático' },
+    { value: 'normal', label: 'Normal' }
+  ];
+
+  const opcionesDiagnosticoMental = [
+    { value: '', label: 'Seleccione diagnóstico mental' },
+    { value: 'demencia', label: 'Demencia' },
+    { value: 'alzheimer', label: 'Alzheimer' },
+    { value: 'depresion', label: 'Depresión' },
+    { value: 'ansiedad', label: 'Ansiedad' },
+    { value: 'esquizofrenia', label: 'Esquizofrenia' },
+    { value: 'trastorno_bipolar', label: 'Trastorno Bipolar' },
+    { value: 'deterioro_cognitivo', label: 'Deterioro Cognitivo' },
+    { value: 'ninguno', label: 'Ninguno' },
+    { value: 'otro', label: 'Otro' }
+  ];
+
+  const opcionesAutonomia = [
+    { value: '', label: 'Seleccione nivel de autonomía' },
+    { value: 'independiente', label: 'Independiente' },
+    { value: 'semi_dependiente', label: 'Semi-dependiente' },
+    { value: 'dependiente', label: 'Dependiente' },
+    { value: 'totalmente_dependiente', label: 'Totalmente Dependiente' }
+  ];
+
+  const opcionesTipoDieta = [
+    { value: '', label: 'Seleccione tipo de dieta' },
+    { value: 'normal', label: 'Normal' },
+    { value: 'blanda', label: 'Blanda' },
+    { value: 'liquida', label: 'Líquida' },
+    { value: 'diabetica', label: 'Hipoglucémica' },
+    { value: 'hiposodica', label: 'Hiposódica' },
+    { value: 'hipoproteica', label: 'Hipoproteica' },
+    { value: 'triturada', label: 'Triturada' },
+  ];
+
+  const opcionesCaidas = [
+    { value: '', label: 'Seleccione riesgo de caídas' },
+    { value: 'alta', label: 'Alta' },
+    { value: 'media', label: 'Media' },
+    { value: 'baja', label: 'Baja' }
+  ];
+
+  
   useEffect(() => {
-    const loadFichaData = async () => {
-      if (id_ficha_paciente) {
-        setIsLoading(true);
-        try {
-          const fichaData = await getFichaById(id_ficha_paciente);
-          setFormulario(fichaData);
-          setIsEditing(true);
-        } catch (error) {
-          console.error("Error al cargar ficha:", error);
-          toast.error("Error al cargar la ficha");
-          navigate('/fichas');
-        } finally {
-          setIsLoading(false);
-        }
+  const loadFichaData = async () => {
+    if (id_ficha_paciente) {
+      setIsLoading(true);
+      try {
+        const fichaData = await getFichaById(id_ficha_paciente);
+        setFormulario({
+          diagnostico_me_actual: fichaData.diagnostico_me_actual || '',
+          condiciones_fisicas: fichaData.condiciones_fisicas || '',
+          nivel_conciencia: fichaData.nivel_conciencia || '',
+          estado_animo: fichaData.estado_animo || '',
+          diagnostico_mental: fichaData.diagnostico_mental || '',
+          autonomia: fichaData.autonomia || '',
+          comunicacion: fichaData.comunicacion || false,
+          otras_comunicaciones: fichaData.otras_comunicaciones || '',
+          tipo_dieta: fichaData.tipo_dieta || '',
+          alimentacion_asistida: fichaData.alimentacion_asistida || '',
+          hora_levantarse: fichaData.hora_levantarse || '',
+          hora_acostarse: fichaData.hora_acostarse || '',
+          frecuencia_siestas: fichaData.frecuencia_siestas || '',
+          frecuencia_baño: fichaData.frecuencia_baño || '',
+          rutina_medica: fichaData.rutina_medica || '',
+          usapanal: fichaData.usapanal || false,
+          acompañado: fichaData.acompañado || false,
+          observaciones: fichaData.observaciones || '',
+          caidas: fichaData.caidas || '',
+          fecha_registro: fichaData.fecha_registro?.split('T')[0] || '',
+          paciente: fichaData.paciente ? { id_paciente: fichaData.paciente.id_paciente } : { id_paciente: '' }
+        });
+        setIsEditing(true);
+      } catch (error) {
+        console.error("Error al cargar ficha:", error);
+        toast.error("Error al cargar la ficha");
+        navigate('/fichas');
+      } finally {
+        setIsLoading(false);
       }
-    };
-    loadFichaData();
-  }, [id_ficha_paciente, navigate]);
+    }
+  };
+
+  loadFichaData();
+}, [id_ficha_paciente, location.key]); 
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -110,129 +199,175 @@ const FichaPacienteForm = ({ editMode = false }) => {
       <FichaStepsNav id_ficha_paciente={id_ficha_paciente} currentStep="ficha" />
 
       <div className="ficha-form-container">
-        <h2>{isEditing ? 'Editar Ficha de Paciente' : 'Crear Nueva Ficha'}</h2>
+        <div className="header-actions">
+          <h2>{isEditing ? 'Editar Ficha de Paciente' : 'Crear Nueva Ficha'}</h2>
+        </div>
 
         <form onSubmit={handleSubmit}>
           <div className="form-section">
-            <h3>Datos Generales</h3>
+            <h3>Información Médica</h3>
 
             <div className="form-row">
               <div className="form-group">
-                <label>Diagnóstico Médico Actual</label>
+                <label htmlFor="diagnostico_me_actual">Diagnóstico Médico Actual</label>
                 <textarea
+                  id="diagnostico_me_actual"
                   name="diagnostico_me_actual"
                   value={formulario.diagnostico_me_actual}
                   onChange={handleChange}
                   rows={4}
+                  placeholder="Describa el diagnóstico médico actual del paciente..."
                 />
               </div>
             </div>
 
             <div className="form-row">
               <div className="form-group">
-                <label>Condiciones Físicas</label>
+                <label htmlFor="condiciones_fisicas">Condiciones Físicas</label>
                 <input
                   type="text"
+                  id="condiciones_fisicas"
                   name="condiciones_fisicas"
                   value={formulario.condiciones_fisicas}
                   onChange={handleChange}
+                  placeholder="Ej: Movilidad reducida, artritis..."
                 />
               </div>
 
               <div className="form-group">
-                <label>Nivel de Conciencia</label>
-                <input
-                  type="text"
+                <label htmlFor="nivel_conciencia">Nivel de Conciencia</label>
+                <select
+                  id="nivel_conciencia"
                   name="nivel_conciencia"
                   value={formulario.nivel_conciencia}
                   onChange={handleChange}
-                />
+                >
+                  {opcionesNivelConciencia.map(opcion => (
+                    <option key={opcion.value} value={opcion.value}>
+                      {opcion.label}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
             <div className="form-row">
               <div className="form-group">
-                <label>Estado de Ánimo</label>
-                <input
-                  type="text"
+                <label htmlFor="estado_animo">Estado de Ánimo</label>
+                <select
+                  id="estado_animo"
                   name="estado_animo"
                   value={formulario.estado_animo}
                   onChange={handleChange}
-                />
+                >
+                  {opcionesEstadoAnimo.map(opcion => (
+                    <option key={opcion.value} value={opcion.value}>
+                      {opcion.label}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="form-group">
-                <label>Diagnóstico Mental</label>
-                <input
-                  type="text"
+                <label htmlFor="diagnostico_mental">Diagnóstico Mental</label>
+                <select
+                  id="diagnostico_mental"
                   name="diagnostico_mental"
                   value={formulario.diagnostico_mental}
                   onChange={handleChange}
-                />
+                >
+                  {opcionesDiagnosticoMental.map(opcion => (
+                    <option key={opcion.value} value={opcion.value}>
+                      {opcion.label}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
             <div className="form-row">
               <div className="form-group">
-                <label>Autonomía</label>
-                <input
-                  type="text"
+                <label htmlFor="autonomia">Autonomía</label>
+                <select
+                  id="autonomia"
                   name="autonomia"
                   value={formulario.autonomia}
                   onChange={handleChange}
-                />
+                >
+                  {opcionesAutonomia.map(opcion => (
+                    <option key={opcion.value} value={opcion.value}>
+                      {opcion.label}
+                    </option>
+                  ))}
+                </select>
               </div>
 
-              <div className="form-group checkbox-group">
-                <label>
+              <div className="form-group">
+                <div className="checkbox-group">
                   <input
                     type="checkbox"
+                    id="comunicacion"
                     name="comunicacion"
                     checked={formulario.comunicacion}
                     onChange={handleChange}
                   />
-                  Comunicación
-                </label>
+                  <label htmlFor="comunicacion">Comunicación Efectiva</label>
+                </div>
               </div>
             </div>
+          </div>
+
+          <div className="form-section">
+            <h3>Alimentación y Rutinas</h3>
 
             <div className="form-row">
               <div className="form-group">
-                <label>Otras formas de comunicación</label>
+                <label htmlFor="otras_comunicaciones">Otras formas de comunicación</label>
                 <input
                   type="text"
+                  id="otras_comunicaciones"
                   name="otras_comunicaciones"
                   value={formulario.otras_comunicaciones}
                   onChange={handleChange}
+                  placeholder="Ej: Lenguaje de señas, gestos..."
                 />
               </div>
 
               <div className="form-group">
-                <label>Tipo de dieta</label>
-                <input
-                  type="text"
+                <label htmlFor="tipo_dieta">Tipo de dieta</label>
+                <select
+                  id="tipo_dieta"
                   name="tipo_dieta"
                   value={formulario.tipo_dieta}
                   onChange={handleChange}
-                />
+                >
+                  {opcionesTipoDieta.map(opcion => (
+                    <option key={opcion.value} value={opcion.value}>
+                      {opcion.label}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
             <div className="form-row">
               <div className="form-group">
-                <label>Alimentación Asistida</label>
+                <label htmlFor="alimentacion_asistida">Alimentación Asistida</label>
                 <input
                   type="text"
+                  id="alimentacion_asistida"
                   name="alimentacion_asistida"
                   value={formulario.alimentacion_asistida}
                   onChange={handleChange}
+                  placeholder="Descripción de la asistencia necesaria..."
                 />
               </div>
 
               <div className="form-group">
-                <label>Hora de levantarse</label>
+                <label htmlFor="hora_levantarse">Hora de levantarse</label>
                 <input
                   type="time"
+                  id="hora_levantarse"
                   name="hora_levantarse"
                   value={formulario.hora_levantarse}
                   onChange={handleChange}
@@ -240,9 +375,10 @@ const FichaPacienteForm = ({ editMode = false }) => {
               </div>
 
               <div className="form-group">
-                <label>Hora de acostarse</label>
+                <label htmlFor="hora_acostarse">Hora de acostarse</label>
                 <input
                   type="time"
+                  id="hora_acostarse"
                   name="hora_acostarse"
                   value={formulario.hora_acostarse}
                   onChange={handleChange}
@@ -252,89 +388,110 @@ const FichaPacienteForm = ({ editMode = false }) => {
 
             <div className="form-row">
               <div className="form-group">
-                <label>Frecuencia de siestas</label>
+                <label htmlFor="frecuencia_siestas">Frecuencia de siestas</label>
                 <input
                   type="text"
+                  id="frecuencia_siestas"
                   name="frecuencia_siestas"
                   value={formulario.frecuencia_siestas}
                   onChange={handleChange}
+                  placeholder="Ej: 2 veces al día, después del almuerzo..."
                 />
               </div>
 
               <div className="form-group">
-                <label>Frecuencia de baño</label>
+                <label htmlFor="frecuencia_baño">Frecuencia de baño</label>
                 <input
                   type="text"
+                  id="frecuencia_baño"
                   name="frecuencia_baño"
                   value={formulario.frecuencia_baño}
                   onChange={handleChange}
+                  placeholder="Ej: Diario, interdiario..."
                 />
               </div>
             </div>
+          </div>
+
+          <div className="form-section">
+            <h3>Cuidados Especiales</h3>
 
             <div className="form-row">
               <div className="form-group">
-                <label>Rutina médica</label>
+                <label htmlFor="rutina_medica">Rutina médica</label>
                 <input
                   type="text"
+                  id="rutina_medica"
                   name="rutina_medica"
                   value={formulario.rutina_medica}
                   onChange={handleChange}
+                  placeholder="Descripción de la rutina médica diaria..."
                 />
               </div>
 
-              <div className="form-group checkbox-group">
-                <label>
+              <div className="form-group">
+                <div className="checkbox-group">
                   <input
                     type="checkbox"
+                    id="usapanal"
                     name="usapanal"
                     checked={formulario.usapanal}
                     onChange={handleChange}
                   />
-                  Usa pañal
-                </label>
+                  <label htmlFor="usapanal">Usa pañal</label>
+                </div>
               </div>
 
-              <div className="form-group checkbox-group">
-                <label>
+              <div className="form-group">
+                <div className="checkbox-group">
                   <input
                     type="checkbox"
+                    id="acompañado"
                     name="acompañado"
                     checked={formulario.acompañado}
                     onChange={handleChange}
                   />
-                  Acompañado
-                </label>
+                  <label htmlFor="acompañado">Requiere acompañamiento</label>
+                </div>
               </div>
             </div>
 
             <div className="form-row">
               <div className="form-group">
-                <label>Observaciones</label>
+                <label htmlFor="observaciones">Observaciones</label>
                 <textarea
+                  id="observaciones"
                   name="observaciones"
                   value={formulario.observaciones}
                   onChange={handleChange}
                   rows={3}
+                  placeholder="Observaciones adicionales sobre el paciente..."
                 />
               </div>
 
               <div className="form-group">
-                <label>Historial de caídas</label>
-                <textarea
+                <label htmlFor="caidas">Riesgo de caídas</label>
+                <select
+                  id="caidas"
                   name="caidas"
                   value={formulario.caidas}
                   onChange={handleChange}
-                  rows={2}
-                />
+                >
+                  {opcionesCaidas.map(opcion => (
+                    <option key={opcion.value} value={opcion.value}>
+                      {opcion.label}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
             <div className="form-row">
               <div className="form-group">
-                <label>Fecha de Registro</label>
+                <label htmlFor="fecha_registro">Fecha de Registro</label>
                 <input
                   type="date"
+                  id="fecha_registro"
                   name="fecha_registro"
                   value={formulario.fecha_registro}
                   onChange={handleChange}

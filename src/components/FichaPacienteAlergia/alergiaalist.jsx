@@ -6,8 +6,8 @@ import {
   getAlergiasAlimentariasByFicha,
   deleteAlergiaAlimentaria 
 } from '../../servicios/alergiaAlimentariaService';
-import FichaStepsNav from '../../FichaPaciente/fichastepsNav';
 import './alergiaalimentaria.css';
+import FichaStepsNav from '../FichaPaciente/fichastepsNav';
 
 const AlergiasAlimentariasList = () => {
   const { id_ficha_paciente } = useParams();

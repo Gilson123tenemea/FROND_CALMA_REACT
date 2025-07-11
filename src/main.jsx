@@ -22,14 +22,25 @@ import CertificadosForm from './components/Certificados/CertificadosForm';
 import HabilidadesForm from './components/Habilidades/HabilidadesForm';
 import DisponibilidadForm from './components/Disponibilidad/DisponibilidadForm';
 import Calificacion from './components/Calificacion/calificacion';
-import FichaPaciente from './components/FichaPaciente/ficha';
-import FichaPacienteAlergia from './components/FichaPacienteAlergia/alergiaali';
+
 import CVCompletoView from './components/ModuloAspirante/CV/CVCompletoView';
 import Soluciones from './components/Login/Soluciones';
 import Servicios from './components/Login/Servicios';
 import SobreNosotros from './components/Login/SobreNosotros';
 import Empleo from './components/Login/Empleo';
 import Contacto from './components/Login/Contacto';
+import FichaPacienteForm from './components/FichaPaciente/ficha';
+
+import MedicamentosList from './components/FichaPacienteMedicamentos/medicamentoslist';
+import MedicamentoForm from './components/FichaPacienteMedicamentos/medicacion';
+import AlergiasAlimentariasList from './components/FichaPacienteAlergia/alergiaalist';
+import AlergiaAlimentariaForm from './components/FichaPacienteAlergia/alergiaali';
+import AlergiasMedicamentosList from './components/FichaPacienteAlergiaMedicamento/alergiamedlist';
+import AlergiaMedicamentoForm from './components/FichaPacienteAlergiaMedicamento/alergiamedicamento';
+import InteresesList from './components/FichaPacienteInteres/intereseslist';
+import InteresForm from './components/FichaPacienteInteres/interes';
+import TemasList from './components/FichaPacienteTema/temalist';
+import TemaForm from './components/FichaPacienteTema/temasc';
 
 
 // ✅ Importación del componente Postulaciones
@@ -59,8 +70,34 @@ createRoot(document.getElementById('root')).render(
         {/* Rutas de paciente */}
         <Route path="/registropaciente" element={<RegistroPaciente />} />
         <Route path="/moduloContratante/registropaciente" element={<RegistroPaciente />} />
-        <Route path='/ficha' element={<FichaPaciente />} />
-        <Route path="/alergiaali" element={<FichaPacienteAlergia />} />
+         <Route path="/fichas/nueva" element={<FichaPacienteForm />} />
+        <Route path="/fichas/:id_ficha_paciente" element={<FichaPacienteForm  key={location.pathname} />} />
+
+        {/* Medicamentos */}
+        <Route path="/fichas/:id_ficha_paciente/medicamentos" element={<MedicamentosList />} />
+        <Route path="/fichas/:id_ficha_paciente/medicamentos/nuevo" element={<MedicamentoForm />} />
+        <Route path="/fichas/:id_ficha_paciente/medicamentos/:idListaMedicamentos" element={<MedicamentoForm />} />
+
+        {/* Alergias Alimentarias */}
+        <Route path="/fichas/:id_ficha_paciente/alergias-alimentarias" element={<AlergiasAlimentariasList />} />
+        <Route path="/fichas/:id_ficha_paciente/alergias-alimentarias/nuevo" element={<AlergiaAlimentariaForm />} />
+        <Route path="/fichas/:id_ficha_paciente/alergias-alimentarias/:id_alergias_alimentarias" element={<AlergiaAlimentariaForm />} />
+
+        {/* Alergias a Medicamentos */}
+        <Route path="/fichas/:id_ficha_paciente/alergias-medicamentos" element={<AlergiasMedicamentosList />} />
+        <Route path="/fichas/:id_ficha_paciente/alergias-medicamentos/nuevo" element={<AlergiaMedicamentoForm />} />
+        <Route path="/fichas/:id_ficha_paciente/alergias-medicamentos/:id_alergiamed" element={<AlergiaMedicamentoForm />} />
+
+        {/* Intereses */}
+        <Route path="/fichas/:id_ficha_paciente/intereses" element={<InteresesList />} />
+        <Route path="/fichas/:id_ficha_paciente/intereses/nuevo" element={<InteresForm />} />
+        <Route path="/fichas/:id_ficha_paciente/intereses/:idInteresesPersonales" element={<InteresForm />} />
+
+        {/* Temas de Conversación */}
+        <Route path="/fichas/:id_ficha_paciente/temas" element={<TemasList />} />
+        <Route path="/fichas/:id_ficha_paciente/temas/nuevo" element={<TemaForm />} />
+        <Route path="/fichas/:id_ficha_paciente/temas/:idTemaConversacion" element={<TemaForm />} />
+
 
         {/* Rutas de CV */}
         <Route path="/moduloAspirante/cv" element={<CVForm />} />
