@@ -10,6 +10,8 @@ import { getCantonesByProvinciaId } from '../../servicios/cantonService';
 import { getParroquiasByCantonId } from '../../servicios/parroquiaService';
 import { registrarAspirante, registrarContratante } from '../../servicios/registrarService';
 import Navbar from '../Shared/Navbar';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Registro = () => {
   // Estados para el formulario
@@ -295,7 +297,7 @@ const Registro = () => {
 
         const response = await registrarAspirante(aspiranteData);
         console.log('Registro exitoso:', response);
-        alert('Registro como aspirante exitoso! Serás redirigido a la página de inicio de sesión.');
+        toast.success('Registro como aspirante exitoso! Serás redirigido a la página de inicio de sesión.');
 
       } else if (formData.tipoUsuario === 'contratante') {
         // Preparar datos para contratante
@@ -321,7 +323,7 @@ const Registro = () => {
 
         const response = await registrarContratante(contratanteData);
         console.log('Registro exitoso:', response);
-        alert('Registro como contratante exitoso! Serás redirigido a la página de inicio de sesión.');
+        toast.success('Registro como contratante exitoso! Serás redirigido a la página de inicio de sesión.');
       }
 
       setTimeout(() => {
@@ -374,10 +376,10 @@ const Registro = () => {
           });
           setErrors(backendErrors);
         } else {
-          alert(error.response.data.message || 'Ocurrió un error durante el registro');
+          toast.error(error.response.data.message || 'Ocurrió un error durante el registro');
         }
       } else {
-        alert('Error de conexión. Por favor verifica tu conexión a internet e intenta nuevamente.');
+        toast.error('Error de conexión. Verifica tu internet e intenta nuevamente.');
       }
     } finally {
       setIsSubmitting(false);
@@ -387,7 +389,19 @@ const Registro = () => {
   return (
     <div className="registro-page">
       {/* Agregar el Navbar aquí */}
+
       <Navbar />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
 
       <div className="registro-container">
         <div className="">
