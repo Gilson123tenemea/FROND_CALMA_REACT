@@ -442,10 +442,10 @@ const Registro = () => {
                     name="cedula"
                     value={formData.cedula}
                     onChange={handleChange}
-                    className={errors.cedula ? 'input-error' : ''}
+                    className={errors.cedula ? 'input-error-registrio' : ''}
                     maxLength="10"
                   />
-                  {errors.cedula && <span className="error-message">{errors.cedula}</span>}
+                  {errors.cedula && <span className="error-text-registrio">{errors.cedula}</span>}
                 </div>
 
                 <div className="input-group">
@@ -456,9 +456,9 @@ const Registro = () => {
                     name="nombres"
                     value={formData.nombres}
                     onChange={handleChange}
-                    className={errors.nombres ? 'input-error' : ''}
+                    className={errors.nombres ? 'input-error-registrio' : ''}
                   />
-                  {errors.nombres && <span className="error-message">{errors.nombres}</span>}
+                  {errors.nombres && <span className="error-text-registrio">{errors.nombres}</span>}
                 </div>
                 <div className="input-group">
                   <label htmlFor="apellidos"><FaUser className="input-icon" /> Apellidos</label>
@@ -468,9 +468,9 @@ const Registro = () => {
                     name="apellidos"
                     value={formData.apellidos}
                     onChange={handleChange}
-                    className={errors.apellidos ? 'input-error' : ''}
+                    className={errors.nombres ? 'input-error-registrio' : ''}
                   />
-                  {errors.apellidos && <span className="error-message">{errors.apellidos}</span>}
+                  {errors.nombres && <span className="error-text-registrio">{errors.nombres}</span>}
                 </div>
               </div>
 
@@ -483,9 +483,9 @@ const Registro = () => {
                     name="correo"
                     value={formData.correo}
                     onChange={handleChange}
-                    className={errors.correo ? 'input-error' : ''}
+                    className={errors.correo ? 'input-error-registrio' : ''}
                   />
-                  {errors.correo && <span className="error-message">{errors.correo}</span>}
+                  {errors.correo && <span className="error-text-registrio">{errors.correo}</span>}
                 </div>
 
                 <div className="input-group">
@@ -496,10 +496,10 @@ const Registro = () => {
                     name="celular"
                     value={formData.celular}
                     onChange={handleChange}
-                    className={errors.celular ? 'input-error' : ''}
+                    className={errors.celular ? 'input-error-registrio' : ''}
                     maxLength="10"
                   />
-                  {errors.celular && <span className="error-message">{errors.celular}</span>}
+                  {errors.celular && <span className="error-text-registrio">{errors.celular}</span>}
                 </div>
 
                 <div className="input-group">
@@ -510,7 +510,7 @@ const Registro = () => {
                       name="genero"
                       value={formData.genero}
                       onChange={handleChange}
-                      className={errors.genero ? 'input-error' : ''}
+                      className={errors.genero ? 'input-error-registrio' : ''}
                     >
                       <option value="">Seleccione...</option>
                       {generos.map((genero, index) => (
@@ -519,7 +519,7 @@ const Registro = () => {
                     </select>
                     <FaChevronDown className="select-arrow" />
                   </div>
-                  {errors.genero && <span className="error-message">{errors.genero}</span>}
+                  {errors.genero && <span className="error-text-registrio">{errors.genero}</span>}
                 </div>
               </div>
 
@@ -531,10 +531,10 @@ const Registro = () => {
                   name="fechaNacimiento"
                   value={formData.fechaNacimiento}
                   onChange={handleChange}
-                  className={errors.fechaNacimiento ? 'input-error' : ''}
+                  className={errors.fechaNacimiento ? 'input-error-registrio' : ''}
                   max={new Date().toISOString().split('T')[0]}
                 />
-                {errors.fechaNacimiento && <span className="error-message">{errors.fechaNacimiento}</span>}
+                {errors.fechaNacimiento && <span className="error-text-registrio">{errors.fechaNacimiento}</span>}
               </div>
 
               <h3 className="form-section-title">Ubicación</h3>
@@ -550,6 +550,7 @@ const Registro = () => {
                       setSelectedProvincia(e.target.value);
                       handleChange(e);
                     }}
+                    className={errors.provincia ? 'input-error-registrio' : ''}
                   >
                     <option value="">Seleccione...</option>
                     {provincias.map((provincia) => (
@@ -560,6 +561,7 @@ const Registro = () => {
                   </select>
                   <FaChevronDown className="select-arrow" />
                 </div>
+                {errors.provincia && <span className="error-text-registrio">{errors.provincia}</span>}
               </div>
 
               <div className="input-group">
@@ -574,6 +576,7 @@ const Registro = () => {
                       handleChange(e);
                     }}
                     disabled={!selectedProvincia || cantones.length === 0}
+                    className={errors.canton ? 'input-error-registrio' : ''}
                   >
                     <option value="">
                       {!selectedProvincia ? 'Seleccione una provincia primero' :
@@ -587,6 +590,7 @@ const Registro = () => {
                   </select>
                   <FaChevronDown className="select-arrow" />
                 </div>
+                {errors.canton && <span className="error-text-registrio">{errors.canton}</span>}
               </div>
 
               <div className="input-group">
@@ -597,7 +601,7 @@ const Registro = () => {
                     name="parroquia"
                     value={formData.parroquia}
                     onChange={handleChange}
-                    className={errors.parroquia ? 'input-error' : ''}
+                    className={errors.parroquia ? 'input-error-registrio' : ''}
                     disabled={!selectedCanton || parroquias.length === 0}
                   >
                     <option value="">
@@ -612,7 +616,7 @@ const Registro = () => {
                   </select>
                   <FaChevronDown className="select-arrow" />
                 </div>
-                {errors.parroquia && <span className="error-message">{errors.parroquia}</span>}
+                {errors.parroquia && <span className="error-text-registrio">{errors.parroquia}</span>}
               </div>
 
               {/* Campos específicos para aspirante */}
@@ -642,7 +646,7 @@ const Registro = () => {
                         /> No
                       </label>
                     </div>
-                    {errors.disponibilidad && <span className="error-message">{errors.disponibilidad}</span>}
+                    {errors.disponibilidad && <span className="error-text-registrio">{errors.disponibilidad}</span>}
                   </div>
 
                   <div className="input-group">
@@ -653,12 +657,12 @@ const Registro = () => {
                       name="aspiracionSalarial"
                       value={formData.aspiracionSalarial}
                       onChange={handleChange}
-                      className={errors.aspiracionSalarial ? 'input-error' : ''}
+                      className={errors.aspiracionSalarial ? 'input-error-registrio' : ''}
                       min="0"
                       step="0.01"
                       placeholder="Ej: 1200.00"
                     />
-                    {errors.aspiracionSalarial && <span className="error-message">{errors.aspiracionSalarial}</span>}
+                    {errors.aspiracionSalarial && <span className="error-text-registrio">{errors.aspiracionSalarial}</span>}
                   </div>
 
                   <div className="input-group">
@@ -669,7 +673,7 @@ const Registro = () => {
                         name="tipo_contrato"
                         value={formData.tipo_contrato}
                         onChange={handleChange}
-                        className={errors.tipo_contrato ? 'input-error' : ''}
+                        className={errors.tipo_contrato ? 'input-error-registrio' : ''}
                       >
                         <option value="">Seleccione...</option>
                         {tiposContrato.map((tipo, index) => (
@@ -678,7 +682,7 @@ const Registro = () => {
                       </select>
                       <FaChevronDown className="select-arrow" />
                     </div>
-                    {errors.tipo_contrato && <span className="error-message">{errors.tipo_contrato}</span>}
+                    {errors.tipo_contrato && <span className="error-text-registrio">{errors.tipo_contrato}</span>}
                   </div>
                 </>
               )}
@@ -718,7 +722,7 @@ const Registro = () => {
                         name="ocupacion"
                         value={formData.ocupacion}
                         onChange={handleChange}
-                        className={errors.ocupacion ? 'input-error' : ''}
+                        className={errors.ocupacion ? 'input-error-registrio' : ''}
                       >
                         <option value="">Seleccione...</option>
                         {ocupaciones.map((ocupacion, index) => (
@@ -727,7 +731,7 @@ const Registro = () => {
                       </select>
                       <FaChevronDown className="select-arrow" />
                     </div>
-                    {errors.ocupacion && <span className="error-message">{errors.ocupacion}</span>}
+                    {errors.ocupacion && <span className="error-text-registrio">{errors.ocupacion}</span>}
                   </div>
 
                   {/* Campos de empresa solo si es representante */}
@@ -743,9 +747,9 @@ const Registro = () => {
                           name="nombreEmpresa"
                           value={formData.nombreEmpresa}
                           onChange={handleChange}
-                          className={errors.nombreEmpresa ? 'input-error' : ''}
+                          className={errors.nombreEmpresa ? 'input-error-registrio' : ''}
                         />
-                        {errors.nombreEmpresa && <span className="error-message">{errors.nombreEmpresa}</span>}
+                        {errors.nombreEmpresa && <span className="error-text-registrio">{errors.nombreEmpresa}</span>}
                       </div>
 
                       <div className="input-group">
@@ -756,10 +760,10 @@ const Registro = () => {
                           name="rucEmpresa"
                           value={formData.rucEmpresa}
                           onChange={handleChange}
-                          className={errors.rucEmpresa ? 'input-error' : ''}
+                          className={errors.rucEmpresa ? 'input-error-registrio' : ''}
                           maxLength="13"
                         />
-                        {errors.rucEmpresa && <span className="error-message">{errors.rucEmpresa}</span>}
+                        {errors.rucEmpresa && <span className="error-text-registrio">{errors.rucEmpresa}</span>}
                       </div>
 
                       <div className="input-group">
@@ -770,9 +774,9 @@ const Registro = () => {
                           name="correoEmpresa"
                           value={formData.correoEmpresa}
                           onChange={handleChange}
-                          className={errors.correoEmpresa ? 'input-error' : ''}
+                          className={errors.correoEmpresa ? 'input-error-registrio' : ''}
                         />
-                        {errors.correoEmpresa && <span className="error-message">{errors.correoEmpresa}</span>}
+                        {errors.correoEmpresa && <span className="error-text-registrio">{errors.correoEmpresa}</span>}
                       </div>
 
                       <div className="input-group">
@@ -783,9 +787,9 @@ const Registro = () => {
                           name="representanteLegal"
                           value={formData.representanteLegal}
                           onChange={handleChange}
-                          className={errors.representanteLegal ? 'input-error' : ''}
+                          className={errors.representanteLegal ? 'input-error-registrio' : ''}
                         />
-                        {errors.representanteLegal && <span className="error-message">{errors.representanteLegal}</span>}
+                        {errors.representanteLegal && <span className="error-text-registrio">{errors.representanteLegal}</span>}
                       </div>
                     </>
                   )}
@@ -803,9 +807,9 @@ const Registro = () => {
                   name="contrasena"
                   value={formData.contrasena}
                   onChange={handleChange}
-                  className={errors.contrasena ? 'input-error' : ''}
+                  className={errors.contrasena ? 'input-error-registrio' : ''}
                 />
-                {errors.contrasena && <span className="error-message">{errors.contrasena}</span>}
+                {errors.contrasena && <span className="error-text-registrio">{errors.contrasena}</span>}
               </div>
 
               <div className="input-group">
@@ -816,9 +820,9 @@ const Registro = () => {
                   name="confirmarContrasena"
                   value={formData.confirmarContrasena}
                   onChange={handleChange}
-                  className={errors.confirmarContrasena ? 'input-error' : ''}
+                  className={errors.confirmarContrasena ? 'input-error-registrio' : ''}
                 />
-                {errors.confirmarContrasena && <span className="error-message">{errors.confirmarContrasena}</span>}
+                {errors.confirmarContrasena && <span className="error-text-registrio">{errors.confirmarContrasena}</span>}
               </div>
 
               <div className="terms-container">

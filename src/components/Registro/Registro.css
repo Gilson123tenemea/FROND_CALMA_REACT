@@ -25,6 +25,28 @@ body {
   color: #333;
   line-height: 1.6;
 }
+
+.error-text-registrio {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: 4px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.error-text-registrio::before {
+  content: "⚠";
+  color: #e74c3c;
+}
+.input-error-registrio {
+  border: 2px solid #F5B5C4 !important;
+  box-shadow: 0 0 0 3px rgba(245, 181, 196, 0.2) !important;
+  background-color: #fef7f7 !important;
+}
+
+
 select {
   border: 2px solid #ccc !important; /* Borde gris claro visible */
   border-radius: 8px;
