@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import FiltrosTrabajos from "../FiltrosTrabajos/filtrosTrabajos";
 import CardTrabajo from "../CardTrabajo/cardTrabajo";
 import './ListaTrabajos.css';
 
@@ -10,10 +9,8 @@ const ListaTrabajos = ({ idAspirante }) => {
   const [error, setError] = useState(null);
 
   const [filters, setFilters] = useState({
-    ubicacion: 'Cualquier lugar',
-    tipoCuidado: 'Cualquiera',
-    recomendacion: 'Todas',
-    fechaPublicacion: 'Cualquier fecha',
+    titulo: '',
+    fechaPublicacion: '',
     rangoSalario: [0, 9999]
   });
 
@@ -68,15 +65,59 @@ const ListaTrabajos = ({ idAspirante }) => {
     setFilters(prev => ({ ...prev, rangoSalario: rango }));
   };
 
+  // Filtrado combinado
   const trabajosFiltrados = trabajos.filter(trabajo => {
+    const tituloMatch = trabajo.titulo.toLowerCase().includes(filters.titulo.toLowerCase());
+    const fechaMatch = filters.fechaPublicacion
+      ? trabajo.fechaPublicacion === filters.fechaPublicacion
+      : true;
     const salario = trabajo.salario || 0;
     const [min, max] = filters.rangoSalario;
-    return salario >= min && salario <= max;
+    const salarioMatch = salario >= min && salario <= max;
+
+    return tituloMatch && fechaMatch && salarioMatch;
   });
 
   return (
     <div className="contenedor-trabajos" style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
       <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Trabajos Disponibles</h1>
+
+      {/* Filtros de título y fecha */}
+      <div className="filtros-superiores" style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginBottom: '25px' }}>
+        <input
+          type="text"
+          name="titulo"
+          placeholder="🔍 Buscar por título"
+          value={filters.titulo}
+          onChange={handleFilterChange}
+          style={{
+            padding: '10px 15px',
+            fontSize: '1rem',
+            borderRadius: '8px',
+            border: '1px solid #ccc',
+            width: '280px',
+            maxWidth: '90%',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
+            outline: 'none'
+          }}
+        />
+        <input
+          type="date"
+          name="fechaPublicacion"
+          value={filters.fechaPublicacion}
+          onChange={handleFilterChange}
+          style={{
+            padding: '10px 15px',
+            fontSize: '1rem',
+            borderRadius: '8px',
+            border: '1px solid #ccc',
+            width: '180px',
+            maxWidth: '90%',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
+            outline: 'none'
+          }}
+        />
+      </div>
 
       <div className="layout-trabajos" style={{ display: 'flex', gap: '20px' }}>
         <div className="lista-trabajos" style={{ flex: 3 }}>
@@ -94,7 +135,7 @@ const ListaTrabajos = ({ idAspirante }) => {
             <CardTrabajo
               key={trabajo.id}
               trabajo={trabajo}
-              idAspirante={idAspirante} // ✅ pasamos el ID correcto para postular
+              idAspirante={idAspirante}
             />
           ))}
         </div>

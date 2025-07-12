@@ -1,30 +1,133 @@
-.lista-publicacion-item {
-  background: #fff;
-  border: 1.5px solid #ddd;
-  border-radius: 12px;
-  box-shadow: 0 4px 14px rgb(0 0 0 / 0.08);
-  padding: 1.4rem 1.8rem;
-  margin-bottom: 1.5rem;
+.lista-publicaciones {
+  padding: 2rem;
+  background-color: #f9fafb;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+}
 
+.titulo {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  color: #2563eb;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #2563eb;
+  padding-bottom: 0.5rem;
+  display: inline-block;
+  width: 100%;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.filtros-publicaciones {
   display: flex;
-  flex-direction: column; /* cambio aquí para que los botones bajen */
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
 }
 
-.lista-publicacion-item:hover {
-  box-shadow: 0 8px 24px rgb(0 0 0 / 0.15);
-  border-color: #0078d7;
+.filtros-publicaciones input[type="text"],
+.filtros-publicaciones input[type="date"] {
+  padding: 10px 14px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 220px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: border 0.3s ease;
 }
 
-.info-publicacion {
-  flex: none; /* para que no se estire innecesariamente */
-  padding-right: 0; /* elimina padding a la derecha porque ya no es fila */
-  margin-bottom: 1.2rem; /* espacio debajo del texto antes de botones */
+.filtros-publicaciones input:focus {
+  border-color: #2563eb;
+  outline: none;
+}
+
+.btn-limpiar-filtro {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.btn-limpiar-filtro:hover {
+  background-color: #dc2626;
+}
+
+.lista-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.item-publicacion {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease;
+}
+
+.item-publicacion:hover {
+  transform: scale(1.01);
+}
+
+.info-publicacion h4 {
+  font-size: 1.2rem;
+  color: #111827;
+  margin-bottom: 0.75rem;
+}
+
+.info-publicacion p {
+  margin: 0.3rem 0;
+  font-size: 0.95rem;
+  color: #374151;
 }
 
 .acciones-publicacion {
   display: flex;
-  flex-direction: row; /* botones en fila */
-  gap: 0.7rem;
-  min-width: auto; /* quita min-width para que sea flexible */
+  gap: 10px;
+  margin-top: 1rem;
+  justify-content: flex-end;
+}
+
+.btn {
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-editar {
+  background-color: #60a5fa;
+  color: white;
+}
+
+.btn-editar:hover {
+  background-color: #3b82f6;
+}
+
+.btn-eliminar {
+  background-color: #f87171;
+  color: white;
+}
+
+.btn-eliminar:hover {
+  background-color: #ef4444;
+}
+
+.loading-text,
+.no-publicaciones {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #6b7280;
+  margin-top: 2rem;
 }

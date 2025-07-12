@@ -6,28 +6,27 @@ const ListaPublicaciones = ({ contratanteId, refrescar, onEditar }) => {
   const [publicaciones, setPublicaciones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filtroFecha, setFiltroFecha] = useState('');
-
-  const fetchPublicaciones = () => {
-    setLoading(true);
-    axios.get(`http://localhost:8090/api/generar/contratante/${contratanteId}`)
-      .then(res => {
-        setPublicaciones(res.data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Error al cargar publicaciones:", err);
-        setLoading(false);
-      });
-  };
+  const [filtroTitulo, setFiltroTitulo] = useState('');
 
   useEffect(() => {
+    const fetchPublicaciones = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get(`http://localhost:8090/api/generar/contratante/${contratanteId}`);
+        setPublicaciones(res.data);
+      } catch (err) {
+        console.error("Error al cargar publicaciones:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchPublicaciones();
   }, [contratanteId, refrescar]);
 
   const handleEditar = (idGenerar) => {
     const publicacionSeleccionada = publicaciones.find(pub => pub.id_genera === idGenerar);
     if (publicacionSeleccionada && onEditar) {
-      // Pasamos solo el objeto publicacionempleo para editar
       onEditar(publicacionSeleccionada.publicacionempleo);
     }
   };
@@ -37,7 +36,8 @@ const ListaPublicaciones = ({ contratanteId, refrescar, onEditar }) => {
       axios.delete(`http://localhost:8090/api/publicacion_empleo/eliminar/${idPublicacion}`)
         .then(res => {
           alert(res.data);
-          fetchPublicaciones();
+          // NO quitamos la publicación de la lista para que no se oculte
+          // setPublicaciones(prev => prev.filter(p => p.publicacionempleo.id_postulacion_empleo !== idPublicacion));
         })
         .catch(err => {
           console.error("Error al eliminar publicación:", err);
@@ -46,78 +46,78 @@ const ListaPublicaciones = ({ contratanteId, refrescar, onEditar }) => {
     }
   };
 
-  const publicacionesFiltradas = filtroFecha
-    ? publicaciones.filter(pub => {
-        const fechaPublicacion = pub.publicacionempleo.fecha_publicacion || pub.publicacionempleo.fecha_limite;
-        if (!fechaPublicacion) return false;
-        const fechaPubStr = new Date(fechaPublicacion).toISOString().slice(0, 10);
-        return fechaPubStr === filtroFecha;
-      })
-    : publicaciones;
+  // Función para normalizar fecha a YYYY-MM-DD en zona local
+  const formatoLocal = (fechaISO) => {
+    const fecha = new Date(fechaISO);
+    const year = fecha.getFullYear();
+    const month = String(fecha.getMonth() + 1).padStart(2, '0');
+    const day = String(fecha.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
-  if (loading) return <p>Cargando publicaciones...</p>;
+  const publicacionesFiltradas = publicaciones.filter(pub => {
+    const fecha = pub.publicacionempleo?.fecha_publicacion || pub.fechaPublicacion;
+    const fechaNormalizada = fecha ? formatoLocal(fecha) : '';
+    const coincideFecha = filtroFecha ? fechaNormalizada === filtroFecha : true;
+    const coincideTitulo = pub.publicacionempleo?.titulo?.toLowerCase().includes(filtroTitulo.toLowerCase());
+    return coincideFecha && coincideTitulo;
+  });
 
   return (
     <div className="lista-publicaciones">
-      <h3>📋 Mis Publicaciones</h3>
+      <h3 className="titulo">📋 Mis Publicaciones</h3>
 
-      <div className="filtro-fecha-container">
-        <label htmlFor="filtro-fecha" className="filtro-fecha-label">
-          Filtrar por fecha de publicación:
-        </label>
+      <div className="filtros-publicaciones">
         <input
-          id="filtro-fecha"
+          type="text"
+          placeholder="🔍 Filtrar por título"
+          value={filtroTitulo}
+          onChange={(e) => setFiltroTitulo(e.target.value)}
+        />
+        <input
           type="date"
           value={filtroFecha}
           onChange={(e) => setFiltroFecha(e.target.value)}
-          className="filtro-fecha-input"
-          aria-label="Seleccionar fecha para filtrar publicaciones"
         />
         {filtroFecha && (
-          <button
-            onClick={() => setFiltroFecha('')}
-            className="filtro-fecha-limpiar"
-            aria-label="Limpiar filtro de fecha"
-          >
-            Limpiar filtro
+          <button onClick={() => setFiltroFecha('')} className="btn-limpiar-filtro">
+            Limpiar fecha
           </button>
         )}
       </div>
 
-      {publicacionesFiltradas.length === 0 ? (
-        <p>No tienes publicaciones para esta fecha.</p>
+      {loading ? (
+        <p className="loading-text">⏳ Cargando publicaciones...</p>
+      ) : publicacionesFiltradas.length === 0 ? (
+        <p className="no-publicaciones">📭 No tienes publicaciones con esos filtros.</p>
       ) : (
-        <ul>
-          {publicacionesFiltradas.map(pub => (
-            <li key={pub.id_genera} className="lista-publicacion-item">
-              <div className="info-publicacion">
-                <h4>💼 {pub.publicacionempleo.titulo}</h4>
-                <p>📝 <strong>Descripción:</strong> {pub.publicacionempleo.descripcion}</p>
-                <p>⏳ <strong>Fecha Límite:</strong> {pub.publicacionempleo.fecha_limite ? new Date(pub.publicacionempleo.fecha_limite).toLocaleDateString() : 'N/A'}</p>
-                <p>🕒 <strong>Jornada:</strong> {pub.publicacionempleo.jornada || 'N/A'}</p>
-                <p>💰 <strong>Salario:</strong> ${pub.publicacionempleo.salario_estimado?.toLocaleString() || '0'}</p>
-                <p>📍 <strong>Parroquia:</strong> {pub.publicacionempleo.parroquia?.nombre || 'N/A'}</p>
-                <p>📊 <strong>Estado:</strong> {pub.publicacionempleo.estado || 'N/A'}</p>
-                <p>⚡ <strong>Disponibilidad inmediata:</strong> {pub.publicacionempleo.disponibilidad_inmediata ? 'Sí' : 'No'}</p>
-              </div>
-              <div className="acciones-publicacion">
-                <button
-                  className="btn btn-editar"
-                  onClick={() => handleEditar(pub.id_genera)}
-                  aria-label={`Editar publicación ${pub.publicacionempleo.titulo}`}
-                >
-                  ✏️ Editar
-                </button>
-                <button
-                  className="btn btn-eliminar"
-                  onClick={() => handleEliminar(pub.publicacionempleo.id_postulacion_empleo)}
-                  aria-label={`Eliminar publicación ${pub.publicacionempleo.titulo}`}
-                >
-                  🗑️ Eliminar
-                </button>
-              </div>
-            </li>
-          ))}
+        <ul className="lista-items">
+          {publicacionesFiltradas.map(pub => {
+            const empleo = pub.publicacionempleo;
+            const parroquia = empleo.parroquia?.nombre || 'N/A';
+            const canton = empleo.parroquia?.canton?.nombre || '';
+            const provincia = empleo.parroquia?.canton?.provincia?.nombre || '';
+
+            return (
+              <li key={pub.id_genera} className="item-publicacion">
+                <div className="info-publicacion">
+                  <h4>💼 {empleo.titulo}</h4>
+                  <p>📝 <strong>Descripción:</strong> {empleo.descripcion}</p>
+                  <p>📅 <strong>Fecha publicación:</strong> {formatoLocal(pub.fechaPublicacion)}</p>
+                  <p>⏳ <strong>Fecha límite:</strong> {empleo.fecha_limite ? formatoLocal(empleo.fecha_limite) : 'N/A'}</p>
+                  <p>🕒 <strong>Jornada:</strong> {empleo.jornada || 'N/A'}</p>
+                  <p>💰 <strong>Salario:</strong> ${empleo.salario_estimado?.toLocaleString() || '0'}</p>
+                  <p>📍 <strong>Ubicación:</strong> {`${parroquia}, ${canton}, ${provincia}`}</p>
+                  <p>📊 <strong>Estado:</strong> {empleo.estado || 'N/A'}</p>
+                  <p>⚡ <strong>Disponibilidad inmediata:</strong> {empleo.disponibilidad_inmediata ? 'Sí' : 'No'}</p>
+                </div>
+                <div className="acciones-publicacion">
+                  <button className="btn btn-editar" onClick={() => handleEditar(pub.id_genera)}>✏️ Editar</button>
+                  <button className="btn btn-eliminar" onClick={() => handleEliminar(empleo.id_postulacion_empleo)}>🗑️ Eliminar</button>
+                </div>
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

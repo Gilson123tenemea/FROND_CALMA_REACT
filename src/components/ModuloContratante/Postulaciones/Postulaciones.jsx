@@ -9,6 +9,7 @@ const Postulaciones = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filtroTitulo, setFiltroTitulo] = useState('');
+  const [filtroFecha, setFiltroFecha] = useState('');
 
   useEffect(() => {
     const obtenerRealizaciones = async () => {
@@ -59,11 +60,38 @@ const Postulaciones = () => {
     }
   };
 
-  const filtradas = realizaciones.filter(r =>
-    r.postulacion?.postulacion_empleo?.titulo
-      ?.toLowerCase()
-      .includes(filtroTitulo.toLowerCase())
-  );
+  const formatoLocal = (fecha) => {
+    const d = new Date(fecha);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const filtradas = realizaciones.filter(r => {
+    const titulo = r.postulacion?.postulacion_empleo?.titulo?.toLowerCase() || '';
+    const fechaPostulacion = r.fecha ? formatoLocal(r.fecha) : '';
+
+    if (filtroTitulo) {
+      return titulo.includes(filtroTitulo.toLowerCase());
+    }
+
+    if (filtroFecha) {
+      return fechaPostulacion === filtroFecha;
+    }
+
+    return true;
+  });
+
+  const handleTituloChange = (e) => {
+    setFiltroTitulo(e.target.value);
+    setFiltroFecha('');
+  };
+
+  const handleFechaChange = (e) => {
+    setFiltroFecha(e.target.value);
+    setFiltroTitulo('');
+  };
 
   if (loading) return <p>⏳ Cargando postulaciones...</p>;
   if (error) return <p>{error}</p>;
@@ -74,12 +102,23 @@ const Postulaciones = () => {
       <h2 className="titulo">📄 Postulaciones del contratante #{userId}</h2>
 
       <div className="filtro">
-        <input
-          type="text"
-          placeholder="🔍 Buscar por oferta..."
-          value={filtroTitulo}
-          onChange={(e) => setFiltroTitulo(e.target.value)}
-        />
+        <div className="input-wrapper">
+          <i className="fas fa-search"></i>
+          <input
+            type="text"
+            placeholder="Buscar por oferta..."
+            value={filtroTitulo}
+            onChange={handleTituloChange}
+          />
+        </div>
+        <div className="input-wrapper">
+          <i className="fas fa-calendar-alt"></i>
+          <input
+            type="date"
+            value={filtroFecha}
+            onChange={handleFechaChange}
+          />
+        </div>
       </div>
 
       <div className="postulaciones-grid">
