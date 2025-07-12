@@ -10,7 +10,8 @@ import { getParroquiasByCantonId } from "../../../servicios/parroquiaService";
 import './registropaciente.css';
 import HeaderContratante from "../HeaderContratante/HeaderContratante";
 import { useSearchParams } from 'react-router-dom';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const RegistroPaciente = () => {
@@ -62,8 +63,9 @@ const RegistroPaciente = () => {
   };
 
   const validarTextoSinNumeros = (texto) => {
-    return /^[A-Za-z\s]+$/.test(texto);
+    return /^[A-Za-zÁÉÍÓÚáéíóúÑñüÜ\s]+$/.test(texto.trim());
   };
+
 
   //Estado errores mensaje
 
@@ -211,7 +213,22 @@ const RegistroPaciente = () => {
     if (!formulario.fechaNacimiento) {
       nuevosErrores.fechaNacimiento = 'Seleccione una fecha';
       valid = false;
+    } else {
+      const hoy = new Date();
+      const fechaNac = new Date(formulario.fechaNacimiento);
+      const edad = hoy.getFullYear() - fechaNac.getFullYear();
+      const mes = hoy.getMonth() - fechaNac.getMonth();
+      const dia = hoy.getDate() - fechaNac.getDate();
+
+      if (
+        edad < 18 ||
+        (edad === 18 && (mes < 0 || (mes === 0 && dia < 0)))
+      ) {
+        nuevosErrores.fechaNacimiento = 'Debe tener al menos 18 años';
+        valid = false;
+      }
     }
+
 
     // Provincia
     if (!ubicacion.provincia) {
@@ -287,7 +304,7 @@ const RegistroPaciente = () => {
     try {
       const data = await registrarPaciente(payload);
       if (data.success) {
-        alert('Paciente registrado exitosamente');
+        toast.success('✅ Paciente registrado exitosamente');
         setFormulario({
           nombres: '',
           apellidos: '',
@@ -309,10 +326,10 @@ const RegistroPaciente = () => {
         setAlergiaSeleccionada('');
 
       } else {
-        alert(data.message || 'No se pudo registrar al paciente.');
+        toast.error(data.message || '❌ No se pudo registrar al paciente.');
       }
     } catch (error) {
-      console.error('Error al registrar paciente:', error);
+      toast.error('❌ Error al registrar paciente');
 
       // 👉 Validación si la cédula ya existe (código 409 del backend)
       if (error.response && error.response.status === 409) {
@@ -757,6 +774,7 @@ const RegistroPaciente = () => {
           </div>
         </div>
       </div>
+      <ToastContainer position="top-right" autoClose={3000} />
     </>
   );
 
