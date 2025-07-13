@@ -2,49 +2,68 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { 
-  getAlergiaAlimentariaById, 
-  createAlergiaAlimentaria, 
+
+import {
+  getAlergiaAlimentariaById,
+  getAlergiasAlimentariasByFicha,
+  createAlergiaAlimentaria,
   updateAlergiaAlimentaria,
-  deleteAlergiaAlimentaria 
+  deleteAlergiaAlimentaria
 } from '../../servicios/alergiaAlimentariaService';
+
+import FichaStepsNav from '../FichaPaciente/fichastepsNav';
 import './alergiaalimentaria.css';
 
 const AlergiaAlimentariaForm = () => {
   const { id_ficha_paciente, id_alergias_alimentarias } = useParams();
   const navigate = useNavigate();
 
+  const [alergias, setAlergias] = useState([]);
   const [alergia, setAlergia] = useState({
     alergiaAlimentaria: '',
-    fichaPaciente: { id_ficha_paciente: Number(id_ficha_paciente) }
+    fichaPaciente: { id_ficha_paciente }
   });
 
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const loadAlergias = async () => {
+    setIsLoading(true);
+    try {
+      const data = await getAlergiasAlimentariasByFicha(id_ficha_paciente);
+      setAlergias(data);
+    } catch (error) {
+      console.error("Error al cargar alergias:", error);
+      toast.error("Error al cargar alergias alimentarias");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loadAlergia = async () => {
+    if (id_alergias_alimentarias && id_alergias_alimentarias !== 'nuevo') {
+      setIsLoading(true);
+      try {
+        const data = await getAlergiaAlimentariaById(id_alergias_alimentarias);
+        setAlergia(data);
+        setIsEditing(true);
+      } catch (error) {
+        console.error("Error al cargar alergia:", error);
+        toast.error("No se pudo cargar la alergia");
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      setIsEditing(false);
+      setAlergia({ alergiaAlimentaria: '', fichaPaciente: { id_ficha_paciente } });
+    }
+  };
 
   useEffect(() => {
-    const loadAlergia = async () => {
-      if (id_alergias_alimentarias && id_alergias_alimentarias !== 'nuevo') {
-        setIsLoading(true);
-        try {
-          const alergiaData = await getAlergiaAlimentariaById(id_alergias_alimentarias);
-          setAlergia({
-            alergiaAlimentaria: alergiaData.alergiaAlimentaria || '',
-            fichaPaciente: alergiaData.fichaPaciente || { id_ficha_paciente: Number(id_ficha_paciente) }
-          });
-          setIsEditing(true);
-        } catch (error) {
-          console.error("Error al cargar alergia:", error);
-          toast.error("Error al cargar alergia");
-          navigate(`/fichas/${id_ficha_paciente}/alergias-alimentarias`);
-        } finally {
-          setIsLoading(false);
-        }
-      }
-    };
+    loadAlergias();
     loadAlergia();
-  }, [id_alergias_alimentarias, id_ficha_paciente, navigate]);
+  }, [id_ficha_paciente, id_alergias_alimentarias]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -56,100 +75,135 @@ const AlergiaAlimentariaForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
-
     if (!alergia.alergiaAlimentaria) {
-      toast.error("El nombre de la alergia es requerido");
-      setIsSubmitting(false);
+      toast.error("El nombre de la alergia alimentaria es requerido");
       return;
     }
 
+    setIsSubmitting(true);
     try {
       if (isEditing) {
         await updateAlergiaAlimentaria(id_alergias_alimentarias, alergia);
         toast.success("Alergia actualizada correctamente");
       } else {
         await createAlergiaAlimentaria(alergia);
-        toast.success("Alergia agregada correctamente");
+        toast.success("Alergia registrada correctamente");
       }
+      await loadAlergias();
+      setAlergia({ alergiaAlimentaria: '', fichaPaciente: { id_ficha_paciente } });
+      setIsEditing(false);
       navigate(`/fichas/${id_ficha_paciente}/alergias-alimentarias`);
     } catch (error) {
       console.error("Error al guardar alergia:", error);
-      toast.error(error.message || "Error al guardar alergia");
+      toast.error("Error al guardar alergia");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleDelete = async () => {
-    if (window.confirm("¿Estás seguro de eliminar esta alergia?")) {
+  const handleEdit = (alergiaEdit) => {
+    setAlergia(alergiaEdit);
+    setIsEditing(true);
+    navigate(`/fichas/${id_ficha_paciente}/alergias-alimentarias/${alergiaEdit.id_alergias_alimentarias}`);
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("¿Deseas eliminar esta alergia?")) {
       try {
-        await deleteAlergiaAlimentaria(id_alergias_alimentarias);
+        await deleteAlergiaAlimentaria(id);
         toast.success("Alergia eliminada correctamente");
-        navigate(`/fichas/${id_ficha_paciente}/alergias-alimentarias`);
+        await loadAlergias();
+        if (id === id_alergias_alimentarias) {
+          setAlergia({ alergiaAlimentaria: '', fichaPaciente: { id_ficha_paciente } });
+          setIsEditing(false);
+        }
       } catch (error) {
-        console.error("Error al eliminar alergia:", error);
-        toast.error("Error al eliminar alergia");
+        console.error("Error al eliminar:", error);
+        toast.error("No se pudo eliminar la alergia");
       }
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="loading-container">
-        <div className="loading-spinner"></div>
-        <p>Cargando alergia...</p>
-      </div>
-    );
-  }
-
   return (
     <div className="form-container">
-      <h2>{isEditing ? 'Editar Alergia Alimentaria' : 'Agregar Nueva Alergia Alimentaria'}</h2>
-      
+      <FichaStepsNav id_ficha_paciente={id_ficha_paciente} currentStep="alergias-alimentarias" />
+
+      <h2>{isEditing ? "Editar Alergia Alimentaria" : "Agregar Nueva Alergia Alimentaria"}</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label>Nombre de la Alergia*</label>
+          <label>Nombre del Alimento*</label>
           <input
             type="text"
             name="alergiaAlimentaria"
-            value={alergia.alergiaAlimentaria ?? ''}
+            value={alergia.alergiaAlimentaria}
             onChange={handleChange}
+            placeholder="Ej: Mariscos"
             required
-            placeholder="Ej: Alergia a los frutos secos"
           />
         </div>
 
         <div className="form-actions">
-          <button 
-            type="submit" 
-            className="btn-primary"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Guardando...' : 'Guardar'}
+          <button type="submit" className="btn-primary" disabled={isSubmitting}>
+            {isSubmitting ? "Guardando..." : "Guardar"}
           </button>
-          
           {isEditing && (
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="btn-danger"
-              onClick={handleDelete}
+              onClick={() => handleDelete(alergia.id_alergias_alimentarias)}
               disabled={isSubmitting}
             >
               Eliminar
             </button>
           )}
-          
-          <button 
+          <button
             type="button"
             className="btn-secondary"
-            onClick={() => navigate(`/fichas/${id_ficha_paciente}/alergias-alimentarias`)}
-            disabled={isSubmitting}
+            onClick={() => {
+              setAlergia({ alergiaAlimentaria: '', fichaPaciente: { id_ficha_paciente } });
+              setIsEditing(false);
+              navigate(`/fichas/${id_ficha_paciente}/alergias-alimentarias`);
+            }}
           >
             Cancelar
           </button>
         </div>
       </form>
+
+      <hr />
+
+      <h3>Listado de Alergias Alimentarias</h3>
+      {isLoading ? (
+        <p>Cargando...</p>
+      ) : alergias.length === 0 ? (
+        <p>No hay alergias registradas</p>
+      ) : (
+        <div className="table-responsive">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Alimento</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {alergias.map((item) => (
+                <tr key={item.id_alergias_alimentarias}>
+                  <td>{item.alergiaAlimentaria}</td>
+                  <td className="actions">
+                    <button onClick={() => handleEdit(item)} className="btn-edit">
+                      Editar
+                    </button>
+                    <button onClick={() => handleDelete(item.id_alergias_alimentarias)} className="btn-danger">
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };

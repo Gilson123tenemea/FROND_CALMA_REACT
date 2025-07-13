@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8090/api/intereses-personales';
+const API_URL = 'http://localhost:8090/api/intereses';
 
 export const getIntereses = async () => {
   try {

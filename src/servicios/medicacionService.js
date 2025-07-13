@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8090/api/lista-medicamentos';
+const API_URL = 'http://localhost:8090/api/medicamentos';
 
 export const getMedicamentos = async () => {
   try {
@@ -40,10 +40,18 @@ export const createMedicamento = async (medicamento) => {
 
 export const updateMedicamento = async (id, medicamento) => {
   try {
-    const response = await axios.put(`${API_URL}/${id}`, medicamento);
+    // Asegúrate de que el ID sea numérico
+    const numericId = Number(id);
+    if (isNaN(numericId)) {
+      throw new Error('ID no válido');
+    }
+    
+    const response = await axios.put(`${API_URL}/${numericId}`, medicamento);
     return response.data;
   } catch (error) {
-    throw new Error('Error al actualizar medicamento: ' + error.message);
+    // Mejor manejo de errores
+    const errorMsg = error.response?.data?.message || error.message;
+    throw new Error(`Error al actualizar medicamento: ${errorMsg}`);
   }
 };
 

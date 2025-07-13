@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom'; // ✅ correcto
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   getFichaById,
   createFicha,
-  updateFicha
+  updateFicha,
+  deleteFicha // <-- importé la función deleteFicha que tenías en tu servicio
 } from '../../servicios/ficha';
 import FichaStepsNav from './fichastepsNav';
 import './ficha.css';
@@ -13,6 +14,7 @@ import './ficha.css';
 const FichaPacienteForm = ({ editMode = false }) => {
   const { id_ficha_paciente } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [formulario, setFormulario] = useState({
     diagnostico_me_actual: '',
@@ -79,46 +81,45 @@ const FichaPacienteForm = ({ editMode = false }) => {
     { value: 'baja', label: 'Baja' }
   ];
 
-  
   useEffect(() => {
-  const loadFichaData = async () => {
-    if (id_ficha_paciente) {
-      setIsLoading(true);
-      try {
-        const fichaData = await getFichaById(id_ficha_paciente);
-        setFormulario({
-          diagnostico_me_actual: fichaData.diagnostico_me_actual || '',
-          condiciones_fisicas: fichaData.condiciones_fisicas || '',
-          estado_animo: fichaData.estado_animo || '',
-          comunicacion: fichaData.comunicacion || false,
-          otras_comunicaciones: fichaData.otras_comunicaciones || '',
-          caidas: fichaData.caidas || '',
-          tipo_dieta: fichaData.tipo_dieta || '',
-          alimentacion_asistida: fichaData.alimentacion_asistida || '',
-          hora_levantarse: fichaData.hora_levantarse || '',
-          hora_acostarse: fichaData.hora_acostarse || '',
-          frecuencia_siestas: fichaData.frecuencia_siestas || '',
-          frecuencia_baño: fichaData.frecuencia_baño || '',
-          rutina_medica: fichaData.rutina_medica || '',
-          usapanal: fichaData.usapanal || false,
-          acompañado: fichaData.acompañado || false,
-          observaciones: fichaData.observaciones || '',
-          fecha_registro: fichaData.fecha_registro?.split('T')[0] || '',
-          paciente: fichaData.paciente ? { id_paciente: fichaData.paciente.id_paciente } : { id_paciente: '' }
-        });
-        setIsEditing(true);
-      } catch (error) {
-        console.error("Error al cargar ficha:", error);
-        toast.error("Error al cargar la ficha");
-        navigate('/fichas');
-      } finally {
-        setIsLoading(false);
+    const loadFichaData = async () => {
+      if (id_ficha_paciente) {
+        setIsLoading(true);
+        try {
+          const fichaData = await getFichaById(id_ficha_paciente);
+          setFormulario({
+            diagnostico_me_actual: fichaData.diagnostico_me_actual || '',
+            condiciones_fisicas: fichaData.condiciones_fisicas || '',
+            estado_animo: fichaData.estado_animo || '',
+            comunicacion: fichaData.comunicacion || false,
+            otras_comunicaciones: fichaData.otras_comunicaciones || '',
+            caidas: fichaData.caidas || '',
+            tipo_dieta: fichaData.tipo_dieta || '',
+            alimentacion_asistida: fichaData.alimentacion_asistida || '',
+            hora_levantarse: fichaData.hora_levantarse || '',
+            hora_acostarse: fichaData.hora_acostarse || '',
+            frecuencia_siestas: fichaData.frecuencia_siestas || '',
+            frecuencia_baño: fichaData.frecuencia_baño || '',
+            rutina_medica: fichaData.rutina_medica || '',
+            usapanal: fichaData.usapanal || false,
+            acompañado: fichaData.acompañado || false,
+            observaciones: fichaData.observaciones || '',
+            fecha_registro: fichaData.fecha_registro?.split('T')[0] || '',
+            paciente: fichaData.paciente ? { id_paciente: fichaData.paciente.id_paciente } : { id_paciente: '' }
+          });
+          setIsEditing(true);
+        } catch (error) {
+          console.error("Error al cargar ficha:", error);
+          toast.error("Error al cargar la ficha");
+          navigate('/fichas');
+        } finally {
+          setIsLoading(false);
+        }
       }
-    }
-  };
+    };
 
-  loadFichaData();
-}, [id_ficha_paciente, location.key]); 
+    loadFichaData();
+  }, [id_ficha_paciente, location.key]);
 
 
   const handleChange = (e) => {
@@ -155,6 +156,21 @@ const FichaPacienteForm = ({ editMode = false }) => {
     }
   };
 
+  // NUEVA FUNCION PARA ELIMINAR LA FICHA
+  const handleDelete = async () => {
+    const confirmacion = window.confirm("¿Estás seguro que deseas eliminar esta ficha?");
+    if (!confirmacion) return;
+
+    try {
+      await deleteFicha(id_ficha_paciente);
+      toast.success("Ficha eliminada correctamente");
+      navigate("/fichas");
+    } catch (error) {
+      console.error("Error al eliminar ficha:", error);
+      toast.error("Hubo un error al eliminar la ficha");
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="loading-container">
@@ -171,6 +187,17 @@ const FichaPacienteForm = ({ editMode = false }) => {
       <div className="ficha-form-container">
         <div className="header-actions">
           <h2>{isEditing ? 'Editar Ficha de Paciente' : 'Crear Nueva Ficha'}</h2>
+          {/* Botón de eliminar solo visible si estás editando */}
+          {isEditing && (
+            <button
+              className="btn btn-danger"
+              onClick={handleDelete}
+              style={{ marginLeft: '10px', height: '36px', alignSelf: 'center' }}
+              type="button"
+            >
+              🗑️ Eliminar Ficha
+            </button>
+          )}
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -249,7 +276,7 @@ const FichaPacienteForm = ({ editMode = false }) => {
                     checked={formulario.comunicacion}
                     onChange={handleChange}
                   />
-                  <label htmlFor="comunicacion">Presenta dificuldades de Cominucación</label>
+                  <label htmlFor="comunicacion">Presenta dificultades de Comunicación</label>
                 </div>
               </div>
 
