@@ -42,37 +42,33 @@ const RecomendacionesForm = () => {
 
   useFormPersistence(idCV, formulario, setFormulario, 'recomendaciones');
 
-  useEffect(() => {
-    const loadRecomendaciones = async () => {
-      setIsLoading(true);
-      try {
-        const data = await getRecomendacionesByCVId(idCV);
-        setRecomendaciones(data);
+useEffect(() => {
+  const loadRecomendaciones = async () => {
+    setIsLoading(true);
+    try {
+      const data = await getRecomendacionesByCVId(idCV);
+      setRecomendaciones(data);
 
-        if (!location.state?.fromCertificados) {
-          const keys = [
-            `form_recomendaciones_${idCV}`,
-            `form_recomendaciones_/recomendaciones/${idCV}`,
-            `form_recomendaciones_/cv/${idCV}/recomendaciones`
-          ];
-
-          for (const key of keys) {
-            const savedState = localStorage.getItem(key);
-            if (savedState) {
-              setFormulario(JSON.parse(savedState));
-              break;
-            }
-          }
-        }
-      } catch (error) {
-        toast.error(error.message);
-      } finally {
-        setIsLoading(false);
+      // Si viene del formulario de CV, limpiar cualquier estado guardado
+      if (location.state?.fromCV) {
+        const keys = [
+          `form_recomendaciones_${idCV}`,
+          `form_recomendaciones_/recomendaciones/${idCV}`,
+          `form_recomendaciones_/cv/${idCV}/recomendaciones`
+        ];
+        
+        keys.forEach(key => localStorage.removeItem(key));
+        resetFormulario();
       }
-    };
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    loadRecomendaciones();
-  }, [idCV, location.key, location.state]);
+  loadRecomendaciones();
+}, [idCV, location.key, location.state]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

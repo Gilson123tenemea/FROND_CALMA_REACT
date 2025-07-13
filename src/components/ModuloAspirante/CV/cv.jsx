@@ -3,7 +3,7 @@ import { FaEdit, FaGlobe, FaLanguage, FaInfoCircle } from "react-icons/fa";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import './cv.css';
-import { createCV, getCVById, updateCV } from "../../../servicios/cvService";
+import { createCV, getCVById, updateCV, getCVByAspiranteId,checkIfAspiranteHasCV} from "../../../servicios/cvService";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import HeaderAspirante from "../HeaderAspirante/HeaderAspirante";
 import CVStepsNav from "./CVStepsNav";
@@ -14,57 +14,23 @@ const CVForm = ({ editMode = false }) => {
   const location = useLocation();
   const userData = JSON.parse(localStorage.getItem("userData"));
   const aspiranteId = userData?.aspiranteId;
+  const isFirstTime = location.state?.isFirstTime || false;
+  const fromLogin = location.state?.fromLogin || false;
 
   const [formulario, setFormulario] = useState({
-    estado: false,
+    estado: true,
     experiencia: '',
     zona_trabajo: '',
     idiomas: '',
     informacion_opcional: '',
+    fecha_solicitud: new Date().toISOString()
   });
 
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // En el useEffect de CVForm.js
-  useEffect(() => {
-    const loadCVData = async () => {
-      if (idCV) {
-        setIsLoading(true);
-        try {
-          const cvData = await getCVById(idCV);
-
-          if (!cvData) {
-            toast.error("No se encontró el CV solicitado");
-            navigate('/ModuloAspirante');
-            return;
-          }
-
-          setFormulario({
-            estado: cvData.estado || false,
-            experiencia: cvData.experiencia || '',
-            zona_trabajo: cvData.zona_trabajo || '',
-            idiomas: cvData.idiomas || '',
-            informacion_opcional: cvData.informacion_opcional || '',
-          });
-          setIsEditing(true);
-        } catch (error) {
-          console.error("Error al cargar CV:", error);
-          toast.error("Error al cargar el CV");
-          navigate('/ModuloAspirante');
-        } finally {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    // Solo cargamos datos si estamos en modo edición
-    if (location.pathname.includes('/edit') || location.state?.fromRecommendations) {
-      loadCVData();
-    }
-  }, [idCV, navigate, location]);
-
+  // Función handleChange para manejar los cambios en los inputs
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormulario({
@@ -73,75 +39,168 @@ const CVForm = ({ editMode = false }) => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    if (!aspiranteId) {
-      toast.error("No se pudo obtener el ID del aspirante", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-      setIsSubmitting(false);
-      return;
+ useEffect(() => {
+  const loadCVData = async () => {
+  setIsLoading(true);
+  
+  try {
+    const effectiveAspiranteId = aspiranteId || location.state?.userId;
+    
+    if (!effectiveAspiranteId) {
+      throw new Error("No se pudo identificar al aspirante");
     }
 
-    // Validación de campos requeridos
-    if (!formulario.experiencia || !formulario.zona_trabajo || !formulario.idiomas) {
-      toast.warning("Por favor completa todos los campos requeridos", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-      setIsSubmitting(false);
+    // Caso 1: Creación de nuevo CV
+    if (idCV === "new") {
+      const hasCV = await checkIfAspiranteHasCV(effectiveAspiranteId);
+      
+      if (hasCV) {
+        const existingCV = await getCVByAspiranteId(effectiveAspiranteId);
+        navigate(`/cv/${existingCV.id_cv}/edit`, { 
+          state: { userId: effectiveAspiranteId },
+          replace: true
+        });
+        return;
+      }
+      
+      setIsEditing(false);
       return;
     }
+    
+    // Caso 2: Edición de CV existente
+    if (idCV) {
+      const cvData = await getCVById(idCV);
+      
+      if (cvData.aspirante.idAspirante !== effectiveAspiranteId) {
+        throw new Error("No tienes permiso para editar este CV");
+      }
+      
+      setFormulario({
+        estado: cvData.estado,
+        experiencia: cvData.experiencia,
+        zona_trabajo: cvData.zona_trabajo,
+        idiomas: cvData.idiomas,
+        informacion_opcional: cvData.informacion_opcional,
+      });
+      setIsEditing(true);
+      return;
+    }
+    
+    // Caso 3: Redirección según tenga CV o no
+    const hasCV = await checkIfAspiranteHasCV(effectiveAspiranteId);
+    
+    if (hasCV) {
+      const existingCV = await getCVByAspiranteId(effectiveAspiranteId);
+      navigate(`/cv/${existingCV.id_cv}/edit`, { 
+        state: { userId: effectiveAspiranteId },
+        replace: true
+      });
+    } else {
+      navigate('/cv/new', { 
+        state: { userId: effectiveAspiranteId },
+        replace: true
+      });
+    }
+    
+  } catch (error) {
+    console.error("Error cargando CV:", error);
+    toast.error(error.message || "Error al cargar el CV");
+    
+    navigate('/moduloAspirante', { 
+      state: { 
+        userId: aspiranteId || location.state?.userId,
+        error: 'Error al cargar el CV'
+      },
+      replace: true 
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
 
+  loadCVData();
+}, [idCV, navigate, location.state, aspiranteId, fromLogin, isFirstTime]);
+
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsSubmitting(true);
+
+  const effectiveAspiranteId = aspiranteId || location.state?.userId;
+  
+  if (!effectiveAspiranteId) {
+    toast.error("No se pudo obtener el ID del aspirante");
+    setIsSubmitting(false);
+    return;
+  }
+
+  // Validación de campos requeridos
+  const requiredFields = {
+    experiencia: formulario.experiencia?.trim(),
+    zona_trabajo: formulario.zona_trabajo?.trim(),
+    idiomas: formulario.idiomas?.trim()
+  };
+
+  const missingFields = Object.entries(requiredFields)
+    .filter(([_, value]) => !value)
+    .map(([key]) => key);
+
+  if (missingFields.length > 0) {
+    toast.error(`Faltan campos requeridos: ${missingFields.join(', ')}`);
+    setIsSubmitting(false);
+    return;
+  }
+
+  try {
+    // Preparar datos para enviar
     const cvData = {
       ...formulario,
-      fecha_solicitud: new Date().toISOString(),
-      aspirante: { idAspirante: aspiranteId }
+      aspirante: { idAspirante: effectiveAspiranteId },
+      experiencia: requiredFields.experiencia,
+      zona_trabajo: requiredFields.zona_trabajo,
+      idiomas: requiredFields.idiomas,
+      informacion_opcional: formulario.informacion_opcional?.trim() || null
     };
 
-    try {
-      let response;
-      let cvId = idCV; // Usamos el idCV si estamos editando
-
-      if (isEditing) {
-        response = await updateCV(idCV, cvData);
-      } else {
-        response = await createCV(cvData);
-        cvId = response.id_cv; // Obtenemos el nuevo ID si es creación
-      }
-
-      // Guardar en localStorage
-      const savedCVs = JSON.parse(localStorage.getItem('savedCVs')) || {};
-      savedCVs[cvId] = true;
-      localStorage.setItem('savedCVs', JSON.stringify(savedCVs));
-
-      // Redirigir a recomendaciones con el ID correcto
-      toast.success(`CV ${isEditing ? 'actualizado' : 'registrado'} exitosamente. Redirigiendo a recomendaciones...`, {
-        position: "top-right",
-        autoClose: 2000,
-        onClose: () => navigate(`/recomendaciones/${cvId}`, {
-          state: { userId: aspiranteId, cvData: formulario } // Pasamos los datos actuales
-        })
-      });
-    } catch (error) {
-      console.error("Error al guardar el CV:", error);
-      toast.error(error.message || `Error al ${isEditing ? 'actualizar' : 'registrar'} el CV`, {
-        position: "top-right",
-        autoClose: 3000,
-      });
-    } finally {
-      setIsSubmitting(false);
+    let response;
+    if (isEditing) {
+      response = await updateCV(idCV, cvData);
+    } else {
+      response = await createCV(cvData);
     }
-  };
 
-  const handleVolver = () => {
-    navigate(`/cv/${cvId}/recomendaciones`, {
-      state: { fromCV: true }
-    });
-  };
+    // Manejo de respuesta exitosa
+    toast.success(`CV ${isEditing ? 'actualizado' : 'creado'} correctamente`);
+    
+    // Redirección a Recomendaciones después de guardar
+    const cvId = response?.id_cv || idCV;
+    
+    if (cvId) {
+      navigate(`/cv/${cvId}/recomendaciones`, {
+        state: {
+          userId: effectiveAspiranteId,
+          fromCV: true,
+          cvId: cvId
+        },
+        replace: true
+      });
+    } else {
+      throw new Error("No se pudo obtener el ID del CV");
+    }
+
+  } catch (error) {
+    console.error("Error al guardar CV:", error);
+    
+    if (error.response?.status === 400) {
+      const backendError = error.response.data?.error || 'Datos inválidos';
+      const backendMessage = error.response.data?.message || 'Verifica la información proporcionada';
+      toast.error(`${backendError}: ${backendMessage}`);
+    } else {
+      toast.error(error.message || 'Error al guardar el CV');
+    }
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   if (isLoading) {
     return (
@@ -161,10 +220,17 @@ const CVForm = ({ editMode = false }) => {
     <>
       <HeaderAspirante userId={aspiranteId} />
       <div className="registro-page">
-        <CVStepsNav idCV={idCV} currentStep="CV" />
+        {!isFirstTime && <CVStepsNav idCV={idCV} currentStep="CV" />}
 
         <div className="registro-container">
           <div className="registro-card">
+            {isFirstTime && (
+              <div className="welcome-banner">
+                <h3>¡Bienvenido a CALMA!</h3>
+                <p>Por favor, completa tu CV para comenzar a usar la plataforma.</p>
+              </div>
+            )}
+            
             <h2>{isEditing ? 'Editar CV' : 'Registro de CV'}</h2>
             <p className="subtitle">
               {isEditing

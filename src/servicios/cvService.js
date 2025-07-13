@@ -73,3 +73,36 @@ export const deleteCV = async (id) => {
     throw new Error('No se pudo eliminar el CV');
   }
 };
+
+export const checkIfAspiranteHasCV = async (aspiranteId) => {
+  try {
+    const response = await axios.get(`${API_URL}/existe-por-aspirante/${aspiranteId}`);
+    return response.data === true; // Asegurar que es booleano
+  } catch (error) {
+    console.error(`Error verificando CV para aspirante ${aspiranteId}:`, error);
+    return false;
+  }
+};
+
+export const getCVByAspiranteId = async (aspiranteId) => {
+  try {
+    const response = await axios.get(`${API_URL}/por-aspirante/${aspiranteId}`);
+    
+    // Verificar si la respuesta tiene datos válidos
+    if (!response.data || !response.data.id_cv) {
+      console.log(`No se encontró CV para el aspirante ${aspiranteId}`);
+      return null;
+    }
+    
+    // Validación explícita de pertenencia
+    if (response.data.aspirante?.idAspirante?.toString() !== aspiranteId?.toString()) {
+      console.error('El CV no pertenece al aspirante solicitado');
+      return null;
+    }
+    
+    return response.data;
+  } catch (error) {
+    console.error(`Error al obtener CV para aspirante ${aspiranteId}:`, error);
+    throw new Error('Error al verificar el CV');
+  }
+};

@@ -20,30 +20,45 @@ const CVCompletoView = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const cargarDatos = async () => {
-      try {
-        const response = await fetch(`http://localhost:8090/api/cvs/completo/${idCV}`);
-        const data = await response.json();
-        
-        if (!response.ok) {
-          throw new Error(data.message || "Error al cargar el CV");
-        }
-
-        if (data.aspirante && data.aspirante.idAspirante !== aspiranteId) {
-          throw new Error("Este CV no pertenece al usuario actual");
-        }
-        
-        setCvData(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+ useEffect(() => {
+  const cargarDatos = async () => {
+    try {
+      // Verificar primero si tenemos un aspiranteId válido
+      if (!aspiranteId) {
+        throw new Error("No se pudo identificar al usuario");
       }
-    };
 
-    cargarDatos();
-  }, [idCV, aspiranteId]);
+      // Obtener el CV por aspiranteId en lugar de por idCV
+      const response = await fetch(`http://localhost:8090/api/cvs/por-aspirante/${aspiranteId}`);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Error al cargar el CV");
+      }
+
+      const data = await response.json();
+      
+      // Si no hay datos de CV
+      if (!data || !data.id_cv) {
+        throw new Error("No se encontró un CV registrado");
+      }
+      
+      // Validación redundante de seguridad
+      if (data.aspirante?.idAspirante?.toString() !== aspiranteId?.toString()) {
+        throw new Error("Este CV no pertenece al usuario actual");
+      }
+      
+      setCvData(data);
+    } catch (err) {
+      console.error("Error cargando CV:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  cargarDatos();
+}, [aspiranteId]); // Dependencia solo de aspiranteId
 
   const handleDownload = async (endpoint, id, fileName) => {
     try {

@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { login } from '../../servicios/LoginService';
+import { checkIfAspiranteHasCV, getCVByAspiranteId } from '../../servicios/cvService';
 import LoadingScreen from '../Shared/LoadingScreen';
 
 const Login = () => {
@@ -52,12 +53,16 @@ const Login = () => {
       toast.success('¡Acceso exitoso! Bienvenido.');
       setRedirecting(true);
 
-      const checkConnectionAndNavigate = () => {
+      const checkConnectionAndNavigate = async () => {
         if (navigator.onLine) {
+          // Redirección según rol
           if (data.rol === 'aspirante') {
-            navigate('/moduloAspirante', { state: { userId: data.aspiranteId } });
+            await handleAspiranteLogin(data);
           } else if (data.rol === 'contratante') {
-            navigate('/moduloContratante', { state: { userId: data.contratanteId } });
+            navigate('/moduloContratante', { 
+              state: { userId: data.contratanteId },
+              replace: true
+            });
           }
         } else {
           toast.error('Estás sin conexión. Esperando reconexión...');
@@ -67,7 +72,9 @@ const Login = () => {
         }
       };
 
-      setTimeout(checkConnectionAndNavigate, 1000);
+      setTimeout(() => {
+        checkConnectionAndNavigate();
+      }, 1000);
     } catch (err) {
       console.error("Error en el login:", err);
       if (err.message === 'Correo no encontrado') {
@@ -77,13 +84,66 @@ const Login = () => {
       } else if (err.message.includes('401')) {
         toast.error('Usuario o contraseña incorrectos');
       } else {
-        toast.error(err.message || 'Error desconocido');
+        toast.error(err.response?.data?.message || 'Error desconocido');
       }
     } finally {
       setLoading(false);
     }
   };
 
+const handleAspiranteLogin = async (userData) => {
+  try {
+    console.log("Iniciando flujo para aspirante:", userData.aspiranteId);
+    
+    // 1. Obtener CV directamente por aspiranteId
+    const cvData = await getCVByAspiranteId(userData.aspiranteId);
+    console.log("CV encontrado:", cvData);
+
+    // 2. Si no existe CV, redirigir a creación
+    if (!cvData) {
+      console.log("No se encontró CV, redirigiendo a creación");
+      navigate('/cv/new', {
+        state: {
+          userId: userData.aspiranteId,
+          isFirstTime: true,
+          fromLogin: true
+        },
+        replace: true
+      });
+      return;
+    }
+
+    // 3. Validar que el CV pertenece al usuario
+    if (cvData.aspirante?.idAspirante?.toString() !== userData.aspiranteId?.toString()) {
+      throw new Error("El CV no pertenece al usuario actual");
+    }
+
+    // 4. Redirigir al módulo aspirante con datos del CV
+    console.log("Redirigiendo a módulo aspirante con CV ID:", cvData.id_cv);
+    navigate('/moduloAspirante', {
+      state: {
+        userId: userData.aspiranteId,
+        hasCV: true,
+        cvData: cvData,
+        cvId: cvData.id_cv // Asegurar que pasamos el ID correcto
+      },
+      replace: true
+    });
+
+  } catch (error) {
+    console.error('Error en el flujo de login para aspirante:', error);
+    toast.error(error.message || 'Error al verificar tu información de CV');
+    
+    // Redirigir a creación de CV como fallback
+    navigate('/cv/new', {
+      state: { 
+        userId: userData.aspiranteId,
+        error: error.message
+      },
+      replace: true
+    });
+  }
+};
   const handleRecovery = async () => {
     if (!validateEmail(recoveryEmail)) {
       toast.error('Por favor ingresa un correo electrónico válido');
