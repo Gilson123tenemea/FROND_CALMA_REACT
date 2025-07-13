@@ -42,33 +42,38 @@ const RecomendacionesForm = () => {
 
   useFormPersistence(idCV, formulario, setFormulario, 'recomendaciones');
 
-useEffect(() => {
-  const loadRecomendaciones = async () => {
-    setIsLoading(true);
-    try {
-      const data = await getRecomendacionesByCVId(idCV);
-      setRecomendaciones(data);
-
-      // Si viene del formulario de CV, limpiar cualquier estado guardado
-      if (location.state?.fromCV) {
-        const keys = [
-          `form_recomendaciones_${idCV}`,
-          `form_recomendaciones_/recomendaciones/${idCV}`,
-          `form_recomendaciones_/cv/${idCV}/recomendaciones`
-        ];
+  useEffect(() => {
+    const loadRecomendaciones = async () => {
+      setIsLoading(true);
+      try {
+        const data = await getRecomendacionesByCVId(idCV);
+        console.log("Datos recibidos de la API:", JSON.stringify(data, null, 2));
         
-        keys.forEach(key => localStorage.removeItem(key));
-        resetFormulario();
+        // Asegura que los datos tengan la estructura correcta
+        const formattedData = data.map(item => ({
+          id_recomendacion: item.id_recomendacion,
+          nombre_recomendador: item.nombre_recomendador || 'No especificado',
+          cargo: item.cargo || 'No especificado',
+          empresa: item.empresa || '-',
+          telefono: item.telefono || '-',
+          email: item.email || '-',
+          relacion: item.relacion || '-',
+          fecha: item.fecha || new Date().toISOString().slice(0, 10),
+          tiene_archivo: item.tiene_archivo || false,
+          nombre_archivo: item.nombre_archivo || ''
+        }));
+        
+        setRecomendaciones(formattedData);
+      } catch (error) {
+        console.error("Error al cargar recomendaciones:", error);
+        toast.error("Error al cargar recomendaciones");
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      toast.error(error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
 
-  loadRecomendaciones();
-}, [idCV, location.key, location.state]);
+    loadRecomendaciones();
+  }, [idCV]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -195,7 +200,7 @@ useEffect(() => {
       relacion: formulario.relacion,
       fecha: formulario.fecha,
       cv: { id_cv: Number(idCV) },
-      conservarArchivo: formulario.isEditing && !formulario.archivo // Indica al backend que conserve el archivo existente
+      conservarArchivo: formulario.isEditing && !formulario.archivo
     };
 
     const formData = new FormData();
@@ -229,59 +234,22 @@ useEffect(() => {
           } : rec
         ));
 
-        toast.success(
-          <div className="custom-toast">
-            <div>Recomendación actualizada correctamente</div>
-          </div>,
-          {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeButton: false,
-          }
-        );
+        toast.success("Recomendación actualizada correctamente");
       } else {
         nuevaRecomendacion = await createRecomendacion(formData);
-        setRecomendaciones([
-          ...recomendaciones,
-          {
-            ...nuevaRecomendacion,
-            archivo: formulario.archivoNombre || "No adjunto",
-          },
-        ]);
+        setRecomendaciones(prev => [...prev, {
+          ...nuevaRecomendacion,
+          tiene_archivo: !!formulario.archivo,
+          nombre_archivo: formulario.archivo?.name || ''
+        }]);
 
-        toast.success(
-          <div className="custom-toast">
-            <div>Recomendación guardada correctamente</div>
-          </div>,
-          {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeButton: false,
-          }
-        );
+        toast.success("Recomendación guardada correctamente");
       }
 
       resetFormulario();
     } catch (error) {
-      console.error("Error completo al guardar:", {
-        message: error.message,
-        response: error.response?.data,
-        stack: error.stack
-      });
-
-      toast.error(
-        <div className="custom-toast">
-          <div>{error.response?.data?.message || error.message || "Error al registrar la recomendación"}</div>
-        </div>,
-        {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeButton: false,
-        }
-      );
+      console.error("Error al guardar:", error);
+      toast.error(error.response?.data?.message || error.message || "Error al registrar la recomendación");
     } finally {
       setIsSubmitting(false);
     }
@@ -289,17 +257,7 @@ useEffect(() => {
 
   const irASiguiente = () => {
     if (recomendaciones.length === 0) {
-      toast.warning(
-        <div className="custom-toast">
-          <div>Debes agregar al menos una recomendación</div>
-        </div>,
-        {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeButton: false,
-        }
-      );
+      toast.warning("Debes agregar al menos una recomendación");
       return;
     }
     navigate(`/cv/${idCV}/certificados`);
@@ -310,22 +268,15 @@ useEffect(() => {
       toast.error("No se encontró el ID del CV");
       return;
     }
-
-    navigate(`/cv/${idCV}`, {
-      state: {
-        fromRecommendations: true,
-        cvId: idCV
-      },
-      replace: true
-    });
+    navigate(`/cv/${idCV}`);
   };
 
   if (isLoading) {
     return (
-      <div className="registro-page">
+      <div className="recomendaciones-loading-container">
         <CVStepsNav idCV={idCV} currentStep="Recomendaciones" />
-        <div className="registro-container">
-          <div className="loading-spinner"></div>
+        <div className="recomendaciones-loading-content">
+          <div className="recomendaciones-loading-spinner"></div>
           <h2>Cargando recomendaciones...</h2>
         </div>
       </div>
@@ -333,13 +284,11 @@ useEffect(() => {
   }
 
   return (
-    <div className="registro-page">
+    <div className="recomendaciones-container">
       <CVStepsNav idCV={idCV} currentStep="Recomendaciones" />
 
-      <div className="registro-container">
-       
-
-        <form onSubmit={handleSubmit} className="form-recomendaciones">
+      <div className="recomendaciones-content">
+        <form onSubmit={handleSubmit} className="recomendaciones-form">
           <h2>{formulario.isEditing ? 'Editar Recomendación' : 'Agregar Nueva Recomendación'}</h2>
 
           <div className="input-group">
@@ -466,62 +415,39 @@ useEffect(() => {
             )}
           </div>
 
-          <div className="button-group">
-            {/* Mostrar botón Regresar solo cuando no esté en modo edición */}
+           <div className="recomendaciones-button-group">
             {!formulario.isEditing && (
-              <button
-                type="button"
-                className="back-btn"
-                onClick={handleBack}
-                disabled={isSubmitting}
-              >
+              <button type="button" className="recomendaciones-back-btn" onClick={handleBack}>
                 Regresar
               </button>
             )}
-
-            <button
-              type="submit"
-              className="submit-btn"
-              disabled={isSubmitting}
-            >
-              {isSubmitting
-                ? 'Guardando...'
-                : formulario.isEditing
-                  ? 'Actualizar recomendación'
-                  : 'Guardar recomendación'}
+            <button type="submit" className="recomendaciones-submit-btn">
+              {formulario.isEditing ? 'Actualizar' : 'Guardar'}
             </button>
-
-            {/* Mostrar botón Cancelar solo en modo edición */}
             {formulario.isEditing && (
-              <button
-                type="button"
-                className="cancel-btn"
-                onClick={resetFormulario}
-                disabled={isSubmitting}
-              >
+              <button type="button" className="recomendaciones-cancel-btn" onClick={resetFormulario}>
                 Cancelar
               </button>
             )}
-
-            {/* Mostrar botón Siguiente solo cuando no esté en modo edición */}
             {!formulario.isEditing && (
-              <button
-                type="button"
-                className="next-btn"
+              <button 
+                type="button" 
+                className="recomendaciones-next-btn" 
                 onClick={irASiguiente}
-                disabled={recomendaciones.length === 0 || isSubmitting}
+                disabled={recomendaciones.length === 0}
               >
-                Siguiente: Certificados
+                Siguiente
               </button>
             )}
           </div>
         </form>
 
-        {recomendaciones.length > 0 && (
-          <div className="recomendaciones-list">
-            <h3><FaPaperclip /> Recomendaciones registradas</h3>
-            <div className="table-container">
-              <table>
+        <div className="recomendaciones-table-section">
+          <h3><FaPaperclip /> Recomendaciones registradas ({recomendaciones.length})</h3>
+          
+          {recomendaciones.length > 0 ? (
+            <div className="recomendaciones-table-container">
+              <table className="recomendaciones-table">
                 <thead>
                   <tr>
                     <th>Nombre</th>
@@ -532,35 +458,31 @@ useEffect(() => {
                   </tr>
                 </thead>
                 <tbody>
-                  {recomendaciones.map((rec, index) => (
-                    <tr key={index}>
+                  {recomendaciones.map((rec) => (
+                    <tr key={rec.id_recomendacion}>
                       <td>{rec.nombre_recomendador}</td>
                       <td>{rec.cargo}</td>
-                      <td>{rec.empresa || '-'}</td>
+                      <td>{rec.empresa}</td>
                       <td>
                         {rec.tiene_archivo ? (
-                          <div className="file-download-container">
-                            <button
-                              className="download-link"
-                              onClick={() => handleDownload(rec.id_recomendacion, rec.nombre_archivo)}
-                            >
-                              <FaDownload /> {rec.nombre_archivo || 'Descargar'}
-                            </button>
-                          </div>
+                          <button 
+                            className="recomendaciones-download-btn"
+                            onClick={() => handleDownload(rec.id_recomendacion, rec.nombre_archivo)}
+                          >
+                            <FaDownload /> {rec.nombre_archivo}
+                          </button>
                         ) : 'No adjunto'}
                       </td>
-                      <td className="actions-cell">
-                        <button
+                      <td className="recomendaciones-actions">
+                        <button 
+                          className="recomendaciones-edit-btn"
                           onClick={() => handleEdit(rec)}
-                          className="edit-btn"
-                          title="Editar"
                         >
                           <FaEdit />
                         </button>
-                        <button
+                        <button 
+                          className="recomendaciones-delete-btn"
                           onClick={() => handleDelete(rec.id_recomendacion)}
-                          className="delete-btn"
-                          title="Eliminar"
                         >
                           <FaTrash />
                         </button>
@@ -570,8 +492,12 @@ useEffect(() => {
                 </tbody>
               </table>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="recomendaciones-empty-message">
+              No hay recomendaciones registradas
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -1,15 +1,16 @@
-/* Estilos mejorados para el formulario de recomendaciones - Estilo cuidado */
-.registro-page {
+/* ESTILOS BASE - Versión que funciona con los datos */
+.recomendaciones-container {
   min-height: 100vh;
-  background-color: #f8f5f0;
+  border-radius: 12px;
+  background-color: #F5F5F5;
   font-family: 'Lexend', 'Noto Sans', sans-serif;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
 }
 
-.registro-container {
+.recomendaciones-content {
   width: 100%;
   max-width: 900px;
   background-color: white;
@@ -20,284 +21,198 @@
   border: 1px solid #e0d5c3;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Títulos */
-h2 {
+/* TÍTULOS */
+.recomendaciones-main-title {
   color: #5E4B2E;
   font-size: 2rem;
   font-weight: 600;
   margin-bottom: 1.5rem;
   text-align: center;
-  letter-spacing: -0.5px;
 }
 
-h3 {
+.recomendaciones-section-title {
   color: #5E4B2E;
   font-size: 1.5rem;
   margin: 2rem 0 1.5rem;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  font-weight: 500;
+  gap: 0.5rem;
 }
 
-/* Formulario */
-.form-recomendaciones {
+/* FORMULARIO */
+.recomendaciones-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
-  padding: 1.5rem 0;
+  margin-bottom: 2rem;
 }
 
-.input-group {
+.recomendaciones-input-group {
   margin-bottom: 1.5rem;
-  position: relative;
 }
 
-.input-group label {
+.recomendaciones-input-group label {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 0.5rem;
   font-weight: 500;
+  color: #5E4B2E;
 }
 
-.input-group input {
+.recomendaciones-input-group input {
   width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.input-icon {
-  color: #A49062;
-  font-size: 1rem;
-}
-
-input[type="text"],
-input[type="email"],
-input[type="date"],
-input[type="file"] {
-  width: 100%;
-  padding: 0.9rem 1.1rem;
+  padding: 0.8rem 1rem;
   border: 1px solid #e0d5c3;
   border-radius: 6px;
   font-size: 1rem;
-  color: #5E4B2E;
-  transition: all 0.2s ease;
   background-color: #FFFCF9;
+  transition: all 0.2s;
 }
 
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="date"]:focus {
+.recomendaciones-input-group input:focus {
   outline: none;
   border-color: #A49062;
   box-shadow: 0 0 0 2px rgba(164, 144, 98, 0.1);
-  background-color: white;
 }
 
-.file-input {
-  padding: 0.5rem;
-  background-color: white;
-}
-
-.file-info {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  color: #7D6B58;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.clear-file-btn {
-  background: none;
-  border: none;
-  color: #A49062;
-  cursor: pointer;
-  font-size: 0.8rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
-}
-
-.clear-file-btn:hover {
-  background-color: #f3f0ea;
-}
-
-/* Botones */
-.button-group {
+/* BOTONES */
+.recomendaciones-button-group {
   grid-column: 1 / -1;
   display: flex;
   gap: 1rem;
-  margin-top: 2rem;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  margin-top: 1rem;
 }
 
-.button-group button {
+.recomendaciones-button-group button {
   flex: 1;
-  min-width: 180px;
-  padding: 0.9rem 1.5rem;
+  padding: 0.8rem;
   border: none;
   border-radius: 6px;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+  transition: all 0.2s;
 }
 
-.back-btn {
+.recomendaciones-back-btn {
   background-color: #f3f0ea;
   color: #5E4B2E;
 }
 
-.back-btn:hover:not(:disabled) {
-  background-color: #e0d5c3;
-}
-
-.submit-btn {
+.recomendaciones-submit-btn {
   background-color: #d4e8c8;
   color: #2D3748;
 }
 
-.submit-btn:hover:not(:disabled) {
-  background-color: #c0d8b4;
-}
-
-.next-btn {
+.recomendaciones-next-btn {
   background-color: #c8e0d4;
   color: #2D3748;
 }
 
-.next-btn:hover:not(:disabled) {
-  background-color: #b4d0c0;
+.recomendaciones-cancel-btn {
+  background-color: #f8e8e8;
+  color: #c88;
 }
 
-.cancel-btn {
-  background-color: #f3f0ea;
-  color: #5E4B2E;
-}
-
-.cancel-btn:hover:not(:disabled) {
-  background-color: #e0d5c3;
-}
-
-.button-group button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none !important;
-  box-shadow: none !important;
-  background-color: #f3f0ea !important;
-  color: #9E9E9E !important;
-}
-
-/* Lista de recomendaciones */
-.recomendaciones-list {
+/* TABLA DE RECOMENDACIONES - Estilo que hace que los datos aparezcan */
+.recomendaciones-table-section {
   margin-top: 3rem;
   padding-top: 2rem;
   border-top: 1px solid #e0d5c3;
 }
 
-.table-container {
+.recomendaciones-table-container {
   overflow-x: auto;
   margin-top: 1.5rem;
-  border-radius: 6px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
-table {
+.recomendaciones-table {
   width: 100%;
   border-collapse: collapse;
   background-color: white;
 }
 
-th, td {
+.recomendaciones-table th {
+  background-color: #f3f0ea;
+  color: #5E4B2E;
   padding: 1rem;
   text-align: left;
-  border-bottom: 1px solid #e0d5c3;
-}
-
-th {
-  background-color: #f3f0ea;
   font-weight: 500;
-  color: #5E4B2E;
   position: sticky;
   top: 0;
 }
 
-tr:hover {
+.recomendaciones-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #e0d5c3;
+  color: #5E4B2E;
+}
+
+.recomendaciones-table tr:hover {
   background-color: #faf8f5;
 }
 
-.actions-cell {
+/* ACCIONES DE TABLA */
+.recomendaciones-actions {
   display: flex;
   gap: 0.5rem;
 }
 
-.edit-btn, .delete-btn {
+.recomendaciones-edit-btn,
+.recomendaciones-delete-btn,
+.recomendaciones-download-btn {
   padding: 0.5rem;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  transition: all 0.2s;
 }
 
-.edit-btn {
+.recomendaciones-edit-btn {
   background-color: #f3f0ea;
   color: #5E4B2E;
 }
 
-.edit-btn:hover {
-  background-color: #e0d5c3;
-}
-
-.delete-btn {
+.recomendaciones-delete-btn {
   background-color: #f8e8e8;
   color: #c88;
 }
 
-.delete-btn:hover {
-  background-color: #f0d0d0;
-}
-
-.download-link {
+.recomendaciones-download-btn {
   background: none;
-  border: none;
   color: #5E4B2E;
-  cursor: pointer;
+  padding: 0;
+}
+
+/* ESTADOS */
+.recomendaciones-button-group button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.recomendaciones-button-group button:hover:not(:disabled) {
+  filter: brightness(0.95);
+}
+
+/* LOADING */
+.recomendaciones-loading-container {
+  min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.3rem;
-  font-size: 0.9rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
+  justify-content: center;
 }
 
-.download-link:hover {
-  background-color: #f3f0ea;
-}
-
-/* Loading spinner */
-.loading-spinner {
-  border: 3px solid #f3f0ea;
-  border-top: 3px solid #A49062;
+.recomendaciones-loading-spinner {
+  border: 4px solid #f3f0ea;
+  border-top: 4px solid #5E4B2E;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   animation: spin 1s linear infinite;
-  margin: 0 auto 20px;
+  margin-bottom: 1rem;
 }
 
 @keyframes spin {
@@ -305,66 +220,48 @@ tr:hover {
   100% { transform: rotate(360deg); }
 }
 
-/* Notificaciones */
-.custom-toast {
-  font-family: 'Lexend', 'Noto Sans', sans-serif;
-  color: #5E4B2E;
+/* MENSAJES */
+.recomendaciones-empty-message {
+  text-align: center;
+  padding: 2rem;
+  color: #7D6B58;
+  font-style: italic;
 }
 
-.Toastify__toast {
-  font-family: 'Lexend', 'Noto Sans', sans-serif;
-  padding: 12px 16px !important;
-  border-radius: 6px !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
-  color: #5E4B2E !important;
-  background: #FFFCF9 !important;
-  border-left: 4px solid #A49062 !important;
-  min-height: auto !important;
-}
-
-/* Responsive */
+/* RESPONSIVE */
 @media (max-width: 768px) {
-  .form-recomendaciones {
+  .recomendaciones-form {
     grid-template-columns: 1fr;
   }
   
-  .registro-container {
+  .recomendaciones-content {
     padding: 2rem;
   }
   
-  .button-group {
+  .recomendaciones-button-group {
     flex-direction: column;
-  }
-  
-  .button-group button {
-    width: 100%;
   }
 }
 
 @media (max-width: 480px) {
-  .registro-page {
+  .recomendaciones-container {
     padding: 1rem;
   }
   
-  .registro-container {
+  .recomendaciones-content {
     padding: 1.5rem;
   }
   
-  h2 {
+  .recomendaciones-main-title {
     font-size: 1.6rem;
   }
   
-  h3 {
-    font-size: 1.2rem;
+  .recomendaciones-section-title {
+    font-size: 1.3rem;
   }
   
-  .actions-cell {
+  .recomendaciones-actions {
     flex-direction: column;
-    gap: 0.25rem;
-  }
-  
-  .edit-btn, .delete-btn {
-    width: 100%;
-    padding: 0.25rem;
+    gap: 0.3rem;
   }
 }

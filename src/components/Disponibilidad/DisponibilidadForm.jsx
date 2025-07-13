@@ -9,9 +9,9 @@ import {
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import CVStepsNav from "../ModuloAspirante/CV/CVStepsNav";
-import './DisponibilidadForm.css';
 import { FaCalendarAlt, FaClock, FaBusinessTime, FaPlane, FaSave, FaArrowLeft, FaEdit, FaTrash } from "react-icons/fa";
 import { useFormPersistence } from '../../hooks/useFormPersistence';
+import './DisponibilidadForm.css';
 
 const DisponibilidadForm = () => {
   const { idCV } = useParams();
@@ -34,10 +34,11 @@ const DisponibilidadForm = () => {
   useFormPersistence(idCV, formulario, setFormulario, 'disponibilidad');
 
   useEffect(() => {
-    const loadDisponibilidades = async () => {
+    const cargarDisponibilidades = async () => {
       setIsLoading(true);
       try {
         const data = await getDisponibilidadesByCVId(idCV);
+        console.log('Disponibilidades cargadas:', data);
         setDisponibilidades(data);
 
         if (!location.state?.fromHabilidades) {
@@ -48,24 +49,25 @@ const DisponibilidadForm = () => {
           ];
 
           for (const key of keys) {
-            const savedState = localStorage.getItem(key);
-            if (savedState) {
-              setFormulario(JSON.parse(savedState));
+            const estadoGuardado = localStorage.getItem(key);
+            if (estadoGuardado) {
+              setFormulario(JSON.parse(estadoGuardado));
               break;
             }
           }
         }
       } catch (error) {
         toast.error(error.message);
+        console.error("Error al cargar disponibilidades:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadDisponibilidades();
+    cargarDisponibilidades();
   }, [idCV, location.key, location.state]);
 
-  const handleChange = (e) => {
+  const manejarCambio = (e) => {
     const { name, value, type, checked } = e.target;
     setFormulario({
       ...formulario,
@@ -73,7 +75,7 @@ const DisponibilidadForm = () => {
     });
   };
 
-  const resetFormulario = () => {
+  const reiniciarFormulario = () => {
     setFormulario({
       id_disponibilidad: null,
       dias_disponibles: "",
@@ -84,7 +86,7 @@ const DisponibilidadForm = () => {
     });
   };
 
-  const handleEdit = (disponibilidad) => {
+  const manejarEditar = (disponibilidad) => {
     setFormulario({
       id_disponibilidad: disponibilidad.id_disponibilidad,
       dias_disponibles: disponibilidad.dias_disponibles,
@@ -94,17 +96,17 @@ const DisponibilidadForm = () => {
       isEditing: true
     });
 
-    document.querySelector('.form-disponibilidad').scrollIntoView({ behavior: 'smooth' });
+    document.querySelector('.disponibilidad-form-container').scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleDelete = async (id) => {
+  const manejarEliminar = async (id) => {
     if (window.confirm("¿Estás seguro de que deseas eliminar esta disponibilidad?")) {
       try {
         await deleteDisponibilidad(id);
         setDisponibilidades(disponibilidades.filter(disp => disp.id_disponibilidad !== id));
 
         toast.success(
-          <div className="custom-toast">
+          <div className="disponibilidad-toast">
             <div>Disponibilidad eliminada correctamente</div>
           </div>,
           {
@@ -116,7 +118,7 @@ const DisponibilidadForm = () => {
         );
       } catch (error) {
         toast.error(
-          <div className="custom-toast">
+          <div className="disponibilidad-toast">
             <div>Error al eliminar la disponibilidad</div>
           </div>,
           {
@@ -130,7 +132,7 @@ const DisponibilidadForm = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const manejarEnvio = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
@@ -140,7 +142,7 @@ const DisponibilidadForm = () => {
       return;
     }
 
-    const disponibilidadData = {
+    const datosDisponibilidad = {
       id_disponibilidad: formulario.id_disponibilidad,
       dias_disponibles: formulario.dias_disponibles,
       horario_preferido: formulario.horario_preferido,
@@ -150,16 +152,16 @@ const DisponibilidadForm = () => {
     };
 
     try {
-      let response;
+      let respuesta;
 
       if (formulario.isEditing) {
-        response = await updateDisponibilidad(formulario.id_disponibilidad, disponibilidadData);
+        respuesta = await updateDisponibilidad(formulario.id_disponibilidad, datosDisponibilidad);
         setDisponibilidades(disponibilidades.map(disp =>
-          disp.id_disponibilidad === formulario.id_disponibilidad ? response : disp
+          disp.id_disponibilidad === formulario.id_disponibilidad ? respuesta : disp
         ));
 
         toast.success(
-          <div className="custom-toast">
+          <div className="disponibilidad-toast">
             <div>Disponibilidad actualizada correctamente</div>
           </div>,
           {
@@ -170,29 +172,30 @@ const DisponibilidadForm = () => {
           }
         );
       } else {
-        response = await createDisponibilidad(disponibilidadData);
-        setDisponibilidades([...disponibilidades, response]);
+        respuesta = await createDisponibilidad(datosDisponibilidad);
+        setDisponibilidades([...disponibilidades, respuesta]);
 
         toast.success(
-          <div className="custom-toast">
-            <div>Disponibilidad guardada correctamente</div>
+          <div className="disponibilidad-toast">
+            <div>¡CV completado correctamente! Redirigiendo...</div>
           </div>,
           {
             position: "top-right",
-            autoClose: 3000,
+            autoClose: 2000,
             hideProgressBar: false,
             closeButton: false,
+            onClose: () => navigate('/moduloAspirante')
           }
         );
       }
 
       if (!formulario.isEditing) {
-        resetFormulario();
+        reiniciarFormulario();
       }
     } catch (error) {
       console.error("Error al guardar disponibilidad:", error);
       toast.error(
-        <div className="custom-toast">
+        <div className="disponibilidad-toast">
           <div>{error.message || "Error al registrar la disponibilidad"}</div>
         </div>,
         {
@@ -207,10 +210,10 @@ const DisponibilidadForm = () => {
     }
   };
 
-  const irASiguiente = () => {
+  const finalizarCV = () => {
     if (disponibilidades.length === 0) {
       toast.warning(
-        <div className="custom-toast">
+        <div className="disponibilidad-toast">
           <div>Debes agregar al menos una disponibilidad</div>
         </div>,
         {
@@ -222,19 +225,19 @@ const DisponibilidadForm = () => {
       );
       return;
     }
-    navigate(`/cv/${idCV}/confirmacion`);
+    navigate('/moduloAspirante');
   };
 
-  const handleBack = () => {
+  const manejarRegresar = () => {
     navigate(`/cv/${idCV}/habilidades`);
   };
 
   if (isLoading) {
     return (
-      <div className="registro-page">
+      <div className="disponibilidad-pagina">
         <CVStepsNav idCV={idCV} currentStep="Disponibilidad" />
-        <div className="registro-container">
-          <div className="loading-spinner"></div>
+        <div className="disponibilidad-contenedor">
+          <div className="disponibilidad-spinner"></div>
           <h2>Cargando disponibilidades...</h2>
         </div>
       </div>
@@ -242,67 +245,73 @@ const DisponibilidadForm = () => {
   }
 
   return (
-    <div className="registro-page">
+    <div className="disponibilidad-pagina">
       <CVStepsNav idCV={idCV} currentStep="Disponibilidad" />
 
-      <div className="registro-container">
-        <form onSubmit={handleSubmit} className="form-disponibilidad">
-          <h2>{formulario.isEditing ? 'Editar Disponibilidad' : 'Agregar Nueva Disponibilidad'}</h2>
+      <div className="disponibilidad-contenedor">
+        <form onSubmit={manejarEnvio} className="disponibilidad-form-container">
+          <h2 className="disponibilidad-titulo-formulario">
+            {formulario.isEditing ? 'Editar Disponibilidad' : 'Agregar Nueva Disponibilidad'}
+          </h2>
 
-          <div className="input-group">
-            <label><FaCalendarAlt className="input-icon" /> Días disponibles *</label>
+          <div className="disponibilidad-grupo-input">
+            <label><FaCalendarAlt className="disponibilidad-icono-input" /> Días disponibles *</label>
             <input
               type="text"
               name="dias_disponibles"
-              onChange={handleChange}
+              onChange={manejarCambio}
               value={formulario.dias_disponibles}
               placeholder="Ej: Lunes a Viernes, Fines de semana"
               required
+              className="disponibilidad-input"
             />
           </div>
 
-          <div className="input-group">
-            <label><FaClock className="input-icon" /> Horario preferido *</label>
+          <div className="disponibilidad-grupo-input">
+            <label><FaClock className="disponibilidad-icono-input" /> Horario preferido *</label>
             <input
               type="text"
               name="horario_preferido"
-              onChange={handleChange}
+              onChange={manejarCambio}
               value={formulario.horario_preferido}
               placeholder="Ej: 9:00 AM - 6:00 PM, Tiempo completo"
               required
+              className="disponibilidad-input"
             />
           </div>
 
-          <div className="input-group">
-            <label><FaBusinessTime className="input-icon" /> Tipo de jornada *</label>
+          <div className="disponibilidad-grupo-input">
+            <label><FaBusinessTime className="disponibilidad-icono-input" /> Tipo de jornada *</label>
             <input
               type="text"
               name="tipo_jornada"
-              onChange={handleChange}
+              onChange={manejarCambio}
               value={formulario.tipo_jornada}
               placeholder="Ej: Tiempo completo, Medio tiempo, Por proyectos"
               required
+              className="disponibilidad-input"
             />
           </div>
 
-          <div className="checkbox-group">
+          <div className="disponibilidad-grupo-checkbox">
             <label>
               <input
                 type="checkbox"
                 name="disponibilidad_viaje"
-                onChange={handleChange}
+                onChange={manejarCambio}
                 checked={formulario.disponibilidad_viaje}
+                className="disponibilidad-checkbox"
               />
-              <FaPlane className="input-icon" /> ¿Disponible para viajar?
+              <FaPlane className="disponibilidad-icono-input" /> ¿Disponible para viajar?
             </label>
           </div>
 
-          <div className="button-group">
+          <div className="disponibilidad-grupo-botones">
             {!formulario.isEditing && (
               <button
                 type="button"
-                className="back-btn"
-                onClick={handleBack}
+                className="disponibilidad-boton-regresar"
+                onClick={manejarRegresar}
                 disabled={isSubmitting}
               >
                 <FaArrowLeft /> Regresar
@@ -311,7 +320,7 @@ const DisponibilidadForm = () => {
 
             <button
               type="submit"
-              className="submit-btn"
+              className="disponibilidad-boton-enviar"
               disabled={isSubmitting}
             >
               {isSubmitting
@@ -324,8 +333,8 @@ const DisponibilidadForm = () => {
             {formulario.isEditing && (
               <button
                 type="button"
-                className="cancel-btn"
-                onClick={resetFormulario}
+                className="disponibilidad-boton-cancelar"
+                onClick={reiniciarFormulario}
                 disabled={isSubmitting}
               >
                 Cancelar
@@ -335,21 +344,21 @@ const DisponibilidadForm = () => {
             {!formulario.isEditing && (
               <button
                 type="button"
-                className="next-btn"
-                onClick={irASiguiente}
+                className="disponibilidad-boton-finalizar"
+                onClick={finalizarCV}
                 disabled={isSubmitting || disponibilidades.length === 0}
               >
-                Siguiente: Confirmación
+                Finalizar CV
               </button>
             )}
           </div>
         </form>
 
-        {disponibilidades.length > 0 && (
-          <div className="disponibilidades-list">
-            <h3><FaCalendarAlt /> Disponibilidades registradas</h3>
-            <div className="table-container">
-              <table>
+        {disponibilidades.length > 0 ? (
+          <div className="disponibilidad-lista">
+            <h3 className="disponibilidad-titulo-lista"><FaCalendarAlt /> Disponibilidades registradas</h3>
+            <div className="disponibilidad-contenedor-tabla">
+              <table className="disponibilidad-tabla">
                 <thead>
                   <tr>
                     <th>Días disponibles</th>
@@ -361,22 +370,22 @@ const DisponibilidadForm = () => {
                 </thead>
                 <tbody>
                   {disponibilidades.map((disp, index) => (
-                    <tr key={index}>
-                      <td>{disp.dias_disponibles}</td>
-                      <td>{disp.horario_preferido}</td>
-                      <td>{disp.tipo_jornada}</td>
+                    <tr key={index} className="disponibilidad-fila">
+                      <td>{disp.dias_disponibles || 'No especificado'}</td>
+                      <td>{disp.horario_preferido || 'No especificado'}</td>
+                      <td>{disp.tipo_jornada || 'No especificado'}</td>
                       <td>{disp.disponibilidad_viaje ? 'Sí' : 'No'}</td>
-                      <td className="actions-cell">
+                      <td className="disponibilidad-celda-acciones">
                         <button
-                          onClick={() => handleEdit(disp)}
-                          className="edit-btn"
+                          onClick={() => manejarEditar(disp)}
+                          className="disponibilidad-boton-editar"
                           title="Editar"
                         >
                           <FaEdit />
                         </button>
                         <button
-                          onClick={() => handleDelete(disp.id_disponibilidad)}
-                          className="delete-btn"
+                          onClick={() => manejarEliminar(disp.id_disponibilidad)}
+                          className="disponibilidad-boton-eliminar"
                           title="Eliminar"
                         >
                           <FaTrash />
@@ -387,6 +396,10 @@ const DisponibilidadForm = () => {
                 </tbody>
               </table>
             </div>
+          </div>
+        ) : (
+          <div className="disponibilidad-mensaje-vacio">
+            No hay disponibilidades registradas aún
           </div>
         )}
       </div>

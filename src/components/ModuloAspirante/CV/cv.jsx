@@ -3,7 +3,7 @@ import { FaEdit, FaGlobe, FaLanguage, FaInfoCircle } from "react-icons/fa";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import './cv.css';
-import { createCV, getCVById, updateCV, getCVByAspiranteId,checkIfAspiranteHasCV} from "../../../servicios/cvService";
+import { createCV, getCVById, updateCV, getCVByAspiranteId, checkIfAspiranteHasCV } from "../../../servicios/cvService";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import HeaderAspirante from "../HeaderAspirante/HeaderAspirante";
 import CVStepsNav from "./CVStepsNav";
@@ -30,8 +30,7 @@ const CVForm = ({ editMode = false }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Función handleChange para manejar los cambios en los inputs
-  const handleChange = (e) => {
+  const manejarCambio = (e) => {
     const { name, value, type, checked } = e.target;
     setFormulario({
       ...formulario,
@@ -39,178 +38,194 @@ const CVForm = ({ editMode = false }) => {
     });
   };
 
- useEffect(() => {
-  const loadCVData = async () => {
-  setIsLoading(true);
-  
-  try {
+  useEffect(() => {
+    const cargarDatosCV = async () => {
+      setIsLoading(true);
+      
+      try {
+        const effectiveAspiranteId = aspiranteId || location.state?.userId;
+        
+        if (!effectiveAspiranteId) {
+          throw new Error("No se pudo identificar al aspirante");
+        }
+
+        // Caso 1: Creación de nuevo CV
+        if (idCV === "new") {
+          const tieneCV = await checkIfAspiranteHasCV(effectiveAspiranteId);
+          
+          if (tieneCV) {
+            const cvExistente = await getCVByAspiranteId(effectiveAspiranteId);
+            navigate(`/cv/${cvExistente.id_cv}/edit`, { 
+              state: { userId: effectiveAspiranteId },
+              replace: true
+            });
+            return;
+          }
+          
+          setIsEditing(false);
+          return;
+        }
+        
+        // Caso 2: Edición de CV existente
+        if (idCV) {
+          const datosCV = await getCVById(idCV);
+          
+          if (datosCV.aspirante.idAspirante !== effectiveAspiranteId) {
+            throw new Error("No tienes permiso para editar este CV");
+          }
+          
+          setFormulario({
+            estado: datosCV.estado,
+            experiencia: datosCV.experiencia,
+            zona_trabajo: datosCV.zona_trabajo,
+            idiomas: datosCV.idiomas,
+            informacion_opcional: datosCV.informacion_opcional,
+          });
+          setIsEditing(true);
+          return;
+        }
+        
+        // Caso 3: Redirección según tenga CV o no
+        const tieneCV = await checkIfAspiranteHasCV(effectiveAspiranteId);
+        
+        if (tieneCV) {
+          const cvExistente = await getCVByAspiranteId(effectiveAspiranteId);
+          navigate(`/cv/${cvExistente.id_cv}/edit`, { 
+            state: { userId: effectiveAspiranteId },
+            replace: true
+          });
+        } else {
+          navigate('/cv/new', { 
+            state: { userId: effectiveAspiranteId },
+            replace: true
+          });
+        }
+        
+      } catch (error) {
+        console.error("Error cargando CV:", error);
+        toast.error(error.message || "Error al cargar el CV");
+        
+        navigate('/moduloAspirante', { 
+          state: { 
+            userId: aspiranteId || location.state?.userId,
+            error: 'Error al cargar el CV'
+          },
+          replace: true 
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    cargarDatosCV();
+  }, [idCV, navigate, location.state, aspiranteId, fromLogin, isFirstTime]);
+
+  const manejarEnvio = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
     const effectiveAspiranteId = aspiranteId || location.state?.userId;
     
     if (!effectiveAspiranteId) {
-      throw new Error("No se pudo identificar al aspirante");
-    }
-
-    // Caso 1: Creación de nuevo CV
-    if (idCV === "new") {
-      const hasCV = await checkIfAspiranteHasCV(effectiveAspiranteId);
-      
-      if (hasCV) {
-        const existingCV = await getCVByAspiranteId(effectiveAspiranteId);
-        navigate(`/cv/${existingCV.id_cv}/edit`, { 
-          state: { userId: effectiveAspiranteId },
-          replace: true
-        });
-        return;
-      }
-      
-      setIsEditing(false);
+      toast.error("No se pudo obtener el ID del aspirante");
+      setIsSubmitting(false);
       return;
     }
-    
-    // Caso 2: Edición de CV existente
-    if (idCV) {
-      const cvData = await getCVById(idCV);
-      
-      if (cvData.aspirante.idAspirante !== effectiveAspiranteId) {
-        throw new Error("No tienes permiso para editar este CV");
-      }
-      
-      setFormulario({
-        estado: cvData.estado,
-        experiencia: cvData.experiencia,
-        zona_trabajo: cvData.zona_trabajo,
-        idiomas: cvData.idiomas,
-        informacion_opcional: cvData.informacion_opcional,
-      });
-      setIsEditing(true);
-      return;
-    }
-    
-    // Caso 3: Redirección según tenga CV o no
-    const hasCV = await checkIfAspiranteHasCV(effectiveAspiranteId);
-    
-    if (hasCV) {
-      const existingCV = await getCVByAspiranteId(effectiveAspiranteId);
-      navigate(`/cv/${existingCV.id_cv}/edit`, { 
-        state: { userId: effectiveAspiranteId },
-        replace: true
-      });
-    } else {
-      navigate('/cv/new', { 
-        state: { userId: effectiveAspiranteId },
-        replace: true
-      });
-    }
-    
-  } catch (error) {
-    console.error("Error cargando CV:", error);
-    toast.error(error.message || "Error al cargar el CV");
-    
-    navigate('/moduloAspirante', { 
-      state: { 
-        userId: aspiranteId || location.state?.userId,
-        error: 'Error al cargar el CV'
-      },
-      replace: true 
-    });
-  } finally {
-    setIsLoading(false);
-  }
-};
 
-  loadCVData();
-}, [idCV, navigate, location.state, aspiranteId, fromLogin, isFirstTime]);
-
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  setIsSubmitting(true);
-
-  const effectiveAspiranteId = aspiranteId || location.state?.userId;
-  
-  if (!effectiveAspiranteId) {
-    toast.error("No se pudo obtener el ID del aspirante");
-    setIsSubmitting(false);
-    return;
-  }
-
-  // Validación de campos requeridos
-  const requiredFields = {
-    experiencia: formulario.experiencia?.trim(),
-    zona_trabajo: formulario.zona_trabajo?.trim(),
-    idiomas: formulario.idiomas?.trim()
-  };
-
-  const missingFields = Object.entries(requiredFields)
-    .filter(([_, value]) => !value)
-    .map(([key]) => key);
-
-  if (missingFields.length > 0) {
-    toast.error(`Faltan campos requeridos: ${missingFields.join(', ')}`);
-    setIsSubmitting(false);
-    return;
-  }
-
-  try {
-    // Preparar datos para enviar
-    const cvData = {
-      ...formulario,
-      aspirante: { idAspirante: effectiveAspiranteId },
-      experiencia: requiredFields.experiencia,
-      zona_trabajo: requiredFields.zona_trabajo,
-      idiomas: requiredFields.idiomas,
-      informacion_opcional: formulario.informacion_opcional?.trim() || null
+    // Validación de campos requeridos
+    const camposRequeridos = {
+      experiencia: formulario.experiencia?.trim(),
+      zona_trabajo: formulario.zona_trabajo?.trim(),
+      idiomas: formulario.idiomas?.trim()
     };
 
-    let response;
-    if (isEditing) {
-      response = await updateCV(idCV, cvData);
-    } else {
-      response = await createCV(cvData);
+    const camposFaltantes = Object.entries(camposRequeridos)
+      .filter(([_, value]) => !value)
+      .map(([key]) => key);
+
+    if (camposFaltantes.length > 0) {
+      toast.error(`Faltan campos requeridos: ${camposFaltantes.join(', ')}`);
+      setIsSubmitting(false);
+      return;
     }
 
-    // Manejo de respuesta exitosa
-    toast.success(`CV ${isEditing ? 'actualizado' : 'creado'} correctamente`);
-    
-    // Redirección a Recomendaciones después de guardar
-    const cvId = response?.id_cv || idCV;
-    
-    if (cvId) {
-      navigate(`/cv/${cvId}/recomendaciones`, {
-        state: {
-          userId: effectiveAspiranteId,
-          fromCV: true,
-          cvId: cvId
-        },
-        replace: true
-      });
-    } else {
-      throw new Error("No se pudo obtener el ID del CV");
-    }
+    try {
+      // Preparar datos para enviar
+      const datosCV = {
+        ...formulario,
+        aspirante: { idAspirante: effectiveAspiranteId },
+        experiencia: camposRequeridos.experiencia,
+        zona_trabajo: camposRequeridos.zona_trabajo,
+        idiomas: camposRequeridos.idiomas,
+        informacion_opcional: formulario.informacion_opcional?.trim() || null
+      };
 
-  } catch (error) {
-    console.error("Error al guardar CV:", error);
-    
-    if (error.response?.status === 400) {
-      const backendError = error.response.data?.error || 'Datos inválidos';
-      const backendMessage = error.response.data?.message || 'Verifica la información proporcionada';
-      toast.error(`${backendError}: ${backendMessage}`);
-    } else {
-      toast.error(error.message || 'Error al guardar el CV');
+      let respuesta;
+      if (isEditing) {
+        respuesta = await updateCV(idCV, datosCV);
+      } else {
+        respuesta = await createCV(datosCV);
+      }
+
+      // Manejo de respuesta exitosa
+      toast.success(
+        <div className="cv-toast">
+          <div>CV {isEditing ? 'actualizado' : 'creado'} correctamente</div>
+        </div>,
+        {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeButton: false,
+        }
+      );
+      
+      // Redirección a Recomendaciones después de guardar
+      const cvId = respuesta?.id_cv || idCV;
+      
+      if (cvId) {
+        navigate(`/cv/${cvId}/recomendaciones`, {
+          state: {
+            userId: effectiveAspiranteId,
+            fromCV: true,
+            cvId: cvId
+          },
+          replace: true
+        });
+      } else {
+        throw new Error("No se pudo obtener el ID del CV");
+      }
+
+    } catch (error) {
+      console.error("Error al guardar CV:", error);
+      
+      if (error.response?.status === 400) {
+        const errorBackend = error.response.data?.error || 'Datos inválidos';
+        const mensajeBackend = error.response.data?.message || 'Verifica la información proporcionada';
+        toast.error(
+          <div className="cv-toast">
+            <div>{errorBackend}: {mensajeBackend}</div>
+          </div>
+        );
+      } else {
+        toast.error(
+          <div className="cv-toast">
+            <div>{error.message || 'Error al guardar el CV'}</div>
+          </div>
+        );
+      }
+    } finally {
+      setIsSubmitting(false);
     }
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+  };
 
   if (isLoading) {
     return (
-      <div className="registro-page">
+      <div className="cv-pagina">
         <HeaderAspirante userId={aspiranteId} />
-        <div className="registro-container">
-          <div className="registro-card">
-            <div className="loading-spinner"></div>
-            <h2>Cargando CV...</h2>
-          </div>
+        <div className="cv-contenedor">
+          <div className="cv-spinner"></div>
+          <h2>Cargando CV...</h2>
         </div>
       </div>
     );
@@ -219,94 +234,98 @@ const CVForm = ({ editMode = false }) => {
   return (
     <>
       <HeaderAspirante userId={aspiranteId} />
-      <div className="registro-page">
+      <div className="cv-pagina">
         {!isFirstTime && <CVStepsNav idCV={idCV} currentStep="CV" />}
 
-        <div className="registro-container">
-          <div className="registro-card">
+        <div className="cv-contenedor">
+          <div className="cv-tarjeta">
             {isFirstTime && (
-              <div className="welcome-banner">
+              <div className="cv-banner-bienvenida">
                 <h3>¡Bienvenido a CALMA!</h3>
                 <p>Por favor, completa tu CV para comenzar a usar la plataforma.</p>
               </div>
             )}
             
-            <h2>{isEditing ? 'Editar CV' : 'Registro de CV'}</h2>
-            <p className="subtitle">
+            <h2 className="cv-titulo">{isEditing ? 'Editar CV' : 'Registro de CV'}</h2>
+            <p className="cv-subtitulo">
               {isEditing
                 ? 'Modifica los campos que necesites actualizar'
                 : 'Completa los campos para registrar un CV'}
             </p>
 
-            <form onSubmit={handleSubmit}>
-              <div className="input-group">
-                <label><FaEdit className="input-icon" /> Experiencia*</label>
+            <form onSubmit={manejarEnvio} className="cv-formulario">
+              <div className="cv-grupo-input">
+                <label><FaEdit className="cv-icono-input" /> Experiencia*</label>
                 <input
                   type="text"
                   name="experiencia"
                   value={formulario.experiencia}
-                  onChange={handleChange}
+                  onChange={manejarCambio}
                   required
                   placeholder="Ej: 5 años cuidando adultos mayores con Alzheimer"
                   disabled={isSubmitting}
+                  className="cv-input"
                 />
-                <div className="input-hint">
-                  <FaInfoCircle className="hint-icon" />
+                <div className="cv-ayuda-input">
+                  <FaInfoCircle className="cv-icono-ayuda" />
                   Describe tu experiencia laboral relevante
                 </div>
               </div>
 
-              <div className="input-group">
-                <label><FaGlobe className="input-icon" /> Zona de Trabajo*</label>
+              <div className="cv-grupo-input">
+                <label><FaGlobe className="cv-icono-input" /> Zona de Trabajo*</label>
                 <input
                   type="text"
                   name="zona_trabajo"
                   value={formulario.zona_trabajo}
-                  onChange={handleChange}
+                  onChange={manejarCambio}
                   required
                   placeholder="Ej: Zona norte de la ciudad, Disponibilidad 24/7"
                   disabled={isSubmitting}
+                  className="cv-input"
                 />
-                <div className="input-hint">
-                  <FaInfoCircle className="hint-icon" />
+                <div className="cv-ayuda-input">
+                  <FaInfoCircle className="cv-icono-ayuda" />
                   Indica tu disponibilidad geográfica o modalidad
                 </div>
               </div>
 
-              <div className="input-group">
-                <label><FaLanguage className="input-icon" /> Idiomas*</label>
+              <div className="cv-grupo-input">
+                <label><FaLanguage className="cv-icono-input" /> Idiomas*</label>
                 <input
                   type="text"
                   name="idiomas"
                   value={formulario.idiomas}
-                  onChange={handleChange}
+                  onChange={manejarCambio}
                   required
                   placeholder="Ej: Español (nativo), Lengua de señas (intermedio)"
                   disabled={isSubmitting}
+                  className="cv-input"
                 />
-                <div className="input-hint">
-                  <FaInfoCircle className="hint-icon" />
+                <div className="cv-ayuda-input">
+                  <FaInfoCircle className="cv-icono-ayuda" />
                   Lista los idiomas que dominas y tu nivel
                 </div>
               </div>
 
-              <div className="input-group">
-                <label><FaEdit className="input-icon" /> Información Adicional</label>
+              <div className="cv-grupo-input">
+                <label><FaEdit className="cv-icono-input" /> Información Adicional</label>
                 <input
                   type="text"
                   name="informacion_opcional"
                   value={formulario.informacion_opcional}
-                  onChange={handleChange}
+                  onChange={manejarCambio}
                   placeholder="Ej: Certificado en primeros auxilios, Movilización de pacientes"
                   disabled={isSubmitting}
+                  className="cv-input"
                 />
-                <div className="input-hint">
-                  <FaInfoCircle className="hint-icon" />
+                <div className="cv-ayuda-input">
+                  <FaInfoCircle className="cv-icono-ayuda" />
                   Agrega información adicional que consideres relevante
                 </div>
               </div>
 
-              <div className="input-group checkbox-group" style={{ display: 'none' }}>
+              <div className="cv-grupo-checkbox" style={{ display: 'none' }}>
                 <input
                   type="checkbox"
                   name="estado"
@@ -317,10 +336,10 @@ const CVForm = ({ editMode = false }) => {
                 />
               </div>
 
-              <div className="button-group">
+              <div className="cv-grupo-botones">
                 <button
                   type="submit"
-                  className="submit-btn"
+                  className="cv-boton-enviar"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? 'Procesando...' : isEditing ? 'Actualizar CV' : 'Guardar y Continuar'}

@@ -38,10 +38,11 @@ const CertificadosForm = () => {
   useFormPersistence(idCV, formulario, setFormulario, 'certificados');
 
   useEffect(() => {
-    const loadCertificados = async () => {
+    const cargarCertificados = async () => {
       setIsLoading(true);
       try {
         const data = await getCertificadosByCVId(idCV);
+        console.log('Certificados cargados:', data); // Para depuración
         setCertificados(data);
 
         if (!location.state?.fromHabilidades) {
@@ -52,29 +53,30 @@ const CertificadosForm = () => {
           ];
 
           for (const key of keys) {
-            const savedState = localStorage.getItem(key);
-            if (savedState) {
-              setFormulario(JSON.parse(savedState));
+            const estadoGuardado = localStorage.getItem(key);
+            if (estadoGuardado) {
+              setFormulario(JSON.parse(estadoGuardado));
               break;
             }
           }
         }
       } catch (error) {
         toast.error(error.message);
+        console.error("Error al cargar certificados:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadCertificados();
+    cargarCertificados();
   }, [idCV, location.key, location.state]);
 
-  const handleChange = (e) => {
+  const manejarCambio = (e) => {
     const { name, value } = e.target;
     setFormulario({ ...formulario, [name]: value });
   };
 
-  const handleFileChange = (e) => {
+  const manejarCambioArchivo = (e) => {
     setFormulario({
       ...formulario,
       archivo: e.target.files[0],
@@ -82,7 +84,7 @@ const CertificadosForm = () => {
     });
   };
 
-  const resetFormulario = () => {
+  const reiniciarFormulario = () => {
     setFormulario({
       id_certificado: null,
       nombre_certificado: "",
@@ -94,13 +96,13 @@ const CertificadosForm = () => {
       nombreArchivoExistente: "",
       isEditing: false
     });
-    const fileInput = document.querySelector('.file-input');
+    const fileInput = document.querySelector('.certificados-file-input');
     if (fileInput) {
       fileInput.value = '';
     }
   };
 
-  const handleEdit = async (certificado) => {
+  const manejarEditar = async (certificado) => {
     setFormulario({
       id_certificado: certificado.id_certificado,
       nombre_certificado: certificado.nombre_certificado,
@@ -113,12 +115,12 @@ const CertificadosForm = () => {
       isEditing: true
     });
 
-    document.querySelector('.form-certificados').scrollIntoView({ behavior: 'smooth' });
+    document.querySelector('.certificados-form-container').scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleDownload = async (id, fileName) => {
+  const manejarDescarga = async (id, nombreArchivo) => {
     try {
-      await downloadCertificadoFile(id, fileName);
+      await downloadCertificadoFile(id, nombreArchivo);
       toast.success("Archivo descargado correctamente");
     } catch (error) {
       toast.error(`Error: ${error.message}`);
@@ -126,14 +128,14 @@ const CertificadosForm = () => {
     }
   };
 
-  const handleDelete = async (id) => {
+  const manejarEliminar = async (id) => {
     if (window.confirm("¿Estás seguro de que deseas eliminar este certificado?")) {
       try {
         await deleteCertificado(id);
         setCertificados(certificados.filter(cert => cert.id_certificado !== id));
 
         toast.success(
-          <div className="custom-toast">
+          <div className="certificados-toast">
             <div>Certificado eliminado correctamente</div>
           </div>,
           {
@@ -145,7 +147,7 @@ const CertificadosForm = () => {
         );
       } catch (error) {
         toast.error(
-          <div className="custom-toast">
+          <div className="certificados-toast">
             <div>Error al eliminar el certificado</div>
           </div>,
           {
@@ -159,7 +161,7 @@ const CertificadosForm = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const manejarEnvio = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
@@ -169,7 +171,7 @@ const CertificadosForm = () => {
       return;
     }
 
-    const certificadoData = {
+    const datosCertificado = {
       id_certificado: formulario.id_certificado,
       nombre_certificado: formulario.nombre_certificado,
       nombre_institucion: formulario.nombre_institucion,
@@ -184,16 +186,16 @@ const CertificadosForm = () => {
     }
     formData.append(
       "certificado",
-      new Blob([JSON.stringify(certificadoData)], {
+      new Blob([JSON.stringify(datosCertificado)], {
         type: "application/json",
       })
     );
 
     try {
-      let response;
+      let respuesta;
 
       if (formulario.isEditing) {
-        response = await updateCertificado(formulario.id_certificado, formData);
+        respuesta = await updateCertificado(formulario.id_certificado, formData);
         setCertificados(certificados.map(cert =>
           cert.id_certificado === formulario.id_certificado ? {
             ...cert,
@@ -206,7 +208,7 @@ const CertificadosForm = () => {
         ));
 
         toast.success(
-          <div className="custom-toast">
+          <div className="certificados-toast">
             <div>Certificado actualizado correctamente</div>
           </div>,
           {
@@ -217,17 +219,17 @@ const CertificadosForm = () => {
           }
         );
       } else {
-        response = await createCertificado(formData);
+        respuesta = await createCertificado(formData);
         setCertificados([
           ...certificados,
           {
-            ...response,
+            ...respuesta,
             archivo: formulario.archivoNombre || "No adjunto",
           },
         ]);
 
         toast.success(
-          <div className="custom-toast">
+          <div className="certificados-toast">
             <div>Certificado guardado correctamente</div>
           </div>,
           {
@@ -240,9 +242,8 @@ const CertificadosForm = () => {
       }
 
       if (!formulario.isEditing) {
-        resetFormulario();
+        reiniciarFormulario();
       } else {
-        // Mantener el estado de edición pero limpiar el archivo si se subió uno nuevo
         setFormulario(prev => ({
           ...prev,
           archivo: null,
@@ -254,7 +255,7 @@ const CertificadosForm = () => {
     } catch (error) {
       console.error("Error completo al guardar:", error);
       toast.error(
-        <div className="custom-toast">
+        <div className="certificados-toast">
           <div>{error.message || "Error al registrar el certificado"}</div>
         </div>,
         {
@@ -272,7 +273,7 @@ const CertificadosForm = () => {
   const irASiguiente = () => {
     if (certificados.length === 0) {
       toast.warning(
-        <div className="custom-toast">
+        <div className="certificados-toast">
           <div>Debes agregar al menos un certificado</div>
         </div>,
         {
@@ -287,16 +288,16 @@ const CertificadosForm = () => {
     navigate(`/cv/${idCV}/habilidades`);
   };
 
-  const handleBack = () => {
+  const manejarRegresar = () => {
     navigate(`/cv/${idCV}/recomendaciones`);
   };
 
   if (isLoading) {
     return (
-      <div className="registro-page">
+      <div className="certificados-pagina">
         <CVStepsNav idCV={idCV} currentStep="Certificados" />
-        <div className="registro-container">
-          <div className="loading-spinner"></div>
+        <div className="certificados-contenedor">
+          <div className="certificados-spinner"></div>
           <h2>Cargando certificados...</h2>
         </div>
       </div>
@@ -304,67 +305,72 @@ const CertificadosForm = () => {
   }
 
   return (
-    <div className="registro-page">
+    <div className="certificados-pagina">
       <CVStepsNav idCV={idCV} currentStep="Certificados" />
 
-      <div className="registro-container">
-        <form onSubmit={handleSubmit} className="form-certificados">
-          <h2>{formulario.isEditing ? 'Editar Certificado' : 'Agregar Nuevo Certificado'}</h2>
+      <div className="certificados-contenedor">
+        <form onSubmit={manejarEnvio} className="certificados-form-container">
+          <h2 className="certificados-titulo-formulario">
+            {formulario.isEditing ? 'Editar Certificado' : 'Agregar Nuevo Certificado'}
+          </h2>
 
-          <div className="input-group">
-            <label><FaCertificate className="input-icon" /> Nombre del Certificado *</label>
+          <div className="certificados-grupo-input">
+            <label><FaCertificate className="certificados-icono-input" /> Nombre del Certificado *</label>
             <input
               type="text"
               name="nombre_certificado"
-              onChange={handleChange}
+              onChange={manejarCambio}
               value={formulario.nombre_certificado}
               placeholder="Ej: Desarrollo Web Avanzado"
               required
+              className="certificados-input"
             />
           </div>
 
-          <div className="input-group">
-            <label><FaUniversity className="input-icon" /> Institución *</label>
+          <div className="certificados-grupo-input">
+            <label><FaUniversity className="certificados-icono-input" /> Institución *</label>
             <input
               type="text"
               name="nombre_institucion"
-              onChange={handleChange}
+              onChange={manejarCambio}
               value={formulario.nombre_institucion}
               placeholder="Ej: Universidad Nacional, Platzi, Coursera"
               required
+              className="certificados-input"
             />
           </div>
 
-          <div className="input-group">
-            <label><FaCalendarAlt className="input-icon" /> Fecha de obtención</label>
+          <div className="certificados-grupo-input">
+            <label><FaCalendarAlt className="certificados-icono-input" /> Fecha de obtención</label>
             <input
               type="date"
               name="fecha"
-              onChange={handleChange}
+              onChange={manejarCambio}
               value={formulario.fecha}
+              className="certificados-input"
             />
           </div>
 
-          <div className="input-group">
+          <div className="certificados-grupo-input">
             <label>
-              <FaPaperclip className="input-icon" />
+              <FaPaperclip className="certificados-icono-input" />
               Archivo {formulario.isEditing ? '(Opcional - Cambiar)' : '(Opcional)'}
             </label>
             <input
               type="file"
               name="archivo"
-              onChange={handleFileChange}
+              onChange={manejarCambioArchivo}
               accept=".pdf,.jpg,.png"
-              className="file-input"
+              className="certificados-file-input"
             />
             {formulario.archivoNombre ? (
-              <div className="file-info">
-                <span className="file-name">
+              <div className="certificados-info-archivo">
+                <span className="certificados-nombre-archivo">
                   Nuevo archivo seleccionado: {formulario.archivoNombre}
                 </span>
                 <button
                   type="button"
-                  className="clear-file-btn"
+                  className="certificados-boton-limpiar"
                   onClick={() => setFormulario({
                     ...formulario,
                     archivo: null,
@@ -375,13 +381,12 @@ const CertificadosForm = () => {
                 </button>
               </div>
             ) : formulario.nombreArchivoExistente && (
-              <div className="file-info">
+              <div className="certificados-info-archivo">
                 Archivo actual: {formulario.nombreArchivoExistente}
                 {formulario.isEditing && (
                   <button
-                    className="download-link"
-                    onClick={() => handleDownload(formulario.id_certificado, formulario.nombreArchivoExistente)}
-                    style={{ marginLeft: '10px' }}
+                    className="certificados-enlace-descarga"
+                    onClick={() => manejarDescarga(formulario.id_certificado, formulario.nombreArchivoExistente)}
                   >
                     <FaDownload /> Descargar
                   </button>
@@ -390,13 +395,12 @@ const CertificadosForm = () => {
             )}
           </div>
 
-          <div className="button-group">
-            {/* Mostrar botón Regresar solo cuando no esté en modo edición */}
+          <div className="certificados-grupo-botones">
             {!formulario.isEditing && (
               <button
                 type="button"
-                className="back-btn"
-                onClick={handleBack}
+                className="certificados-boton-regresar"
+                onClick={manejarRegresar}
                 disabled={isSubmitting}
               >
                 <FaArrowLeft /> Regresar
@@ -405,7 +409,7 @@ const CertificadosForm = () => {
 
             <button
               type="submit"
-              className="submit-btn"
+              className="certificados-boton-enviar"
               disabled={isSubmitting}
             >
               {isSubmitting
@@ -415,23 +419,21 @@ const CertificadosForm = () => {
                   : 'Guardar certificado'}
             </button>
 
-            {/* Mostrar botón Cancelar solo en modo edición */}
             {formulario.isEditing && (
               <button
                 type="button"
-                className="cancel-btn"
-                onClick={resetFormulario}
+                className="certificados-boton-cancelar"
+                onClick={reiniciarFormulario}
                 disabled={isSubmitting}
               >
                 Cancelar
               </button>
             )}
 
-            {/* Mostrar botón Siguiente solo cuando no esté en modo edición */}
             {!formulario.isEditing && (
               <button
                 type="button"
-                className="next-btn"
+                className="certificados-boton-siguiente"
                 onClick={irASiguiente}
                 disabled={isSubmitting || certificados.length === 0}
               >
@@ -441,11 +443,11 @@ const CertificadosForm = () => {
           </div>
         </form>
 
-        {certificados.length > 0 && (
-          <div className="certificados-list">
-            <h3><FaCertificate /> Certificados registrados</h3>
-            <div className="table-container">
-              <table>
+        {certificados.length > 0 ? (
+          <div className="certificados-lista">
+            <h3 className="certificados-titulo-lista"><FaCertificate /> Certificados registrados</h3>
+            <div className="certificados-contenedor-tabla">
+              <table className="certificados-tabla">
                 <thead>
                   <tr>
                     <th>Certificado</th>
@@ -457,33 +459,33 @@ const CertificadosForm = () => {
                 </thead>
                 <tbody>
                   {certificados.map((cert, index) => (
-                    <tr key={index}>
-                      <td>{cert.nombre_certificado}</td>
-                      <td>{cert.nombre_institucion}</td>
-                      <td>{new Date(cert.fecha).toLocaleDateString()}</td>
+                    <tr key={index} className="certificados-fila">
+                      <td>{cert.nombre_certificado || 'No especificado'}</td>
+                      <td>{cert.nombre_institucion || 'No especificada'}</td>
+                      <td>{cert.fecha ? new Date(cert.fecha).toLocaleDateString() : 'No especificada'}</td>
                       <td>
                         {cert.tiene_archivo ? (
-                          <div className="file-download-container">
+                          <div className="certificados-contenedor-descarga">
                             <button
-                              className="download-link"
-                              onClick={() => handleDownload(cert.id_certificado, cert.nombre_archivo)}
+                              className="certificados-enlace-descarga"
+                              onClick={() => manejarDescarga(cert.id_certificado, cert.nombre_archivo)}
                             >
                               <FaDownload /> {cert.nombre_archivo || 'Descargar'}
                             </button>
                           </div>
                         ) : 'No adjunto'}
                       </td>
-                      <td className="actions-cell">
+                      <td className="certificados-celda-acciones">
                         <button
-                          onClick={() => handleEdit(cert)}
-                          className="edit-btn"
+                          onClick={() => manejarEditar(cert)}
+                          className="certificados-boton-editar"
                           title="Editar"
                         >
                           <FaEdit />
                         </button>
                         <button
-                          onClick={() => handleDelete(cert.id_certificado)}
-                          className="delete-btn"
+                          onClick={() => manejarEliminar(cert.id_certificado)}
+                          className="certificados-boton-eliminar"
                           title="Eliminar"
                         >
                           <FaTrash />
@@ -494,6 +496,10 @@ const CertificadosForm = () => {
                 </tbody>
               </table>
             </div>
+          </div>
+        ) : (
+          <div className="certificados-mensaje-vacio">
+            No hay certificados registrados aún
           </div>
         )}
       </div>

@@ -32,10 +32,11 @@ const HabilidadesForm = () => {
   useFormPersistence(idCV, formulario, setFormulario, 'habilidades');
 
   useEffect(() => {
-    const loadHabilidades = async () => {
+    const cargarHabilidades = async () => {
       setIsLoading(true);
       try {
         const data = await getHabilidadesByCVId(idCV);
+        console.log('Habilidades cargadas:', data); // Para depuración
         setHabilidades(data);
 
         if (!location.state?.fromCertificados) {
@@ -46,29 +47,30 @@ const HabilidadesForm = () => {
           ];
 
           for (const key of keys) {
-            const savedState = localStorage.getItem(key);
-            if (savedState) {
-              setFormulario(JSON.parse(savedState));
+            const estadoGuardado = localStorage.getItem(key);
+            if (estadoGuardado) {
+              setFormulario(JSON.parse(estadoGuardado));
               break;
             }
           }
         }
       } catch (error) {
         toast.error(error.message || "Error al cargar habilidades");
+        console.error("Error al cargar habilidades:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadHabilidades();
+    cargarHabilidades();
   }, [idCV, location.key, location.state]);
 
-  const handleChange = (e) => {
+  const manejarCambio = (e) => {
     const { name, value } = e.target;
     setFormulario({ ...formulario, [name]: value });
   };
 
-  const resetFormulario = () => {
+  const reiniciarFormulario = () => {
     setFormulario({
       id_habilidad: null,
       descripcion: "",
@@ -77,7 +79,7 @@ const HabilidadesForm = () => {
     });
   };
 
-  const handleEdit = (habilidad) => {
+  const manejarEditar = (habilidad) => {
     setFormulario({
       id_habilidad: habilidad.id_habilidad,
       descripcion: habilidad.descripcion,
@@ -85,17 +87,17 @@ const HabilidadesForm = () => {
       isEditing: true
     });
 
-    document.querySelector('.form-habilidades').scrollIntoView({ behavior: 'smooth' });
+    document.querySelector('.habilidades-form-container').scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleDelete = async (id) => {
+  const manejarEliminar = async (id) => {
     if (window.confirm("¿Estás seguro de que deseas eliminar esta habilidad?")) {
       try {
         await deleteHabilidad(id);
         setHabilidades(habilidades.filter(hab => hab.id_habilidad !== id));
 
         toast.success(
-          <div className="custom-toast">
+          <div className="habilidades-toast">
             <div>Habilidad eliminada correctamente</div>
           </div>,
           {
@@ -107,7 +109,7 @@ const HabilidadesForm = () => {
         );
       } catch (error) {
         toast.error(
-          <div className="custom-toast">
+          <div className="habilidades-toast">
             <div>Error al eliminar la habilidad</div>
           </div>,
           {
@@ -121,7 +123,7 @@ const HabilidadesForm = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const manejarEnvio = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
@@ -131,7 +133,7 @@ const HabilidadesForm = () => {
       return;
     }
 
-    const habilidadData = {
+    const datosHabilidad = {
       id_habilidad: formulario.id_habilidad,
       descripcion: formulario.descripcion,
       nivel: formulario.nivel,
@@ -140,13 +142,13 @@ const HabilidadesForm = () => {
 
     try {
       if (formulario.isEditing) {
-        const habilidadActualizada = await updateHabilidad(formulario.id_habilidad, habilidadData);
+        const habilidadActualizada = await updateHabilidad(formulario.id_habilidad, datosHabilidad);
         setHabilidades(habilidades.map(hab => 
           hab.id_habilidad === formulario.id_habilidad ? habilidadActualizada : hab
         ));
 
         toast.success(
-          <div className="custom-toast">
+          <div className="habilidades-toast">
             <div>Habilidad actualizada correctamente</div>
           </div>,
           {
@@ -157,11 +159,11 @@ const HabilidadesForm = () => {
           }
         );
       } else {
-        const nuevaHabilidad = await createHabilidad(habilidadData);
+        const nuevaHabilidad = await createHabilidad(datosHabilidad);
         setHabilidades([...habilidades, nuevaHabilidad]);
 
         toast.success(
-          <div className="custom-toast">
+          <div className="habilidades-toast">
             <div>Habilidad guardada correctamente</div>
           </div>,
           {
@@ -173,11 +175,11 @@ const HabilidadesForm = () => {
         );
       }
 
-      resetFormulario();
+      reiniciarFormulario();
     } catch (error) {
       console.error("Error al guardar:", error);
       toast.error(
-        <div className="custom-toast">
+        <div className="habilidades-toast">
           <div>{error.message || "Error al registrar la habilidad"}</div>
         </div>,
         {
@@ -195,7 +197,7 @@ const HabilidadesForm = () => {
   const irASiguiente = () => {
     if (habilidades.length === 0) {
       toast.warning(
-        <div className="custom-toast">
+        <div className="habilidades-toast">
           <div>Debes agregar al menos una habilidad</div>
         </div>,
         {
@@ -212,7 +214,7 @@ const HabilidadesForm = () => {
     });
   };
 
-  const handleBack = () => {
+  const manejarRegresar = () => {
     navigate(`/cv/${idCV}/certificados`, {
       state: { fromHabilidades: true }
     });
@@ -220,10 +222,10 @@ const HabilidadesForm = () => {
 
   if (isLoading) {
     return (
-      <div className="registro-page">
+      <div className="habilidades-pagina">
         <CVStepsNav idCV={idCV} currentStep="Habilidades" />
-        <div className="registro-container">
-          <div className="loading-spinner"></div>
+        <div className="habilidades-contenedor">
+          <div className="habilidades-spinner"></div>
           <h2>Cargando habilidades...</h2>
         </div>
       </div>
@@ -231,32 +233,35 @@ const HabilidadesForm = () => {
   }
 
   return (
-    <div className="registro-page">
+    <div className="habilidades-pagina">
       <CVStepsNav idCV={idCV} currentStep="Habilidades" />
       
-      <div className="registro-container">
-        <form onSubmit={handleSubmit} className="form-habilidades">
-          <h2>{formulario.isEditing ? 'Editar Habilidad' : 'Agregar Nueva Habilidad'}</h2>
+      <div className="habilidades-contenedor">
+        <form onSubmit={manejarEnvio} className="habilidades-form-container">
+          <h2 className="habilidades-titulo-formulario">
+            {formulario.isEditing ? 'Editar Habilidad' : 'Agregar Nueva Habilidad'}
+          </h2>
 
-          <div className="input-group">
-            <label><FaCode className="input-icon" /> Habilidad *</label>
+          <div className="habilidades-grupo-input">
+            <label><FaCode className="habilidades-icono-input" /> Habilidad *</label>
             <input
               type="text"
               name="descripcion"
               value={formulario.descripcion}
-              onChange={handleChange}
+              onChange={manejarCambio}
               placeholder="Ej: JavaScript, Diseño UX, Gestión de proyectos"
               required
+              className="habilidades-input"
             />
           </div>
 
-          <div className="input-group">
-            <label><FaChartLine className="input-icon" /> Nivel *</label>
+          <div className="habilidades-grupo-input">
+            <label><FaChartLine className="habilidades-icono-input" /> Nivel *</label>
             <select 
               name="nivel" 
               value={formulario.nivel} 
-              onChange={handleChange}
-              className="nivel-select"
+              onChange={manejarCambio}
+              className="habilidades-select"
               required
             >
               <option value="Básico">Básico</option>
@@ -265,13 +270,12 @@ const HabilidadesForm = () => {
             </select>
           </div>
 
-          <div className="button-group">
-            {/* Mostrar botón Regresar solo cuando no esté en modo edición */}
+          <div className="habilidades-grupo-botones">
             {!formulario.isEditing && (
               <button 
                 type="button" 
-                className="back-btn" 
-                onClick={handleBack}
+                className="habilidades-boton-regresar" 
+                onClick={manejarRegresar}
                 disabled={isSubmitting}
               >
                 <FaArrowLeft /> Regresar
@@ -280,7 +284,7 @@ const HabilidadesForm = () => {
 
             <button 
               type="submit" 
-              className="submit-btn"
+              className="habilidades-boton-enviar"
               disabled={isSubmitting}
             >
               {isSubmitting
@@ -290,23 +294,21 @@ const HabilidadesForm = () => {
                   : 'Guardar habilidad'}
             </button>
 
-            {/* Mostrar botón Cancelar solo en modo edición */}
             {formulario.isEditing && (
               <button
                 type="button"
-                className="cancel-btn"
-                onClick={resetFormulario}
+                className="habilidades-boton-cancelar"
+                onClick={reiniciarFormulario}
                 disabled={isSubmitting}
               >
                 Cancelar
               </button>
             )}
 
-            {/* Mostrar botón Siguiente solo cuando no esté en modo edición */}
             {!formulario.isEditing && (
               <button 
                 type="button" 
-                className="next-btn"
+                className="habilidades-boton-siguiente"
                 onClick={irASiguiente}
                 disabled={isSubmitting || habilidades.length === 0}
               >
@@ -316,11 +318,11 @@ const HabilidadesForm = () => {
           </div>
         </form>
 
-        {habilidades.length > 0 && (
-          <div className="habilidades-list">
-            <h3><FaCode /> Habilidades registradas</h3>
-            <div className="table-container">
-              <table>
+        {habilidades.length > 0 ? (
+          <div className="habilidades-lista">
+            <h3 className="habilidades-titulo-lista"><FaCode /> Habilidades registradas</h3>
+            <div className="habilidades-contenedor-tabla">
+              <table className="habilidades-tabla">
                 <thead>
                   <tr>
                     <th>Habilidad</th>
@@ -330,24 +332,24 @@ const HabilidadesForm = () => {
                 </thead>
                 <tbody>
                   {habilidades.map((hab, index) => (
-                    <tr key={index}>
-                      <td>{hab.descripcion}</td>
+                    <tr key={index} className="habilidades-fila">
+                      <td>{hab.descripcion || 'No especificada'}</td>
                       <td>
-                        <span className={`nivel-badge nivel-${hab.nivel.toLowerCase()}`}>
+                        <span className={`habilidades-badge habilidades-nivel-${hab.nivel.toLowerCase()}`}>
                           {hab.nivel}
                         </span>
                       </td>
-                      <td className="actions-cell">
+                      <td className="habilidades-celda-acciones">
                         <button
-                          onClick={() => handleEdit(hab)}
-                          className="edit-btn"
+                          onClick={() => manejarEditar(hab)}
+                          className="habilidades-boton-editar"
                           title="Editar"
                         >
                           <FaEdit />
                         </button>
                         <button
-                          onClick={() => handleDelete(hab.id_habilidad)}
-                          className="delete-btn"
+                          onClick={() => manejarEliminar(hab.id_habilidad)}
+                          className="habilidades-boton-eliminar"
                           title="Eliminar"
                         >
                           <FaTrash />
@@ -358,6 +360,10 @@ const HabilidadesForm = () => {
                 </tbody>
               </table>
             </div>
+          </div>
+        ) : (
+          <div className="habilidades-mensaje-vacio">
+            No hay habilidades registradas aún
           </div>
         )}
       </div>
