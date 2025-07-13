@@ -5,7 +5,7 @@ import './FormularioPublicacion.css';
 const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess }) => {
   const [titulo, setTitulo] = useState('');
   const [descripcion, setDescripcion] = useState('');
-  const [fechaLimite, setFechaLimite] = useState(''); // string en formato "YYYY-MM-DDTHH:mm"
+  const [fechaLimite, setFechaLimite] = useState(''); // formato "YYYY-MM-DDTHH:mm"
   const [jornada, setJornada] = useState('');
   const [salarioEstimado, setSalarioEstimado] = useState('');
   const [requisitos, setRequisitos] = useState('');
@@ -21,12 +21,18 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
   const [cantones, setCantones] = useState([]);
   const [parroquias, setParroquias] = useState([]);
 
+  // Nuevo estado para pacientes
+  const [pacientes, setPacientes] = useState([]);
+  const [idPaciente, setIdPaciente] = useState(''); // paciente seleccionado
+
+  // Cargar provincias
   useEffect(() => {
     axios.get('http://localhost:8090/api/provincias')
       .then(res => setProvincias(res.data))
       .catch(() => setProvincias([]));
   }, []);
 
+  // Cargar cantones al seleccionar provincia
   useEffect(() => {
     if (idProvincia) {
       axios.get(`http://localhost:8090/api/cantones/provincia/${idProvincia}`)
@@ -40,6 +46,7 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
     setParroquias([]);
   }, [idProvincia]);
 
+  // Cargar parroquias al seleccionar canton
   useEffect(() => {
     if (idCanton) {
       axios.get(`http://localhost:8090/api/parroquias/canton/${idCanton}`)
@@ -51,16 +58,23 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
     setIdParroquia('');
   }, [idCanton]);
 
+  // Cargar pacientes del contratante
+  useEffect(() => {
+    if (contratanteId) {
+      axios.get(`http://localhost:8090/api/publicacion_empleo/pacientes/contratante/${contratanteId}`)
+        .then(res => setPacientes(res.data))
+        .catch(() => setPacientes([]));
+    }
+  }, [contratanteId]);
+
+  // Cuando carga o cambia la publicación a editar, cargar datos al formulario, incluyendo paciente
   useEffect(() => {
     if (publicacionEditar) {
       setTitulo(publicacionEditar.titulo || '');
       setDescripcion(publicacionEditar.descripcion || '');
 
-      // Aquí asumimos que publicacionEditar.fecha_limite viene en formato ISO string con hora,
-      // convertimos para input datetime-local que necesita formato 'YYYY-MM-DDTHH:mm'
       if (publicacionEditar.fecha_limite) {
         const fecha = new Date(publicacionEditar.fecha_limite);
-        // Ajustamos la fecha para que sea en hora local (sin desfase)
         const yyyy = fecha.getFullYear();
         const mm = String(fecha.getMonth() + 1).padStart(2, '0');
         const dd = String(fecha.getDate()).padStart(2, '0');
@@ -83,7 +97,14 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
         setIdProvincia(parroquia.canton.provincia.id_provincia);
         setIdCanton(parroquia.canton.id_canton);
         setIdParroquia(parroquia.id_parroquia);
+      } else {
+        setIdProvincia('');
+        setIdCanton('');
+        setIdParroquia('');
       }
+
+      // Aquí asignamos el paciente seleccionado, si existe
+      setIdPaciente(publicacionEditar.id_paciente ? String(publicacionEditar.id_paciente) : '');
     } else {
       setTitulo('');
       setDescripcion('');
@@ -97,19 +118,19 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
       setIdProvincia('');
       setIdCanton('');
       setIdParroquia('');
+      setIdPaciente('');
     }
   }, [publicacionEditar]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!titulo || !descripcion || !idParroquia) {
-      alert('Por favor completa los campos obligatorios');
+    // Validaciones básicas
+    if (!titulo || !descripcion || !idParroquia || !idPaciente) {
+      alert('Por favor completa todos los campos obligatorios (Título, Descripción, Paciente, Parroquia)');
       return;
     }
 
-    // Aquí enviamos la fecha tal cual la selecciona el usuario, sin convertir a ISO UTC
-    // (es decir, mantenemos la zona horaria local que puso el usuario)
     const fechaEnviar = fechaLimite || null;
 
     const data = {
@@ -122,7 +143,8 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
       turno,
       estado,
       disponibilidad_inmediata: disponibilidadInmediata,
-      parroquia: { id_parroquia: idParroquia }
+      parroquia: { id_parroquia: idParroquia },
+      id_paciente: Number(idPaciente),  // envío id paciente como número
     };
 
     try {
@@ -145,6 +167,22 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
   return (
     <form onSubmit={handleSubmit} className="form-publicacion">
       <h3>{publicacionEditar ? '✏️ Editar Publicación' : '📝 Nueva Publicación'}</h3>
+
+      <label>
+        Paciente*:
+        <select
+          value={idPaciente}
+          onChange={e => setIdPaciente(e.target.value)}
+          required
+        >
+          <option value="">-- Selecciona paciente --</option>
+          {pacientes.map(p => (
+            <option key={p.id_paciente} value={p.id_paciente}>
+              {p.nombres} {p.apellidos}
+            </option>
+          ))}
+        </select>
+      </label>
 
       <label>
         Título*:
