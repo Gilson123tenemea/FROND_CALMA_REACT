@@ -11,7 +11,10 @@ const CardTrabajo = ({ trabajo, idAspirante }) => {
     contratante,
     empresa,
     ubicacion,
-    imagen
+    imagen,
+    requisitos,
+    jornada,
+    turno
   } = trabajo;
 
   const publicador = empresa || contratante || "Anónimo";
@@ -21,7 +24,7 @@ const CardTrabajo = ({ trabajo, idAspirante }) => {
 
   const handleAplicar = async () => {
     if (!idAspirante) {
-      setMensaje('No se pudo obtener el ID del aspirante.');
+      console.log('❌ No se pudo obtener el ID del aspirante.');
       return;
     }
 
@@ -33,17 +36,16 @@ const CardTrabajo = ({ trabajo, idAspirante }) => {
 
       if (response.ok) {
         setPostulado(true);
-        setMensaje('¡Postulación exitosa!');
+        console.log('✅ ¡Postulación exitosa!');
       } else if (response.status === 409) {
         setPostulado(true);
-        setMensaje('Ya te has postulado a esta oferta.');
+        console.log('⚠️ Ya te has postulado a esta oferta.');
       } else {
         const texto = await response.text();
-        setMensaje(`Error al postular: ${texto}`);
+        console.error('Error al postular:', texto);
       }
     } catch (error) {
-      console.error('Error al postular:', error);
-      setMensaje('Error inesperado al postular.');
+      console.error('❌ Error inesperado al postular:', error);
     }
   };
 
@@ -64,12 +66,13 @@ const CardTrabajo = ({ trabajo, idAspirante }) => {
         <p className="card-descripcion">{descripcion}</p>
 
         <div className="card-detalles">
-          <span className="salario"><strong>Salario:</strong> ${salario.toFixed(2)}</span>
-          <span className="fecha"><strong>Fecha:</strong> {fechaPublicacion}</span>
-          <span className="ubicacion"><strong>Ubicación:</strong> {`${ubicacion.parroquia}, ${ubicacion.canton}, ${ubicacion.provincia}`}</span>
+          <span><strong>Salario:</strong> ${salario.toFixed(2)}</span>
+          <span><strong>Fecha publicación:</strong> {fechaPublicacion}</span>
+          <span><strong>Ubicación:</strong> {`${ubicacion.parroquia}, ${ubicacion.canton}, ${ubicacion.provincia}`}</span>
+          <span><strong>Turno:</strong> {turno}</span>
+          <span><strong>Jornada:</strong> {jornada}</span>
+          <span><strong>Requisitos:</strong> {requisitos}</span>
         </div>
-
-        {mensaje && <p className="mensaje-postulacion">{mensaje}</p>}
 
         <button
           className="card-boton"

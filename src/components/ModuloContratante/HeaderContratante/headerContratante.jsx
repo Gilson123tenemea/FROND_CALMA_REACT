@@ -1,49 +1,51 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import './HeaderContratante.css';
 
-const HeaderContratante = ({ userId, onOpenMensajes }) => {
-const [mostrarSubmenu, setMostrarSubmenu] = useState(false);
+const HeaderContratante = ({ userId, onOpenMensajes, onOpenNotificaciones, notificacionesNoLeidas }) => {
   const handleMensajesClick = (e) => {
     e.preventDefault();
     console.log("ID del contratante:", userId);
     onOpenMensajes(userId);
   };
-  const toggleSubmenu = () => {
-    setMostrarSubmenu(!mostrarSubmenu);
+
+  const handleNotificacionesClick = (e) => {
+    e.preventDefault();
+    onOpenNotificaciones();
   };
+
   return (
     <header className="header-contratante">
       <div className="header-left">
         <div className="logo">
-          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            {/* Logo SVG */}
-          </svg>
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"></svg>
           <h2>C A L M A</h2>
         </div>
+
         <nav className="nav-links">
           <Link to={`/moduloContratante/publicaciones?userId=${userId}`}>Publicaciones</Link>
           <Link to={`/moduloContratante/nueva-publicacion?userId=${userId}`}>Crear Publicación</Link>
           <Link to={`/Calificacion/calificacion?userId=${userId}`}>Calificación</Link>
-          <a href="#" onClick={handleMensajesClick}>Mensajes</a>
-          <Link to={`/moduloContratante/perfilContratante?userId=${userId}`}>Mi Perfil</Link>
-          {/* Menú desplegable de Paciente */}
-          <div className="dropdown">
-            <button className="dropdown-btn" onClick={toggleSubmenu}>
-              Paciente ▼
-            </button>
-            {mostrarSubmenu && (
-              <div className="dropdown-content">
-                <Link to={`/moduloContratante/registropaciente?userId=${userId}`}>Registrar paciente</Link>
-                <Link to={`/moduloContratante/visualizarpaciente?userId=${userId}`}>Ver paciente</Link>
-              </div>
-            )}
-          </div>
 
-          {/* ✅ Nuevo link para Ver Postulaciones */}
+          <a href="#" onClick={handleMensajesClick}>🗨️ Mensajes</a>
+          <Link to={`/moduloContratante/perfilContratante?userId=${userId}`}>Mi Perfil</Link>
+          <Link to={`/moduloContratante/registropaciente?userId=${userId}`}>Registro del paciente</Link>
           <Link to={`/postulaciones/${userId}`}>Ver Postulaciones</Link>
+
+          <a
+            href="#"
+            onClick={handleNotificacionesClick}
+            className="notificaciones-emoji"
+            style={{ position: 'relative', display: 'inline-block' }}
+          >
+            🔔
+            {notificacionesNoLeidas > 0 && (
+              <span className="badge-notificacion">{notificacionesNoLeidas}</span>
+            )}
+          </a>
         </nav>
       </div>
+
       <div className="header-right">
         <div className="search-bar">
           <div className="search-icon">
@@ -53,6 +55,7 @@ const [mostrarSubmenu, setMostrarSubmenu] = useState(false);
           </div>
           <input type="text" placeholder="Buscar" />
         </div>
+
         <div className="user-avatar" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/a/...")' }}></div>
       </div>
     </header>

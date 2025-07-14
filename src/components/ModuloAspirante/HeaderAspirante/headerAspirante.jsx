@@ -12,11 +12,10 @@ const HeaderAspirante = ({ userId, onOpenMensajes }) => {
   };
 
   const handleLogout = () => {
-    // Aquí tu lógica para cerrar sesión
     console.log("Cerrando sesión...");
-    localStorage.clear(); // limpia el almacenamiento local
-    sessionStorage.clear(); // limpia la sesión también por si acaso
-    navigate('/login'); // redirige al login
+    localStorage.clear();
+    sessionStorage.clear();
+    navigate('/login');
   };
 
   return (
@@ -31,10 +30,20 @@ const HeaderAspirante = ({ userId, onOpenMensajes }) => {
         <nav className="nav-links">
           <Link to={`/moduloAspirante/trabajos?userId=${userId}`}>Trabajos</Link>
           <Link to={`/moduloAspirante/red?userId=${userId}`}>Mi Red</Link>
-          <a href="#" onClick={handleMensajesClick}>Mensajes</a>
+
+          {/* 💬 Chat entre usuarios */}
+          <a href="#" onClick={handleMensajesClick} className="mensajes-emoji">
+            💬 Mensajes
+          </a>
+
           <Link to={`/moduloAspirante/cv?userId=${userId}`}>CV</Link>
           <Link to={`/ver-cv/${userId}`}>Ver CV Completo</Link>
           <Link to={`/moduloAspirante/perfilAspirante?userId=${userId}`}>Mi Perfil</Link>
+
+          {/* 🔔 Notificaciones */}
+          <Link to={`/moduloAspirante/notificaciones?userId=${userId}`} className="notificaciones-emoji">
+            🔔
+          </Link>
         </nav>
       </div>
 

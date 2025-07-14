@@ -1,3 +1,4 @@
+// ListaTrabajos.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import CardTrabajo from "../CardTrabajo/cardTrabajo";
@@ -26,13 +27,16 @@ const ListaTrabajos = ({ idAspirante }) => {
           const provincia = canton?.provincia;
 
           return {
-            id: item.id_genera,
+            id: item.publicacionempleo?.id_postulacion_empleo,
             titulo: item.publicacionempleo?.titulo || 'Sin título',
             descripcion: item.publicacionempleo?.descripcion || 'Sin descripción',
             salario: item.publicacionempleo?.salario_estimado || 0,
             fechaPublicacion: item.fechaPublicacion?.split('T')[0] || 'Sin fecha',
             contratante: item.contratante?.usuario?.nombres || 'Anónimo',
             empresa: item.contratante?.empresas?.[0]?.nombreEmpresa || null,
+            requisitos: item.publicacionempleo?.requisitos || 'No especificado',
+            jornada: item.publicacionempleo?.jornada || 'No especificada',
+            turno: item.publicacionempleo?.turno || 'No especificado',
             ubicacion: {
               parroquia: parroquia?.nombre || '',
               canton: canton?.nombre || '',
@@ -65,7 +69,6 @@ const ListaTrabajos = ({ idAspirante }) => {
     setFilters(prev => ({ ...prev, rangoSalario: rango }));
   };
 
-  // Filtrado combinado
   const trabajosFiltrados = trabajos.filter(trabajo => {
     const tituloMatch = trabajo.titulo.toLowerCase().includes(filters.titulo.toLowerCase());
     const fechaMatch = filters.fechaPublicacion
@@ -79,53 +82,31 @@ const ListaTrabajos = ({ idAspirante }) => {
   });
 
   return (
-    <div className="contenedor-trabajos" style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Trabajos Disponibles</h1>
+    <div className="contenedor-trabajos">
+      <h1>Trabajos Disponibles</h1>
 
-      {/* Filtros de título y fecha */}
-      <div className="filtros-superiores" style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginBottom: '25px' }}>
+      <div className="filtros-superiores">
         <input
           type="text"
           name="titulo"
           placeholder="🔍 Buscar por título"
           value={filters.titulo}
           onChange={handleFilterChange}
-          style={{
-            padding: '10px 15px',
-            fontSize: '1rem',
-            borderRadius: '8px',
-            border: '1px solid #ccc',
-            width: '280px',
-            maxWidth: '90%',
-            boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
-            outline: 'none'
-          }}
         />
         <input
           type="date"
           name="fechaPublicacion"
           value={filters.fechaPublicacion}
           onChange={handleFilterChange}
-          style={{
-            padding: '10px 15px',
-            fontSize: '1rem',
-            borderRadius: '8px',
-            border: '1px solid #ccc',
-            width: '180px',
-            maxWidth: '90%',
-            boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
-            outline: 'none'
-          }}
         />
       </div>
 
-      <div className="layout-trabajos" style={{ display: 'flex', gap: '20px' }}>
-        <div className="lista-trabajos" style={{ flex: 3 }}>
-          {loading && <p style={{ textAlign: 'center' }}>Cargando trabajos...</p>}
-          {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
-
+      <div className="layout-trabajos">
+        <div className="lista-trabajos">
+          {loading && <p>Cargando trabajos...</p>}
+          {error && <p style={{ color: 'red' }}>{error}</p>}
           {!loading && trabajosFiltrados.length === 0 && (
-            <div className="sin-resultados" style={{ textAlign: 'center', marginTop: '40px' }}>
+            <div>
               <h3>No se encontraron trabajos</h3>
               <p>Intenta ajustar tus filtros.</p>
             </div>

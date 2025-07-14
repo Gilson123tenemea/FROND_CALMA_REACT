@@ -13,11 +13,14 @@ const ModuloContratante = () => {
   const [refrescarLista, setRefrescarLista] = useState(false);
   const [publicacionEditar, setPublicacionEditar] = useState(null);
 
-  // Estados para mensajes (idéntico a ModuloAspirante)
   const [showPanelUsuarios, setShowPanelUsuarios] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [usuariosEncontrados, setUsuariosEncontrados] = useState([]);
   const [usuarioChat, setUsuarioChat] = useState(null);
+
+  const [showPanelNotificaciones, setShowPanelNotificaciones] = useState(false);
+  const [notificaciones, setNotificaciones] = useState([]);
+  const [cantidadNoLeidas, setCantidadNoLeidas] = useState(0);
 
   useEffect(() => {
     if (location.state?.userId) {
@@ -29,6 +32,21 @@ const ModuloContratante = () => {
       }
     }
   }, [location.state]);
+
+  useEffect(() => {
+    const fetchNoLeidas = async () => {
+      try {
+        const res = await axios.get(`http://localhost:8090/api/notificaciones/contratante/noleidas/${contratanteId}`);
+        setCantidadNoLeidas(res.data.length);
+      } catch (error) {
+        console.error("Error al cargar notificaciones no leídas:", error);
+      }
+    };
+
+    if (contratanteId) {
+      fetchNoLeidas();
+    }
+  }, [contratanteId, showPanelNotificaciones]);
 
   if (!contratanteId) return <div>Cargando...</div>;
 
@@ -46,7 +64,6 @@ const ModuloContratante = () => {
     setPublicacionEditar(null);
   };
 
-  // Funciones para Mensajes (idénticas a ModuloAspirante)
   const handleAbrirPanelUsuarios = () => {
     setShowPanelUsuarios(true);
     setSearchTerm('');
@@ -82,15 +99,38 @@ const ModuloContratante = () => {
     setUsuarioChat(null);
   };
 
+  const handleAbrirNotificaciones = async () => {
+    if (!contratanteId) return;
+    try {
+      // MARCAR TODAS COMO LEÍDAS
+      await axios.put(`http://localhost:8090/api/notificaciones/contratante/marcar-leidas/${contratanteId}`);
+
+      // OBTENER NOTIFICACIONES ACTUALIZADAS
+      const response = await axios.get(`http://localhost:8090/api/notificaciones/contratante/${contratanteId}`);
+      setNotificaciones(response.data);
+
+      setShowPanelNotificaciones(true);
+    } catch (error) {
+      console.error("Error al obtener notificaciones:", error);
+    }
+  };
+
+  const handleCerrarNotificaciones = () => {
+    setShowPanelNotificaciones(false);
+  };
+
   return (
     <div className="modulo-contratante">
-      <HeaderContratante userId={contratanteId} onOpenMensajes={handleAbrirPanelUsuarios} />
+      <HeaderContratante
+        userId={contratanteId}
+        onOpenMensajes={handleAbrirPanelUsuarios}
+        onOpenNotificaciones={handleAbrirNotificaciones}
+        notificacionesNoLeidas={cantidadNoLeidas}
+      />
 
       <div className="main-content">
         <div className="tabs-container">
-          <div className="tabs">
-            {/* Puedes agregar tabs si quieres */}
-          </div>
+          <div className="tabs"></div>
 
           <div className="tab-content">
             <div className="paneles-container">
@@ -115,7 +155,6 @@ const ModuloContratante = () => {
         </div>
       </div>
 
-      {/* Panel Usuarios para Mensajes */}
       <div className={`panel-usuarios ${showPanelUsuarios ? 'open' : ''}`}>
         <div className="panel-usuarios-header">
           <span>Buscar Usuarios</span>
@@ -153,7 +192,6 @@ const ModuloContratante = () => {
         </ul>
       </div>
 
-      {/* Chat Flotante */}
       {usuarioChat && (
         <div className="chat-flotante">
           <div className="header-chat">
@@ -167,6 +205,34 @@ const ModuloContratante = () => {
           />
         </div>
       )}
+
+      <div className={`panel-notificaciones ${showPanelNotificaciones ? 'open' : ''}`}>
+        <div className="panel-notificaciones-header">
+          <span>Notificaciones</span>
+          <button onClick={handleCerrarNotificaciones}>✖</button>
+        </div>
+
+        <ul className="lista-notificaciones">
+          {notificaciones.length === 0 ? (
+            <li className="no-notificaciones">No tienes notificaciones aún.</li>
+          ) : (
+            [...notificaciones]
+              .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+              .map((noti) => (
+                <li key={noti.id_notificaciones} className="notificacion-item">
+                  <div className="notificacion-contenido">
+                    <small className="notificacion-texto">
+                      <strong>{noti.aspirante?.usuario?.nombres} {noti.aspirante?.usuario?.apellidos}</strong> postuló a: <span className="titulo-publicacion">{noti.postulacion?.postulacion_empleo?.titulo}</span>
+                    </small>
+                    <small className="notificacion-fecha">
+                      <em>{noti.fecha ? new Date(noti.fecha).toLocaleString() : 'Fecha no disponible'}</em>
+                    </small>
+                  </div>
+                </li>
+              ))
+          )}
+        </ul>
+      </div>
     </div>
   );
 };
