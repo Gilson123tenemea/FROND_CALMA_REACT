@@ -1,456 +1,376 @@
-/* Estilos generales */
-.cv-view-container {
+/* Estilos base */
+.cv-view-main-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 2rem;
+  font-family: 'Lexend', 'Noto Sans', sans-serif;
+  color: #2D3748;
 }
 
-.cv-view-loading, .cv-view-error {
+/* Estilos para loading */
+.cv-view-loading-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.cv-view-loading-content {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  padding: 2rem;
 }
 
-.loading-spinner {
-  border: 5px solid #f3f3f3;
-  border-top: 5px solid #3498db;
+.cv-view-spinner {
+  border: 4px solid #f3f0ea;
+  border-top: 4px solid #5E4B2E;
   border-radius: 50%;
   width: 50px;
   height: 50px;
-  animation: spin 1s linear infinite;
-  margin-bottom: 20px;
+  animation: cv-view-spin 1s linear infinite;
+  margin-bottom: 1rem;
 }
 
-@keyframes spin {
+@keyframes cv-view-spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-.error-message {
-  color: #e74c3c;
-  font-size: 1.2rem;
+/* Estilos para errores */
+.cv-view-error-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.cv-view-error-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
   text-align: center;
 }
 
-/* Secciones */
-.cv-view-section {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 25px;
-  margin-bottom: 30px;
-}
-
-.cv-view-section h2 {
-  color: #2c3e50;
-  border-bottom: 2px solid #ecf0f1;
-  padding-bottom: 10px;
-  margin-bottom: 20px;
+.cv-view-error-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #E53E3E;
+  color: white;
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
 }
 
-.cv-view-section h2::after {
-  content: attr(data-count);
-  background-color: #ecf0f1;
-  color: #7f8c8d;
-  font-size: 0.8rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 10px;
-  margin-left: 0.5rem;
+.cv-view-error-message {
+  color: #E53E3E;
+  font-size: 1.1rem;
 }
 
-/* Foto del aspirante */
+/* Estilos para secciones */
+.cv-view-section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #E2E8F0;
+}
+
+.cv-view-section-icon {
+  margin-right: 0.75rem;
+  color: #5E4B2E;
+  font-size: 1.5rem;
+}
+
+.cv-view-section-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #2D3748;
+}
+
+/* Sección de información personal */
+.cv-view-personal-section {
+  background-color: white;
+  border-radius: 8px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.cv-view-personal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .cv-view-personal-content {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.cv-view-photo-container {
+  margin-right: 0;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .cv-view-photo-container {
+    margin-right: 2rem;
+    margin-bottom: 0;
+  }
+}
+
 .cv-view-photo {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.cv-view-photo img {
   width: 150px;
   height: 150px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #3498db;
+  border: 3px solid #5E4B2E;
 }
 
-.default-photo {
+.cv-view-default-photo {
   width: 150px;
   height: 150px;
   border-radius: 50%;
-  background: #ecf0f1;
-  display: inline-flex;
+  background-color: #EDF2F7;
+  display: flex;
   align-items: center;
   justify-content: center;
-  color: #7f8c8d;
-  border: 3px solid #bdc3c7;
+  color: #718096;
+  border: 3px solid #CBD5E0;
 }
 
-/* Detalles */
-.cv-view-details {
+.cv-view-details-grid {
+  flex: 1;
   display: grid;
   grid-template-columns: 1fr;
-  gap: 15px;
+  gap: 1rem;
+  width: 100%;
 }
 
-.cv-view-detail {
+@media (min-width: 768px) {
+  .cv-view-details-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.cv-view-detail-item {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
 }
 
-.detail-icon {
-  color: #3498db;
-  font-size: 1.2rem;
-  margin-top: 3px;
+.cv-view-detail-icon {
+  margin-right: 0.75rem;
+  color: #5E4B2E;
+  margin-top: 0.2rem;
+  min-width: 20px;
 }
 
-.detail-label {
-  font-weight: 600;
-  color: #2c3e50;
-  min-width: 150px;
+.cv-view-detail-label {
+  font-weight: 500;
+  color: #4A5568;
+  margin-right: 0.5rem;
 }
 
-.detail-value {
-  color: #34495e;
-  flex-grow: 1;
+.cv-view-detail-value {
+  color: #2D3748;
 }
 
-/* Sección de certificados mejorada */
-.certificado-item {
-  margin-bottom: 25px;
-  padding: 20px;
-  border-left: 4px solid #4CAF50;
-  background-color: #f8f9fa;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+/* Estilos comunes para secciones */
+.cv-view-cv-section,
+.cv-view-availability-section,
+.cv-view-education-section,
+.cv-view-experience-section,
+.cv-view-recommendations-section,
+.cv-view-references-section,
+.cv-view-certificates-section,
+.cv-view-courses-section,
+.cv-view-skills-section {
+  background-color: white;
+  border-radius: 8px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.certificado-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-  flex-wrap: wrap;
-}
-
-.certificado-header h3 {
-  margin: 0;
-  color: #2c3e50;
-  font-size: 1.2em;
-}
-
-.certificado-institucion {
-  font-style: italic;
-  color: #555;
-  font-size: 0.95em;
-  background-color: #e8f5e9;
-  padding: 3px 8px;
-  border-radius: 3px;
-}
-
-.certificado-details {
+/* Listas de items */
+.cv-view-availability-list,
+.cv-view-education-list,
+.cv-view-experience-list,
+.cv-view-recommendations-list,
+.cv-view-references-list,
+.cv-view-certificates-list,
+.cv-view-courses-list,
+.cv-view-skills-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 12px;
+  gap: 1.5rem;
 }
 
-.certificado-detail {
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: 8px;
+/* Items individuales */
+.cv-view-availability-item,
+.cv-view-education-item,
+.cv-view-experience-item,
+.cv-view-recommendation-item,
+.cv-view-reference-item,
+.cv-view-certificate-item,
+.cv-view-course-item,
+.cv-view-skill-item {
+  padding: 1.5rem;
+  border-radius: 6px;
+  background-color: #F7FAFC;
+  border-left: 4px solid #5E4B2E;
 }
 
-.certificado-url {
-  color: #2196F3;
+/* Encabezados de items */
+.cv-view-education-header,
+.cv-view-experience-header,
+.cv-view-recommendation-header,
+.cv-view-reference-header,
+.cv-view-certificate-header,
+.cv-view-course-header,
+.cv-view-skill-header {
+  margin-bottom: 1rem;
+}
+
+.cv-view-education-header h3,
+.cv-view-experience-header h3,
+.cv-view-recommendation-header h3,
+.cv-view-reference-header h3,
+.cv-view-certificate-header h3,
+.cv-view-course-header h3,
+.cv-view-skill-header h3 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.2rem;
+  color: #2D3748;
+}
+
+.cv-view-education-institution,
+.cv-view-experience-company,
+.cv-view-recommendation-position,
+.cv-view-reference-relationship,
+.cv-view-certificate-institution,
+.cv-view-course-institution {
+  font-style: italic;
+  color: #718096;
+  font-size: 0.95rem;
+}
+
+/* Grid de disponibilidad */
+.cv-view-availability-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .cv-view-availability-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Detalles de items */
+.cv-view-education-details,
+.cv-view-experience-details,
+.cv-view-recommendation-details,
+.cv-view-reference-details,
+.cv-view-certificate-details,
+.cv-view-course-details {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .cv-view-education-details,
+  .cv-view-experience-details,
+  .cv-view-recommendation-details,
+  .cv-view-certificate-details {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Botón de descarga */
+.cv-view-download-container {
+  grid-column: 1 / -1;
+}
+
+.cv-view-download-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: #5E4B2E;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cv-view-download-button:hover {
+  background-color: #4C3D26;
+}
+
+.cv-view-download-icon {
+  margin-right: 0.5rem;
+}
+
+/* Enlace de certificado */
+.cv-view-certificate-url {
+  color: #3182CE;
   text-decoration: none;
-  word-break: break-all;
 }
 
-.certificado-url:hover {
+.cv-view-certificate-url:hover {
   text-decoration: underline;
 }
 
-/* Estilos para recomendaciones */
-.recomendaciones-section {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  border-left: 4px solid #3498db;
-}
-
-.recomendaciones-list {
-  margin-top: 1rem;
-}
-
-.recomendacion-item {
-  padding: 1rem;
-  margin-bottom: 1rem;
-  background-color: white;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.recomendacion-header {
+/* Habilidades */
+.cv-view-skill-level {
   display: flex;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
 }
 
-.recomendacion-header h3 {
-  margin: 0;
-  font-size: 1.2rem;
+.cv-view-skill-star-filled {
+  color: #ECC94B;
 }
 
-.recomendacion-cargo {
-  margin-left: 1rem;
-  color: #666;
-  font-style: italic;
+.cv-view-skill-star-empty {
+  color: #E2E8F0;
 }
 
-.recomendacion-details {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 0.5rem;
-}
-
-.recomendacion-detail {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.3rem;
-}
-
-/* Estilos para habilidades */
-.habilidades-section {
-  border-left: 4px solid #e74c3c;
-}
-
-.habilidad-item {
-  padding: 1rem;
-  margin-bottom: 1rem;
-  background-color: #f8f9fa;
-  border-radius: 6px;
-  border-left: 3px solid #ddd;
-}
-
-.habilidad-header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  margin-bottom: 0.5rem;
-}
-
-.habilidad-header h3 {
-  margin: 0;
-  font-size: 1.1rem;
-  color: #34495e;
-}
-
-.habilidad-nivel {
-  margin-left: 1rem;
-  display: flex;
-  gap: 0.2rem;
-}
-
-.star-filled {
-  color: #f39c12;
-}
-
-.star-empty {
-  color: #ddd;
-}
-
-.nivel-texto {
-  margin-left: 8px;
-  font-size: 0.9em;
-  color: #555;
-}
-
-/* Estilos para formación académica */
-.formacion-section {
-  border-left: 4px solid #9b59b6;
-}
-
-.formacion-item {
-  padding: 1rem;
-  margin-bottom: 1rem;
-  background-color: #f8f9fa;
-  border-radius: 6px;
-}
-
-.formacion-header {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
-}
-
-.formacion-header h3 {
-  margin: 0;
-  font-size: 1.1rem;
-}
-
-.formacion-institucion {
-  font-style: italic;
-  color: #7f8c8d;
-}
-
-/* Estilos para experiencia laboral */
-.experiencia-section {
-  border-left: 4px solid #f1c40f;
-}
-
-.experiencia-item {
-  padding: 1rem;
-  margin-bottom: 1rem;
-  background-color: #f8f9fa;
-  border-radius: 6px;
-}
-
-.experiencia-header {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
-}
-
-.experiencia-header h3 {
-  margin: 0;
-  font-size: 1.1rem;
-}
-
-.experiencia-empresa {
-  font-style: italic;
-  color: #7f8c8d;
-}
-
-/* Estilos para cursos */
-.cursos-section {
-  border-left: 4px solid #1abc9c;
-}
-
-.curso-item {
-  padding: 1rem;
-  margin-bottom: 1rem;
-  background-color: #f8f9fa;
-  border-radius: 6px;
-}
-
-.curso-header {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
-}
-
-.curso-header h3 {
-  margin: 0;
-  font-size: 1.1rem;
-}
-
-.curso-institucion {
-  font-style: italic;
-  color: #7f8c8d;
-}
-
-/* Estilos para referencias personales */
-.referencias-section {
-  border-left: 4px solid #e67e22;
-}
-
-.referencia-item {
-  padding: 1rem;
-  margin-bottom: 1rem;
-  background-color: #f8f9fa;
-  border-radius: 6px;
-}
-
-.referencia-header {
-  display: flex;
-  flex-wrap: wrap;
-  margin-bottom: 0.5rem;
-}
-
-.referencia-header h3 {
-  margin: 0;
-  font-size: 1.1rem;
-}
-
-.referencia-parentesco {
-  margin-left: 1rem;
-  color: #7f8c8d;
-  font-style: italic;
-}
-
-/* Botones de descarga */
-.download-btn {
-  background-color: #3498db;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.9em;
-  transition: background-color 0.3s;
-}
-
-.download-btn:hover {
-  background-color: #2980b9;
+.cv-view-skill-level-text {
+  margin-left: 0.5rem;
+  font-size: 0.9rem;
+  color: #718096;
 }
 
 /* Responsive */
-@media (min-width: 768px) {
-  .cv-view-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
-  }
-  
-  .cv-view-section {
-    margin-bottom: 0;
-  }
-  
-  .personal-section {
-    grid-column: 1;
-  }
-  
-  .cv-section {
-    grid-column: 2;
-  }
-}
-
 @media (max-width: 768px) {
-  .certificado-details,
-  .recomendacion-details {
-    grid-template-columns: 1fr;
+  .cv-view-main-container {
+    padding: 1rem;
   }
   
-  .certificado-header,
-  .recomendacion-header,
-  .formacion-header,
-  .experiencia-header,
-  .curso-header,
-  .referencia-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 5px;
-  }
-  
-  .certificado-institucion,
-  .recomendacion-cargo,
-  .formacion-institucion,
-  .experiencia-empresa,
-  .curso-institucion,
-  .referencia-parentesco {
-    margin-left: 0;
+  .cv-view-personal-section,
+  .cv-view-cv-section,
+  .cv-view-availability-section,
+  .cv-view-education-section,
+  .cv-view-experience-section,
+  .cv-view-recommendations-section,
+  .cv-view-references-section,
+  .cv-view-certificates-section,
+  .cv-view-courses-section,
+  .cv-view-skills-section {
+    padding: 1.5rem;
   }
 }
