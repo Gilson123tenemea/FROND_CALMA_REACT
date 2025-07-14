@@ -12,7 +12,7 @@ import HeaderContratante from "../HeaderContratante/HeaderContratante";
 import { useSearchParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import axios from 'axios';
 
 const RegistroPaciente = () => {
   const generos = ['Masculino', 'Femenino'];
@@ -24,6 +24,10 @@ const RegistroPaciente = () => {
   const [provincias, setProvincias] = useState([]);
   const [cantones, setCantones] = useState([]);
   const [parroquias, setParroquias] = useState([]);
+
+  const [datosCargados, setDatosCargados] = useState(false);
+  const rawIdPaciente = searchParams.get("idPaciente");
+  const idPaciente = (rawIdPaciente && rawIdPaciente !== "undefined" && rawIdPaciente !== "null") ? rawIdPaciente : null;
 
   const [ubicacion, setUbicacion] = useState({
     provincia: '',
@@ -105,6 +109,89 @@ const RegistroPaciente = () => {
     foto: ''
   });
 
+  const [formData, setFormData] = useState({
+    nombres: '',
+    apellidos: '',
+    cedula: '',
+    direccion: '',
+    genero: '',
+    fechaNacimiento: '',
+    tipoSangre: '',
+    alergia: '',
+    contactoEmergencia: '',
+    parentesco: '',
+    idProvincia: '',
+    idCanton: '',
+    idParroquia: '',
+    foto: ''
+  });
+
+  console.log("idPaciente:", idPaciente);
+  useEffect(() => {
+    if (idPaciente) {
+      axios.get(`http://localhost:8090/api/registro/paciente/detalle/${idPaciente}`)
+        .then(async (res) => {
+          console.log("Respuesta API:", res.data);
+          if (res.data.success) {
+            const p = res.data.paciente;
+
+            // Asignar formulario con imagen correctamente cargada
+            setFormulario({
+              nombres: p.nombres || '',
+              apellidos: p.apellidos || '',
+              cedula: p.cedula || '',
+              direccion: p.direccion || '',
+              genero: p.genero || '',
+              fechaNacimiento: p.fechaNacimiento?.split("T")[0] || '',
+              tipoSangre: p.tipoSangre || '',
+              alergia: p.alergia || '',
+              contactoEmergencia: p.contactoEmergencia || '',
+              parentesco: p.parentesco || '',
+              parroquia: p.idParroquia || '',
+              contrasena: '',
+              confirmarContrasena: '',
+              foto: p.foto ? `http://localhost:8090/api/registro/${p.foto}` : ''
+            });
+
+            console.log("Contenido de p.foto:", p.foto);
+
+            // Carga directa de cantones y parroquias sin depender de setUbicacion
+            const provinciaId = p.idProvincia;
+            const cantonId = p.idCanton;
+            const parroquiaId = p.idParroquia;
+
+            try {
+              const cantonesData = await getCantonesByProvinciaId(provinciaId);
+              const parroquiasData = await getParroquiasByCantonId(cantonId);
+
+              setCantones(cantonesData);
+              setParroquias(parroquiasData);
+
+              // Set ubicación al final
+              setUbicacion({
+                provincia: provinciaId,
+                canton: cantonId,
+                parroquia: parroquiaId
+              });
+              setDatosCargados(true);
+            } catch (err) {
+              console.error("Error cargando cantones o parroquias:", err);
+            }
+
+            if (p.alergia) {
+              const alergiasArray = p.alergia.split(',').map(a => a.trim());
+              setAlergiasSeleccionadas(alergiasArray);
+            }
+          }
+        })
+        .catch(error => {
+          console.error("Error al cargar datos del paciente:", error);
+        });
+    }
+  }, [idPaciente]);
+
+
+
   useEffect(() => {
     const cargarProvincias = async () => {
       try {
@@ -119,7 +206,7 @@ const RegistroPaciente = () => {
 
   useEffect(() => {
     const cargarCantones = async () => {
-      if (ubicacion.provincia) {
+      if (ubicacion.provincia && !datosCargados) {
         try {
           const data = await getCantonesByProvinciaId(ubicacion.provincia);
           setCantones(data);
@@ -131,11 +218,11 @@ const RegistroPaciente = () => {
       }
     };
     cargarCantones();
-  }, [ubicacion.provincia]);
+  }, [ubicacion.provincia, datosCargados]);
 
   useEffect(() => {
     const cargarParroquias = async () => {
-      if (ubicacion.canton) {
+      if (ubicacion.canton && !datosCargados) {
         try {
           const data = await getParroquiasByCantonId(ubicacion.canton);
           setParroquias(data);
@@ -146,8 +233,50 @@ const RegistroPaciente = () => {
       }
     };
     cargarParroquias();
-  }, [ubicacion.canton]);
+  }, [ubicacion.canton, datosCargados]);
 
+  useEffect(() => {
+    if (!idPaciente) {
+      setFormulario({
+        nombres: '',
+        apellidos: '',
+        cedula: '',
+        genero: '',
+        direccion: '',
+        fechaNacimiento: '',
+        contactoEmergencia: '',
+        parentesco: '',
+        parroquia: '',
+        tipoSangre: '',
+        alergia: '',
+        contrasena: '',
+        confirmarContrasena: '',
+        foto: ''
+      });
+      setUbicacion({ provincia: '', canton: '', parroquia: '' });
+      setAlergiasSeleccionadas([]);
+      setAlergiaPersonalizada('');
+      setAlergiaSeleccionada('');
+      setErrores({});
+      setDatosCargados(false);
+      setCantones([]);
+      setParroquias([]);
+    }
+  }, [idPaciente]);
+
+
+  const handleActualizar = () => {
+    axios.put(`http://localhost:8090/api/registro/paciente/${idPaciente}`, formData)
+      .then(res => {
+        if (res.data.success) {
+          alert("Paciente actualizado correctamente");
+          // Redirige o muestra un mensaje
+        }
+      })
+      .catch(error => {
+        console.error("Error al actualizar paciente:", error);
+      });
+  };
 
 
   const handleUbicacionChange = (e) => {
@@ -283,6 +412,30 @@ const RegistroPaciente = () => {
     setErrores(nuevosErrores);
 
     if (!valid) return;
+    let imagenBase64 = formulario.foto; // 👈 Agrega esto primero
+
+    // Si es una URL, entonces la convertimos a base64
+    if (formulario.foto && formulario.foto.startsWith("http")) {
+      try {
+        const respuesta = await fetch(formulario.foto);
+        const blob = await respuesta.blob();
+        const reader = new FileReader();
+
+        const base64 = await new Promise((resolve, reject) => {
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+
+        imagenBase64 = base64; // ✅ Se actualiza correctamente
+      } catch (err) {
+        console.error("Error al convertir imagen a base64:", err);
+        toast.error("❌ No se pudo procesar la imagen");
+        return;
+      }
+    }
+
+
     const payload = {
       nombres: formulario.nombres,
       apellidos: formulario.apellidos,
@@ -290,52 +443,69 @@ const RegistroPaciente = () => {
       genero: formulario.genero,
       direccion: formulario.direccion,
       fechaNacimiento: formulario.fechaNacimiento,
-      contacto_emergencia: formulario.contactoEmergencia,
+      contactoEmergencia: formulario.contactoEmergencia,
       parentesco: formulario.parentesco,
-      tipo_sangre: formulario.tipoSangre,
+      tipoSangre: formulario.tipoSangre,
       idParroquia: parseInt(ubicacion.parroquia),
       alergia: alergiasSeleccionadas.join(', '),
-      foto: formulario.foto,
+      foto: imagenBase64,
       idContratante: parseInt(userId)
     };
 
     console.log(formulario.foto.length)
 
     try {
-      const data = await registrarPaciente(payload);
-      if (data.success) {
-        toast.success('✅ Paciente registrado exitosamente');
-        setFormulario({
-          nombres: '',
-          apellidos: '',
-          cedula: '',
-          genero: '',
-          direccion: '',
-          fechaNacimiento: '',
-          contactoEmergencia: '',
-          parentesco: '',
-          parroquia: '',
-          tipoSangre: '',
-          alergia: '',
-          foto: ''
-        });
-        setUbicacion({ provincia: '', canton: '', parroquia: '' });
-
-        setAlergiasSeleccionadas([]);
-        setAlergiaPersonalizada('');
-        setAlergiaSeleccionada('');
-
+      if (idPaciente) {
+        // ACTUALIZAR paciente
+        const res = await axios.put(`http://localhost:8090/api/registro/paciente/${idPaciente}`, payload);
+        if (res.data.success) {
+          toast.success('✅ Paciente actualizado exitosamente');
+          // Opcional: redirigir o actualizar estado aquí
+        } else {
+          toast.error(res.data.message || '❌ No se pudo actualizar el paciente.');
+        }
       } else {
-        toast.error(data.message || '❌ No se pudo registrar al paciente.');
+        // CREAR paciente (igual que antes)
+        const payloadPost = {
+          ...payload,
+          tipo_sangre: payload.tipoSangre,
+          contacto_emergencia: payload.contactoEmergencia
+        };
+        delete payloadPost.tipoSangre;
+        delete payloadPost.contactoEmergencia;
+
+
+        const data = await registrarPaciente(payloadPost);
+        if (data.success) {
+          toast.success('✅ Paciente registrado exitosamente');
+          setFormulario({
+            nombres: '',
+            apellidos: '',
+            cedula: '',
+            genero: '',
+            direccion: '',
+            fechaNacimiento: '',
+            contactoEmergencia: '',
+            parentesco: '',
+            parroquia: '',
+            tipoSangre: '',
+            alergia: '',
+            foto: ''
+          });
+          setUbicacion({ provincia: '', canton: '', parroquia: '' });
+          setAlergiasSeleccionadas([]);
+          setAlergiaPersonalizada('');
+          setAlergiaSeleccionada('');
+        } else {
+          toast.error(data.message || '❌ No se pudo registrar al paciente.');
+        }
       }
     } catch (error) {
-      toast.error('❌ Error al registrar paciente');
-
-      // 👉 Validación si la cédula ya existe (código 409 del backend)
-      if (error.response && error.response.status === 409) {
-        setErrores(prev => ({ ...prev, cedula: 'La cédula ya está registrada' }));
+      console.error("Error en la solicitud:", error);
+      if (error.response) {
+        console.error("Respuesta error:", error.response.data);
       } else {
-        alert('Error al registrar paciente');
+        toast.error('❌ Error en la solicitud');
       }
     }
   };
@@ -509,7 +679,9 @@ const RegistroPaciente = () => {
               <div style={{ display: 'flex', gap: '30px', marginBottom: '15px' }}>
                 <div style={{ flex: 1 }}>
                   <div className="input-groupv2-paci">
-                    <label><FaPhone className="input-icon-paci" /> Contacto de emergencia</label>
+                    <label style={{ color: 'black' }}>
+                      <FaPhone className="input-icon-paci" /> Contacto de emergencia
+                    </label>
                     <input
                       type="text"
                       name="contactoEmergencia"
@@ -526,7 +698,9 @@ const RegistroPaciente = () => {
                 </div>
                 <div style={{ flex: 1 }}>
                   <div className="input-groupv3-paci">
-                    <label><FaVenusMars className="input-icon-paci" /> Género</label>
+                    <label style={{ color: 'black' }}>
+                      <FaVenusMars className="input-icon-paci" /> Género
+                    </label>
                     <div className="select-wrapper-paci">
                       <select
                         name="genero"
@@ -547,7 +721,9 @@ const RegistroPaciente = () => {
                   </div>
                 </div>
                 <div className="input-groupv4-paci">
-                  <label><FaTint className="input-icon-paci" /> Tipo de sangre</label>
+                  <label style={{ color: 'black' }}>
+                    <FaTint className="input-icon-paci" /> Tipo de sangre
+                  </label>
                   <div className="select-wrapper-paci">
                     <select
                       name="tipoSangre"
@@ -765,12 +941,11 @@ const RegistroPaciente = () => {
                 <label htmlFor="terminos">Acepto los términos y condiciones</label>
               </div>
 
-              <button type="submit" className="submit-btn-paci">Registrar Paciente</button>
+              <button type="submit" className="submit-btn-paci">
+                {idPaciente ? "Actualizar Paciente" : "Registrar Paciente"}
+              </button>
             </form>
 
-            <div className="login-link-paci" style={{ marginTop: '20px' }}>
-              ¿Ya tienes una cuenta? <a href="/login">Inicia sesión aquí</a>
-            </div>
           </div>
         </div>
       </div>

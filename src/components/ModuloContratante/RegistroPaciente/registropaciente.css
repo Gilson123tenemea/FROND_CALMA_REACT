@@ -84,7 +84,7 @@ html, body {
 
 .input-groupv2-paci{
   margin-bottom: 10px;
-  min-height: 40px;     /* menos alto que el original */
+  min-height: 70px;     /* menos alto que el original */
   gap: 4px;    
   max-width: 525px;
 }
@@ -104,7 +104,7 @@ html, body {
   min-height: 40px;
   gap: 4px;
 
-  width: 525px;
+  width: 330px;
   transform: scaleX(1.0.23); /* Escala horizontalmente */
   transform-origin: left; /* Mantiene anclado el lado izquierdo */
 }

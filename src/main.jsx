@@ -18,6 +18,7 @@ import ModuloContratante from './components/ModuloContratante/ModuloContratante'
 
 // Componentes varios
 import RegistroPaciente from './components/ModuloContratante/RegistroPaciente/registropaciente';
+import Visualizarpaciente from './components/ModuloContratante/RegistroPaciente/visualizarpaciente';
 import PerfilAspirante from './components/ModuloAspirante/PerfilAspirante/perfilAspirante';
 import CVForm from './components/ModuloAspirante/CV/cv';
 import PerfilContratante from './components/ModuloContratante/PerfilContratante/perfilContratante';
@@ -167,6 +168,8 @@ createRoot(document.getElementById('root')).render(
         {/* Rutas de paciente */}
         <Route path="/registropaciente" element={<RegistroPaciente />} />
         <Route path="/moduloContratante/registropaciente" element={<RegistroPaciente />} />
+        <Route path="/moduloContratante/visualizarpaciente" element={<Visualizarpaciente />} />
+        <Route path="/moduloContratante/registropaciente/:idPaciente" element={<RegistroPaciente />} />
         
         <Route path="/fichas/nueva" element={<FichaPacienteForm />} />
         <Route path="/fichas/:id_ficha_paciente" element={<FichaPacienteForm  key={location.pathname} />} />
