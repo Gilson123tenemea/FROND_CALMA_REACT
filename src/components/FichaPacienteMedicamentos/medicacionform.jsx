@@ -27,296 +27,491 @@ const MedicamentoForm = () => {
     via_administracion: '',
     condicion_tratada: '',
     reacciones_esp: '',
-    fichaPaciente: { id_ficha_paciente }
+    fichaPaciente: { id_ficha_paciente: Number(id_ficha_paciente) }
   });
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [editando, setEditando] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const [cargando, setCargando] = useState(false);
+  const [errores, setErrores] = useState({});
 
-  const loadMedicamentos = async () => {
-    setIsLoading(true);
+  const cargarMedicamentos = async () => {
+    setCargando(true);
     try {
       const data = await getMedicamentosByFicha(id_ficha_paciente);
       setMedicamentos(data);
     } catch (error) {
       console.error("Error al cargar medicamentos:", error);
-      toast.error("Error al cargar medicamentos");
+      toast.error("Error al cargar la información de medicamentos", {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
     } finally {
-      setIsLoading(false);
+      setCargando(false);
     }
   };
 
-  const loadMedicamento = async () => {
+  const cargarMedicamento = async () => {
     if (idListaMedicamentos && idListaMedicamentos !== 'nuevo') {
-      setIsLoading(true);
+      setCargando(true);
       try {
         const data = await getMedicamentoById(idListaMedicamentos);
         setMedicamento({
           ...data,
-          idListaMedicamentos: idListaMedicamentos,
-          fichaPaciente: { id_ficha_paciente }
+          fichaPaciente: { id_ficha_paciente: Number(id_ficha_paciente) }
         });
-        setIsEditing(true);
+        setEditando(true);
       } catch (error) {
-        toast.error("Error al cargar medicamento");
+        console.error("Error al cargar medicamento:", error);
+        toast.error("No se pudo cargar la información del medicamento", {
+          position: "top-right",
+          autoClose: 4000,
+        });
       } finally {
-        setIsLoading(false);
+        setCargando(false);
       }
     } else {
-      setIsEditing(false);
-      setMedicamento({
-        medicacion: false,
-        nombremedicamento: '',
-        dosis_med: '',
-        frecuencia_med: '',
-        via_administracion: '',
-        condicion_tratada: '',
-        reacciones_esp: '',
-        fichaPaciente: { id_ficha_paciente }
-      });
+      setEditando(false);
+      resetearFormulario();
     }
   };
 
   useEffect(() => {
-    loadMedicamentos();
-    loadMedicamento();
-  }, [id_ficha_paciente, idListaMedicamentos]);
+    cargarMedicamentos();
+  }, [id_ficha_paciente]);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setMedicamento(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
+  useEffect(() => {
+    cargarMedicamento();
+  }, [idListaMedicamentos]);
+
+  const resetearFormulario = () => {
+    setMedicamento({
+      medicacion: false,
+      nombremedicamento: '',
+      dosis_med: '',
+      frecuencia_med: '',
+      via_administracion: '',
+      condicion_tratada: '',
+      reacciones_esp: '',
+      fichaPaciente: { id_ficha_paciente: Number(id_ficha_paciente) }
+    });
+    setErrores({});
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const validarTexto = (valor, campo) => {
+    const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+    if (!valor.trim()) {
+      return `${campo} es obligatorio`;
+    }
+    if (!regex.test(valor)) {
+      return `${campo} solo debe contener letras y espacios`;
+    }
+    return '';
+  };
 
-    if (!medicamento.nombremedicamento || !medicamento.dosis_med || !medicamento.frecuencia_med) {
-      toast.error('Complete los campos obligatorios: Nombre, Dosis y Frecuencia.');
-      return;
+  const validarDosis = (valor) => {
+    if (!valor.trim()) {
+      return 'La dosis es obligatoria';
+    }
+    const regex = /^[0-9]+(\.[0-9]+)?\s*(mg|g|ml|L|UI|mcg|µg)$/i;
+    if (!regex.test(valor)) {
+      return 'Formato inválido. Ejemplos: 500mg, 10ml, 2.5g';
+    }
+    return '';
+  };
+
+  const validarFrecuencia = (valor) => {
+    if (!valor.trim()) {
+      return 'La frecuencia es obligatoria';
+    }
+    const regex = /^(cada\s+\d+\s+(horas?|días?|semanas?)|[1-9]\s+vez(es)?\s+al\s+día|[1-9]\s+vez(es)?\s+por\s+semana)$/i;
+    if (!regex.test(valor)) {
+      return 'Formato inválido. Ejemplos: cada 8 horas, 2 veces al día';
+    }
+    return '';
+  };
+
+  const validarCampos = () => {
+    const nuevosErrores = {};
+
+    if (!medicamento.medicacion) {
+      return nuevosErrores;
     }
 
-    setIsSubmitting(true);
-    try {
-      if (isEditing) {
-       
-        console.log('medicamento.idListaMedicamentos:', medicamento.idListaMedicamentos);
-        await updateMedicamento(medicamento.idListaMedicamentos, medicamento);
-        toast.success("Medicamento actualizado correctamente");
-      } else {
-        await createMedicamento(medicamento);
-        toast.success("Medicamento agregado correctamente");
+    nuevosErrores.nombremedicamento = validarTexto(medicamento.nombremedicamento, 'El nombre del medicamento');
+    nuevosErrores.dosis_med = validarDosis(medicamento.dosis_med);
+    nuevosErrores.frecuencia_med = validarFrecuencia(medicamento.frecuencia_med);
+    nuevosErrores.condicion_tratada = validarTexto(medicamento.condicion_tratada, 'La condición tratada');
+    
+    if (!medicamento.via_administracion) {
+      nuevosErrores.via_administracion = 'La vía de administración es obligatoria';
+    }
+
+    Object.keys(nuevosErrores).forEach(key => {
+      if (!nuevosErrores[key]) {
+        delete nuevosErrores[key];
       }
-      await loadMedicamentos();
-      setMedicamento({
-        medicacion: false,
+    });
+
+    return nuevosErrores;
+  };
+
+  const manejarCambio = (e) => {
+    const { name, value, type, checked } = e.target;
+    const nuevoValor = type === 'checkbox' ? checked : value;
+    
+    setMedicamento(prev => ({
+      ...prev,
+      [name]: nuevoValor
+    }));
+
+    if (errores[name]) {
+      setErrores(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+
+    if (name === 'medicacion' && !checked) {
+      setMedicamento(prev => ({
+        ...prev,
         nombremedicamento: '',
         dosis_med: '',
         frecuencia_med: '',
         via_administracion: '',
         condicion_tratada: '',
-        reacciones_esp: '',
-        fichaPaciente: { id_ficha_paciente }
-      });
-      setIsEditing(false);
-      navigate(`/fichas/${id_ficha_paciente}/medicamentos`);
-    } catch (error) {
-      toast.error("Error al guardar medicamento");
-    } finally {
-      setIsSubmitting(false);
+        reacciones_esp: ''
+      }));
+      setErrores({});
     }
   };
 
-  const handleEdit = (med) => {
-    setMedicamento(med);
-    setIsEditing(true);
+  const manejarEnvio = async (e) => {
+    e.preventDefault();
+
+    if (!medicamento.medicacion) {
+      toast.warning("Debe marcar 'En medicación' para continuar", {
+        position: "top-right",
+        autoClose: 4000,
+      });
+      return;
+    }
+
+    const nuevosErrores = validarCampos();
+    setErrores(nuevosErrores);
+
+    if (Object.keys(nuevosErrores).length > 0) {
+      toast.error("Por favor corrige los errores del formulario", {
+        position: "top-right",
+        autoClose: 4000,
+      });
+      return;
+    }
+
+    setEnviando(true);
+    try {
+      const datosMedicamento = {
+        ...medicamento,
+        fichaPaciente: { id_ficha_paciente: Number(medicamento.fichaPaciente.id_ficha_paciente) }
+      };
+
+      if (editando) {
+        await updateMedicamento(medicamento.idListaMedicamentos, datosMedicamento);
+        toast.success("Medicamento actualizado correctamente", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      } else {
+        await createMedicamento(datosMedicamento);
+        toast.success("Medicamento agregado correctamente", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      }
+      
+      await cargarMedicamentos();
+      resetearFormulario();
+      setEditando(false);
+      navigate(`/fichas/${id_ficha_paciente}/medicamentos`);
+    } catch (error) {
+      console.error("Error al guardar medicamento:", error);
+      toast.error("Error al guardar el medicamento. Por favor, intente nuevamente.", {
+        position: "top-right",
+        autoClose: 4000,
+      });
+    } finally {
+      setEnviando(false);
+    }
+  };
+
+  const manejarEdicion = (med) => {
+    setMedicamento({
+      ...med,
+      fichaPaciente: { id_ficha_paciente: Number(id_ficha_paciente) }
+    });
+    setEditando(true);
+    setErrores({});
     navigate(`/fichas/${id_ficha_paciente}/medicamentos/${med.idListaMedicamentos}`);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("¿Deseas eliminar este medicamento?")) {
+  const manejarEliminacion = async (id) => {
+    if (window.confirm("¿Está seguro que desea eliminar este medicamento?")) {
       try {
         await deleteMedicamento(id);
-        toast.success("Medicamento eliminado correctamente");
-        await loadMedicamentos();
+        toast.success("Medicamento eliminado correctamente", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        await cargarMedicamentos();
         if (id === idListaMedicamentos) {
-          setMedicamento({
-            medicacion: false,
-            nombremedicamento: '',
-            dosis_med: '',
-            frecuencia_med: '',
-            via_administracion: '',
-            condicion_tratada: '',
-            reacciones_esp: '',
-            fichaPaciente: { id_ficha_paciente }
-          });
-          setIsEditing(false);
+          resetearFormulario();
+          setEditando(false);
           navigate(`/fichas/${id_ficha_paciente}/medicamentos`);
         }
       } catch (error) {
-        toast.error("No se pudo eliminar el medicamento");
+        console.error("Error al eliminar medicamento:", error);
+        toast.error("No se pudo eliminar el medicamento", {
+          position: "top-right",
+          autoClose: 4000,
+        });
       }
     }
   };
 
   return (
-    <div className="form-container">
+    <div className="contenedor-formulario-medicamento">
       <FichaStepsNav id_ficha_paciente={id_ficha_paciente} currentStep="medicamentos" />
 
-      <h2>{isEditing ? 'Editar Medicamento' : 'Agregar Nuevo Medicamento'}</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group checkbox-group">
-          <label>
-            <input
-              type="checkbox"
-              name="medicacion"
-              checked={medicamento.medicacion}
-              onChange={handleChange}
-            />
-            En medicación
-          </label>
-        </div>
-
-        <div className="form-group">
-          <label>Nombre del Medicamento*</label>
-          <input
-            type="text"
-            name="nombremedicamento"
-            value={medicamento.nombremedicamento}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="form-row">
-          <div className="form-group">
-            <label>Dosis*</label>
-            <input
-              type="text"
-              name="dosis_med"
-              value={medicamento.dosis_med}
-              onChange={handleChange}
-              required
-            />
+      <div className="formulario-card">
+        <h2 className="titulo-formulario">
+          {editando ? 'Editar Medicamento' : 'Agregar Nuevo Medicamento'}
+        </h2>
+        
+        <form onSubmit={manejarEnvio} className="formulario-medicamento">
+          <div className="grupo-formulario grupo-checkbox">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                name="medicacion"
+                checked={medicamento.medicacion || false}
+                onChange={manejarCambio}
+              />
+              <span className="checkmark"></span>
+              Paciente en medicación
+            </label>
           </div>
-          <div className="form-group">
-            <label>Frecuencia*</label>
-            <input
-              type="text"
-              name="frecuencia_med"
-              value={medicamento.frecuencia_med}
-              onChange={handleChange}
-              required
-            />
+
+          <div className={`campos-medicamento ${!medicamento.medicacion ? 'campos-deshabilitados' : ''}`}>
+            <div className="grupo-formulario">
+              <label className="etiqueta-campo">
+                Nombre del Medicamento *
+              </label>
+              <input
+                type="text"
+                name="nombremedicamento"
+                value={medicamento.nombremedicamento || ''}
+                onChange={manejarCambio}
+                disabled={!medicamento.medicacion}
+                className={errores.nombremedicamento ? 'campo-error' : ''}
+                placeholder="Ingrese el nombre del medicamento"
+              />
+              {errores.nombremedicamento && (
+                <span className="mensaje-error">{errores.nombremedicamento}</span>
+              )}
+            </div>
+
+            <div className="fila-formulario">
+              <div className="grupo-formulario">
+                <label className="etiqueta-campo">
+                  Dosis *
+                </label>
+                <input
+                  type="text"
+                  name="dosis_med"
+                  value={medicamento.dosis_med || ''}
+                  onChange={manejarCambio}
+                  disabled={!medicamento.medicacion}
+                  className={errores.dosis_med ? 'campo-error' : ''}
+                  placeholder="Ej: 500mg"
+                />
+                {errores.dosis_med && (
+                  <span className="mensaje-error">{errores.dosis_med}</span>
+                )}
+              </div>
+              
+              <div className="grupo-formulario">
+                <label className="etiqueta-campo">
+                  Frecuencia *
+                </label>
+                <input
+                  type="text"
+                  name="frecuencia_med"
+                  value={medicamento.frecuencia_med || ''}
+                  onChange={manejarCambio}
+                  disabled={!medicamento.medicacion}
+                  className={errores.frecuencia_med ? 'campo-error' : ''}
+                  placeholder="Ej: cada 8 horas"
+                />
+                {errores.frecuencia_med && (
+                  <span className="mensaje-error">{errores.frecuencia_med}</span>
+                )}
+              </div>
+            </div>
+
+            <div className="grupo-formulario">
+              <label className="etiqueta-campo">
+                Vía de Administración *
+              </label>
+              <select
+                name="via_administracion"
+                value={medicamento.via_administracion || ''}
+                onChange={manejarCambio}
+                disabled={!medicamento.medicacion}
+                className={errores.via_administracion ? 'campo-error' : ''}
+              >
+                <option value="">Seleccione una opción</option>
+                <option value="Oral">Oral</option>
+                <option value="Intravenosa">Intravenosa</option>
+                <option value="Subcutánea">Subcutánea</option>
+                <option value="Tópica">Tópica</option>
+                <option value="Inhalatoria">Inhalatoria</option>
+              </select>
+              {errores.via_administracion && (
+                <span className="mensaje-error">{errores.via_administracion}</span>
+              )}
+            </div>
+
+            <div className="grupo-formulario">
+              <label className="etiqueta-campo">
+                Condición Tratada *
+              </label>
+              <input
+                type="text"
+                name="condicion_tratada"
+                value={medicamento.condicion_tratada || ''}
+                onChange={manejarCambio}
+                disabled={!medicamento.medicacion}
+                className={errores.condicion_tratada ? 'campo-error' : ''}
+                placeholder="Indique la condición médica tratada"
+              />
+              {errores.condicion_tratada && (
+                <span className="mensaje-error">{errores.condicion_tratada}</span>
+              )}
+            </div>
+
+            <div className="grupo-formulario">
+              <label className="etiqueta-campo">
+                Reacciones Especiales
+              </label>
+              <textarea
+                name="reacciones_esp"
+                value={medicamento.reacciones_esp || ''}
+                onChange={manejarCambio}
+                disabled={!medicamento.medicacion}
+                rows={3}
+                placeholder="Describa cualquier reacción adversa o especial observada"
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="form-group">
-          <label>Vía de Administración</label>
-          <select
-            name="via_administracion"
-            value={medicamento.via_administracion}
-            onChange={handleChange}
-          >
-            <option value="">Seleccione...</option>
-            <option value="Oral">Oral</option>
-            <option value="Intravenosa">Intravenosa</option>
-            <option value="Subcutánea">Subcutánea</option>
-            <option value="Tópica">Tópica</option>
-            <option value="Inhalatoria">Inhalatoria</option>
-          </select>
-        </div>
+          <div className="acciones-formulario">
+            <button 
+              type="submit" 
+              className="boton-primario" 
+              disabled={enviando || !medicamento.medicacion}
+            >
+              {enviando ? 'Procesando...' : editando ? 'Actualizar' : 'Guardar'}
+            </button>
+            <button
+              type="button"
+              className="boton-secundario"
+              onClick={() => {
+                resetearFormulario();
+                setEditando(false);
+                navigate(`/fichas/${id_ficha_paciente}/medicamentos`);
+              }}
+              disabled={enviando}
+            >
+              Cancelar
+            </button>
+            
+          </div>
+        </form>
+      </div>
 
-        <div className="form-group">
-          <label>Condición Tratada</label>
-          <input
-            type="text"
-            name="condicion_tratada"
-            value={medicamento.condicion_tratada}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Reacciones Especiales</label>
-          <textarea
-            name="reacciones_esp"
-            value={medicamento.reacciones_esp}
-            onChange={handleChange}
-            rows={3}
-          />
-        </div>
-
-        <div className="form-actions">
-          <button type="submit" className="btn-primary" disabled={isSubmitting}>
-            {isSubmitting ? 'Guardando...' : isEditing ? 'Actualizar' : 'Guardar'}
-          </button>
-          <button
-            type="button"
-            className="btn-secondary"
-            onClick={() => {
-              setMedicamento({
-                medicacion: false,
-                nombremedicamento: '',
-                dosis_med: '',
-                frecuencia_med: '',
-                via_administracion: '',
-                condicion_tratada: '',
-                reacciones_esp: '',
-                fichaPaciente: { id_ficha_paciente }
-              });
-              setIsEditing(false);
-              navigate(`/fichas/${id_ficha_paciente}/medicamentos`);
-            }}
-          >
-            Cancelar
-          </button>
-        </div>
-      </form>
-
-      <hr />
-
-      <h3>Listado de Medicamentos</h3>
-      {isLoading ? (
-        <p>Cargando medicamentos...</p>
-      ) : medicamentos.length === 0 ? (
-        <p>No hay medicamentos registrados</p>
-      ) : (
-        <div className="table-responsive">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Dosis</th>
-                <th>Frecuencia</th>
-                <th>Vía</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {medicamentos.map((med) => (
-                <tr key={med.idListaMedicamentos}>
-                  <td>{med.nombremedicamento}</td>
-                  <td>{med.dosis_med}</td>
-                  <td>{med.frecuencia_med}</td>
-                  <td>{med.via_administracion || '-'}</td>
-                  <td className="actions">
-                    <button className="btn-edit" onClick={() => handleEdit(med)}>
-                      Editar
-                    </button>
-                    <button className="btn-danger" onClick={() => handleDelete(med.idListaMedicamentos)}>
-                      Eliminar
-                    </button>
-                  </td>
+      <div className="listado-card">
+        <h3 className="titulo-listado">Listado de Medicamentos</h3>
+        {cargando ? (
+          <div className="cargando">
+            <div className="spinner"></div>
+            <p>Cargando información...</p>
+          </div>
+        ) : medicamentos.length === 0 ? (
+          <div className="sin-datos">
+            <p>No hay medicamentos registrados para este paciente</p>
+          </div>
+        ) : (
+          <div className="tabla-responsive">
+            <table className="tabla-datos">
+              <thead>
+                <tr>
+                  <th>Medicamento</th>
+                  <th>Dosis</th>
+                  <th>Frecuencia</th>
+                  <th>Vía</th>
+                  <th>Condición</th>
+                  <th>Acciones</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody>
+                {medicamentos.map((med) => (
+                  <tr key={med.idListaMedicamentos}>
+                    <td>
+                      <div>
+                        {med.nombremedicamento || 'Sin especificar'}
+                      </div>
+                    </td>
+                    <td>
+                      {med.dosis_med || 'No especificada'}
+                    </td>
+                    <td>
+                      {med.frecuencia_med || 'No especificada'}
+                    </td>
+                    <td>
+                      {med.via_administracion || 'No especificada'}
+                    </td>
+                    <td>
+                      {med.condicion_tratada || 'No especificada'}
+                    </td>
+                    <td className="acciones-tabla">
+                      <button 
+                        className="boton-editar" 
+                        onClick={() => manejarEdicion(med)}
+                        disabled={enviando}
+                        title="Editar medicamento"
+                      >
+                        Editar
+                      </button>
+                      <button 
+                        className="boton-eliminar" 
+                        onClick={() => manejarEliminacion(med.idListaMedicamentos)}
+                        disabled={enviando}
+                        title="Eliminar medicamento"
+                      >
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

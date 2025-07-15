@@ -127,85 +127,90 @@ const AlergiaMedicamento = () => {
   };
 
   return (
-    <div className="form-container">
+    <div className="alergias-medicamentos-main-wrapper">
       <FichaStepsNav id_ficha_paciente={id_ficha_paciente} currentStep="alergias-medicamentos" />
 
-      <h2>{isEditing ? "Editar Alergia" : "Agregar Nueva Alergia"}</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Nombre del Medicamento*</label>
-          <input
-            type="text"
-            name="nombremedicamento"
-            value={alergia.nombremedicamento}
-            onChange={handleChange}
-            placeholder="Ej: Penicilina"
-            required
-          />
-        </div>
+      <div className="alergias-medicamentos-form-section">
+        <h2 className="alergias-medicamentos-form-title">{isEditing ? "Editar Alergia" : "Agregar Nueva Alergia"}</h2>
+        <form onSubmit={handleSubmit} className="alergias-medicamentos-form">
+          <div className="alergias-medicamentos-input-group">
+            <label className="alergias-medicamentos-label">Nombre del Medicamento*</label>
+            <input
+              type="text"
+              name="nombremedicamento"
+              value={alergia.nombremedicamento}
+              onChange={handleChange}
+              placeholder="Ej: Penicilina"
+              required
+              className="alergias-medicamentos-input"
+            />
+          </div>
 
-        <div className="form-actions">
-          <button type="submit" className="btn-primary" disabled={isSubmitting}>
-            {isSubmitting ? "Guardando..." : "Guardar"}
-          </button>
-          {isEditing && (
+          <div className="alergias-medicamentos-button-group">
+            <button type="submit" className="alergias-medicamentos-save-btn" disabled={isSubmitting}>
+              {isSubmitting ? "Guardando..." : "Guardar"}
+            </button>
+            {isEditing && (
+              <button
+                type="button"
+                className="alergias-medicamentos-delete-btn"
+                onClick={() => handleDelete(alergia.id_alergiamed)}
+                disabled={isSubmitting}
+              >
+                Eliminar
+              </button>
+            )}
             <button
               type="button"
-              className="btn-danger"
-              onClick={() => handleDelete(alergia.id_alergiamed)}
-              disabled={isSubmitting}
+              className="alergias-medicamentos-cancel-btn"
+              onClick={() => {
+                setAlergia({ nombremedicamento: '', fichaPaciente: { id_ficha_paciente } });
+                setIsEditing(false);
+                navigate(`/fichas/${id_ficha_paciente}/alergias-medicamentos`);
+              }}
             >
-              Eliminar
+              Cancelar
             </button>
-          )}
-          <button
-            type="button"
-            className="btn-secondary"
-            onClick={() => {
-              setAlergia({ nombremedicamento: '', fichaPaciente: { id_ficha_paciente } });
-              setIsEditing(false);
-              navigate(`/fichas/${id_ficha_paciente}/alergias-medicamentos`);
-            }}
-          >
-            Cancelar
-          </button>
-        </div>
-      </form>
+          </div>
+        </form>
+      </div>
 
-      <hr />
+      <div className="alergias-medicamentos-divider"></div>
 
-      <h3>Listado de Alergias a Medicamentos</h3>
-      {isLoading ? (
-        <p>Cargando...</p>
-      ) : alergias.length === 0 ? (
-        <p>No hay alergias registradas</p>
-      ) : (
-        <div className="table-responsive">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Medicamento</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {alergias.map((item) => (
-                <tr key={item.id_alergiamed}>
-                  <td>{item.nombremedicamento}</td>
-                  <td className="actions">
-                    <button onClick={() => handleEdit(item)} className="btn-edit">
-                      Editar
-                    </button>
-                    <button onClick={() => handleDelete(item.id_alergiamed)} className="btn-danger">
-                      Eliminar
-                    </button>
-                  </td>
+      <div className="alergias-medicamentos-list-section">
+        <h3 className="alergias-medicamentos-list-title">Listado de Alergias a Medicamentos</h3>
+        {isLoading ? (
+          <p className="alergias-medicamentos-loading">Cargando...</p>
+        ) : alergias.length === 0 ? (
+          <p className="alergias-medicamentos-empty">No hay alergias registradas</p>
+        ) : (
+          <div className="alergias-medicamentos-table-container">
+            <table className="alergias-medicamentos-data-grid">
+              <thead>
+                <tr>
+                  <th>Medicamento</th>
+                  <th>Acciones</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody>
+                {alergias.map((item) => (
+                  <tr key={item.id_alergiamed}>
+                    <td>{item.nombremedicamento}</td>
+                    <td className="alergias-medicamentos-action-cell">
+                      <button onClick={() => handleEdit(item)} className="alergias-medicamentos-edit-btn">
+                        Editar
+                      </button>
+                      <button onClick={() => handleDelete(item.id_alergiamed)} className="alergias-medicamentos-remove-btn">
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,85 +1,326 @@
-.container {
-  max-width: 700px;
-  margin: 30px auto;
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  background: #fafafa;
+/* ===== CONTENEDOR PRINCIPAL ===== */
+.alergia-alimentaria-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-h2 {
+/* ===== TÍTULOS ===== */
+.alergia-alimentaria-container h2 {
+  color: #2c3e50;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
   text-align: center;
-  margin-bottom: 20px;
+  border-bottom: 3px solid #3498db;
+  padding-bottom: 0.5rem;
 }
 
-.error {
-  color: red;
-  margin-bottom: 10px;
-  text-align: center;
+.alergia-alimentaria-container h3 {
+  color: #34495e;
+  font-size: 1.4rem;
+  font-weight: 500;
+  margin: 2rem 0 1rem 0;
+  padding-left: 0.5rem;
+  border-left: 4px solid #e74c3c;
 }
 
-.formulario {
+/* ===== FORMULARIO ===== */
+.alergia-alimentaria-container form {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  border: 1px solid #e1e8ed;
+}
+
+.alergia-alimentaria-form-group {
+  margin-bottom: 1.5rem;
+}
+
+.alergia-alimentaria-form-group label {
+  display: block;
+  color: #2c3e50;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.alergia-alimentaria-form-group input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+.alergia-alimentaria-form-group input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  background-color: #f8f9fa;
+}
+
+.alergia-alimentaria-form-group input::placeholder {
+  color: #95a5a6;
+  font-style: italic;
+}
+
+/* ===== BOTONES ===== */
+.alergia-alimentaria-form-actions {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
 }
 
-.formulario input[type='text'] {
-  flex-grow: 1;
-  padding: 8px;
-  font-size: 1rem;
-}
-
-.formulario button {
-  padding: 8px 12px;
-  font-size: 1rem;
-  cursor: pointer;
-  border: none;
-  border-radius: 4px;
-  background-color: #1976d2;
+.alergia-alimentaria-btn-primary {
+  background: linear-gradient(135deg, #3498db, #2980b9);
   color: white;
-  transition: background-color 0.3s ease;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
 }
 
-.formulario button:hover {
-  background-color: #0f4a8c;
+.alergia-alimentaria-btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2980b9, #1f6390);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
 }
 
-.btn-cancel {
-  background-color: #999;
+.alergia-alimentaria-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
-.btn-cancel:hover {
-  background-color: #666;
+.alergia-alimentaria-btn-danger {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
 }
 
-table {
+.alergia-alimentaria-btn-danger:hover:not(:disabled) {
+  background: linear-gradient(135deg, #c0392b, #a93226);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+}
+
+.alergia-alimentaria-btn-secondary {
+  background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.alergia-alimentaria-btn-secondary:hover {
+  background: linear-gradient(135deg, #7f8c8d, #6c7b7d);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(149, 165, 166, 0.3);
+}
+
+.alergia-alimentaria-btn-edit {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: 0.5rem;
+}
+
+.alergia-alimentaria-btn-edit:hover {
+  background: linear-gradient(135deg, #e67e22, #d68910);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(243, 156, 18, 0.3);
+}
+
+/* ===== SEPARADOR ===== */
+hr {
+  border: none;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #bdc3c7, transparent);
+  margin: 3rem 0;
+}
+
+/* ===== TABLA ===== */
+.alergia-alimentaria-table-responsive {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e1e8ed;
+}
+
+.alergia-alimentaria-data-table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 0.95rem;
 }
 
-thead {
-  background-color: #1976d2;
+.alergia-alimentaria-data-table thead {
+  background: linear-gradient(135deg, #34495e, #2c3e50);
   color: white;
 }
 
-th, td {
-  padding: 10px;
-  border: 1px solid #ddd;
+.alergia-alimentaria-data-table th {
+  padding: 1rem;
   text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.btn-eliminar {
-  background-color: #d32f2f;
-  color: white;
-  margin-left: 5px;
+.alergia-alimentaria-data-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #ecf0f1;
+  color: #2c3e50;
+  vertical-align: middle;
 }
 
-.btn-eliminar:hover {
-  background-color: #9a1f1f;
+.alergia-alimentaria-data-table tbody tr:hover {
+  background-color: #f8f9fa;
+  transform: scale(1.01);
+  transition: all 0.2s ease;
 }
 
-button {
-  outline: none;
+.alergia-alimentaria-data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.alergia-alimentaria-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* ===== ESTADOS DE CARGA ===== */
+.alergia-alimentaria-container p {
+  text-align: center;
+  color: #7f8c8d;
+  font-size: 1.1rem;
+  padding: 2rem;
+  background: white;
+  border-radius: 8px;
+  margin: 1rem 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .alergia-alimentaria-container {
+    padding: 1rem;
+  }
+  
+  .alergia-alimentaria-container form {
+    padding: 1.5rem;
+  }
+  
+  .alergia-alimentaria-form-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .alergia-alimentaria-form-actions button {
+    width: 100%;
+  }
+  
+  .alergia-alimentaria-table-responsive {
+    overflow-x: auto;
+  }
+  
+  .alergia-alimentaria-data-table {
+    min-width: 500px;
+  }
+  
+  .alergia-alimentaria-actions {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .alergia-alimentaria-btn-edit {
+    margin-right: 0;
+    width: 100%;
+  }
+  
+  .alergia-alimentaria-container h2 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .alergia-alimentaria-container {
+    padding: 0.5rem;
+  }
+  
+  .alergia-alimentaria-container h2 {
+    font-size: 1.3rem;
+  }
+  
+  .alergia-alimentaria-container h3 {
+    font-size: 1.2rem;
+  }
+  
+  .alergia-alimentaria-data-table th,
+  .alergia-alimentaria-data-table td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.alergia-alimentaria-container form,
+.alergia-alimentaria-table-responsive {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* ===== EFECTOS ADICIONALES ===== */
+.alergia-alimentaria-container form:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  transition: box-shadow 0.3s ease;
+}
+
+.alergia-alimentaria-table-responsive:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  transition: box-shadow 0.3s ease;
 }

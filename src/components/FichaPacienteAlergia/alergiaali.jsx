@@ -17,7 +17,6 @@ import './alergiaalimentaria.css';
 const AlergiaAlimentariaForm = () => {
   const { id_ficha_paciente, id_alergias_alimentarias } = useParams();
   const navigate = useNavigate();
-
   const [alergias, setAlergias] = useState([]);
   const [alergia, setAlergia] = useState({
     alergiaAlimentaria: '',
@@ -63,6 +62,7 @@ const AlergiaAlimentariaForm = () => {
   useEffect(() => {
     loadAlergias();
     loadAlergia();
+
   }, [id_ficha_paciente, id_alergias_alimentarias]);
 
   const handleChange = (e) => {
@@ -101,12 +101,6 @@ const AlergiaAlimentariaForm = () => {
     }
   };
 
-  const handleEdit = (alergiaEdit) => {
-    setAlergia(alergiaEdit);
-    setIsEditing(true);
-    navigate(`/fichas/${id_ficha_paciente}/alergias-alimentarias/${alergiaEdit.id_alergias_alimentarias}`);
-  };
-
   const handleDelete = async (id) => {
     if (window.confirm("¿Deseas eliminar esta alergia?")) {
       try {
@@ -124,13 +118,17 @@ const AlergiaAlimentariaForm = () => {
     }
   };
 
+  const handleEdit = (item) => {
+    navigate(`/fichas/${id_ficha_paciente}/alergias-alimentarias/${item.id_alergias_alimentarias}`);
+  };
+
   return (
-    <div className="form-container">
+    <div className="alergia-alimentaria-container">
       <FichaStepsNav id_ficha_paciente={id_ficha_paciente} currentStep="alergias-alimentarias" />
 
       <h2>{isEditing ? "Editar Alergia Alimentaria" : "Agregar Nueva Alergia Alimentaria"}</h2>
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
+        <div className="alergia-alimentaria-form-group">
           <label>Nombre del Alimento*</label>
           <input
             type="text"
@@ -142,14 +140,14 @@ const AlergiaAlimentariaForm = () => {
           />
         </div>
 
-        <div className="form-actions">
-          <button type="submit" className="btn-primary" disabled={isSubmitting}>
+        <div className="alergia-alimentaria-form-actions">
+          <button type="submit" className="alergia-alimentaria-btn-primary" disabled={isSubmitting}>
             {isSubmitting ? "Guardando..." : "Guardar"}
           </button>
           {isEditing && (
             <button
               type="button"
-              className="btn-danger"
+              className="alergia-alimentaria-btn-danger"
               onClick={() => handleDelete(alergia.id_alergias_alimentarias)}
               disabled={isSubmitting}
             >
@@ -158,15 +156,17 @@ const AlergiaAlimentariaForm = () => {
           )}
           <button
             type="button"
-            className="btn-secondary"
+            className="alergia-alimentaria-btn-secondary"
             onClick={() => {
               setAlergia({ alergiaAlimentaria: '', fichaPaciente: { id_ficha_paciente } });
               setIsEditing(false);
-              navigate(`/fichas/${id_ficha_paciente}/alergias-alimentarias`);
+              navigate(`/fichas/${id_ficha_paciente}/alergias-alimentarias/nuevo`);
             }}
+            disabled={isSubmitting}
           >
             Cancelar
           </button>
+
         </div>
       </form>
 
@@ -178,8 +178,8 @@ const AlergiaAlimentariaForm = () => {
       ) : alergias.length === 0 ? (
         <p>No hay alergias registradas</p>
       ) : (
-        <div className="table-responsive">
-          <table className="data-table">
+        <div className="alergia-alimentaria-table-responsive">
+          <table className="alergia-alimentaria-data-table">
             <thead>
               <tr>
                 <th>Alimento</th>
@@ -190,11 +190,11 @@ const AlergiaAlimentariaForm = () => {
               {alergias.map((item) => (
                 <tr key={item.id_alergias_alimentarias}>
                   <td>{item.alergiaAlimentaria}</td>
-                  <td className="actions">
-                    <button onClick={() => handleEdit(item)} className="btn-edit">
+                  <td className="alergia-alimentaria-actions">
+                    <button onClick={() => handleEdit(item)} className="alergia-alimentaria-btn-edit">
                       Editar
                     </button>
-                    <button onClick={() => handleDelete(item.id_alergias_alimentarias)} className="btn-danger">
+                    <button onClick={() => handleDelete(item.id_alergias_alimentarias)} className="alergia-alimentaria-btn-danger">
                       Eliminar
                     </button>
                   </td>

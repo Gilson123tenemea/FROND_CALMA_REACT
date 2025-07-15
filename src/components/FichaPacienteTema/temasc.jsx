@@ -29,7 +29,7 @@ const TemasConversacion = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Cargar todos los temas por ficha
+  
   const loadTemas = async () => {
     setIsLoading(true);
     try {
@@ -45,7 +45,7 @@ const TemasConversacion = () => {
     }
   };
 
-  // Cargar un tema individual si se está editando
+  
   const loadTema = async () => {
     if (idTemaConversacion && idTemaConversacion !== 'nuevo') {
       setIsLoading(true);
@@ -134,89 +134,105 @@ const TemasConversacion = () => {
   };
 
   return (
-    <div className="form-container">
+    <div className="temas-conversacion-container">
       <FichaStepsNav id_ficha_paciente={id_ficha_paciente} currentStep="temas" />
 
-      <h2>{isEditing ? "Editar Tema de Conversación" : "Agregar Nuevo Tema de Conversación"}</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Tema*</label>
-          <input
-            type="text"
-            name="tema"
-            value={tema.tema}
-            onChange={handleChange}
-            placeholder="Ej: Cine, Política, Viajes"
-            required
-          />
-        </div>
+      <div className="temas-form-section">
+        <h2 className="temas-form-title">
+          {isEditing ? "Editar Tema de Conversación" : "Agregar Nuevo Tema de Conversación"}
+        </h2>
+        
+        <form onSubmit={handleSubmit} className="temas-form">
+          <div className="temas-input-group">
+            <label className="temas-label">Tema*</label>
+            <input
+              type="text"
+              name="tema"
+              value={tema.tema}
+              onChange={handleChange}
+              placeholder="Ej: Cine, Política, Viajes"
+              className="temas-input"
+              required
+            />
+          </div>
 
-        <div className="form-actions">
-          <button type="submit" className="btn-primary" disabled={isSubmitting}>
-            {isSubmitting ? "Guardando..." : "Guardar"}
-          </button>
-          {isEditing && (
-            <button
-              type="button"
-              className="btn-danger"
-              onClick={() => handleDelete(tema.idTemaConversacion)}
+          <div className="temas-form-actions">
+            <button 
+              type="submit" 
+              className="temas-btn-primary" 
               disabled={isSubmitting}
             >
-              Eliminar
+              {isSubmitting ? "Guardando..." : "Guardar"}
             </button>
-          )}
-          <button
-            type="button"
-            className="btn-secondary"
-            onClick={() => {
-              setTema({ tema: '', fichaPaciente: { id_ficha_paciente } });
-              setIsEditing(false);
-              navigate(`/fichas/${id_ficha_paciente}/temas`);
-            }}
-            disabled={isSubmitting}
-          >
-            Cancelar
-          </button>
-        </div>
+            {isEditing && (
+              <button
+                type="button"
+                className="temas-btn-danger"
+                onClick={() => handleDelete(tema.idTemaConversacion)}
+                disabled={isSubmitting}
+              >
+                Eliminar
+              </button>
+            )}
+            <button
+              type="button"
+              className="temas-btn-secondary"
+              onClick={() => {
+                setTema({ tema: '', fichaPaciente: { id_ficha_paciente } });
+                setIsEditing(false);
+                navigate(`/fichas/${id_ficha_paciente}/temas`);
+              }}
+              disabled={isSubmitting}
+            >
+              Cancelar
+            </button>
+            
+          </div>
+        </form>
+      </div>
 
-        
-      </form>
+      <div className="temas-divider"></div>
 
-      <hr />
-
-      <h3>Listado de Temas de Conversación</h3>
-      {isLoading ? (
-        <p>Cargando...</p>
-      ) : temas.length === 0 ? (
-        <p>No hay temas registrados</p>
-      ) : (
-        
-        <div className="table-responsive">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Tema</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {temas.map((item) => (
-                <tr key={item.idTemaConversacion}>
-                  <td>{item.tema}</td>
-                  <td className="actions">
-                    <button onClick={() => handleEdit(item)} className="btn-edit">
-                      Editar
-                    </button>
-                    <button onClick={() => handleDelete(item.idTemaConversacion)} className="btn-danger">
-                      Eliminar
-                    </button>
-                  </td>
+      <div className="temas-list-section">
+        <h3 className="temas-list-title">Listado de Temas de Conversación</h3>
+        {isLoading ? (
+          <p className="temas-loading">Cargando...</p>
+        ) : temas.length === 0 ? (
+          <p className="temas-empty">No hay temas registrados</p>
+        ) : (
+          <div className="temas-table-wrapper">
+            <table className="temas-table">
+              <thead className="temas-table-header">
+                <tr>
+                  <th className="temas-table-cell-header">Tema</th>
+                  <th className="temas-table-cell-header">Acciones</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody className="temas-table-body">
+                {temas.map((item) => (
+                  <tr key={item.idTemaConversacion} className="temas-table-row">
+                    <td className="temas-table-cell">{item.tema}</td>
+                    <td className="temas-table-cell temas-actions-cell">
+                      <button 
+                        onClick={() => handleEdit(item)} 
+                        className="temas-btn-edit"
+                      >
+                        Editar
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(item.idTemaConversacion)} 
+                        className="temas-btn-delete"
+                      >
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
