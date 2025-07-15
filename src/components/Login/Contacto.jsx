@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Contacto.css';
+import Footer from "../Footer/footer";
 import Navbar from '../Shared/Navbar';
 
 const Contacto = () => {
@@ -24,32 +25,30 @@ const Contacto = () => {
     { value: 'feature', label: 'Solicitar Funcionalidad', icono: '⭐' }
   ];
 
-  const equipoContacto = [
-    {
-      nombre: 'Freddy Gomez',
-      rol: 'Scrum Master',
-      especialidad: 'Gestión de Proyectos',
-      email: 'freddy.gomez@calma.com',
-      telefono: '+593 99 123 4567',
-      disponibilidad: 'Lun-Vie 9:00-18:00',
-      icono: '🎯'
-    },
-    {
-      nombre: 'Equipo de Desarrollo',
-      rol: 'Full Stack Team',
-      especialidad: 'Desarrollo Frontend & Backend',
-      email: 'desarrollo@calma.com',
-      telefono: '+593 99 765 4321',
-      disponibilidad: 'Lun-Vie 8:00-17:00',
-      icono: '👥'
-    }
-  ];
-
   const redesSociales = [
     { nombre: 'GitHub', url: 'https://github.com/calma-team', icono: '🐙', color: '#333' },
     { nombre: 'LinkedIn', url: 'https://linkedin.com/company/calma', icono: '💼', color: '#0077B5' },
     { nombre: 'Email', url: 'mailto:contacto@calma.com', icono: '📧', color: '#D44638' },
     { nombre: 'Discord', url: 'https://discord.gg/calma', icono: '💬', color: '#7289DA' }
+  ];
+
+  const faqs = [
+    {
+      pregunta: '¿Cómo reportar un bug?',
+      respuesta: 'Selecciona "Reportar Error" en el formulario e incluye pasos para reproducir el problema.'
+    },
+    {
+      pregunta: '¿Ofrecen soporte técnico?',
+      respuesta: 'Sí, nuestro equipo brinda soporte técnico de lunes a viernes en horario laboral.'
+    },
+    {
+      pregunta: '¿Puedo sugerir nuevas funcionalidades?',
+      respuesta: '¡Por supuesto! Usa el tipo "Solicitar Funcionalidad" para enviarnos tus ideas.'
+    },
+    {
+      pregunta: '¿Hay oportunidades de colaboración?',
+      respuesta: 'Estamos abiertos a colaboraciones. Contáctanos para discutir oportunidades.'
+    }
   ];
 
   const handleInputChange = (e) => {
@@ -58,8 +57,7 @@ const Contacto = () => {
       ...prev,
       [name]: value
     }));
-    
-    // Limpiar error cuando el usuario empiece a escribir
+
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -70,46 +68,44 @@ const Contacto = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.nombre.trim()) {
       newErrors.nombre = 'El nombre es requerido';
     }
-    
+
     if (!formData.email.trim()) {
       newErrors.email = 'El email es requerido';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'El email no es válido';
     }
-    
+
     if (!formData.asunto.trim()) {
       newErrors.asunto = 'El asunto es requerido';
     }
-    
+
     if (!formData.mensaje.trim()) {
       newErrors.mensaje = 'El mensaje es requerido';
     } else if (formData.mensaje.length < 10) {
       newErrors.mensaje = 'El mensaje debe tener al menos 10 caracteres';
     }
-    
+
     return newErrors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
       return;
     }
-    
+
     setIsSubmitting(true);
     setSubmitStatus('');
-    
+
     try {
-      // Simular envío del formulario
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
       setSubmitStatus('success');
       setFormData({
         nombre: '',
@@ -118,11 +114,10 @@ const Contacto = () => {
         mensaje: '',
         tipoContacto: 'general'
       });
-      
+
       setTimeout(() => {
         setSubmitStatus('');
       }, 5000);
-      
     } catch (error) {
       setSubmitStatus('error');
     } finally {
@@ -133,26 +128,32 @@ const Contacto = () => {
   return (
     <div className="contacto-page">
       <Navbar />
-      
-      <div className="contacto-container">
-        {/* Hero Section */}
-        <div className="contacto-hero">
-          <h1 className="contacto-titulo">Contacta con Nosotros</h1>
-          <p className="contacto-subtitulo">
-            ¿Tienes alguna pregunta, sugerencia o necesitas soporte? 
-            Nuestro equipo de desarrolladores está aquí para ayudarte.
-          </p>
-        </div>
 
+      <main className="contacto-container">
+        {/* Hero Section */}
+        <section class="contacto-hero">
+          <div class="hero-content">
+            <div class="hero-text">
+              <h1 class="contacto-titulo">Contáctanos</h1>
+              <p class="contacto-subtitulo">
+                Estamos aquí para ayudarte. Completa el formulario o comunícate con nosotros directamente.
+              </p>
+            </div>
+            <div class="hero-illustration"></div>
+          </div>
+        </section>
+
+
+        {/* Main Content */}
         <div className="contacto-content">
-          {/* Formulario de Contacto */}
-          <div className="contacto-form-section">
+          {/* Form Section */}
+          <section className="contacto-form-section">
             <div className="form-header">
-              <h2>📝 Envíanos un Mensaje</h2>
+              <h2-contacto1>Envíanos un mensaje</h2-contacto1>
               <p>Completa el formulario y te responderemos lo antes posible</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="contacto-form">
+            <form onSubmit={handleSubmit} className="contacto-form" noValidate>
               <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="nombre">Nombre Completo *</label>
@@ -164,8 +165,10 @@ const Contacto = () => {
                     onChange={handleInputChange}
                     className={errors.nombre ? 'error' : ''}
                     placeholder="Tu nombre completo"
+                    aria-invalid={!!errors.nombre}
+                    aria-describedby={errors.nombre ? 'nombre-error' : undefined}
                   />
-                  {errors.nombre && <span className="error-message">{errors.nombre}</span>}
+                  {errors.nombre && <span id="nombre-error" className="error-message">{errors.nombre}</span>}
                 </div>
 
                 <div className="form-group">
@@ -178,8 +181,10 @@ const Contacto = () => {
                     onChange={handleInputChange}
                     className={errors.email ? 'error' : ''}
                     placeholder="tu@email.com"
+                    aria-invalid={!!errors.email}
+                    aria-describedby={errors.email ? 'email-error' : undefined}
                   />
-                  {errors.email && <span className="error-message">{errors.email}</span>}
+                  {errors.email && <span id="email-error" className="error-message">{errors.email}</span>}
                 </div>
               </div>
 
@@ -210,8 +215,10 @@ const Contacto = () => {
                   onChange={handleInputChange}
                   className={errors.asunto ? 'error' : ''}
                   placeholder="Breve descripción del tema"
+                  aria-invalid={!!errors.asunto}
+                  aria-describedby={errors.asunto ? 'asunto-error' : undefined}
                 />
-                {errors.asunto && <span className="error-message">{errors.asunto}</span>}
+                {errors.asunto && <span id="asunto-error" className="error-message">{errors.asunto}</span>}
               </div>
 
               <div className="form-group">
@@ -224,112 +231,124 @@ const Contacto = () => {
                   className={errors.mensaje ? 'error' : ''}
                   placeholder="Escribe tu mensaje aquí... (mínimo 10 caracteres)"
                   rows="6"
+                  aria-invalid={!!errors.mensaje}
+                  aria-describedby={errors.mensaje ? 'mensaje-error' : undefined}
                 ></textarea>
-                {errors.mensaje && <span className="error-message">{errors.mensaje}</span>}
+                {errors.mensaje && <span id="mensaje-error" className="error-message">{errors.mensaje}</span>}
                 <div className="char-counter">
                   {formData.mensaje.length}/500 caracteres
                 </div>
               </div>
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className={`submit-btn ${isSubmitting ? 'submitting' : ''}`}
                 disabled={isSubmitting}
+                aria-busy={isSubmitting}
               >
-                {isSubmitting ? '📤 Enviando...' : '🚀 Enviar Mensaje'}
+                {isSubmitting ? 'Enviando...' : 'Enviar Mensaje'}
               </button>
 
               {submitStatus === 'success' && (
-                <div className="success-message">
+                <div className="success-message" role="alert">
                   ✅ ¡Mensaje enviado exitosamente! Te responderemos pronto.
                 </div>
               )}
 
               {submitStatus === 'error' && (
-                <div className="error-message-form">
+                <div className="error-message-form" role="alert">
                   ❌ Error al enviar el mensaje. Por favor, intenta de nuevo.
                 </div>
               )}
             </form>
-          </div>
+          </section>
 
-          {/* Información de Contacto */}
-          <div className="contacto-info-section">
-            <div className="info-header">
-              <h2>📞 Información de Contacto</h2>
+          {/* Info Section */}
+          <section className="contacto-info-section">
+            <div className="info-card">
+              <h3>Información de contacto</h3>
               <p>También puedes contactarnos directamente</p>
+
+              <div className="contact-method">
+                <div className="contact-icon" aria-hidden="true">📧</div>
+                <div>
+                  <h4>Correo electrónico</h4>
+                  <a href="mailto:contacto@calma.com">contacto@calma.com</a>
+                </div>
+              </div>
+
+              <div className="contact-method">
+                <div className="contact-icon" aria-hidden="true">📞</div>
+                <div>
+                  <h4>Teléfono</h4>
+                  <a href="tel:+593991234567">+593 99 123 4567</a>
+                </div>
+              </div>
+
+              <div className="contact-method">
+                <div className="contact-icon" aria-hidden="true">🕒</div>
+                <div>
+                  <h4>Horario de atención</h4>
+                  <p>Lunes a Viernes: 9:00 AM - 6:00 PM</p>
+                  <p>Zona horaria: GMT-5 (Ecuador)</p>
+                </div>
+              </div>
             </div>
 
-            {/* Redes Sociales */}
-            <div className="redes-sociales">
-              <h3>🌐 Síguenos en Redes</h3>
-              <div className="redes-grid">
+            {/* Social Media */}
+            <div className="info-card">
+              <h3>Síguenos en redes</h3>
+              <div className="social-grid">
                 {redesSociales.map((red, index) => (
-                  <a 
-                    key={index} 
-                    href={red.url} 
-                    className="red-social"
+                  <a
+                    key={index}
+                    href={red.url}
+                    className="social-item"
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ '--color': red.color }}
+                    style={{ backgroundColor: red.color }}
+                    aria-label={`${red.nombre} (se abre en nueva pestaña)`}
                   >
-                    <span className="red-icono">{red.icono}</span>
-                    <span className="red-nombre">{red.nombre}</span>
+                    <span className="social-icon" aria-hidden="true">{red.icono}</span>
+                    <span>{red.nombre}</span>
                   </a>
                 ))}
               </div>
             </div>
-
-            {/* Información Adicional */}
-            <div className="info-adicional">
-              <h3>⚡ Respuesta Rápida</h3>
-              <div className="respuesta-info">
-                <div className="respuesta-item">
-                  <span className="respuesta-icono">🕐</span>
-                  <div>
-                    <h4>Tiempo de Respuesta</h4>
-                    <p>Consultas generales: 24-48 horas</p>
-                    <p>Soporte técnico: 2-6 horas</p>
-                  </div>
-                </div>
-                <div className="respuesta-item">
-                  <span className="respuesta-icono">🎯</span>
-                  <div>
-                    <h4>Mejor Momento</h4>
-                    <p>Lunes a Viernes: 9:00 AM - 6:00 PM</p>
-                    <p>Zona horaria: GMT-5 (Ecuador)</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          </section>
         </div>
 
         {/* FAQ Section */}
-        <div className="faq-section">
-          <h2>❓ Preguntas Frecuentes</h2>
+        <section className="faq-section">
+          <h2-contacto1>Preguntas frecuentes</h2-contacto1>
           <div className="faq-grid">
-            <div className="faq-item">
-              <h3>¿Cómo reportar un bug?</h3>
-              <p>Selecciona "Reportar Error" en el formulario e incluye pasos para reproducir el problema.</p>
-            </div>
-            <div className="faq-item">
-              <h3>¿Ofrecen soporte técnico?</h3>
-              <p>Sí, nuestro equipo brinda soporte técnico de lunes a viernes en horario laboral.</p>
-            </div>
-            <div className="faq-item">
-              <h3>¿Puedo sugerir nuevas funcionalidades?</h3>
-              <p>¡Por supuesto! Usa el tipo "Solicitar Funcionalidad" para enviarnos tus ideas.</p>
-            </div>
-            <div className="faq-item">
-              <h3>¿Hay oportunidades de colaboración?</h3>
-              <p>Estamos abiertos a colaboraciones. Contáctanos para discutir oportunidades.</p>
-            </div>
+            {faqs.map((faq, index) => (
+              <div key={index} className="faq-item">
+                <h3>{faq.pregunta}</h3>
+                <p>{faq.respuesta}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </main>
+      <section className="contactosection1-cta">
+        <div className="contactosection-content">
+          <h2-contacto>¿Listo para unirte a nuestro equipo?</h2-contacto>
+          <p>
+            Si no encuentras una vacante que se ajuste a tu perfil pero crees que puedes contribuir,
+            envíanos tu CV y te contactaremos cuando tengamos una oportunidad.
+          </p>
+          <div className="contactosection-buttons">
+            <button className="primarycontacto-cta">Enviar CV</button>
+            <button className="secondarycontacto-cta">Contactar Reclutador</button>
           </div>
         </div>
-      </div>
+      </section>
+      <Footer />
     </div>
+
   );
 };
+
 
 export default Contacto;

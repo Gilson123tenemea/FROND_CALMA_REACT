@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './SobreNosotros.css';
+import Footer from "../Footer/footer";
 import Navbar from '../Shared/Navbar';
 
 const SobreNosotros = () => {
@@ -8,88 +9,49 @@ const SobreNosotros = () => {
   const equipo = [
     {
       id: 1,
-      nombre: "Freddy Gomez",
-      rol: "Scrum Master",
-      especialidad: "Gestión de Proyectos",
-      descripcion: "Líder del equipo encargado de la metodología Scrum, facilita la comunicación y garantiza el cumplimiento de los objetivos del proyecto.",
-      icono: "🎯",
-      skills: ["Scrum", "Agile", "Liderazgo", "Gestión de Equipos"]
-    },
-    {
-      id: 2,
-      nombre: "Gilson Tenemea",
-      rol: "Full Stack Developer",
-      especialidad: "Backend & Frontend",
-      descripcion: "Desarrollador con experiencia en ambos lados de la aplicación, especializado en arquitectura de sistemas y experiencia de usuario.",
-      icono: "💻",
-      skills: ["React", "Node.js", "Base de Datos", "API Development"]
-    },
-    {
-      id: 3,
-      nombre: "Anthony Fajardo",
-      rol: "Full Stack Developer",
-      especialidad: "Backend & Frontend",
-      descripcion: "Experto en desarrollo web completo, enfocado en crear soluciones escalables y mantener la calidad del código.",
-      icono: "🚀",
-      skills: ["JavaScript", "Python", "React", "MongoDB"]
-    },
-    {
-      id: 4,
-      nombre: "David Lopez",
-      rol: "Full Stack Developer",
-      especialidad: "Backend & Frontend",
-      descripcion: "Desarrollador versátil con sólida experiencia en tecnologías modernas, comprometido con las mejores prácticas de desarrollo.",
-      icono: "⚡",
-      skills: ["Vue.js", "Express", "MySQL", "DevOps"]
-    },
-    {
-      id: 5,
-      nombre: "Andrea Calle",
-      rol: "Full Stack Developer",
-      especialidad: "Backend & Frontend",
-      descripcion: "Desarrolladora apasionada por crear interfaces intuitivas y sistemas robustos que mejoren la experiencia del usuario.",
-      icono: "🌟",
-      skills: ["React", "CSS", "Node.js", "UX/UI"]
-    },
-    {
-      id: 6,
-      nombre: "Carmen Neira",
-      rol: "Full Stack Developer",
-      especialidad: "Backend & Frontend",
-      descripcion: "Especialista en desarrollo integral con enfoque en soluciones innovadoras y código limpio y mantenible.",
-      icono: "💡",
-      skills: ["Angular", "Spring Boot", "PostgreSQL", "Testing"]
+      nombre: "Equipo CALMA",
+      rol: "Fundadores",
+      especialidad: "Innovación en Cuidado Geriátrico",
+      descripcion: "El equipo detrás de CALMA combina experiencia en tecnología y cuidado de adultos mayores para crear soluciones que realmente marcan la diferencia.",
+      icono: "👥",
+      skills: ["Tecnología", "Cuidado Geriátrico", "Innovación", "Servicio"]
     }
   ];
 
   const estadisticas = [
-    { numero: "6", label: "Desarrolladores", icono: "👥" },
-    { numero: "100+", label: "Horas de Desarrollo", icono: "⏰" },
-    { numero: "50+", label: "Funcionalidades", icono: "⚙️" },
-    { numero: "24/7", label: "Soporte", icono: "🛡️" }
+    { numero: "500+", label: "Familias Beneficiadas", icono: "🏠" },
+    { numero: "200+", label: "Cuidadores Certificados", icono: "👩‍⚕️" },
+    { numero: "24/7", label: "Soporte Disponible", icono: "🛡️" },
+    { numero: "95%", label: "Satisfacción", icono: "⭐" }
   ];
 
   const valores = [
     {
-      titulo: "Confianza",
-      descripcion: "Construimos relaciones sólidas basadas en la transparencia y confiabilidad.",
-      icono: "🤝"
+      titulo: "Empatía",
+      descripcion: "Entendemos profundamente las necesidades de las familias y los adultos mayores.",
+      icono: "❤️"
     },
     {
       titulo: "Innovación",
-      descripcion: "Utilizamos tecnologías modernas para crear soluciones que marquen la diferencia.",
+      descripcion: "Utilizamos tecnología avanzada para simplificar el cuidado de tus seres queridos.",
       icono: "💡"
     },
     {
-      titulo: "Calidad",
-      descripcion: "Cada línea de código es revisada y optimizada para garantizar la mejor experiencia.",
-      icono: "⭐"
+      titulo: "Confianza",
+      descripcion: "Todos nuestros cuidadores pasan por un riguroso proceso de selección y verificación.",
+      icono: "🤝"
     },
     {
       titulo: "Compromiso",
-      descripcion: "Trabajamos con metodologías ágiles para entregar resultados excepcionales.",
+      descripcion: "Estamos dedicados a mejorar la calidad de vida de los adultos mayores.",
       icono: "🎯"
     }
+  ];
+
+  const tecnologias = [
+    { categoria: "Frontend", items: ["React", "JavaScript", "CSS3"] },
+    { categoria: "Backend", items: ["Node.js", "Express", "API REST"] },
+    { categoria: "Base de Datos", items: ["MongoDB", "PostgreSQL"] }
   ];
 
   const toggleMiembro = (id) => {
@@ -97,183 +59,151 @@ const SobreNosotros = () => {
   };
 
   return (
-    <div className="nosotros-page">
+    <div className="sobre-nosotros-page">
       <Navbar />
       
-      <div className="nosotros-container">
-        {/* Hero Section */}
-        <div className="nosotros-hero">
-          <h1 className="nosotros-titulo">Acerca de Nosotros</h1>
-          <p className="nosotros-subtitulo">
-            Somos un equipo de desarrolladores apasionados por crear soluciones tecnológicas que conectan personas y mejoran vidas.
-          </p>
+      <header className="sobre-nosotros-hero">
+        <div className="hero-content">
+          <h1>Nuestra Historia</h1>
+          <p>Conoce el propósito y la pasión que impulsan a CALMA</p>
         </div>
+        <div className="hero-image" aria-hidden="true"></div>
+      </header>
+
+      <div className="sobre-nosotros-container">
+        {/* Origen */}
+        <section className="origen-section">
+          <div className="origen-content">
+            <h2-color>El Origen de CALMA</h2-color>
+            <p>
+              CALMA nació de la necesidad personal de sus fundadores de encontrar cuidado de calidad para sus seres queridos. 
+              Frustrados por la falta de opciones confiables y accesibles, decidimos crear una solución que combina tecnología 
+              y cuidado humano para transformar la experiencia del cuidado geriátrico.
+            </p>
+            <div className="origen-image"></div>
+          </div>
+        </section>
 
         {/* Misión y Visión */}
-        <div className="mision-vision">
-          <div className="mision">
-            <h2>🎯 Nuestra Misión</h2>
+        <section className="mision-vision-section">
+          <div className="mision-card">
+            <div className="card-icon">🎯</div>
+            <h3>Nuestra Misión</h3>
             <p>
-              Desarrollar una plataforma tecnológica que facilite la conexión entre cuidadores profesionales y familias que necesitan apoyo para sus adultos mayores, promoviendo el bienestar y la tranquilidad a través de la tecnología.
+              Conectar familias con cuidadores excepcionales mediante una plataforma tecnológica que garantiza seguridad, 
+              confianza y tranquilidad en el cuidado de adultos mayores.
             </p>
           </div>
-          <div className="vision">
-            <h2>🌟 Nuestra Visión</h2>
+          <div className="vision-card">
+            <div className="card-icon">🌎</div>
+            <h3>Nuestra Visión</h3>
             <p>
-              Ser la plataforma líder en servicios de cuidado geriátrico, reconocida por nuestra calidad técnica, innovación y compromiso con la creación de vínculos humanos significativos.
+              Ser el referente en cuidado geriátrico en Latinoamérica, reconocidos por nuestra innovación tecnológica y 
+              nuestro impacto positivo en la calidad de vida de miles de familias.
             </p>
           </div>
-        </div>
+        </section>
 
         {/* Estadísticas */}
-        <div className="estadisticas">
-          <h2>Nuestros Números</h2>
+        <section className="estadisticas-section">
+          <h2-color>CALMA en Números</h2-color>
+          <p>El impacto que hemos logrado juntos</p>
           <div className="estadisticas-grid">
             {estadisticas.map((stat, index) => (
-              <div key={index} className="stat-card">
-                <span className="stat-icono">{stat.icono}</span>
-                <h3 className="stat-numero">{stat.numero}</h3>
-                <p className="stat-label">{stat.label}</p>
+              <div key={index} className="estadistica-card">
+                <div className="estadistica-icon">{stat.icono}</div>
+                <div className="estadistica-numero">{stat.numero}</div>
+                <div className="estadistica-label">{stat.label}</div>
               </div>
             ))}
           </div>
-        </div>
-
-        {/* Metodología */}
-        <div className="metodologia">
-          <h2>🏃‍♂️ Metodología de Trabajo</h2>
-          <div className="metodologia-content">
-            <div className="metodologia-info">
-              <h3>Scrum Framework</h3>
-              <p>
-                Utilizamos la metodología Scrum para garantizar entregas incrementales de valor, 
-                adaptabilidad a los cambios y comunicación constante entre el equipo. Esto nos 
-                permite ser más eficientes y responder rápidamente a las necesidades del proyecto.
-              </p>
-              <div className="scrum-beneficios">
-                <h4>Beneficios de nuestra metodología:</h4>
-                <ul>
-                  <li>✅ Entregas frecuentes y funcionales</li>
-                  <li>✅ Flexibilidad ante cambios</li>
-                  <li>✅ Comunicación constante del equipo</li>
-                  <li>✅ Mejora continua del producto</li>
-                </ul>
-              </div>
-            </div>
-            <div className="metodologia-visual">
-              <div className="scrum-cycle">
-                <div className="cycle-step">Sprint Planning</div>
-                <div className="cycle-step">Daily Scrum</div>
-                <div className="cycle-step">Sprint Review</div>
-                <div className="cycle-step">Sprint Retrospective</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Equipo */}
-        <div className="equipo">
-          <h2>👥 Nuestro Equipo</h2>
-          <p className="equipo-descripcion">
-            Un grupo diverso de desarrolladores especializados en tecnologías modernas, 
-            unidos por la pasión de crear soluciones que impacten positivamente en la vida de las personas.
-          </p>
-          
-          <div className="equipo-grid">
-            {equipo.map((miembro) => (
-              <div key={miembro.id} className="miembro-card">
-                <div className="miembro-header">
-                  <span className="miembro-icono">{miembro.icono}</span>
-                  <div className="miembro-info">
-                    <h3>{miembro.nombre}</h3>
-                    <p className="miembro-rol">{miembro.rol}</p>
-                    <p className="miembro-especialidad">{miembro.especialidad}</p>
-                  </div>
-                </div>
-                
-                <p className="miembro-descripcion">{miembro.descripcion}</p>
-                
-                <button 
-                  className="miembro-btn"
-                  onClick={() => toggleMiembro(miembro.id)}
-                >
-                  {miembroSeleccionado === miembro.id ? 'Ocultar skills' : 'Ver skills'}
-                </button>
-                
-                {miembroSeleccionado === miembro.id && (
-                  <div className="miembro-skills">
-                    <h4>Tecnologías:</h4>
-                    <div className="skills-list">
-                      {miembro.skills.map((skill, index) => (
-                        <span key={index} className="skill-tag">{skill}</span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+        </section>
 
         {/* Valores */}
-        <div className="valores">
-          <h2>💎 Nuestros Valores</h2>
+        <section className="valores-section">
+          <h2-color>Nuestros Valores Fundamentales</h2-color>
+          <p>Los principios que guían cada decisión en CALMA</p>
           <div className="valores-grid">
             {valores.map((valor, index) => (
               <div key={index} className="valor-card">
-                <span className="valor-icono">{valor.icono}</span>
+                <div className="valor-icon">{valor.icono}</div>
                 <h3>{valor.titulo}</h3>
                 <p>{valor.descripcion}</p>
               </div>
             ))}
           </div>
-        </div>
+        </section>
+
+        {/* Equipo */}
+        <section className="equipo-section">
+          <h2-color>El Equipo CALMA</h2-color>
+          <p>Las personas detrás de esta iniciativa</p>
+          <div className="equipo-grid">
+            {equipo.map((miembro) => (
+              <div key={miembro.id} className="miembro-card">
+                <div 
+                  className="miembro-image"
+                  style={{ backgroundImage: "url('https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80')" }}
+                ></div>
+                <div className="miembro-info">
+                  <div className="miembro-header">
+                    <span className="miembro-icono">{miembro.icono}</span>
+                    <h3>{miembro.nombre}</h3>
+                  </div>
+                  <p className="miembro-rol">{miembro.rol}</p>
+                  <p className="miembro-descripcion">{miembro.descripcion}</p>
+                  <button 
+                    className="miembro-btn"
+                    onClick={() => toggleMiembro(miembro.id)}
+                  >
+                    {miembroSeleccionado === miembro.id ? 'Ocultar detalles' : 'Ver más'}
+                  </button>
+                  {miembroSeleccionado === miembro.id && (
+                    <div className="miembro-detalles">
+                      <h4>Enfoque:</h4>
+                      <div className="skills-list">
+                        {miembro.skills.map((skill, index) => (
+                          <span key={index} className="skill-tag">{skill}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
         {/* Tecnologías */}
-        <div className="tecnologias">
-          <h2>⚡ Tecnologías que Utilizamos</h2>
-          <div className="tech-categories">
-            <div className="tech-category">
-              <h3>Frontend</h3>
-              <div className="tech-list">
-                <span className="tech-item">React</span>
-                <span className="tech-item">Vue.js</span>
-                <span className="tech-item">Angular</span>
-                <span className="tech-item">CSS3</span>
-                <span className="tech-item">JavaScript</span>
+        <section className="tecnologias-section">
+          <h2-color>Nuestra Tecnología</h2-color>
+          <p>Plataforma diseñada para brindar seguridad y tranquilidad</p>
+          <div className="tecnologias-grid">
+            {tecnologias.map((tech, index) => (
+              <div key={index} className="tech-category">
+                <h3>{tech.categoria}</h3>
+                <div className="tech-items">
+                  {tech.items.map((item, i) => (
+                    <span key={i} className="tech-item">{item}</span>
+                  ))}
+                </div>
               </div>
-            </div>
-            <div className="tech-category">
-              <h3>Backend</h3>
-              <div className="tech-list">
-                <span className="tech-item">Node.js</span>
-                <span className="tech-item">Express</span>
-                <span className="tech-item">Python</span>
-                <span className="tech-item">Spring Boot</span>
-                <span className="tech-item">API REST</span>
-              </div>
-            </div>
-            <div className="tech-category">
-              <h3>Base de Datos</h3>
-              <div className="tech-list">
-                <span className="tech-item">MongoDB</span>
-                <span className="tech-item">MySQL</span>
-                <span className="tech-item">PostgreSQL</span>
-              </div>
-            </div>
+            ))}
           </div>
-        </div>
-
-        {/* Call to Action */}
-        <div className="nosotros-cta">
-          <h2>¿Listo para conocer más sobre CALMA?</h2>
-          <p>Descubre cómo nuestro equipo puede ayudarte a encontrar el cuidado perfecto para tu ser querido</p>
-          <div className="cta-buttons">
-            <button className="btn-primary">Conocer Servicios</button>
-            <button className="btn-secondary">Contáctanos</button>
-          </div>
-        </div>
+        </section>
       </div>
+        {/* CTA */}
+        <section className="cta-section">
+          <div className="cta-content">
+            <h2-color>¿Listo para experimentar CALMA?</h2-color>
+            <p>Descubre cómo podemos ayudarte a encontrar el cuidado perfecto para tu ser querido</p>
+            <div className="cta-buttons">
+              <button className="cta-btn-primary">Encontrar Cuidador</button>
+              <button className="cta-btn-secondary">Registrarse</button>
+            </div>
+          </div>
+        </section>
+        <Footer />
     </div>
   );
 };

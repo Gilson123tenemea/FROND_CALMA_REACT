@@ -1,129 +1,327 @@
-.calma-empleo-wrapper {
-  font-family: 'Segoe UI', sans-serif;
-  color: #2c2c2c;
-  background-color: #fdfdfd;
-  padding-top: 80px;
+/* Variables de color */
+:root {
+  --electric-blue: #0066ff;
+  --electric-blue-light: #4d94ff;
+  --electric-blue-dark: #0052cc;
+  --white: #ffffff;
+  --light-gray: #f5f7fa;
+  --medium-gray: #e1e5eb;
+  --dark-gray: #6c757d;
+  --black: #212529;
+  --success: #28a745;
+  --error: #dc3545;
 }
 
-.calma-empleo-header {
-  background: linear-gradient(135deg, #9cb9ff, #e6e9f7);
+/* Estilos generales */
+.empleo-page {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--black);
+  background-color: var(--light-gray);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* Hero Section */
+.empleo-hero {
+  background: linear-gradient(135deg, var(--electric-blue), var(--electric-blue-dark));
+  color: var(--white);
+  padding: 100px 0;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-content {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 80px;
+  position: relative;
+  z-index: 2;
   text-align: center;
-  padding: 60px 20px;
-  border-bottom: 4px solid #e0e0e0;
 }
 
-.calma-empleo-header h1 {
-  font-size: 2.8rem;
-  margin-bottom: 15px;
-  color: #1a237e;
+.empleo-titulo {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  margin-bottom: 20px;
+  line-height: 1.2;
 }
 
-.calma-empleo-header p {
-  font-size: 1.2rem;
-  color: #333;
+.empleo-subtitulo {
+  font-size: clamp(1rem, 2vw, 1.25rem);
   max-width: 700px;
+  margin: 0 auto 30px;
+  opacity: 0.9;
+}
+
+.hero-cta {
+  background-color: var(--white);
+  color: var(--electric-blue);
+  border: none;
+  padding: 12px 30px;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+
+.hero-cta:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.hero-image {
+  display: none;
+}
+
+/* Ofertas Section */
+.empleo-ofertas {
+  padding: 80px 20px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
-.calma-empleo-ofertas {
-  padding: 60px 20px;
-  background-color: #ffffff;
+.section-header {
   text-align: center;
+  margin-bottom: 50px;
 }
 
-.calma-empleo-ofertas h2 {
-  font-size: 2.2rem;
-  color: #333366;
-  margin-bottom: 40px;
+.section-header h2-empleo {
+  font-size: clamp(1.75rem, 3vw, 2.2rem);
+  color: var(--electric-blue-dark);
+  margin-bottom: 15px;
 }
 
-.calma-empleo-cards {
-  display: flex;
-  flex-wrap: wrap;
+.section-header p {
+  color: var(--dark-gray);
+  font-size: 1.1rem;
+}
+
+.ofertas-grid {
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 30px;
-  justify-content: center;
 }
 
-.calma-empleo-card {
-  background: #f7f9fc;
-  padding: 25px;
+.oferta-card {
+  background: var(--white);
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  width: 320px;
-  transition: transform 0.2s ease;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
 }
 
-.calma-empleo-card:hover {
+.oferta-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
-.calma-empleo-card h3 {
-  color: #1a237e;
+.card-image {
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.card-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background-color: var(--success);
+  color: var(--white);
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.card-content {
+  padding: 25px;
+}
+
+.card-content h3 {
   font-size: 1.4rem;
+  color: var(--electric-blue-dark);
   margin-bottom: 10px;
 }
 
-.calma-empleo-card p {
-  color: #555;
+.ubicacion {
+  color: var(--dark-gray);
   margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
-.calma-empleo-card ul {
-  text-align: left;
+.requisitos h4 {
+  font-size: 1.1rem;
+  margin: 20px 0 10px;
+  color: var(--electric-blue);
+}
+
+.requisitos ul {
   padding-left: 20px;
+  margin-bottom: 25px;
+}
+
+.requisitos li {
+  margin-bottom: 8px;
+  color: var(--black);
+}
+
+.card-cta {
+  background-color: var(--electric-blue);
+  color: var(--white);
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  justify-content: center;
+}
+
+.card-cta:hover {
+  background-color: var(--electric-blue-dark);
+}
+
+.card-cta .arrow {
+  transition: transform 0.3s ease;
+}
+
+.card-cta:hover .arrow {
+  transform: translateX(3px);
+}
+
+/* CTA Section */
+.empleo-cta {
+  background: linear-gradient(135deg, var(--electric-blue-light), var(--electric-blue));
+  color: var(--white);
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.cta-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.empleo-cta h2-empleo {
+  font-size: clamp(1.5rem, 3vw, 2rem);
   margin-bottom: 20px;
 }
 
-.calma-empleo-card ul li {
-  color: #333;
-  margin-bottom: 6px;
-}
-
-.calma-empleo-card button {
-  background-color: #5c6bc0;
-  color: white;
-  border: none;
-  padding: 10px 25px;
-  border-radius: 20px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.calma-empleo-card button:hover {
-  background-color: #3f51b5;
-}
-
-.calma-empleo-final {
-  text-align: center;
-  padding: 60px 20px;
-  background: linear-gradient(135deg, #dfe9f3, #ffffff);
-}
-
-.calma-empleo-final h2 {
-  font-size: 2rem;
-  color: #1a237e;
-  margin-bottom: 15px;
-}
-
-.calma-empleo-final p {
-  font-size: 1.1rem;
-  color: #444;
+.empleo-cta p {
   margin-bottom: 30px;
+  opacity: 0.9;
+  font-size: 1.1rem;
 }
 
-.calma-empleo-cta {
-  background-color: #1a237e;
-  color: white;
-  padding: 12px 35px;
+.cta-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+
+.primary-cta {
+  background-color: var(--white);
+  color: var(--electric-blue);
   border: none;
-  border-radius: 30px;
-  font-weight: bold;
-  font-size: 1rem;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
-.calma-empleo-cta:hover {
-  background-color: #0d1848;
+.primary-cta:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+}
+
+.secondary-cta {
+  background-color: transparent;
+  color: var(--white);
+  border: 2px solid var(--white);
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.secondary-cta:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Media Queries para pantallas más grandes */
+@media (min-width: 768px) {
+  .empleo-hero {
+    padding: 120px 0;
+  }
+  
+  .hero-content {
+    text-align: left;
+    padding-left: 40px;
+    max-width: 50%;
+  }
+  
+  .hero-image {
+    display: block;
+    position: absolute;
+    right: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40%;
+    height: 80%;
+    background-image: url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80');
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+    opacity: 0.9;
+  }
+  
+  .ofertas-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .ofertas-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .empleo-hero {
+    padding: 150px 0;
+  }
+}
+
+/* Mejoras para modo oscuro */
+@media (prefers-color-scheme: dark) {
+  .empleo-page {
+    background-color: #121212;
+  }
+  
+  .oferta-card {
+    background-color: #1e1e1e;
+    color: #f0f0f0;
+  }
+  
+  .requisitos li {
+    color: #e0e0e0;
+  }
+  
+  .ubicacion {
+    color: #b0b0b0;
+  }
 }

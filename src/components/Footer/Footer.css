@@ -1,0 +1,27 @@
+/* Footer Component */
+.app-footer {
+    background-color: var(--electric-blue-dark);
+    color: var(--white);
+    text-align: center;
+    padding: 20px;
+    font-size: 0.9rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .app-footer p {
+    margin: 5px 0;
+    opacity: 0.8;
+  }
+  
+  /* Opcional: Estilos para hacerlo sticky en el fondo */
+  .app-footer.sticky {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+  
+  .app-footer.relative {
+    position: relative;
+  }
