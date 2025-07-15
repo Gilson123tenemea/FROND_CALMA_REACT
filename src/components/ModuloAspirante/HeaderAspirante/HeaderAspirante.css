@@ -88,3 +88,21 @@
   background-position: center;
   cursor: pointer;
 }
+
+/* CSS para el badge de notificaciones */
+.badge-notificacion {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background-color: red;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 50%;
+  pointer-events: none; /* que no interfiera con el clic */
+  user-select: none;
+  min-width: 18px;
+  text-align: center;
+  line-height: 1;
+}

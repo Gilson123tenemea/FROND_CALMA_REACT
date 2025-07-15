@@ -222,7 +222,7 @@ const ModuloContratante = () => {
                 <li key={noti.id_notificaciones} className="notificacion-item">
                   <div className="notificacion-contenido">
                     <small className="notificacion-texto">
-                      <strong>{noti.aspirante?.usuario?.nombres} {noti.aspirante?.usuario?.apellidos}</strong> postuló a: <span className="titulo-publicacion">{noti.postulacion?.postulacion_empleo?.titulo}</span>
+                      <strong>{noti.descripcion} </strong>
                     </small>
                     <small className="notificacion-fecha">
                       <em>{noti.fecha ? new Date(noti.fecha).toLocaleString() : 'Fecha no disponible'}</em>

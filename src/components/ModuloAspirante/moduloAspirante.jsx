@@ -8,19 +8,19 @@ import './ModuloAspirante.css';
 
 const ModuloAspirante = () => {
   const location = useLocation();
-  const [idAspirante, setIdAspirante] = useState(null); // Para postulaciones
-  const [userId, setUserId] = useState(null);           // Para chat
+  const [idAspirante, setIdAspirante] = useState(null);
+  const [userId, setUserId] = useState(null);
   const [showPanelUsuarios, setShowPanelUsuarios] = useState(false);
+  const [showPanelNotificaciones, setShowPanelNotificaciones] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [usuariosEncontrados, setUsuariosEncontrados] = useState([]);
   const [usuarioChat, setUsuarioChat] = useState(null);
+  const [notificaciones, setNotificaciones] = useState([]);
+  const [cantidadNoLeidas, setCantidadNoLeidas] = useState(0);
 
   useEffect(() => {
     const aspiranteIdFromState = location.state?.aspiranteId;
     const aspiranteId = aspiranteIdFromState || JSON.parse(localStorage.getItem('userData'))?.aspiranteId;
-
-    console.log('location.state:', location.state);
-    console.log('aspiranteId calculado:', aspiranteId);
 
     if (!aspiranteId) {
       console.warn('No se encontró idAspirante ni en location.state ni en localStorage.');
@@ -31,8 +31,6 @@ const ModuloAspirante = () => {
 
     axios.get(`http://localhost:8090/api/usuarios/buscar_aspirante/${aspiranteId}`)
       .then((response) => {
-        console.log('Respuesta API buscar_aspirante:', response.data);
-        // Ajusta aquí según cómo venga el ID en la respuesta
         const idUsuario = response.data?.id || response.data?.idUsuario || response.data;
         if (!idUsuario) {
           console.error('Respuesta inesperada: no contiene ID de usuario.');
@@ -44,6 +42,20 @@ const ModuloAspirante = () => {
         console.error('Error al obtener el ID del usuario:', error);
       });
   }, [location.state]);
+
+  useEffect(() => {
+    const fetchNoLeidas = async () => {
+      if (!idAspirante) return;
+      try {
+        const res = await axios.get(`http://localhost:8090/api/notificaciones/aspirante/noleidas/${idAspirante}`);
+        setCantidadNoLeidas(res.data.length);
+      } catch (error) {
+        console.error("Error al cargar notificaciones no leídas:", error);
+      }
+    };
+
+    fetchNoLeidas();
+  }, [idAspirante, showPanelNotificaciones]);
 
   const handleAbrirPanelUsuarios = () => {
     setShowPanelUsuarios(true);
@@ -80,12 +92,36 @@ const ModuloAspirante = () => {
     setUsuarioChat(null);
   };
 
+  const handleAbrirNotificaciones = async () => {
+    console.log("Intentando abrir panel de notificaciones...");
+    if (!idAspirante) return;
+
+    try {
+      await axios.put(`http://localhost:8090/api/notificaciones/aspirante/marcar-leidas/${idAspirante}`);
+      const response = await axios.get(`http://localhost:8090/api/notificaciones/aspirante/${idAspirante}`);
+      setNotificaciones(response.data);
+    } catch (error) {
+      console.error("Error al obtener notificaciones:", error);
+    } finally {
+      setShowPanelNotificaciones(true); // Esto garantiza que se abra
+    }
+  };
+
+  const handleCerrarNotificaciones = () => {
+    setShowPanelNotificaciones(false);
+  };
+
   if (!idAspirante) return <div>Cargando datos del aspirante...</div>;
   if (!userId) return <div>Cargando datos del usuario para chat...</div>;
 
   return (
     <div className="modulo-aspirante-container">
-      <HeaderAspirante userId={userId} onOpenMensajes={handleAbrirPanelUsuarios} />
+      <HeaderAspirante
+        userId={userId}
+        onOpenMensajes={handleAbrirPanelUsuarios}
+        onOpenNotificaciones={handleAbrirNotificaciones}
+        notificacionesNoLeidas={cantidadNoLeidas}
+      />
 
       <main className="main-content">
         <Routes>
@@ -94,6 +130,7 @@ const ModuloAspirante = () => {
         </Routes>
       </main>
 
+      {/* Panel Usuarios */}
       <div className={`panel-usuarios ${showPanelUsuarios ? 'open' : ''}`}>
         <div className="panel-usuarios-header">
           <span>Buscar Usuarios</span>
@@ -131,6 +168,7 @@ const ModuloAspirante = () => {
         </ul>
       </div>
 
+      {/* Chat flotante */}
       {usuarioChat && (
         <div className="chat-flotante">
           <div className="header-chat">
@@ -144,6 +182,35 @@ const ModuloAspirante = () => {
           />
         </div>
       )}
+
+      {/* Panel Notificaciones */}
+      <div className={`panel-notificaciones ${showPanelNotificaciones ? 'open' : ''}`}>
+        <div className="panel-notificaciones-header">
+          <span>Notificaciones</span>
+          <button onClick={handleCerrarNotificaciones}>✖</button>
+        </div>
+
+        <ul className="lista-notificaciones">
+          {notificaciones.length === 0 ? (
+            <li className="no-notificaciones">No tienes notificaciones aún.</li>
+          ) : (
+            [...notificaciones]
+              .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+              .map((noti) => (
+                <li key={noti.id_notificaciones} className="notificacion-item">
+                  <div className="notificacion-contenido">
+                    <small className="notificacion-texto">
+                      <strong>{noti.descripcion} </strong>
+                    </small>
+                    <small className="notificacion-fecha">
+                      <em>{noti.fecha ? new Date(noti.fecha).toLocaleString() : 'Fecha no disponible'}</em>
+                    </small>
+                  </div>
+                </li>
+              ))
+          )}
+        </ul>
+      </div>
     </div>
   );
 };

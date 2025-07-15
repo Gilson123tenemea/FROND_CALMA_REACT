@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import './Postulaciones.css';
 
 const Postulaciones = () => {
-  const { userId } = useParams();
+  const { userId } = useParams(); // userId es el id del CONTRATANTE
   const [realizaciones, setRealizaciones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -29,14 +29,17 @@ const Postulaciones = () => {
     }
   }, [userId]);
 
-  const actualizarEstado = async (idPostulacion, idPostulacionEmpleo, nuevoEstado) => {
+  const actualizarEstado = async (idPostulacion, idPostulacionEmpleo, nuevoEstado, idAspirante) => {
     try {
-      await axios.put(`http://localhost:8090/api/postulacion/actualizar/${idPostulacion}`, {
-        estado: nuevoEstado,
-        postulacion_empleo: {
-          id_postulacion_empleo: idPostulacionEmpleo
+      await axios.put(
+        `http://localhost:8090/api/postulacion/actualizar/${idPostulacion}/${userId}/${idAspirante}`,
+        {
+          estado: nuevoEstado,
+          postulacion_empleo: {
+            id_postulacion_empleo: idPostulacionEmpleo
+          }
         }
-      });
+      );
 
       alert(`✅ Postulación ${nuevoEstado ? 'aceptada' : 'rechazada'} correctamente`);
 
@@ -148,7 +151,8 @@ const Postulaciones = () => {
                     actualizarEstado(
                       postulacion?.id_postulacion,
                       publicacion?.id_postulacion_empleo,
-                      true
+                      true,
+                      aspirante?.idAspirante
                     )
                   }
                 >
@@ -160,7 +164,8 @@ const Postulaciones = () => {
                     actualizarEstado(
                       postulacion?.id_postulacion,
                       publicacion?.id_postulacion_empleo,
-                      false
+                      false,
+                      aspirante?.idAspirante
                     )
                   }
                 >
