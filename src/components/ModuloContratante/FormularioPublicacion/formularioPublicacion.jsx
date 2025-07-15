@@ -12,6 +12,7 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
   const [turno, setTurno] = useState('');
   const [estado, setEstado] = useState('');
   const [disponibilidadInmediata, setDisponibilidadInmediata] = useState(false);
+  const [actividadesRealizar, setActividadesRealizar] = useState(''); // <-- nuevo estado
 
   const [idProvincia, setIdProvincia] = useState('');
   const [idCanton, setIdCanton] = useState('');
@@ -21,18 +22,18 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
   const [cantones, setCantones] = useState([]);
   const [parroquias, setParroquias] = useState([]);
 
-  // Nuevo estado para pacientes
   const [pacientes, setPacientes] = useState([]);
-  const [idPaciente, setIdPaciente] = useState(''); // paciente seleccionado
+  const [idPaciente, setIdPaciente] = useState('');
 
-  // Cargar provincias
+  // Para mostrar mensajes de error
+  const [errores, setErrores] = useState({});
+
   useEffect(() => {
     axios.get('http://localhost:8090/api/provincias')
       .then(res => setProvincias(res.data))
       .catch(() => setProvincias([]));
   }, []);
 
-  // Cargar cantones al seleccionar provincia
   useEffect(() => {
     if (idProvincia) {
       axios.get(`http://localhost:8090/api/cantones/provincia/${idProvincia}`)
@@ -46,7 +47,6 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
     setParroquias([]);
   }, [idProvincia]);
 
-  // Cargar parroquias al seleccionar canton
   useEffect(() => {
     if (idCanton) {
       axios.get(`http://localhost:8090/api/parroquias/canton/${idCanton}`)
@@ -58,7 +58,6 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
     setIdParroquia('');
   }, [idCanton]);
 
-  // Cargar pacientes del contratante
   useEffect(() => {
     if (contratanteId) {
       axios.get(`http://localhost:8090/api/publicacion_empleo/pacientes/contratante/${contratanteId}`)
@@ -67,7 +66,6 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
     }
   }, [contratanteId]);
 
-  // Cuando carga o cambia la publicación a editar, cargar datos al formulario, incluyendo paciente
   useEffect(() => {
     if (publicacionEditar) {
       setTitulo(publicacionEditar.titulo || '');
@@ -91,6 +89,7 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
       setTurno(publicacionEditar.turno || '');
       setEstado(publicacionEditar.estado || '');
       setDisponibilidadInmediata(!!publicacionEditar.disponibilidad_inmediata);
+      setActividadesRealizar(publicacionEditar.actividades_realizar || '');
 
       const parroquia = publicacionEditar.parroquia;
       if (parroquia) {
@@ -103,7 +102,6 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
         setIdParroquia('');
       }
 
-      // Aquí asignamos el paciente seleccionado, si existe
       setIdPaciente(publicacionEditar.id_paciente ? String(publicacionEditar.id_paciente) : '');
     } else {
       setTitulo('');
@@ -115,19 +113,34 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
       setTurno('');
       setEstado('');
       setDisponibilidadInmediata(false);
+      setActividadesRealizar('');
       setIdProvincia('');
       setIdCanton('');
       setIdParroquia('');
       setIdPaciente('');
+      setErrores({});
     }
   }, [publicacionEditar]);
+
+  const validarCampos = () => {
+    const erroresTemp = {};
+    if (!idPaciente) erroresTemp.idPaciente = 'Debe seleccionar un paciente.';
+    if (!titulo.trim()) erroresTemp.titulo = 'El título es obligatorio.';
+    if (!descripcion.trim()) erroresTemp.descripcion = 'La descripción es obligatoria.';
+    if (!idProvincia) erroresTemp.idProvincia = 'Debe seleccionar una provincia.';
+    if (!idCanton) erroresTemp.idCanton = 'Debe seleccionar un cantón.';
+    if (!idParroquia) erroresTemp.idParroquia = 'Debe seleccionar una parroquia.';
+    if (!estado) erroresTemp.estado = 'Debe seleccionar el estado.';
+    // Otros campos opcionales no se validan estrictamente
+    setErrores(erroresTemp);
+    return Object.keys(erroresTemp).length === 0;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validaciones básicas
-    if (!titulo || !descripcion || !idParroquia || !idPaciente) {
-      alert('Por favor completa todos los campos obligatorios (Título, Descripción, Paciente, Parroquia)');
+    if (!validarCampos()) {
+      alert('Por favor corrige los errores en el formulario.');
       return;
     }
 
@@ -143,8 +156,9 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
       turno,
       estado,
       disponibilidad_inmediata: disponibilidadInmediata,
+      actividades_realizar: actividadesRealizar,
       parroquia: { id_parroquia: idParroquia },
-      id_paciente: Number(idPaciente),  // envío id paciente como número
+      id_paciente: Number(idPaciente),
     };
 
     try {
@@ -165,7 +179,7 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
   };
 
   return (
-    <form onSubmit={handleSubmit} className="form-publicacion">
+    <form onSubmit={handleSubmit} className="form-publicacion" noValidate>
       <h3>{publicacionEditar ? '✏️ Editar Publicación' : '📝 Nueva Publicación'}</h3>
 
       <label>
@@ -183,15 +197,38 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
           ))}
         </select>
       </label>
+      {errores.idPaciente && <p className="error">{errores.idPaciente}</p>}
 
       <label>
         Título*:
-        <input type="text" value={titulo} onChange={e => setTitulo(e.target.value)} required />
+        <input
+          type="text"
+          value={titulo}
+          onChange={e => setTitulo(e.target.value)}
+          placeholder="Ejemplo: Cuidador para adulto mayor con experiencia"
+          required
+        />
       </label>
+      {errores.titulo && <p className="error">{errores.titulo}</p>}
 
       <label>
         Descripción*:
-        <textarea value={descripcion} onChange={e => setDescripcion(e.target.value)} required />
+        <textarea
+          value={descripcion}
+          onChange={e => setDescripcion(e.target.value)}
+          placeholder="Describa las tareas y responsabilidades"
+          required
+        />
+      </label>
+      {errores.descripcion && <p className="error">{errores.descripcion}</p>}
+
+      <label>
+        Actividades a realizar:
+        <textarea
+          value={actividadesRealizar}
+          onChange={e => setActividadesRealizar(e.target.value)}
+          placeholder="Ejemplo: Acompañamiento, administración de medicamentos, higiene personal..."
+        />
       </label>
 
       <label>
@@ -200,12 +237,16 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
           type="datetime-local"
           value={fechaLimite}
           onChange={e => setFechaLimite(e.target.value)}
+          placeholder="YYYY-MM-DDTHH:mm"
         />
       </label>
 
       <label>
         Jornada:
-        <select value={jornada} onChange={e => setJornada(e.target.value)}>
+        <select
+          value={jornada}
+          onChange={e => setJornada(e.target.value)}
+        >
           <option value="">--Selecciona--</option>
           <option value="Tiempo completo">Tiempo completo</option>
           <option value="Medio tiempo">Medio tiempo</option>
@@ -220,17 +261,25 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
           min="0"
           value={salarioEstimado}
           onChange={e => setSalarioEstimado(e.target.value)}
+          placeholder="Ejemplo: 400"
         />
       </label>
 
       <label>
         Requisitos:
-        <textarea value={requisitos} onChange={e => setRequisitos(e.target.value)} />
+        <textarea
+          value={requisitos}
+          onChange={e => setRequisitos(e.target.value)}
+          placeholder="Ejemplo: Experiencia mínima 1 año, referencias comprobables"
+        />
       </label>
 
       <label>
         Turno:
-        <select value={turno} onChange={e => setTurno(e.target.value)}>
+        <select
+          value={turno}
+          onChange={e => setTurno(e.target.value)}
+        >
           <option value="">--Selecciona--</option>
           <option value="Mañana">Mañana</option>
           <option value="Tarde">Tarde</option>
@@ -239,13 +288,18 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
       </label>
 
       <label>
-        Estado:
-        <select value={estado} onChange={e => setEstado(e.target.value)}>
+        Estado*:
+        <select
+          value={estado}
+          onChange={e => setEstado(e.target.value)}
+          required
+        >
           <option value="">--Selecciona--</option>
           <option value="Activo">Activo</option>
           <option value="Inactivo">Inactivo</option>
         </select>
       </label>
+      {errores.estado && <p className="error">{errores.estado}</p>}
 
       <label>
         Disponibilidad inmediata:
@@ -258,7 +312,11 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
 
       <label>
         Provincia*:
-        <select value={idProvincia} onChange={e => setIdProvincia(e.target.value)} required>
+        <select
+          value={idProvincia}
+          onChange={e => setIdProvincia(e.target.value)}
+          required
+        >
           <option value="">--Selecciona provincia--</option>
           {provincias.map(p => (
             <option key={p.id_provincia} value={p.id_provincia}>
@@ -267,10 +325,16 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
           ))}
         </select>
       </label>
+      {errores.idProvincia && <p className="error">{errores.idProvincia}</p>}
 
       <label>
         Cantón*:
-        <select value={idCanton} onChange={e => setIdCanton(e.target.value)} required disabled={!idProvincia}>
+        <select
+          value={idCanton}
+          onChange={e => setIdCanton(e.target.value)}
+          required
+          disabled={!idProvincia}
+        >
           <option value="">--Selecciona cantón--</option>
           {cantones.map(c => (
             <option key={c.id_canton} value={c.id_canton}>
@@ -279,10 +343,16 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
           ))}
         </select>
       </label>
+      {errores.idCanton && <p className="error">{errores.idCanton}</p>}
 
       <label>
         Parroquia*:
-        <select value={idParroquia} onChange={e => setIdParroquia(e.target.value)} required disabled={!idCanton}>
+        <select
+          value={idParroquia}
+          onChange={e => setIdParroquia(e.target.value)}
+          required
+          disabled={!idCanton}
+        >
           <option value="">--Selecciona parroquia--</option>
           {parroquias.map(p => (
             <option key={p.id_parroquia} value={p.id_parroquia}>
@@ -291,6 +361,7 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
           ))}
         </select>
       </label>
+      {errores.idParroquia && <p className="error">{errores.idParroquia}</p>}
 
       <div style={{ marginTop: '1rem' }}>
         <button type="submit">{publicacionEditar ? 'Actualizar' : 'Crear'}</button>

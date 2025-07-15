@@ -1,4 +1,3 @@
-// ListaTrabajos.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import CardTrabajo from "../CardTrabajo/cardTrabajo";
@@ -37,6 +36,7 @@ const ListaTrabajos = ({ idAspirante }) => {
             requisitos: item.publicacionempleo?.requisitos || 'No especificado',
             jornada: item.publicacionempleo?.jornada || 'No especificada',
             turno: item.publicacionempleo?.turno || 'No especificado',
+            actividadesRealizar: item.publicacionempleo?.actividades_realizar || 'No especificadas', // ✅ agregado
             ubicacion: {
               parroquia: parroquia?.nombre || '',
               canton: canton?.nombre || '',
