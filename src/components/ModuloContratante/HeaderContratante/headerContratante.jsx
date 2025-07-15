@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './HeaderContratante.css';
 
 const HeaderContratante = ({ userId, onOpenMensajes, onOpenNotificaciones, notificacionesNoLeidas }) => {
+  const [mostrarSubmenu, setMostrarSubmenu] = useState(false);
   const handleMensajesClick = (e) => {
     e.preventDefault();
     console.log("ID del contratante:", userId);
@@ -12,6 +13,10 @@ const HeaderContratante = ({ userId, onOpenMensajes, onOpenNotificaciones, notif
   const handleNotificacionesClick = (e) => {
     e.preventDefault();
     onOpenNotificaciones();
+  };
+
+    const toggleSubmenu = () => {
+    setMostrarSubmenu(!mostrarSubmenu);
   };
 
   return (
@@ -29,7 +34,18 @@ const HeaderContratante = ({ userId, onOpenMensajes, onOpenNotificaciones, notif
 
           <a href="#" onClick={handleMensajesClick}>🗨️ Mensajes</a>
           <Link to={`/moduloContratante/perfilContratante?userId=${userId}`}>Mi Perfil</Link>
-          <Link to={`/moduloContratante/registropaciente?userId=${userId}`}>Registro del paciente</Link>
+          {/* Menú desplegable de Paciente */}
+          <div className="dropdown">
+            <button className="dropdown-btn" onClick={toggleSubmenu}>
+              Paciente ▼
+            </button>
+            {mostrarSubmenu && (
+              <div className="dropdown-content">
+                <Link to={`/moduloContratante/registropaciente?userId=${userId}`}>Registrar paciente</Link>
+                <Link to={`/moduloContratante/visualizarpaciente?userId=${userId}`}>Ver paciente</Link>
+              </div>
+            )}
+          </div>
           <Link to={`/postulaciones/${userId}`}>Ver Postulaciones</Link>
 
           <a
