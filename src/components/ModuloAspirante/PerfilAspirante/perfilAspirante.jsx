@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { obtenerDetalleAspirante } from '../../../servicios/registrarService';
-import './PerfilAspirante.css';
+import styles from './perfilAspirante.module.css';
 import { useNavigate } from 'react-router-dom';
 import HeaderAspirante from "../HeaderAspirante/HeaderAspirante";
 import { getProvincias } from "../../../servicios/ProvinciaService";
@@ -353,30 +353,30 @@ const PerfilAspirante = () => {
   return (
     <>
       <HeaderAspirante userId={aspiranteId} />
-      <div className={` ${isAnimating ? 'animate' : ''}`}>
+      <div className={`${isAnimating ? styles.animate : ''}`}>
         {/* ... todo tu contenido ... */}
       </div>
       <ToastContainer position="top-right" autoClose={3000} />
 
-      <div className={`profile-container-aspirante ${isAnimating ? 'animate' : ''}`}>
-        <main className="profile-main-aspirante">
-          <div className="profile-intro-aspirante">
+      <div className={`${styles["profile-container-aspirante"]} ${isAnimating ? styles.animate : ''}`}>
+        <main className={styles["profile-main-aspirante"]}>
+          <div className={styles["profile-intro-aspirante"]}>
             <div
-              className="profile-avatar-large-aspirante"
+              className={styles["profile-avatar-large-aspirante"]}
               style={{
                 backgroundImage: `url(${editData.foto || "https://cdn.shopify.com/s/files/1/0229/0839/articles/bancos_de_imagenes_gratis.jpg"})`,
               }}
             />
-            <div className="profile-info-aspirante">
-              <h1 className="profile-name-aspirante">
+            <div className={styles["profile-info-aspirante"]}>
+              <h1 className={styles["profile-name-aspirante"]}>
                 {formData.nombres} {formData.apellidos}
               </h1>
-              <p className="profile-title-aspirante">{formData.ocupacion}</p>
+              <p className={styles["profile-title-aspirante"]}>{formData.ocupacion}</p>
               {isEditing && (
                 <div style={{ marginTop: '10px' }}>
                   <button
                     type="button"
-                    className="submit-buttonv1-aspirante"
+                    className={styles["submit-buttonv1-aspirante"]}
                     onClick={() => inputFileRef.current.click()}
                   >
                     Subir Foto
@@ -393,139 +393,140 @@ const PerfilAspirante = () => {
             </div>
           </div>
           <form onSubmit={handleSave}>
-            <div className="datos-personales-box-aspirante">
-              <h3 className="sub-section-title-aspirante">Información Personal</h3>
-              <div className="grid-2-columns-aspirante">
-                <div className="field-box-aspirante">
+            <div className={styles["datos-personales-box-aspirante"]}>
+              <h3 className={styles["sub-section-title-aspirante"]}>Información Personal</h3>
+              <div className={styles["grid-2-columns-aspirante"]}>
+                <div className={styles["field-box-aspirante"]}>
                   <label>Cédula</label>
                   <input
                     type="text"
                     name="cedula"
                     value={formData.cedula}
                     onChange={handleInputChange}
-                    className="form-input-aspirante"
+                    className={styles["form-input-aspirante"]}
                     disabled={!isEditing}
                   />
                 </div>
-                <div className="field-box-aspirante">
+                <div className={styles["field-box-aspirante"]}>
                   <label>Nombres</label>
                   <input
                     type="text"
                     name="nombres"
                     value={isEditing ? editData.nombres : formData.nombres}
                     onChange={handleInputChange}
-                    className={`form-input-aspirante ${errores.nombres ? 'input-error-aspirante' : ''}`}
+                    className={`${styles["form-input-aspirante"]} ${errores.nombres ? styles["input-error-aspirante"] : ''}`}
                     disabled={!isEditing}
                   />
-                  {errores.nombres && <p className="error-text-aspirante">{errores.nombres}</p>}
+                  {errores.nombres && <p className={styles["error-text-aspirante"]}>{errores.nombres}</p>}
                 </div>
-                <div className="field-box-aspirante">
+                <div className={styles["field-box-aspirante"]}>
                   <label>Apellidos</label>
                   <input
                     type="text"
                     name="apellidos"
                     value={isEditing ? editData.apellidos : formData.apellidos}
                     onChange={handleInputChange}
-                    className={`form-input-aspirante ${errores.apellidos ? 'input-error-aspirante' : ''}`}
+                    className={`${styles["form-input-aspirante"]} ${errores.apellidos ? styles["input-error-aspirante"] : ''}`}
                     disabled={!isEditing}
                   />
-                  {errores.apellidos && <p className="error-text-aspirante">{errores.apellidos}</p>}
+                  {errores.apellidos && <p className={styles["error-text-aspirante"]}>{errores.apellidos}</p>}
                 </div>
-                <div className="field-box-aspirante">
+                <div className={styles["field-box-aspirante"]}>
                   <label>Correo Electrónico</label>
                   <input
                     type="email"
                     name="correo"
                     value={isEditing ? editData.correo : formData.correo}
                     onChange={handleInputChange}
-                    className={`form-input-aspirante ${errores.correo ? 'input-error-aspirante' : ''}`}
+                    className={`${styles["form-input-aspirante"]} ${errores.correo ? styles["input-error-aspirante"] : ''}`}
                     disabled={!isEditing}
                   />
-                  {errores.correo && <p className="error-text-aspirante">{errores.correo}</p>}
+                  {errores.correo && <p className={styles["error-text-aspirante"]}>{errores.correo}</p>}
                 </div>
-                <div className="field-box-aspirante">
+                <div className={styles["field-box-aspirante"]}>
                   <label>Fecha de Nacimiento</label>
                   <input
                     type="date"
                     name="fechaNacimiento"
                     value={isEditing ? editData.fechaNacimiento : formData.fechaNacimiento}
                     onChange={handleInputChange}
-                    className="form-input-aspirante"
+                    className={styles["form-input-aspirante"]}
                     disabled
                   />
                 </div>
-                <div className="field-box-aspirante">
+                <div className={styles["field-box-aspirante"]}>
                   <label>Género</label>
                   <select
                     name="genero"
                     value={isEditing ? editData.genero : formData.genero}
                     onChange={handleInputChange}
-                    className={`form-input-aspirante ${errores.genero ? 'input-error-aspirante' : ''}`}
+                    className={`${styles["form-input-aspirante"]} ${errores.genero ? styles["input-error-aspirante"] : ''}`}
                     disabled={!isEditing}
-                  ><option value="">Seleccione...</option>
+                  >
+                    <option value="">Seleccione...</option>
                     <option value="Masculino">Masculino</option>
                     <option value="Femenino">Femenino</option>
                     <option value="Otro">Otro</option>
                   </select>
-                  {errores.genero && <p className="error-text-aspirante">{errores.genero}</p>}
+                  {errores.genero && <p className={styles["error-text-aspirante"]}>{errores.genero}</p>}
                 </div>
-                <div className="profile-row-aspirante">
-                  <label>Provincia:</label>
+
+                <div className={styles["field-box-aspirante"]}>
+                  <label>Provincia</label>
                   <select
                     name="provincia"
                     value={ubicacion.provincia}
                     onChange={handleUbicacionChange}
                     disabled={!isEditing}
-                    className={`input-select-aspirante ${errores.provincia ? 'input-error-aspirante' : ''}`}
+                    className={`${styles["form-input-aspirante"]} ${errores.provincia ? styles["input-error-aspirante"] : ''}`}
                   >
                     <option value="">Seleccione...</option>
                     {provincias.map(p => (
                       <option key={p.id_provincia} value={p.id_provincia}>{p.nombre}</option>
                     ))}
                   </select>
-                  {errores.provincia && <p className="error-text-aspirante">{errores.provincia}</p>}
+                  {errores.provincia && <p className={styles["error-text-aspirante"]}>{errores.provincia}</p>}
                 </div>
 
-                <div className="profile-row-aspirante">
-                  <label>Cantón:</label>
+                <div className={styles["field-box-aspirante"]}>
+                  <label>Cantón</label>
                   <select
                     name="canton"
                     value={ubicacion.canton}
                     onChange={handleUbicacionChange}
                     disabled={!isEditing}
-                    className={`input-select-aspirante ${errores.canton ? 'input-error-aspirante' : ''}`}
+                    className={`${styles["form-input-aspirante"]} ${errores.canton ? styles["input-error-aspirante"] : ''}`}
                   >
                     <option value="">Seleccione...</option>
                     {cantones.map(c => (
                       <option key={c.id_canton} value={c.id_canton}>{c.nombre}</option>
                     ))}
                   </select>
-                  {errores.canton && <p className="error-text-aspirante">{errores.canton}</p>}
+                  {errores.canton && <p className={styles["error-text-aspirante"]}>{errores.canton}</p>}
                 </div>
 
-                <div className="profile-row-aspirante">
-                  <label>Parroquia:</label>
+                <div className={styles["field-box-aspirante"]}>
+                  <label>Parroquia</label>
                   <select
                     name="parroquia"
                     value={ubicacion.parroquia}
                     onChange={handleUbicacionChange}
                     disabled={!isEditing}
-                    className={`input-select-aspirante ${errores.parroquia ? 'input-error-aspirante' : ''}`}
+                    className={`${styles["form-input-aspirante"]} ${errores.parroquia ? styles["input-error-aspirante"] : ''}`}
                   >
                     <option value="">Seleccione...</option>
                     {parroquias.map(p => (
                       <option key={p.id_parroquia} value={p.id_parroquia}>{p.nombre}</option>
                     ))}
                   </select>
-                  {errores.parroquia && <p className="error-text-aspirante">{errores.parroquia}</p>}
+                  {errores.parroquia && <p className={styles["error-text-aspirante"]}>{errores.parroquia}</p>}
                 </div>
-
               </div>
-              <div className="profile-section-aspirante">
+
+              <div className={styles["profile-section-aspirante"]}>
                 <h3>Información Laboral</h3>
 
-
-                <div className="profile-row disponibilidad-row-aspirante">
+                <div className={styles["disponibilidad-row-aspirante"]}>
                   <label>Disponibilidad:</label>
                   <input
                     type="checkbox"
@@ -534,46 +535,54 @@ const PerfilAspirante = () => {
                     disabled={!isEditing}
                     onChange={handleInputChange}
                   />
-                  <span className={(isEditing ? editData.disponibilidad : formData.disponibilidad) ? 'disponible' : 'no-disponible'}>
-                    {(isEditing ? editData.disponibilidad : formData.disponibilidad) ? '✓ Disponible' : '✗ No disponible'}
+                  <span className={
+                    (isEditing ? editData.disponibilidad : formData.disponibilidad)
+                      ? styles.disponible
+                      : styles["no-disponible"]
+                  }>
+                    {(isEditing ? editData.disponibilidad : formData.disponibilidad)
+                      ? '✓ Disponible'
+                      : '✗ No disponible'}
                   </span>
                 </div>
 
-                <div className="profile-row-aspirante">
+                <div className={styles["profile-row-aspirante"]}>
                   <label>Aspiración Salarial:</label>
                   <input
                     type="number"
                     name="aspiracionSalarial"
                     value={isEditing ? (editData.aspiracionSalarial || '') : (formData.aspiracionSalarial || '')}
                     readOnly={!isEditing}
-                    className={`input-text-aspirante ${errores.aspiracionSalarial ? 'input-error-aspirante' : ''}`}
+                    className={`${styles["input-text-aspirante"]} ${errores.aspiracionSalarial ? styles["input-error-aspirante"] : ''}`}
                     onChange={handleInputChange}
                   />
-                  {errores.aspiracionSalarial && <p className="error-text-aspirante">{errores.aspiracionSalarial}</p>}
+                  {errores.aspiracionSalarial && <p className={styles["error-text-aspirante"]}>{errores.aspiracionSalarial}</p>}
                 </div>
 
-                <div className="profile-row-aspirante">
+                <div className={styles["profile-row-aspirante"]}>
                   <label>Tipo de Contrato Preferido:</label>
                   <select
                     name="tipo_contrato"
                     value={isEditing ? editData.tipo_contrato : formData.tipo_contrato}
                     disabled={!isEditing}
                     onChange={handleInputChange}
-                    className={`input-select-aspirante-aspirante ${errores.tipo_contrato ? 'input-error-aspirante' : ''}`}
-                  ><option value="">Seleccione...</option>
+                    className={`${styles["input-select-aspirante-aspirante"]} ${errores.tipo_contrato ? styles["input-error-aspirante"] : ''}`}
+                  >
+                    <option value="">Seleccione...</option>
                     <option value="Tiempo completo">Tiempo completo</option>
                     <option value="Medio tiempo">Medio tiempo</option>
                     <option value="Por horas">Por horas</option>
                     <option value="Freelance">Freelance</option>
                     <option value="Contrato temporal">Contrato temporal</option>
                   </select>
-                  {errores.tipo_contrato && <p className="error-text-aspirante">{errores.tipo_contrato}</p>}
+                  {errores.tipo_contrato && <p className={styles["error-text-aspirante"]}>{errores.tipo_contrato}</p>}
                 </div>
               </div>
+
               <h3>Seguridad</h3>
 
-              <div className="grid-2-columns-aspirante">
-                <div className="field-box-aspirante" style={{ position: 'relative' }}>
+              <div className={styles["grid-2-columns-aspirante"]}>
+                <div className={styles["field-box-aspirante"]} style={{ position: 'relative' }}>
                   <label>Contraseña</label>
                   <input
                     type={mostrarContrasena ? "text" : "password"}
@@ -582,7 +591,7 @@ const PerfilAspirante = () => {
                     inputMode="text"
                     value={isEditing ? editData.contrasena : '***********'}
                     onChange={handleInputChange}
-                    className={`form-input-aspirante ${errores.contrasena ? 'input-error-aspirante' : ''}`}
+                    className={`${styles["form-input-aspirante"]} ${errores.contrasena ? styles["input-error-aspirante"] : ''}`}
                     disabled={!isEditing}
                   />
                   {isEditing && (
@@ -602,23 +611,22 @@ const PerfilAspirante = () => {
                     </button>
                   )}
                   {errores.contrasena && (
-                    <p className="error-text-aspirante">{errores.contrasena}</p>
+                    <p className={styles["error-text-aspirante"]}>{errores.contrasena}</p>
                   )}
                 </div>
               </div>
 
-
-              <div className="datos-personales-box-aspirante > div:last-child">
+              <div className={styles["datos-personales-box-aspirante"]}>
                 <button
                   type="submit"
-                  className="submit-button-aspirante"
+                  className={styles["submit-button-aspirante"]}
                   disabled={!isEditing}
                 >
                   Guardar Cambios
                 </button>
                 <button
                   type="button"
-                  className="submit-buttonv1-aspirante"
+                  className={styles["submit-buttonv1-aspirante"]}
                   onClick={handleEdit}
                 >
                   Editar Perfil
