@@ -1,3 +1,4 @@
+// ...importaciones iguales
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -28,15 +29,41 @@ const TemasConversacion = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [validationError, setValidationError] = useState('');
 
-  
+  const MIN_LENGTH = 2;
+  const MAX_LENGTH = 50;
+
+  const validarTemaTexto = (texto) => {
+    const regex = /^[\p{L}\sáéíóúÁÉÍÓÚñÑ]+$/u;
+    return regex.test(texto);
+  };
+
+  const checkDuplicateTema = (nombre) => {
+    const normalizado = nombre.trim().toLowerCase();
+    return temas.some(t =>
+      t.tema.trim().toLowerCase() === normalizado &&
+      t.idTemaConversacion !== idTemaConversacion
+    );
+  };
+
+  const validarInput = (texto) => {
+    const trimmed = texto.trim();
+    if (!trimmed) return 'Este campo es obligatorio';
+    if (trimmed.length < MIN_LENGTH) return `Debe tener al menos ${MIN_LENGTH} caracteres`;
+    if (trimmed.length > MAX_LENGTH) return `No puede tener más de ${MAX_LENGTH} caracteres`;
+    if (!validarTemaTexto(trimmed)) return 'Solo se permiten letras y espacios';
+    if (/\s{2,}/.test(trimmed)) return 'No se permiten espacios múltiples consecutivos';
+    if (!/[a-zA-ZáéíóúÁÉÍÓÚñÑ]/.test(trimmed)) return 'Debe contener al menos una letra';
+    return '';
+  };
+
   const loadTemas = async () => {
     setIsLoading(true);
     try {
       const response = await getTemasConversacionByFicha(id_ficha_paciente);
       const data = Array.isArray(response) ? response : response.data;
       setTemas(data);
-      console.log("Datos recibidos de temas:", data);
     } catch (error) {
       console.error("Error al cargar temas:", error);
       toast.error("Error al cargar temas de conversación");
@@ -45,7 +72,6 @@ const TemasConversacion = () => {
     }
   };
 
-  
   const loadTema = async () => {
     if (idTemaConversacion && idTemaConversacion !== 'nuevo') {
       setIsLoading(true);
@@ -76,12 +102,25 @@ const TemasConversacion = () => {
       ...prev,
       [name]: value
     }));
+
+    const error = validarInput(value);
+    setValidationError(error);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!tema.tema.trim()) {
-      toast.error("El tema de conversación es requerido");
+
+    const error = validarInput(tema.tema);
+    if (error) {
+      setValidationError(error);
+      toast.error(error);
+      return;
+    }
+
+    if (checkDuplicateTema(tema.tema)) {
+      const msg = 'Este tema ya está registrado para este paciente';
+      setValidationError(msg);
+      toast.error(msg);
       return;
     }
 
@@ -97,6 +136,7 @@ const TemasConversacion = () => {
       await loadTemas();
       setTema({ tema: '', fichaPaciente: { id_ficha_paciente } });
       setIsEditing(false);
+      setValidationError('');
       navigate(`/fichas/${id_ficha_paciente}/temas`);
     } catch (error) {
       console.error("Error al guardar tema:", error);
@@ -125,6 +165,7 @@ const TemasConversacion = () => {
         if (id === idTemaConversacion) {
           setTema({ tema: '', fichaPaciente: { id_ficha_paciente } });
           setIsEditing(false);
+          setValidationError('');
         }
       } catch (error) {
         console.error("Error al eliminar tema:", error);
@@ -154,6 +195,16 @@ const TemasConversacion = () => {
               className="temas-input"
               required
             />
+            {validationError && (
+              <div className="error-message">
+                ⚠️ {validationError}
+                
+              </div>
+
+            )}
+            <small style={{ color: '#6c757d', fontSize: '0.875rem', marginTop: '0.25rem', display: 'block' }}>
+              💡 Solo letras, espacios y acentos • Mínimo {MIN_LENGTH} caracteres • Máximo {MAX_LENGTH}
+            </small>
           </div>
 
           <div className="temas-form-actions">
@@ -162,7 +213,7 @@ const TemasConversacion = () => {
               className="temas-btn-primary" 
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Guardando..." : "Guardar"}
+              <span>{isEditing ? "💾" : "✅"}</span>  {isSubmitting ? "Guardando..." : "Guardar"}
             </button>
             {isEditing && (
               <button
@@ -180,13 +231,13 @@ const TemasConversacion = () => {
               onClick={() => {
                 setTema({ tema: '', fichaPaciente: { id_ficha_paciente } });
                 setIsEditing(false);
+                setValidationError('');
                 navigate(`/fichas/${id_ficha_paciente}/temas`);
               }}
               disabled={isSubmitting}
             >
-              Cancelar
+              <span>❌</span> Cancelar
             </button>
-            
           </div>
         </form>
       </div>
