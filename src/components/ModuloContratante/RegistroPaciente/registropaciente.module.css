@@ -5,11 +5,14 @@ html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   background-color: #F5F5F5;
 }
-html, body {
+
+html,
+body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  overflow-x: hidden; /* 👈 evita scroll horizontal */
+  overflow-x: hidden;
+  /* 👈 evita scroll horizontal */
   font-family: 'Segoe UI', sans-serif;
 }
 
@@ -32,8 +35,10 @@ html, body {
 
 /* Contenedor principal */
 .registro-container-paci {
-  min-width: 1850px;   /* antes 1200px */
-  max-width: 1800px;   /* antes 1400px */
+  min-width: 1850px;
+  /* antes 1200px */
+  max-width: 1800px;
+  /* antes 1400px */
   width: 100%;
   box-sizing: border-box;
   min-height: 100vh;
@@ -52,6 +57,7 @@ html, body {
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
+
 /* Títulos */
 .registro-card-paci h2 {
   color: #2c3e50;
@@ -77,17 +83,27 @@ html, body {
 .input-group-paci {
   display: flex;
   flex-direction: column;
-  gap: 6px;         /* Aumenta el espacio vertical entre label y input */
-  min-height: 90px; /* Similar al que usas para separar visualmente */
-  margin-bottom: 20px; /* Espacio abajo para separar de otro grupo */
+  gap: 6px;
+  /* Aumenta el espacio vertical entre label y input */
+  min-height: 90px;
+  /* Similar al que usas para separar visualmente */
+  margin-bottom: 20px;
+  /* Espacio abajo para separar de otro grupo */
 }
 
-.input-groupv2-paci{
+.input-groupv2-paci {
   margin-bottom: 10px;
-  min-height: 70px;     /* menos alto que el original */
-  gap: 4px;    
+  min-height: 70px;
+  /* menos alto que el original */
+  gap: 7px;
   max-width: 525px;
+
 }
+.input-groupv2-paci input {
+  width: 100%;
+  max-width: 330px; /* o el valor que necesites */
+}
+
 .input-groupv3-paci {
   margin-bottom: 10px;
   min-height: 80px;
@@ -97,18 +113,21 @@ html, body {
   margin-left: -3px;
   padding-left: 0;
 }
+.input-groupv3-paci {
+  margin-left: -1px; /* ajusta según cuánto lo quieras mover */
+}
 
-
-.input-groupv4-paci {
+.input-groupv45-paci {
   margin-bottom: 10px;
   min-height: 40px;
   gap: 4px;
 
   width: 330px;
-  transform: scaleX(1.0.23); /* Escala horizontalmente */
-  transform-origin: left; /* Mantiene anclado el lado izquierdo */
+  transform: scaleX(1.0.23);
+  /* Escala horizontalmente */
+  transform-origin: left;
+  /* Mantiene anclado el lado izquierdo */
 }
-
 .input-group-paci label {
   font-weight: 600;
   color: #2c3e50;
@@ -161,6 +180,13 @@ html, body {
   background-repeat: no-repeat;
   background-size: 16px;
   padding-right: 40px;
+
+  width: 330px;
+  /* Ajusta aquí el ancho para que se haga más largo */
+
+  /* Opcional: para que el texto dentro del select no quede pegado a la izquierda */
+  padding-left: 20px;
+
 }
 
 /* Estados de error */
@@ -438,7 +464,7 @@ button[style*="background-color: #0a3d62"]:hover {
     min-width: 100%;
     padding: 20px;
   }
-  
+
   .registro-card-paci {
     padding: 30px;
   }
@@ -448,20 +474,20 @@ button[style*="background-color: #0a3d62"]:hover {
   .registro-page-paci {
     padding: 10px;
   }
-  
+
   .registro-card-paci {
     padding: 20px;
   }
-  
+
   .foto-container-paci {
     padding: 15px;
   }
-  
+
   .ing-1-paci {
     width: 150px;
     height: 150px;
   }
-  
+
   .submit-btn-paci {
     padding: 14px 28px;
     font-size: 1rem;
@@ -474,6 +500,7 @@ button[style*="background-color: #0a3d62"]:hover {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -489,8 +516,22 @@ button[style*="background-color: #0a3d62"]:hover {
   animation-fill-mode: both;
 }
 
-.input-group-paci:nth-child(1) { animation-delay: 0.1s; }
-.input-group-paci:nth-child(2) { animation-delay: 0.2s; }
-.input-group-paci:nth-child(3) { animation-delay: 0.3s; }
-.input-group-paci:nth-child(4) { animation-delay: 0.4s; }
-.input-group-paci:nth-child(5) { animation-delay: 0.5s; }
+.input-group-paci:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.input-group-paci:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.input-group-paci:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.input-group-paci:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.input-group-paci:nth-child(5) {
+  animation-delay: 0.5s;
+}

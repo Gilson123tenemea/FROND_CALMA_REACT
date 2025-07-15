@@ -7,7 +7,7 @@ import { registrarPaciente } from "../../../servicios/registrarService";
 import { getProvincias } from '../../../servicios/ProvinciaService';
 import { getCantonesByProvinciaId } from '../../../servicios/CantonService';
 import { getParroquiasByCantonId } from "../../../servicios/parroquiaService";
-import './registropaciente.css';
+import styles from './registropaciente.module.css';
 import HeaderContratante from "../HeaderContratante/HeaderContratante";
 import { useSearchParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
@@ -513,218 +513,220 @@ const RegistroPaciente = () => {
   return (
     <>
       <HeaderContratante userId={userId} />
-      <div className="registro-page-paci">
-        <div className="">
-          <div className="registro-card-paci">
-            <h2>Registro Paciente</h2>
-            <p className="subtitle">Por favor completa tus datos</p>
-            <form onSubmit={handleSubmit}>
-
-              <h3 className="form-section-title-paci"></h3>
-              <h3></h3>
-
-              <div style={{ display: 'flex', gap: '30px', marginBottom: '15px' }}>
-                <div style={{ flex: 1 }}>
-                  <div className="input-group-paci">
-                    <label><FaIdCard className="input-icon-paci" /> Cédula</label>
-                    <input
-                      type="text"
-                      name="cedula"
-                      placeholder="Ingrese la cédula"
-                      value={formulario.cedula}
-                      onChange={(e) => {
-                        handleChange(e);
-                        setErrores(prev => ({ ...prev, cedula: '' }));
-                      }}
-                      className={errores.cedula ? 'input-error-paci' : ''}
-                    />
-                    {errores.cedula && <p className="error-text-paci">{errores.cedula}</p>}
-                  </div>
-                  <div style={{ display: 'flex', gap: '30px', marginBottom: '15px' }}>
-                    <div style={{ flex: 1 }}>
-                      <div className="input-group-paci">
-                        <label><FaUser className="input-icon-paci" /> Dirección</label>
-                        <input
-                          type="text"
-                          name="direccion"
-                          placeholder="Ingrese la dirección"
-                          value={formulario.direccion}
-                          onChange={(e) => {
-                            handleChange(e);
-                            setErrores(prev => ({ ...prev, direccion: '' }));
-                          }}
-                          className={errores.direccion ? 'input-error-paci' : ''}
-                        />
-                        {errores.direccion && <p className="error-text-paci">{errores.direccion}</p>}
-                      </div>
-                    </div>
-
-                  </div>
+      <div className={styles["registro-page-paci"]}>
+        <div className={styles["registro-card-paci"]}>
+          <h2>Registro Paciente</h2>
+          <p className={styles["subtitle-paci"]}>Por favor completa tus datos</p>
+          <form onSubmit={handleSubmit}>
+            <h3 className={styles["form-section-title-paci"]}></h3>
+            <h3></h3>
+            <div style={{ display: 'flex', gap: '30px', marginBottom: '15px' }}>
+              <div style={{ flex: 1 }}>
+                <div className={styles["input-group-paci"]}>
+                  <label><FaIdCard className={styles["input-icon-paci"]} /> Cédula</label>
+                  <input
+                    type="text"
+                    name="cedula"
+                    placeholder="Ingrese la cédula"
+                    value={formulario.cedula}
+                    onChange={(e) => {
+                      handleChange(e);
+                      setErrores(prev => ({ ...prev, cedula: '' }));
+                    }}
+                    className={errores.cedula ? styles["input-error-paci"] : ''}
+                  />
+                  {errores.cedula && <p className={styles["error-text-paci"]}>{errores.cedula}</p>}
                 </div>
-                <div style={{ flex: 1 }}>
-                  <div className="input-group-paci">
-                    <label><FaUser className="input-icon-paci" /> Nombres</label>
-                    <input
-                      type="text"
-                      name="nombres"
-                      placeholder="Ingrese los nombres"
-                      value={formulario.nombres}
-                      onChange={(e) => {
-                        handleChange(e);
-                        setErrores(prev => ({ ...prev, nombres: '' }));
-                      }}
-                      className={errores.nombres ? 'input-error-paci' : ''}
-                    />
-                    {errores.nombres && <p className="error-text-paci">{errores.nombres}</p>}
-                  </div>
+                <div style={{ display: 'flex', gap: '30px', marginBottom: '15px' }}>
                   <div style={{ flex: 1 }}>
-                    <div className="input-group-paci">
-                      <label><FaUser className="input-icon-paci" /> Parentesco</label>
+                    <div className={styles["input-group-paci"]}>
+                      <label><FaUser className={styles["input-icon-paci"]} /> Dirección</label>
                       <input
                         type="text"
-                        name="parentesco"
-                        placeholder="Parentesco"
-                        value={formulario.parentesco}
+                        name="direccion"
+                        placeholder="Ingrese la dirección"
+                        value={formulario.direccion}
                         onChange={(e) => {
                           handleChange(e);
-                          setErrores(prev => ({ ...prev, parentesco: '' }));
+                          setErrores(prev => ({ ...prev, direccion: '' }));
                         }}
-                        className={errores.parentesco ? 'input-error-paci' : ''}
+                        className={errores.direccion ? styles["input-error-paci"] : ''}
                       />
-                      {errores.parentesco && <p className="error-text-paci">{errores.parentesco}</p>}
+                      {errores.direccion && <p className={styles["error-text-paci"]}>{errores.direccion}</p>}
                     </div>
                   </div>
                 </div>
-                <div style={{ flex: 1 }}>
-                  <div className="input-group-paci">
-                    <label><FaUser className="input-icon-paci" /> Apellidos</label>
-                    <input
-                      type="text"
-                      name="apellidos"
-                      placeholder="Ingrese los apellidos"
-                      value={formulario.apellidos}
-                      onChange={(e) => {
-                        handleChange(e);
-                        setErrores(prev => ({ ...prev, apellidos: '' }));
-                      }}
-                      className={errores.apellidos ? 'input-error-paci' : ''}
-                    />
-                    {errores.apellidos && <p className="error-text-paci">{errores.apellidos}</p>}
-                  </div>
-
-                  <div style={{ flex: 1 }}>
-                    <div className="input-group-paci">
-                      <label><FaCalendarAlt className="input-icon-paci" /> Fecha de nacimiento</label>
-                      <input
-                        type="date"
-                        name="fechaNacimiento"
-                        value={formulario.fechaNacimiento}
-                        onChange={(e) => {
-                          handleChange(e);
-                          setErrores(prev => ({ ...prev, fechaNacimiento: '' }));
-                        }}
-                        className={errores.fechaNacimiento ? 'input-error-paci' : ''}
-                      />
-                      {errores.fechaNacimiento && <p className="error-text-paci">{errores.fechaNacimiento}</p>}
-                    </div>
-                  </div>
-                </div>
-
-
-
-                {/* Foto a la derecha */}
-                <div className="foto-container-paci">
-                  <div className="ing-1-paci">
-                    {formulario.foto ? (
-                      <img
-                        src={formulario.foto}
-                        alt="Foto cargada"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
-                      />
-                    ) : (
-                      <div style={{
-                        width: '100%', height: '100%', display: 'flex',
-                        justifyContent: 'center', alignItems: 'center', fontSize: '48px',
-                        color: '#ccc'
-                      }}></div>
-                    )}
-                  </div>
-                  <input
-                    type="file"
-                    id="fotoPaciente"
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      if (file) {
-                        const reader = new FileReader();
-                        reader.onloadend = () => {
-                          setFormulario(prev => ({ ...prev, foto: reader.result }));
-                        };
-                        reader.readAsDataURL(file);
-                      }
-                    }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => document.getElementById('fotoPaciente').click()}
-                    className="btn-cargar-foto-paci"
-                  >
-                    Cargar Foto
-                  </button>
-                  {errores.foto && <p className="error-foto-paci">{errores.foto}</p>}
-                </div>
-
               </div>
-              <div style={{ display: 'flex', gap: '30px', marginBottom: '15px' }}>
+              <div style={{ flex: 1 }}>
+                <div className={styles["input-group-paci"]}>
+                  <label><FaUser className={styles["input-icon-paci"]} /> Nombres</label>
+                  <input
+                    type="text"
+                    name="nombres"
+                    placeholder="Ingrese los nombres"
+                    value={formulario.nombres}
+                    onChange={(e) => {
+                      handleChange(e);
+                      setErrores(prev => ({ ...prev, nombres: '' }));
+                    }}
+                    className={errores.nombres ? styles["input-error-paci"] : ''}
+                  />
+                  {errores.nombres && <p className={styles["error-text-paci"]}>{errores.nombres}</p>}
+                </div>
                 <div style={{ flex: 1 }}>
-                  <div className="input-groupv2-paci">
-                    <label style={{ color: 'black' }}>
-                      <FaPhone className="input-icon-paci" /> Contacto de emergencia
-                    </label>
+                  <div className={styles["input-group-paci"]}>
+                    <label><FaUser className={styles["input-icon-paci"]} /> Parentesco</label>
                     <input
                       type="text"
-                      name="contactoEmergencia"
-                      placeholder="Número de contacto"
-                      value={formulario.contactoEmergencia}
+                      name="parentesco"
+                      placeholder="Parentesco"
+                      value={formulario.parentesco}
                       onChange={(e) => {
                         handleChange(e);
-                        setErrores(prev => ({ ...prev, contactoEmergencia: '' }));
+                        setErrores(prev => ({ ...prev, parentesco: '' }));
                       }}
-                      className={errores.contactoEmergencia ? 'input-error-paci' : ''}
+                      className={errores.parentesco ? styles["input-error-paci"] : ''}
                     />
-                    {errores.contactoEmergencia && <p className="error-text-paci">{errores.contactoEmergencia}</p>}
+                    {errores.parentesco && <p className={styles["error-text-paci"]}>{errores.parentesco}</p>}
                   </div>
+                </div>
+              </div>
+              <div style={{ flex: 1 }}>
+                <div className={styles["input-group-paci"]}>
+                  <label><FaUser className={styles["input-icon-paci"]} /> Apellidos</label>
+                  <input
+                    type="text"
+                    name="apellidos"
+                    placeholder="Ingrese los apellidos"
+                    value={formulario.apellidos}
+                    onChange={(e) => {
+                      handleChange(e);
+                      setErrores(prev => ({ ...prev, apellidos: '' }));
+                    }}
+                    className={errores.apellidos ? styles["input-error-paci"] : ''}
+                  />
+                  {errores.apellidos && <p className={styles["error-text-paci"]}>{errores.apellidos}</p>}
                 </div>
                 <div style={{ flex: 1 }}>
-                  <div className="input-groupv3-paci">
-                    <label style={{ color: 'black' }}>
-                      <FaVenusMars className="input-icon-paci" /> Género
-                    </label>
-                    <div className="select-wrapper-paci">
-                      <select
-                        name="genero"
-                        value={formulario.genero}
-                        onChange={(e) => {
-                          handleChange(e);
-                          setErrores(prev => ({ ...prev, genero: '' }));
-                        }}
-                        className={errores.genero ? 'input-error-paci' : ''}
-                      >
-                        <option value="">Seleccione...</option>
-                        {generos.map((g, i) => (
-                          <option key={i} value={g}>{g}</option>
-                        ))}
-                      </select>
-                    </div>
-                    {errores.genero && <p className="error-text-paci">Seleccione un género</p>}
+                  <div className={styles["input-group-paci"]}>
+                    <label><FaCalendarAlt className={styles["input-icon-paci"]} /> Fecha de nacimiento</label>
+                    <input
+                      type="date"
+                      name="fechaNacimiento"
+                      value={formulario.fechaNacimiento}
+                      onChange={(e) => {
+                        handleChange(e);
+                        setErrores(prev => ({ ...prev, fechaNacimiento: '' }));
+                      }}
+                      className={errores.fechaNacimiento ? styles["input-error-paci"] : ''}
+                    />
+                    {errores.fechaNacimiento && <p className={styles["error-text-paci"]}>{errores.fechaNacimiento}</p>}
                   </div>
                 </div>
-                <div className="input-groupv4-paci">
+              </div>
+              {/* Foto a la derecha */}
+              <div className={styles["foto-container-paci"]}>
+                <div className={styles["ing-1-paci"]}>
+                  {formulario.foto ? (
+                    <img
+                      src={formulario.foto}
+                      alt="Foto cargada"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
+                    />
+                  ) : (
+                    <div style={{
+                      width: '100%', height: '100%', display: 'flex',
+                      justifyContent: 'center', alignItems: 'center', fontSize: '48px',
+                      color: '#ccc'
+                    }}></div>
+                  )}
+                </div>
+                <input
+                  type="file"
+                  id="fotoPaciente"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setFormulario(prev => ({ ...prev, foto: reader.result }));
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => document.getElementById('fotoPaciente').click()}
+                  className={styles["btn-cargar-foto-paci"]}
+                >
+                  Cargar Foto
+                </button>
+                {errores.foto && <p className={styles["error-foto-paci"]}>{errores.foto}</p>}
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '30px', marginBottom: '15px' }}>
+              {/* Contacto de emergencia */}
+              <div style={{ flex: 1 }}>
+                <div className={styles["input-groupv2-paci"]}>
                   <label style={{ color: 'black' }}>
-                    <FaTint className="input-icon-paci" /> Tipo de sangre
+                    <FaPhone className={styles["input-icon-paci"]} /> Contacto de emergencia
                   </label>
-                  <div className="select-wrapper-paci">
+                  <input
+                    type="text"
+                    name="contactoEmergencia"
+                    placeholder="Número de contacto"
+                    value={formulario.contactoEmergencia}
+                    onChange={(e) => {
+                      handleChange(e);
+                      setErrores(prev => ({ ...prev, contactoEmergencia: '' }));
+                    }}
+                    className={errores.contactoEmergencia ? styles["input-error-paci"] : ''}
+                  />
+                  {errores.contactoEmergencia && (
+                    <p className={styles["error-text-paci"]}>{errores.contactoEmergencia}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Género */}
+              <div style={{ flex: 1 }}>
+                <div className={styles["input-groupv3-paci"]}>
+                  <label style={{ color: 'black' }}>
+                    <FaVenusMars className={styles["input-icon-paci"]} /> Género
+                  </label>
+                  <div className={styles["select-wrapper-paci"]}>
+                    <select
+                      name="genero"
+                      value={formulario.genero}
+                      onChange={(e) => {
+                        handleChange(e);
+                        setErrores(prev => ({ ...prev, genero: '' }));
+                      }}
+                      className={errores.genero ? styles["input-error-paci"] : ''}
+                    >
+                      <option value="">Seleccione...</option>
+                      {generos.map((g, i) => (
+                        <option key={i} value={g}>{g}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {errores.genero && (
+                    <p className={styles["error-text-paci"]}>Seleccione un género</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Tipo de sangre */}
+              <div style={{ flex: 1 }}>
+                <div className={styles["input-groupv45-paci"]}>
+                  <label style={{ color: 'black' }}>
+                    <FaTint className={styles["input-icon-paci"]} /> Tipo de sangre
+                  </label>
+                  <div className={styles["select-wrapper-paci"]}>
                     <select
                       name="tipoSangre"
                       value={formulario.tipoSangre}
@@ -732,7 +734,7 @@ const RegistroPaciente = () => {
                         handleChange(e);
                         setErrores(prev => ({ ...prev, tipoSangre: '' }));
                       }}
-                      className={errores.tipoSangre ? 'input-error-paci' : ''}
+                      className={errores.tipoSangre ? styles["input-error-paci"] : ''}
                     >
                       <option value="">Seleccione...</option>
                       {tiposSangre.map((t, i) => (
@@ -740,213 +742,211 @@ const RegistroPaciente = () => {
                       ))}
                     </select>
                   </div>
-                  {errores.tipoSangre && <p className="error-text-paci">Seleccione un tipo de sangre</p>}
+                  {errores.tipoSangre && (
+                    <p className={styles["error-text-paci"]}>Seleccione un tipo de sangre</p>
+                  )}
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '30px', marginBottom: '15px' }}>
-                <div style={{ flex: 1 }}>
-                  <div className="input-group-paci">
-                    <label><FaUser className="input-icon-paci" /> Provincia</label>
-                    <div className="select-wrapper-paci">
-                      <select
-                        name="provincia"
-                        value={ubicacion.provincia}
-                        onChange={(e) => {
-                          handleUbicacionChange(e);
-                          setErrores(prev => ({ ...prev, provincia: '' }));
-                        }}
-                        className={errores.provincia ? 'input-error-paci' : ''}
-                      >
-                        <option value="">Seleccione...</option>
-                        {provincias.map(p => (
-                          <option key={p.id_provincia} value={p.id_provincia}>{p.nombre}</option>
-                        ))}
-                      </select>
-                    </div>
-                    {errores.provincia && <p className="error-text-paci">Seleccione una provincia</p>}
-                  </div>
-                </div>
 
-                <div style={{ flex: 1 }}>
-                  <div className="input-group-paci">
-                    <label><FaUser className="input-icon-paci" /> Cantón</label>
-                    <div className="select-wrapper-paci">
-                      <select
-                        name="canton"
-                        value={ubicacion.canton}
-                        onChange={(e) => {
-                          handleUbicacionChange(e);
-                          setErrores(prev => ({ ...prev, canton: '' }));
-                        }}
-                        className={errores.canton ? 'input-error-paci' : ''}
-                      >
-                        <option value="">Seleccione...</option>
-                        {cantones.map(c => (
-                          <option key={c.id_canton} value={c.id_canton}>{c.nombre}</option>
-                        ))}
-                      </select>
-                    </div>
-                    {errores.canton && <p className="error-text-paci">Seleccione un cantón</p>}
-                  </div>
-                </div>
 
-                <div style={{ flex: 1 }}>
-                  <div className="input-group-paci">
-                    <label><FaUser className="input-icon-paci" /> Parroquia</label>
-                    <div className="select-wrapper-paci">
-                      <select
-                        name="parroquia"
-                        value={ubicacion.parroquia}
-                        onChange={(e) => {
-                          handleUbicacionChange(e);
-                          setErrores(prev => ({ ...prev, parroquia: '' }));
-                        }}
-                        className={errores.parroquia ? 'input-error-paci' : ''}
-                      >
-                        <option value="">Seleccione...</option>
-                        {parroquias.map(p => (
-                          <option key={p.id_parroquia} value={p.id_parroquia}>{p.nombre}</option>
-                        ))}
-                      </select>
-                    </div>
-                    {errores.parroquia && <p className="error-text-paci">Seleccione una parroquia</p>}
+            </div>
+            <div style={{ display: 'flex', gap: '30px', marginBottom: '15px' }}>
+              <div style={{ flex: 1 }}>
+                <div className={styles["input-group-paci"]}>
+                  <label><FaUser className={styles["input-icon-paci"]} /> Provincia</label>
+                  <div className={styles["select-wrapper-paci"]}>
+                    <select
+                      name="provincia"
+                      value={ubicacion.provincia}
+                      onChange={(e) => {
+                        handleUbicacionChange(e);
+                        setErrores(prev => ({ ...prev, provincia: '' }));
+                      }}
+                      className={errores.provincia ? styles["input-error-paci"] : ''}
+                    >
+                      <option value="">Seleccione...</option>
+                      {provincias.map(p => (
+                        <option key={p.id_provincia} value={p.id_provincia}>{p.nombre}</option>
+                      ))}
+                    </select>
                   </div>
+                  {errores.provincia && <p className={styles["error-text-paci"]}>Seleccione una provincia</p>}
                 </div>
               </div>
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', maxWidth: '700px' }}>
-                {/* Combo de alergias */}
-                <div className="input-group-paci" style={{ flex: '0 0 320px' }}>
-                  <label><FaHeartbeat className="input-icon-paci" /> Alergia</label>
-                  <select
-                    name="alergia"
-                    value={alergiaSeleccionada}
-                    onChange={(e) => {
-                      const nuevaAlergia = e.target.value;
-                      if (nuevaAlergia === "Otra") {
-                        setAlergiaSeleccionada("Otra");
+              <div style={{ flex: 1 }}>
+                <div className={styles["input-group-paci"]}>
+                  <label><FaUser className={styles["input-icon-paci"]} /> Cantón</label>
+                  <div className={styles["select-wrapper-paci"]}>
+                    <select
+                      name="canton"
+                      value={ubicacion.canton}
+                      onChange={(e) => {
+                        handleUbicacionChange(e);
+                        setErrores(prev => ({ ...prev, canton: '' }));
+                      }}
+                      className={errores.canton ? styles["input-error-paci"] : ''}
+                    >
+                      <option value="">Seleccione...</option>
+                      {cantones.map(c => (
+                        <option key={c.id_canton} value={c.id_canton}>{c.nombre}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {errores.canton && <p className={styles["error-text-paci"]}>Seleccione un cantón</p>}
+                </div>
+              </div>
+              <div style={{ flex: 1 }}>
+                <div className={styles["input-group-paci"]}>
+                  <label><FaUser className={styles["input-icon-paci"]} /> Parroquia</label>
+                  <div className={styles["select-wrapper-paci"]}>
+                    <select
+                      name="parroquia"
+                      value={ubicacion.parroquia}
+                      onChange={(e) => {
+                        handleUbicacionChange(e);
+                        setErrores(prev => ({ ...prev, parroquia: '' }));
+                      }}
+                      className={errores.parroquia ? styles["input-error-paci"] : ''}
+                    >
+                      <option value="">Seleccione...</option>
+                      {parroquias.map(p => (
+                        <option key={p.id_parroquia} value={p.id_parroquia}>{p.nombre}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {errores.parroquia && <p className={styles["error-text-paci"]}>Seleccione una parroquia</p>}
+                </div>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', maxWidth: '700px' }}>
+              {/* Combo de alergias */}
+              <div className={styles["input-group-paci"]} style={{ flex: '0 0 320px' }}>
+                <label><FaHeartbeat className={styles["input-icon-paci"]} /> Alergia</label>
+                <select
+                  name="alergia"
+                  value={alergiaSeleccionada}
+                  onChange={(e) => {
+                    const nuevaAlergia = e.target.value;
+                    if (nuevaAlergia === "Otra") {
+                      setAlergiaSeleccionada("Otra");
+                    } else {
+                      setAlergiaSeleccionada("");
+                      if (nuevaAlergia === "Ninguna") {
+                        setAlergiasSeleccionadas(["Ninguna"]);
                       } else {
-                        setAlergiaSeleccionada("");
-                        if (nuevaAlergia === "Ninguna") {
-                          setAlergiasSeleccionadas(["Ninguna"]);
-                        } else {
-                          if (alergiasSeleccionadas.includes("Ninguna")) return;
-                          if (nuevaAlergia && !alergiasSeleccionadas.includes(nuevaAlergia)) {
-                            setAlergiasSeleccionadas([...alergiasSeleccionadas, nuevaAlergia]);
-                          }
+                        if (alergiasSeleccionadas.includes("Ninguna")) return;
+                        if (nuevaAlergia && !alergiasSeleccionadas.includes(nuevaAlergia)) {
+                          setAlergiasSeleccionadas([...alergiasSeleccionadas, nuevaAlergia]);
                         }
                       }
-                    }}
-                    disabled={alergiasSeleccionadas.includes("Ninguna")}
-                    style={{ width: '100%', padding: '8px', borderRadius: '5px', border: '1px solid #ccc' }}
-                  >
-                    <option value="">Seleccione...</option>
-                    {alergias.map((a, i) => (
-                      <option key={i} value={a}>{a}</option>
-                    ))}
-                  </select>
-                  {errores.alergia && <p className="error-text-paci">Seleccione al menos una alergia o "Ninguna"</p>}
+                    }
+                  }}
+                  disabled={alergiasSeleccionadas.includes("Ninguna")}
+                  style={{ width: '100%', padding: '8px', borderRadius: '5px', border: '1px solid #ccc' }}
+                >
+                  <option value="">Seleccione...</option>
+                  {alergias.map((a, i) => (
+                    <option key={i} value={a}>{a}</option>
+                  ))}
+                </select>
+                {errores.alergia && <p className={styles["error-text-paci"]}>Seleccione al menos una alergia o "Ninguna"</p>}
 
-                </div>
-
-
-                {/* Input + botón a la derecha, solo si "Otra" está seleccionado */}
-                {alergiaSeleccionada === "Otra" && (
-                  <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-end', flex: '1', marginTop: '30px' }}>
-                    <input
-                      type="text"
-                      placeholder="Escribe tu alergia"
-                      value={alergiaPersonalizada}
-                      onChange={(e) => setAlergiaPersonalizada(e.target.value)}
-                      style={{
-                        flex: 1,
-                        padding: '8px',
-                        borderRadius: '5px',
-                        border: '1px solid #ccc',
-                        fontSize: '1rem'
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (!alergiaPersonalizada.trim()) {
-                          alert('Por favor, escribe una alergia');
-                          return;
-                        }
-                        if (!alergiasSeleccionadas.includes(alergiaPersonalizada.trim())) {
-                          setAlergiasSeleccionadas([...alergiasSeleccionadas, alergiaPersonalizada.trim()]);
-                        }
-                        setAlergiaPersonalizada('');
-                        setAlergiaSeleccionada('');
-                      }}
-                      style={{
-                        padding: '8px 20px',
-                        backgroundColor: '#0a3d62',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '5px',
-                        cursor: 'pointer',
-                        fontWeight: 'bold',
-                      }}
-                    >
-                      Guardar
-                    </button>
-                  </div>
-                )}
-
-                {/* Lista de alergias seleccionadas debajo (ocupa toda la fila) */}
               </div>
-
-              {/* Lista abajo, con margenes separados */}
-              <div className="alergias-container-paci" style={{ marginTop: '-17px', maxWidth: '700px' }}>
-                {alergiasSeleccionadas.map((alergia, index) => (
-                  <div
-                    key={index}
-                    className="alergia-tag-paci"
+              {/* Input + botón a la derecha, solo si "Otra" está seleccionado */}
+              {alergiaSeleccionada === "Otra" && (
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-end', flex: '1', marginTop: '30px' }}>
+                  <input
+                    type="text"
+                    placeholder="Escribe tu alergia"
+                    value={alergiaPersonalizada}
+                    onChange={(e) => setAlergiaPersonalizada(e.target.value)}
                     style={{
-                      padding: '5px 12px',
-                      margin: '7px 8px 0 0',
+                      flex: 1,
+                      padding: '8px',
+                      borderRadius: '5px',
+                      border: '1px solid #ccc',
+                      fontSize: '1rem'
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!alergiaPersonalizada.trim()) {
+                        alert('Por favor, escribe una alergia');
+                        return;
+                      }
+                      if (!alergiasSeleccionadas.includes(alergiaPersonalizada.trim())) {
+                        setAlergiasSeleccionadas([...alergiasSeleccionadas, alergiaPersonalizada.trim()]);
+                      }
+                      setAlergiaPersonalizada('');
+                      setAlergiaSeleccionada('');
+                    }}
+                    style={{
+                      padding: '8px 20px',
                       backgroundColor: '#0a3d62',
                       color: 'white',
-                      borderRadius: '10px',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      whiteSpace: 'nowrap',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'pointer',
+                      fontWeight: 'bold',
                     }}
                   >
-                    {alergia}
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setAlergiasSeleccionadas(alergiasSeleccionadas.filter((a) => a !== alergia))
-                      }
-                      style={{
-                        marginLeft: '10px',
-                        background: 'none',
-                        color: 'red',
-                        border: 'none',
-                        cursor: 'pointer',
-                        fontWeight: 'bold',
-                      }}
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ))}
-              </div>
+                    Guardar
+                  </button>
+                </div>
+              )}
 
-              {/* Fila 9: Términos y botón */}
-              <div className="terms-checkbox-paci" style={{ marginBottom: '15px' }}>
-                <input type="checkbox" id="terminos" required />
-                <label htmlFor="terminos">Acepto los términos y condiciones</label>
-              </div>
+              {/* Lista de alergias seleccionadas debajo (ocupa toda la fila) */}
+            </div>
+            {/* Lista abajo, con margenes separados */}
+            <div className={styles["alergias-container-paci"]} style={{ marginTop: '-17px', maxWidth: '700px' }}>
+              {alergiasSeleccionadas.map((alergia, index) => (
+                <div
+                  key={index}
+                  className={styles["alergia-tag-paci"]}
+                  style={{
+                    padding: '5px 12px',
+                    margin: '7px 8px 0 0',
+                    backgroundColor: '#0a3d62',
+                    color: 'white',
+                    borderRadius: '10px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {alergia}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setAlergiasSeleccionadas(alergiasSeleccionadas.filter((a) => a !== alergia))
+                    }
+                    style={{
+                      marginLeft: '10px',
+                      background: 'none',
+                      color: 'red',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+            {/* Fila 9: Términos y botón */}
+            <div className={styles["terms-checkbox-paci"]} style={{ marginBottom: '15px' }}>
+              <input type="checkbox" id="terminos" required />
+              <label htmlFor="terminos">Acepto los términos y condiciones</label>
+            </div>
 
-              <button type="submit" className="submit-btn-paci">
-                {idPaciente ? "Actualizar Paciente" : "Registrar Paciente"}
-              </button>
-            </form>
+            <button type="submit" className={styles["submit-btn-paci"]}>
+              {idPaciente ? "Actualizar Paciente" : "Registrar Paciente"}
+            </button>
+          </form>
 
-          </div>
         </div>
       </div>
       <ToastContainer position="top-right" autoClose={3000} />

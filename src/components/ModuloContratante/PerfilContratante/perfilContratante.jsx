@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import './perfilContratante.css';
+import styles from './perfilContratante.module.css';
 import HeaderContratante from "../HeaderContratante/HeaderContratante";
 import { useSearchParams } from 'react-router-dom';
 import { getProvincias } from "../../../servicios/ProvinciaService";
@@ -374,7 +374,7 @@ const PerfilContratante = () => {
           const fotoNombre = jsonContratante.contratante.foto;
         }
       } else {
-           
+
       }
     } catch (error) {
       toast.alert('Error en la conexión: ' + result.message);
@@ -385,19 +385,18 @@ const PerfilContratante = () => {
 
   return (
     <>
-
       <HeaderContratante userId={idContratante} />
-      <div className={` ${isAnimating ? 'animate' : ''}`}>
+      <div className={`${isAnimating ? styles.animate : ''}`}>
         {/* ... todo tu contenido ... */}
       </div>
       <ToastContainer position="top-right" autoClose={3000} />
 
-      <div className={` ${isAnimating ? 'animate' : ''}`}>
-        <main className="profile-main-contrat">
-          <div className="profile-container-contrat">
-            <div className="profile-intro-contrat">
+      <div className={`${isAnimating ? styles.animate : ''}`}>
+        <main className={styles["profile-main-contrat"]}>
+          <div className={styles["profile-container-contrat"]}>
+            <div className={styles["profile-intro-contrat"]}>
               <div
-                className="profile-avatar-large-contrat"
+                className={styles["profile-avatar-large-contrat"]}
                 style={{
                   backgroundImage: foto
                     ? `url(${foto})`
@@ -410,10 +409,15 @@ const PerfilContratante = () => {
                 }}
               ></div>
 
-              <div className="profile-info-contrat">
+              <div className={styles["profile-info-contrat"]}>
                 <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-                  <h1 className="profile-name-contrat">{formData.nombre} {formData.apellido}</h1>
-                  <p className="profile-title-contrat" style={{ textAlign: 'left', marginLeft: '1rem', display: 'inline-block' }}>
+                  <h1 className={styles["profile-name-contrat"]}>
+                    {formData.nombre} {formData.apellido}
+                  </h1>
+                  <p
+                    className={styles["profile-title-contrat"]}
+                    style={{ textAlign: 'left', marginLeft: '1rem', display: 'inline-block' }}
+                  >
                     {formData.ocupacion}
                   </p>
                 </div>
@@ -421,7 +425,7 @@ const PerfilContratante = () => {
                   <div style={{ marginTop: '10px' }}>
                     <button
                       type="button"
-                      className="submit-buttonv1-contrat"
+                      className={styles["submit-buttonv1-contrat"]}
                       onClick={handleClickSubirFoto}
                     >
                       Subir Foto
@@ -438,109 +442,108 @@ const PerfilContratante = () => {
               </div>
             </div>
 
-            {/* 🔻 AHORA va fuera del bloque anterior */}
-            <div className="profile-datos-rightinit-contrat">
-              <h3 className="sub-section-principal-contrat">Información Personal</h3>
-              <div className="grid-2-columns-contrat">
-                <div className="field-box-contrat">
+            <div className={styles["profile-datos-rightinit-contrat"]}>
+              <h3 className={styles["sub-section-principal-contrat"]}>Información Personal</h3>
+              <div className={styles["grid-2-columns-contrat"]}>
+                <div className={styles["field-box-contrat"]}>
                   <label>Cédula</label>
                   <input
                     type="text"
                     name="cedula"
                     value={formData.cedula}
                     onChange={handleChange}
-                    className="form-input-contrat"
+                    className={styles["form-input-contrat"]}
                     disabled
                   />
                 </div>
-                <div className="field-box-contrat">
+                <div className={styles["field-box-contrat"]}>
                   <label>Nombre</label>
                   <input
                     type="text"
                     name="nombre"
                     value={formData.nombre}
                     onChange={handleChange}
-                    className={`form-input-contrat ${errores.nombres ? 'input-error-contrat' : ''}`}
+                    className={`${styles["form-input-contrat"]} ${errores.nombres ? styles["input-error-contrat"] : ''}`}
                     disabled={!modoEdicion}
                   />
-                  {errores.nombres && <p className="error-text-contrat">{errores.nombres}</p>}
+                  {errores.nombres && <p className={styles["error-text-contrat"]}>{errores.nombres}</p>}
                 </div>
-                <div className="field-box-contrat">
+                <div className={styles["field-box-contrat"]}>
                   <label>Apellido</label>
                   <input
                     type="text"
                     name="apellido"
                     value={formData.apellido}
                     onChange={handleChange}
-                    className={`form-input-contrat ${errores.apellidos ? 'input-error-contrat' : ''}`}
+                    className={`${styles["form-input-contrat"]} ${errores.apellidos ? styles["input-error-contrat"] : ''}`}
                     disabled={!modoEdicion}
                   />
-                  {errores.apellidos && <p className="error-text-contrat">{errores.apellidos}</p>}
+                  {errores.apellidos && <p className={styles["error-text-contrat"]}>{errores.apellidos}</p>}
                 </div>
-                <div className="field-box-contrat">
+                <div className={styles["field-box-contrat"]}>
                   <label>Correo Electrónico</label>
                   <input
                     type="email"
                     name="correo"
                     value={formData.correo}
                     onChange={handleChange}
-                    className={`form-input-contrat ${errores.correo ? 'input-error-contrat' : ''}`}
+                    className={`${styles["form-input-contrat"]} ${errores.correo ? styles["input-error-contrat"] : ''}`}
                     disabled={!modoEdicion}
                   />
-                  {errores.correo && <p className="error-text-contrat">{errores.correo}</p>}
+                  {errores.correo && <p className={styles["error-text-contrat"]}>{errores.correo}</p>}
                 </div>
-                <div className="field-box-contrat">
+                <div className={styles["field-box-contrat"]}>
                   <label>Fecha de Nacimiento</label>
                   <input
                     type="date"
                     name="fechaNacimiento"
                     value={formData.fechaNacimiento}
                     onChange={handleChange}
-                    className="form-input-contrat"
+                    className={styles["form-input-contrat"]}
                     disabled
                   />
                 </div>
-                <div className="field-box-contrat">
+                <div className={styles["field-box-contrat"]}>
                   <label>Género</label>
                   <select
                     name="genero"
                     value={formData.genero}
                     onChange={handleChange}
-                    className={`form-input-contrat ${errores.genero ? 'input-error-contrat' : ''}`}
+                    className={`${styles["form-input-contrat"]} ${errores.genero ? styles["input-error-contrat"] : ''}`}
                     disabled={!modoEdicion}
                   >
                     <option value="">Seleccione...</option>
                     <option value="Masculino">Masculino</option>
                     <option value="Femenino">Femenino</option>
                   </select>
-                  {errores.genero && <p className="error-text-contrat">{errores.genero}</p>}
+                  {errores.genero && <p className={styles["error-text-contrat"]}>{errores.genero}</p>}
                 </div>
-                <div className="field-box-contrat">
+                <div className={styles["field-box-contrat"]}>
                   <label>Ocupación</label>
                   <input
                     type="text"
                     name="ocupacion"
                     value={formData.ocupacion}
                     onChange={handleChange}
-                    className={`form-input-contrat ${errores.ocupacion ? 'input-error-contrat' : ''}`}
+                    className={`${styles["form-input-contrat"]} ${errores.ocupacion ? styles["input-error-contrat"] : ''}`}
                     disabled={!modoEdicion}
                   />
-                  {errores.ocupacion && <p className="error-text-contrat">{errores.ocupacion}</p>}
+                  {errores.ocupacion && <p className={styles["error-text-contrat"]}>{errores.ocupacion}</p>}
                 </div>
               </div>
             </div>
-            <form onSubmit={handleSubmit}>
-              <div className="datos-personales-box-contrat">
 
-                <h3 className="sub-section-title-contrat">Ubicación</h3>
-                <div className="grid-2-columns-contrat">
-                  <div className="field-box-contrat">
+            <form onSubmit={handleSubmit}>
+              <div className={styles["datos-personales-box-contrat"]}>
+                <h3 className={styles["sub-section-title-contrat"]}>Ubicación</h3>
+                <div className={styles["grid-2-columns-contrat"]}>
+                  <div className={styles["field-box-contrat"]}>
                     <label>Provincia</label>
                     <select
                       name="provincia"
                       value={ubicacion.provincia}
                       onChange={handleUbicacionChange}
-                      className={`form-input-contrat ${errores.provincia ? 'input-error-contrat' : ''}`}
+                      className={`${styles["form-input-contrat"]} ${errores.provincia ? styles["input-error-contrat"] : ''}`}
                       disabled={!modoEdicion}
                     >
                       <option value="">Seleccione...</option>
@@ -548,15 +551,15 @@ const PerfilContratante = () => {
                         <option key={p.id_provincia} value={p.id_provincia}>{p.nombre}</option>
                       ))}
                     </select>
-                    {errores.provincia && <p className="error-text-contrat">{errores.provincia}</p>}
+                    {errores.provincia && <p className={styles["error-text-contrat"]}>{errores.provincia}</p>}
                   </div>
-                  <div className="field-box-contrat">
+                  <div className={styles["field-box-contrat"]}>
                     <label>Cantón</label>
                     <select
                       name="canton"
                       value={ubicacion.canton}
                       onChange={handleUbicacionChange}
-                      className={`form-input-contrat ${errores.canton ? 'input-error-contrat' : ''}`}
+                      className={`${styles["form-input-contrat"]} ${errores.canton ? styles["input-error-contrat"] : ''}`}
                       disabled={!modoEdicion}
                     >
                       <option value="">Seleccione...</option>
@@ -564,15 +567,15 @@ const PerfilContratante = () => {
                         <option key={c.id_canton} value={c.id_canton}>{c.nombre}</option>
                       ))}
                     </select>
-                    {errores.canton && <p className="error-text-contrat">{errores.canton}</p>}
+                    {errores.canton && <p className={styles["error-text-contrat"]}>{errores.canton}</p>}
                   </div>
-                  <div className="field-box-contrat">
+                  <div className={styles["field-box-contrat"]}>
                     <label>Parroquia</label>
                     <select
                       name="parroquia"
                       value={ubicacion.parroquia}
                       onChange={handleUbicacionChange}
-                      className={`form-input-contrat ${errores.parroquia ? 'input-error-contrat' : ''}`}
+                      className={`${styles["form-input-contrat"]} ${errores.parroquia ? styles["input-error-contrat"] : ''}`}
                       disabled={!modoEdicion}
                     >
                       <option value="">Seleccione...</option>
@@ -580,44 +583,44 @@ const PerfilContratante = () => {
                         <option key={p.id_parroquia} value={p.id_parroquia}>{p.nombre}</option>
                       ))}
                     </select>
-                    {errores.parroquia && <p className="error-text-contrat">{errores.parroquia}</p>}
+                    {errores.parroquia && <p className={styles["error-text-contrat"]}>{errores.parroquia}</p>}
                   </div>
                 </div>
 
                 {representaEmpresa && (
                   <>
-                    <h3 className="sub-section-empresas-contrat">Datos de la Empresa</h3>
-                    <div className="grid-2-columns-contrat">
-                      <div className="field-box-contrat">
+                    <h3 className={styles["sub-section-empresas-contrat"]}>Datos de la Empresa</h3>
+                    <div className={styles["grid-2-columns-contrat"]}>
+                      <div className={styles["field-box-contrat"]}>
                         <label>Nombre de la Empresa</label>
                         <input
                           type="text"
                           name="nombreEmpresa"
                           value={empresaData.nombreEmpresa}
                           onChange={handleEmpresaChange}
-                          className="form-input-contrat"
+                          className={styles["form-input-contrat"]}
                           disabled
                         />
                       </div>
-                      <div className="field-box-contrat">
+                      <div className={styles["field-box-contrat"]}>
                         <label>RUC</label>
                         <input
                           type="text"
                           name="rucEmpresa"
                           value={empresaData.rucEmpresa}
                           onChange={handleEmpresaChange}
-                          className="form-input-contrat"
+                          className={styles["form-input-contrat"]}
                           disabled
                         />
                       </div>
-                      <div className="field-box-contrat">
+                      <div className={styles["field-box-contrat"]}>
                         <label>Correo Empresa</label>
                         <input
                           type="email"
                           name="correoEmpresa"
                           value={empresaData.correoEmpresa}
                           onChange={handleEmpresaChange}
-                          className="form-input-contrat"
+                          className={styles["form-input-contrat"]}
                           disabled
                         />
                       </div>
@@ -636,7 +639,7 @@ const PerfilContratante = () => {
                 >
                   <button
                     type="submit"
-                    className="submit-button"
+                    className={styles["submit-button-contrat"]}
                     style={{ flex: '1', minWidth: '120px' }}
                     disabled={!modoEdicion}
                   >
@@ -645,14 +648,13 @@ const PerfilContratante = () => {
 
                   <button
                     type="button"
-                    className="submit-button"
+                    className={styles["submit-buttonv1-contrat"]}
                     style={{ flex: '1', minWidth: '120px' }}
                     onClick={() => setModoEdicion(true)}
                   >
                     Editar Perfil
                   </button>
                 </div>
-
               </div>
             </form>
           </div>
