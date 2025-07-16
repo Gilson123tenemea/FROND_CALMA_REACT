@@ -9,11 +9,10 @@ import { getCantonesByProvinciaId } from '../../../servicios/CantonService';
 import { getParroquiasByCantonId } from "../../../servicios/parroquiaService";
 import styles from './registropaciente.module.css';
 import HeaderContratante from "../HeaderContratante/HeaderContratante";
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
-
 
 const RegistroPaciente = () => {
   const generos = ['Masculino', 'Femenino'];
@@ -21,12 +20,11 @@ const RegistroPaciente = () => {
   const [searchParams] = useSearchParams();
   const userId = searchParams.get('userId');
   const alergias = ["Ninguna", "Otra", "Penicilina", "Ibuprofeno", "Sulfas", "Naproxeno", "Diclofenaco", "Soya", "Gluten", "Caspa de perro", "Caspa de gato", "Rinitis", "Dermatitis", "Urticaria", "Eczema", "Anafilaxia", "Conjuntivitis", "Angioedema", "Hipersensibilidad", "Atopia", "Vasculitis"];
-
+  const [cedulasRegistradas, setCedulasRegistradas] = useState(new Set());
+  
   const [provincias, setProvincias] = useState([]);
   const [cantones, setCantones] = useState([]);
   const [parroquias, setParroquias] = useState([]);
-  const navigate = useNavigate();
-
 
   const [datosCargados, setDatosCargados] = useState(false);
   const rawIdPaciente = searchParams.get("idPaciente");
@@ -193,6 +191,17 @@ const RegistroPaciente = () => {
     }
   }, [idPaciente]);
 
+  useEffect(() => {
+    const cargarCedulasRegistradas = async () => {
+      try {
+        const res = await axios.get('http://localhost:8090/api/registro/paciente/cedulas');
+        setCedulasRegistradas(new Set(res.data.cedulas));
+      } catch (error) {
+        console.error("Error al obtener cédulas registradas:", error);
+      }
+    };
+    cargarCedulasRegistradas();
+  }, []);
 
 
   useEffect(() => {
@@ -314,6 +323,9 @@ const RegistroPaciente = () => {
       valid = false;
     } else if (!validarCedulaEcuatoriana(formulario.cedula)) {
       nuevosErrores.cedula = 'Cédula incorrecta';
+      valid = false;
+    } else if (!idPaciente && cedulasRegistradas.has(formulario.cedula)) {
+      nuevosErrores.cedula = 'Cédula ya ingresada';
       valid = false;
     }
 
@@ -463,7 +475,6 @@ const RegistroPaciente = () => {
         const res = await axios.put(`http://localhost:8090/api/registro/paciente/${idPaciente}`, payload);
         if (res.data.success) {
           toast.success('✅ Paciente actualizado exitosamente');
-         navigate(`/fichas/nueva?idPaciente=${idPaciente}`);
           // Opcional: redirigir o actualizar estado aquí
         } else {
           toast.error(res.data.message || '❌ No se pudo actualizar el paciente.');
@@ -482,8 +493,6 @@ const RegistroPaciente = () => {
         const data = await registrarPaciente(payloadPost);
         if (data.success) {
           toast.success('✅ Paciente registrado exitosamente');
-      navigate(`/fichas/nueva?idPaciente=${data.paciente.id_paciente}&userId=${userId}`);
-
           setFormulario({
             nombres: '',
             apellidos: '',
