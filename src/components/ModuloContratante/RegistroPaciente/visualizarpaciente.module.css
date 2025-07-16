@@ -1,0 +1,278 @@
+.pacientes-container-vistavisu {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #F5F5F5;
+  min-height: 100vh;
+}
+
+.pacientes-container-vistavisu h2 {
+  background-color: #c1b0ff;
+  padding: 20px;
+  margin: 0 0 30px 0;
+  border-radius: 12px;
+  text-align: center;
+  color: #333;
+  font-size: 28px;
+  font-weight: 600;
+  border: 2px solid #9E9E9E;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pacientes-lista-vistavisu {
+  background-color: #F5F5F5;
+  padding: 30px;
+  color: #000;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 25px;
+  border-radius: 12px;
+}
+
+.paciente-card-vistavisu {
+  border: 2px solid #9E9E9E;
+  border-radius: 16px;
+  padding: 30px;
+  background: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  grid-template-rows: auto 1fr auto;
+  gap: 30px;
+  align-items: start;
+}
+
+.paciente-foto-container {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.paciente-nombre-container {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.paciente-datos-container {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.paciente-boton-container {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.paciente-card-vistavisu:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  border-color: #4A90E2;
+  background: linear-gradient(135deg, #ffffff 0%, #f5f8ff 100%);
+}
+
+.paciente-card-vistavisu::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #4A90E2, #A8CBB7, #4A90E2);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+
+.paciente-card-vistavisu::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(74, 144, 226, 0.02) 50%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.paciente-card-vistavisu:hover::before {
+  transform: translateX(0);
+}
+
+.paciente-card-vistavisu:hover::after {
+  opacity: 1;
+}
+
+.paciente-foto-container {
+  position: relative;
+}
+
+.paciente-foto-vistavisu {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 0;
+  border: 3px solid #9E9E9E;
+  transition: all 0.4s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.paciente-card-vistavisu:hover .paciente-foto-vistavisu {
+  border-color: #4A90E2;
+  transform: scale(1.03);
+  box-shadow: 0 12px 30px rgba(74, 144, 226, 0.3);
+}
+
+.paciente-info-vistavisu {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.paciente-card-vistavisu h4 {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #FFF3B0 0%, #f5f0a0 100%);
+  border-radius: 10px;
+  border: 2px solid #9E9E9E;
+  position: relative;
+  overflow: hidden;
+}
+
+.paciente-card-vistavisu h4::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 100%;
+
+}
+
+.paciente-card-vistavisu p {
+  margin: 0;
+  font-size: 15px;
+  color: #555;
+  padding: 10px 15px;
+  border-radius: 8px;
+  background-color: #fafafa;
+  border-left: 4px solid #A8CBB7;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+
+.paciente-card-vistavisu p:hover {
+  background-color: #f0f8f0;
+  border-left-color: #4A90E2;
+  transform: translateX(5px);
+}
+
+.paciente-card-vistavisu strong {
+  color: #222;
+  font-weight: 700;
+  min-width: 140px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-editar-vistavisu {
+  margin-top: 25px;
+  padding: 15px 30px;
+  background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-block;
+  text-decoration: none;
+  text-align: center;
+  width: 100%;
+  box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-editar-vistavisu:hover {
+  background: linear-gradient(135deg, #357ABD 0%, #2C5F8A 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(74, 144, 226, 0.5);
+}
+
+.btn-editar-vistavisu::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.6s ease;
+}
+
+.btn-editar-vistavisu:hover::before {
+  left: 100%;
+}
+
+.btn-editar-vistavisu:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .pacientes-lista-vistavisu {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+  
+  .pacientes-container-vistavisu {
+    padding: 15px;
+  }
+  
+  .pacientes-container-vistavisu h2 {
+    font-size: 24px;
+    padding: 15px;
+  }
+  
+  .paciente-card-vistavisu {
+    padding: 20px;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .paciente-foto-vistavisu {
+    height: 200px;
+  }
+  
+  .paciente-card-vistavisu h4 {
+    font-size: 20px;
+  }
+  
+  .paciente-card-vistavisu p {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  
+  .paciente-card-vistavisu strong {
+    min-width: auto;
+  }
+}
