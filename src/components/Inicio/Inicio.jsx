@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import './Inicio.css';
 import Navbar from '../Shared/Navbar';
+import ChatBubble from '../chatbot/ChatBubble'; // Importa el chatbot
 
 const Inicio = () => {
   useEffect(() => {
@@ -72,7 +73,6 @@ const Inicio = () => {
           </div>
         </div>
       </section>
-
 
       {/* Sección de Impacto con testimonios */}
       <section className="impact-section">
@@ -288,6 +288,9 @@ const Inicio = () => {
           </div>
         </div>
       </footer>
+
+      {/* Aquí insertamos la burbuja del chatbot */}
+      <ChatBubble />
     </div>
   );
 };
