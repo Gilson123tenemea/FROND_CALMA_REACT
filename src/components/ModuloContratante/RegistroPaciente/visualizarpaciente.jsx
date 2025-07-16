@@ -33,7 +33,7 @@ const VisualizarPacientes = () => {
     <>
       <HeaderContratante userId={idContratante} />
       <div className={styles["pacientes-container-vistavisu"]}>
-        <h2>Pacientes Registrados</h2>
+         <h4>Pacientes Registrados</h4>
         <div className={styles["pacientes-lista-vistavisu"]}>
           {pacientes.map((paciente, index) => (
             <div key={index} className={styles["paciente-card-vistavisu"]}>
