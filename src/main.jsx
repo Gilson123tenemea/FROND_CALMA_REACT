@@ -24,6 +24,8 @@ import CVForm from './components/ModuloAspirante/CV/cv';
 import PerfilContratante from './components/ModuloContratante/PerfilContratante/perfilContratante';
 import CVCompletoView from './components/ModuloAspirante/CV/CVCompletoView';
 import Postulaciones from './components/ModuloContratante/Postulaciones/Postulaciones';
+import CVContratanteView from './components/ModuloAspirante/CV/CVContratanteView';
+
 
 // Componentes de CV relacionados
 import RecomendacionesForm from './components/Recomendaciones/RecomendacionesForm';
@@ -84,6 +86,8 @@ createRoot(document.getElementById('root')).render(
         <Route path="/moduloAspirante/cv" element={<CVForm />} />
         <Route path="/cv/:idCV" element={<CVForm editMode={false} />} />
         <Route path="/cv/:idCV/edit" element={<CVForm editMode={true} />} />
+        <Route path="/cv-aspirante/:idAspirante" element={<CVContratanteView />} />
+
 
         
         {/* Rutas dependientes de CV (protegidas) */}

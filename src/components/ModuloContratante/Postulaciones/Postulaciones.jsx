@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import './Postulaciones.css';
 
 const Postulaciones = () => {
@@ -10,6 +10,7 @@ const Postulaciones = () => {
   const [error, setError] = useState(null);
   const [filtroTitulo, setFiltroTitulo] = useState('');
   const [filtroFecha, setFiltroFecha] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const obtenerRealizaciones = async () => {
@@ -31,36 +32,40 @@ const Postulaciones = () => {
 
   const actualizarEstado = async (idPostulacion, idPostulacionEmpleo, nuevoEstado, idAspirante) => {
     try {
-      await axios.put(
-        `http://localhost:8090/api/postulacion/actualizar/${idPostulacion}/${userId}/${idAspirante}`,
-        {
-          estado: nuevoEstado,
-          postulacion_empleo: {
-            id_postulacion_empleo: idPostulacionEmpleo
-          }
-        }
-      );
+        await axios.put(
+            `http://localhost:8090/api/postulacion/actualizar/${idPostulacion}/${userId}/${idAspirante}`,
+            {
+                estado: nuevoEstado,
+                postulacion_empleo: {
+                    id_postulacion_empleo: idPostulacionEmpleo
+                }
+            }
+        );
 
-      alert(`✅ Postulación ${nuevoEstado ? 'aceptada' : 'rechazada'} correctamente`);
+        alert(`✅ Postulación ${nuevoEstado === null ? 'marcada como pendiente' : nuevoEstado ? 'aceptada' : 'rechazada'} correctamente`);
 
-      setRealizaciones(prev =>
-        prev.map(r => {
-          if (r.postulacion?.id_postulacion === idPostulacion) {
-            return {
-              ...r,
-              postulacion: {
-                ...r.postulacion,
-                estado: nuevoEstado
-              }
-            };
-          }
-          return r;
-        })
-      );
+        setRealizaciones(prev =>
+            prev.map(r => {
+                if (r.postulacion?.id_postulacion === idPostulacion) {
+                    return {
+                        ...r,
+                        postulacion: {
+                            ...r.postulacion,
+                            estado: nuevoEstado
+                        }
+                    };
+                }
+                return r;
+            })
+        );
     } catch (error) {
-      console.error('Error al actualizar el estado:', error);
-      alert('❌ Error al actualizar la postulación');
+        console.error('Error al actualizar el estado:', error);
+        alert('❌ Error al actualizar la postulación');
     }
+};
+
+  const verCV = (idAspirante) => {
+    navigate(`/cv-aspirante/${idAspirante}`);
   };
 
   const formatoLocal = (fecha) => {
@@ -142,7 +147,10 @@ const Postulaciones = () => {
               <p>💰 <strong>Salario:</strong> {publicacion?.salario_estimado ? `$${publicacion.salario_estimado}` : 'N/D'}</p>
               <p>📋 <strong>Requisitos:</strong> {publicacion?.requisitos || 'N/D'}</p>
               <p>🌞 <strong>Turno:</strong> {publicacion?.turno || 'N/D'}</p>
-              <p>📌 <strong>Estado:</strong> {postulacion?.estado ? '✅ Aceptada' : '❌ Rechazada'}</p>
+              <p>📌 <strong>Estado:</strong>
+                {postulacion?.estado === null ? '🟡 Pendiente' :
+                  postulacion?.estado ? '✅ Aceptada' : '❌ Rechazada'}
+              </p>
 
               <div className="acciones">
                 <button
@@ -170,6 +178,12 @@ const Postulaciones = () => {
                   }
                 >
                   ❌ Rechazar
+                </button>
+                <button
+                  className="btn ver-cv"
+                  onClick={() => verCV(aspirante?.idAspirante)}
+                >
+                  📄 Ver CV
                 </button>
               </div>
             </div>
