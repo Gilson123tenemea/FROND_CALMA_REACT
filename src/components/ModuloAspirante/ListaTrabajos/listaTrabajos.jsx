@@ -11,14 +11,20 @@ const ListaTrabajos = ({ idAspirante }) => {
   const [filters, setFilters] = useState({
     titulo: '',
     fechaPublicacion: '',
-    rangoSalario: [0, 9999]
+    rangoSalario: [0, 9999999]
   });
 
   useEffect(() => {
+    if (!idAspirante) return;
+
     const fetchTrabajos = async () => {
       try {
         setLoading(true);
-        const res = await axios.get('http://localhost:8090/api/generar/publicaciones');
+        setError(null);
+
+        // Petición usando el idAspirante para traer sólo trabajos NO postulados
+        const res = await axios.get(`http://localhost:8090/api/generar/publicaciones-no-postuladas/${idAspirante}`);
+        console.log('Datos recibidos backend:', res.data);
 
         const trabajosData = res.data.map(item => {
           const parroquia = item.publicacionempleo?.parroquia;
@@ -36,7 +42,7 @@ const ListaTrabajos = ({ idAspirante }) => {
             requisitos: item.publicacionempleo?.requisitos || 'No especificado',
             jornada: item.publicacionempleo?.jornada || 'No especificada',
             turno: item.publicacionempleo?.turno || 'No especificado',
-            actividadesRealizar: item.publicacionempleo?.actividades_realizar || 'No especificadas', // ✅ agregado
+            actividadesRealizar: item.publicacionempleo?.actividades_realizar || 'No especificadas',
             ubicacion: {
               parroquia: parroquia?.nombre || '',
               canton: canton?.nombre || '',
@@ -56,7 +62,7 @@ const ListaTrabajos = ({ idAspirante }) => {
     };
 
     fetchTrabajos();
-  }, []);
+  }, [idAspirante]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -105,6 +111,7 @@ const ListaTrabajos = ({ idAspirante }) => {
         <div className="lista-trabajos">
           {loading && <p>Cargando trabajos...</p>}
           {error && <p style={{ color: 'red' }}>{error}</p>}
+
           {!loading && trabajosFiltrados.length === 0 && (
             <div>
               <h3>No se encontraron trabajos</h3>
