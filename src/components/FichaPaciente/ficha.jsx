@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
@@ -13,6 +13,8 @@ import './ficha.css';
 
 const FichaPacienteForm = ({ editMode = false }) => {
   const { id_ficha_paciente } = useParams();
+  const [searchParams] = useSearchParams();
+  const idPaciente = searchParams.get('idPaciente');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -276,45 +278,84 @@ const FichaPacienteForm = ({ editMode = false }) => {
 
   // ===== EFECTOS Y MANEJADORES =====
 
-  useEffect(() => {
-    const loadFichaData = async () => {
-      if (id_ficha_paciente) {
-        setIsLoading(true);
-        try {
-          const fichaData = await getFichaById(id_ficha_paciente);
-          setFormulario({
-            diagnostico_me_actual: fichaData.diagnostico_me_actual || '',
-            condiciones_fisicas: fichaData.condiciones_fisicas || '',
-            estado_animo: fichaData.estado_animo || '',
-            comunicacion: fichaData.comunicacion || false,
-            otras_comunicaciones: fichaData.otras_comunicaciones || '',
-            caidas: fichaData.caidas || '',
-            tipo_dieta: fichaData.tipo_dieta || '',
-            alimentacion_asistida: fichaData.alimentacion_asistida || '',
-            hora_levantarse: fichaData.hora_levantarse || '',
-            hora_acostarse: fichaData.hora_acostarse || '',
-            frecuencia_siestas: fichaData.frecuencia_siestas || '',
-            frecuencia_baño: fichaData.frecuencia_baño || '',
-            rutina_medica: fichaData.rutina_medica || '',
-            usapanal: fichaData.usapanal || false,
-            acompañado: fichaData.acompañado || false,
-            observaciones: fichaData.observaciones || '',
-            fecha_registro: fichaData.fecha_registro?.split('T')[0] || '',
-            paciente: fichaData.paciente ? { id_paciente: fichaData.paciente.id_paciente } : { id_paciente: '' }
-          });
-          setIsEditing(true);
-        } catch (error) {
-          console.error("Error al cargar ficha:", error);
-          toast.error("Error al cargar la ficha");
-          navigate('/fichas');
-        } finally {
-          setIsLoading(false);
-        }
-      }
-    };
+ useEffect(() => {
+  const loadFichaData = async () => {
+    // Caso 1: Creando nueva ficha para un paciente existente (tenemos idPaciente pero no id_ficha_paciente)
+    if (idPaciente && !id_ficha_paciente) {
+      setFormulario(prev => ({
+        ...prev,
+        paciente: { id_paciente: idPaciente },
+        // Inicializar otros campos relevantes si es necesario
+        fecha_registro: new Date().toISOString().split('T')[0]
+      }));
+      setIsEditing(false); // Estamos creando una nueva ficha
+      return;
+    }
 
-    loadFichaData();
-  }, [id_ficha_paciente, location.key]);
+    // Caso 2: Editando ficha existente (tenemos id_ficha_paciente)
+    if (id_ficha_paciente) {
+      setIsLoading(true);
+      try {
+        const fichaData = await getFichaById(id_ficha_paciente);
+        
+        // Verificar si la ficha existe
+        if (!fichaData) {
+          toast.error("Ficha no encontrada");
+          navigate('/fichas');
+          return;
+        }
+
+        // Si estamos editando pero se proporcionó un idPaciente diferente, mostrar advertencia
+        if (idPaciente && fichaData.paciente?.id_paciente !== idPaciente) {
+          toast.warn("Estás editando una ficha existente para otro paciente");
+        }
+
+        setFormulario({
+          diagnostico_me_actual: fichaData.diagnostico_me_actual || '',
+          condiciones_fisicas: fichaData.condiciones_fisicas || '',
+          estado_animo: fichaData.estado_animo || '',
+          comunicacion: fichaData.comunicacion || false,
+          otras_comunicaciones: fichaData.otras_comunicaciones || '',
+          caidas: fichaData.caidas || '',
+          tipo_dieta: fichaData.tipo_dieta || '',
+          alimentacion_asistida: fichaData.alimentacion_asistida || '',
+          hora_levantarse: fichaData.hora_levantarse || '',
+          hora_acostarse: fichaData.hora_acostarse || '',
+          frecuencia_siestas: fichaData.frecuencia_siestas || '',
+          frecuencia_baño: fichaData.frecuencia_baño || '',
+          rutina_medica: fichaData.rutina_medica || '',
+          usapanal: fichaData.usapanal || false,
+          acompañado: fichaData.acompañado || false,
+          observaciones: fichaData.observaciones || '',
+          fecha_registro: fichaData.fecha_registro?.split('T')[0] || new Date().toISOString().split('T')[0],
+          paciente: {
+            id_paciente: fichaData.paciente?.id_paciente || idPaciente || ''
+          }
+        });
+        
+        setIsEditing(true);
+      } catch (error) {
+        console.error("Error al cargar ficha:", error);
+        toast.error("Error al cargar la ficha");
+        navigate('/fichas');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    // Caso 3: Creando nueva ficha sin paciente específico (rara vez debería ocurrir)
+    if (!idPaciente && !id_ficha_paciente) {
+      setFormulario(prev => ({
+        ...prev,
+        fecha_registro: new Date().toISOString().split('T')[0],
+        paciente: { id_paciente: '' }
+      }));
+      setIsEditing(false);
+    }
+  };
+
+  loadFichaData();
+}, [id_ficha_paciente, idPaciente, location.key, navigate]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;

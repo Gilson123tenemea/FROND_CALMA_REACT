@@ -175,7 +175,14 @@ createRoot(document.getElementById('root')).render(
         <Route path="/moduloContratante/visualizarpaciente" element={<Visualizarpaciente />} />
         <Route path="/moduloContratante/registropaciente/:idPaciente" element={<RegistroPaciente />} />
         
-        <Route path="/fichas/nueva" element={<FichaPacienteForm />} />
+        <Route 
+  path="/fichas/nueva" 
+  element={<FichaPacienteForm />} 
+/>
+<Route 
+  path="/fichas/:id_ficha_paciente" 
+  element={<FichaPacienteForm editMode={true} />} 
+/>
         <Route path="/fichas/:id_ficha_paciente" element={<FichaPacienteForm  key={location.pathname} />} />
         <Route path="/fichas/:id_ficha_paciente/medicamentos" element={<MedicamentoForm />} />
         <Route path="/fichas/:id_ficha_paciente/medicamentos/:idListaMedicamentos" element={<MedicamentoForm />} />

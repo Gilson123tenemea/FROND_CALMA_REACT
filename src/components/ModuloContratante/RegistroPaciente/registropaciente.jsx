@@ -9,10 +9,11 @@ import { getCantonesByProvinciaId } from '../../../servicios/CantonService';
 import { getParroquiasByCantonId } from "../../../servicios/parroquiaService";
 import styles from './registropaciente.module.css';
 import HeaderContratante from "../HeaderContratante/HeaderContratante";
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+
 
 const RegistroPaciente = () => {
   const generos = ['Masculino', 'Femenino'];
@@ -24,6 +25,8 @@ const RegistroPaciente = () => {
   const [provincias, setProvincias] = useState([]);
   const [cantones, setCantones] = useState([]);
   const [parroquias, setParroquias] = useState([]);
+  const navigate = useNavigate();
+
 
   const [datosCargados, setDatosCargados] = useState(false);
   const rawIdPaciente = searchParams.get("idPaciente");
@@ -460,6 +463,7 @@ const RegistroPaciente = () => {
         const res = await axios.put(`http://localhost:8090/api/registro/paciente/${idPaciente}`, payload);
         if (res.data.success) {
           toast.success('✅ Paciente actualizado exitosamente');
+         navigate(`/fichas/nueva?idPaciente=${idPaciente}`);
           // Opcional: redirigir o actualizar estado aquí
         } else {
           toast.error(res.data.message || '❌ No se pudo actualizar el paciente.');
@@ -478,6 +482,8 @@ const RegistroPaciente = () => {
         const data = await registrarPaciente(payloadPost);
         if (data.success) {
           toast.success('✅ Paciente registrado exitosamente');
+      navigate(`/fichas/nueva?idPaciente=${idPaciente}`);
+
           setFormulario({
             nombres: '',
             apellidos: '',
