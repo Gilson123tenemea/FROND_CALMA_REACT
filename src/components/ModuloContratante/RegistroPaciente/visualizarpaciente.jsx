@@ -20,7 +20,7 @@ const VisualizarPacientes = () => {
         .then(res => {
           if (res.data.success) {
             setPacientes(res.data.pacientes);
-            console.log("Pacientes cargados:", res.data.pacientes); // <-- AGREGA ESTO
+            console.log("Pacientes cargados:", res.data.pacientes);
           }
         })
         .catch(err => {
@@ -35,57 +35,92 @@ const VisualizarPacientes = () => {
       <div className={styles["pacientes-container-vistavisu"]}>
         <h2>Pacientes Registrados</h2>
         <div className={styles["pacientes-lista-vistavisu"]}>
-{pacientes.map((paciente, index) => (
-  <div key={index} className={styles["paciente-card-vistavisu"]}>
-    
-    {/* Contenedor de la imagen */}
-    <div className={styles["paciente-foto-container"]}>
-      <img
-        src={`http://localhost:8090/api/registro/${paciente.foto}`}
-        alt="foto"
-        className={styles["paciente-foto-vistavisu"]}
-      />
-    </div>
+          {pacientes.map((paciente, index) => (
+            <div key={index} className={styles["paciente-card-vistavisu"]}>
+              
+              {/* Contenedor de la imagen */}
+              <div className={styles["paciente-foto-container"]}>
+                <img
+                  src={`http://localhost:8090/api/registro/${paciente.foto}`}
+                  alt="foto"
+                  className={styles["paciente-foto-vistavisu"]}
+                />
+              </div>
 
-    {/* Contenedor de toda la info textual */}
-    <div className={styles["paciente-info-vistavisu"]}>
-      
-      {/* Nombre */}
-      <div className={styles["paciente-nombre-container"]}>
-        <h4>{paciente.nombres} {paciente.apellidos}</h4>
-      </div>
+              {/* Contenedor de toda la info textual */}
+              <div className={styles["paciente-info-vistavisu"]}>
+                
+                {/* Nombre */}
+                <div className={styles["paciente-nombre-container"]}>
+                  <h4>{paciente.nombres} {paciente.apellidos}</h4>
+                </div>
 
-      {/* Datos */}
-      <div className={styles["paciente-datos-container"]}>
-        <p><strong>Cédula:</strong> {paciente.cedula}</p>
-        <p><strong>Género:</strong> {paciente.genero}</p>
-        <p><strong>Dirección:</strong> {paciente.direccion}</p>
-        <p><strong>Fecha Nacimiento:</strong> {new Date(paciente.fechaNacimiento).toLocaleDateString()}</p>
-        <p><strong>Tipo de Sangre:</strong> {paciente.tipoSangre}</p>
-        <p><strong>Provincia:</strong> {paciente.provincia}</p>
-        <p><strong>Cantón:</strong> {paciente.canton}</p>
-        <p><strong>Parroquia:</strong> {paciente.parroquia}</p>
-        <p><strong>Alergia:</strong> {paciente.alergia}</p>
-        <p><strong>Contacto Emergencia:</strong> {paciente.contactoEmergencia} ({paciente.parentesco})</p>
-      </div>
+                {/* Datos en cuadrícula elegante */}
+                <div className={styles["paciente-datos-container"]}>
+                  <p>
+                    <strong data-field="cedula">Cédula</strong>
+                    <span className="valor-dato">{paciente.cedula}</span>
+                  </p>
+                  
+                  <p>
+                    <strong data-field="genero">Género</strong>
+                    <span className="valor-dato">{paciente.genero}</span>
+                  </p>
+                  
+                  <p>
+                    <strong data-field="fecha">Fecha de Nacimiento</strong>
+                    <span className="valor-dato">{new Date(paciente.fechaNacimiento).toLocaleDateString()}</span>
+                  </p>
+                  
+                  <p>
+                    <strong data-field="sangre">Tipo de Sangre</strong>
+                    <span className="valor-dato">{paciente.tipoSangre}</span>
+                  </p>
+                  
+                  <p>
+                    <strong data-field="provincia">Provincia</strong>
+                    <span className="valor-dato">{paciente.provincia}</span>
+                  </p>
+                  
+                  <p>
+                    <strong data-field="canton">Cantón</strong>
+                    <span className="valor-dato">{paciente.canton}</span>
+                  </p>
+                  
+                  <p>
+                    <strong data-field="parroquia">Parroquia</strong>
+                    <span className="valor-dato">{paciente.parroquia}</span>
+                  </p>
+                  
+                  <p>
+                    <strong data-field="direccion">Dirección</strong>
+                    <span className="valor-dato">{paciente.direccion}</span>
+                  </p>
+                  
+                  <p>
+                    <strong data-field="alergia">Alergias</strong>
+                    <span className="valor-dato">{paciente.alergia}</span>
+                  </p>
+                  
+                  <p>
+                    <strong data-field="contacto">Contacto de Emergencia</strong>
+                    <span className="valor-dato">{paciente.contactoEmergencia} ({paciente.parentesco})</span>
+                  </p>
+                </div>
 
-      {/* Botón */}
-      <div className={styles["paciente-boton-container"]}>
-<Link
-  to={`/moduloContratante/registropaciente?userId=${idContratante}&idPaciente=${paciente.idPaciente}`}
-  className={styles["btn-editar-vistavisu"]}
-  style={{ position: "relative", zIndex: 2 }}
->
-  Editar
-</Link>
-      </div>
-
-    </div>
-  </div>
-))}
-
-
-
+                {/* Botón */}
+                <div className={styles["paciente-boton-container"]}>
+                  <Link
+                    to={`/moduloContratante/registropaciente?userId=${idContratante}&idPaciente=${paciente.idPaciente}`}
+                    className={styles["btn-editar-vistavisu"]}
+                    style={{ position: "relative", zIndex: 2 }}
+                  >
+                    Editar
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </>
