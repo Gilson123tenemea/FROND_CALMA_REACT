@@ -36,7 +36,7 @@ const FichaPacienteForm = ({ editMode = false }) => {
     acompañado: false,
     observaciones: '',
     fecha_registro: new Date().toISOString().split('T')[0],
-    paciente: { id_paciente: '' }
+    paciente: { idPaciente: Number(idPaciente) }
   });
 
   const [errores, setErrores] = useState({});

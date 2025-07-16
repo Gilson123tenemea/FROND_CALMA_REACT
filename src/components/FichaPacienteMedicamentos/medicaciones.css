@@ -2,28 +2,28 @@
 
 /* Variables CSS para consistencia */
 :root {
-  --color-primary: #2563eb;
-  --color-primary-hover: #1d4ed8;
+  --color-primary: hsl(160, 45%, 40%);
+  --color-primary-hover: #035e4b;
   --color-secondary: #64748b;
-  --color-success: #059669;
-  --color-success-hover: #047857;
+  --color-success: hsl(160, 45%, 40%);
+  --color-success-hover: #5dc5a7;
   --color-danger: #dc2626;
-  --color-danger-hover: #b91c1c;
+  --color-danger-hover: #8e0b0b;
   --color-warning: #d97706;
   --color-gray-50: #f8fafc;
   --color-gray-100: #f1f5f9;
-  --color-gray-200: #e2e8f0;
+  --color-gray-200: #2a4e7e;
   --color-gray-300: #cbd5e1;
-  --color-gray-400: #94a3b8;
-  --color-gray-500: #64748b;
-  --color-gray-600: #475569;
-  --color-gray-700: #334155;
-  --color-gray-800: #1e293b;
+  --color-gray-400: #9cb1cf;
+  --color-gray-500: #ffffff;
+  --color-gray-600: #000000;
+  --color-gray-700: #032848;
+  --color-gray-800: #000000;
   --color-gray-900: #0f172a;
   --color-white: #ffffff;
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(80, 4, 4, 0.1), 0 4px 6px -2px rgba(131, 40, 40, 0.05);
   --border-radius: 8px;
   --border-radius-lg: 12px;
   --transition: all 0.2s ease-in-out;
@@ -31,10 +31,10 @@
 
 /* Contenedor principal */
 .contenedor-formulario-medicamento {
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
   padding: 2rem;
-  background-color: var(--color-gray-50);
+  background-color: var(--color--50);
   min-height: 100vh;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
@@ -623,5 +623,5 @@ textarea:focus-visible {
 }
 .tabla-datos th,
 .tabla-datos td {
-  color: black !important;
+  color: rgb(0, 0, 0) !important;
 }

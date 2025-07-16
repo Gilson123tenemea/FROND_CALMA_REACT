@@ -482,7 +482,7 @@ const RegistroPaciente = () => {
         const data = await registrarPaciente(payloadPost);
         if (data.success) {
           toast.success('✅ Paciente registrado exitosamente');
-      navigate(`/fichas/nueva?idPaciente=${idPaciente}`);
+      navigate(`/fichas/nueva?idPaciente=${data.paciente.id_paciente}&userId=${userId}`);
 
           setFormulario({
             nombres: '',

@@ -113,6 +113,24 @@ const MedicamentoForm = () => {
     return '';
   };
 
+  const validarNombreUnico = (nombre) => {
+    if (!nombre.trim()) {
+      return 'El nombre del medicamento es obligatorio';
+    }
+    
+    // Verificar si el nombre ya existe (excluyendo el medicamento actual en edición)
+    const nombreExistente = medicamentos.find(med => 
+      med.nombremedicamento.toLowerCase() === nombre.toLowerCase() && 
+      med.idListaMedicamentos !== medicamento.idListaMedicamentos
+    );
+    
+    if (nombreExistente) {
+      return 'Ya existe un medicamento con este nombre';
+    }
+    
+    return validarTexto(nombre, 'El nombre del medicamento');
+  };
+
   const validarDosis = (valor) => {
     if (!valor.trim()) {
       return 'La dosis es obligatoria';
@@ -142,7 +160,7 @@ const MedicamentoForm = () => {
       return nuevosErrores;
     }
 
-    nuevosErrores.nombremedicamento = validarTexto(medicamento.nombremedicamento, 'El nombre del medicamento');
+    nuevosErrores.nombremedicamento = validarNombreUnico(medicamento.nombremedicamento);
     nuevosErrores.dosis_med = validarDosis(medicamento.dosis_med);
     nuevosErrores.frecuencia_med = validarFrecuencia(medicamento.frecuencia_med);
     nuevosErrores.condicion_tratada = validarTexto(medicamento.condicion_tratada, 'La condición tratada');
@@ -301,7 +319,7 @@ const MedicamentoForm = () => {
                 onChange={manejarCambio}
               />
               <span className="checkmark"></span>
-              Paciente en medicación
+              El paciente requiere medicación 
             </label>
           </div>
 
@@ -471,21 +489,30 @@ const MedicamentoForm = () => {
                 {medicamentos.map((med) => (
                   <tr key={med.idListaMedicamentos}>
                     <td>
-                      <div>
-                        {med.nombremedicamento || 'Sin especificar'}
+                      <div className="medicamento-cell">
+                        <span className="medicamento-nombre">{med.nombremedicamento || 'Sin especificar'}</span>
+                        
                       </div>
                     </td>
                     <td>
-                      {med.dosis_med || 'No especificada'}
+                      <span className="dosis-info">
+                        {med.dosis_med || 'No especificada'}
+                      </span>
                     </td>
                     <td>
-                      {med.frecuencia_med || 'No especificada'}
+                      <span className="frecuencia-info">
+                        {med.frecuencia_med || 'No especificada'}
+                      </span>
                     </td>
                     <td>
-                      {med.via_administracion || 'No especificada'}
+                      <span className="via-info">
+                        {med.via_administracion || 'No especificada'}
+                      </span>
                     </td>
                     <td>
-                      {med.condicion_tratada || 'No especificada'}
+                      <span className="condicion-info">
+                        {med.condicion_tratada || 'No especificada'}
+                      </span>
                     </td>
                     <td className="acciones-tabla">
                       <button 
@@ -494,7 +521,7 @@ const MedicamentoForm = () => {
                         disabled={enviando}
                         title="Editar medicamento"
                       >
-                        Editar
+                        ✏️ Editar
                       </button>
                       <button 
                         className="boton-eliminar" 
@@ -502,7 +529,7 @@ const MedicamentoForm = () => {
                         disabled={enviando}
                         title="Eliminar medicamento"
                       >
-                        Eliminar
+                        🗑️ Eliminar
                       </button>
                     </td>
                   </tr>
