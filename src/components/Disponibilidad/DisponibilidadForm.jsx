@@ -9,7 +9,7 @@ import {
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import CVStepsNav from "../ModuloAspirante/CV/CVStepsNav";
-import { FaCalendarAlt, FaClock, FaBusinessTime, FaPlane, FaSave, FaArrowLeft, FaEdit, FaTrash } from "react-icons/fa";
+import { FaCalendarAlt, FaClock, FaBusinessTime, FaRoute, FaSave, FaArrowLeft, FaEdit, FaTrash, FaCheckCircle, FaHeartbeat } from "react-icons/fa";
 import { useFormPersistence } from '../../hooks/useFormPersistence';
 import styles from './DisponibilidadForm.module.css';
 
@@ -57,7 +57,7 @@ const DisponibilidadForm = () => {
           }
         }
       } catch (error) {
-        toast.error(error.message);
+        toast.error(error.message || "Error al cargar disponibilidad para servicios de cuidado");
         console.error("Error al cargar disponibilidades:", error);
       } finally {
         setIsLoading(false);
@@ -100,14 +100,14 @@ const DisponibilidadForm = () => {
   };
 
   const manejarEliminar = async (id) => {
-    if (window.confirm("¿Estás seguro de que deseas eliminar esta disponibilidad?")) {
+    if (window.confirm("¿Estás seguro de que deseas eliminar esta disponibilidad de cuidado?")) {
       try {
         await deleteDisponibilidad(id);
         setDisponibilidades(disponibilidades.filter(disp => disp.id_disponibilidad !== id));
 
         toast.success(
           <div className={styles["disponibilidad-toast"]}>
-            <div>Disponibilidad eliminada correctamente</div>
+            <div>Disponibilidad de cuidado eliminada correctamente</div>
           </div>,
           {
             position: "top-right",
@@ -119,7 +119,7 @@ const DisponibilidadForm = () => {
       } catch (error) {
         toast.error(
           <div className={styles["disponibilidad-toast"]}>
-            <div>Error al eliminar la disponibilidad</div>
+            <div>Error al eliminar la disponibilidad de cuidado</div>
           </div>,
           {
             position: "top-right",
@@ -137,7 +137,7 @@ const DisponibilidadForm = () => {
     setIsSubmitting(true);
 
     if (!formulario.dias_disponibles || !formulario.horario_preferido || !formulario.tipo_jornada) {
-      toast.error("Días disponibles, horario preferido y tipo de jornada son campos requeridos");
+      toast.error("Días disponibles, horario preferido y tipo de jornada son campos obligatorios para brindar servicios de cuidado");
       setIsSubmitting(false);
       return;
     }
@@ -162,7 +162,7 @@ const DisponibilidadForm = () => {
 
         toast.success(
           <div className={styles["disponibilidad-toast"]}>
-            <div>Disponibilidad actualizada correctamente</div>
+            <div>Disponibilidad de cuidado actualizada correctamente</div>
           </div>,
           {
             position: "top-right",
@@ -177,7 +177,7 @@ const DisponibilidadForm = () => {
 
         toast.success(
           <div className={styles["disponibilidad-toast"]}>
-            <div>¡CV completado correctamente! Redirigiendo...</div>
+            <div>¡Perfil de cuidador completado correctamente! Redirigiendo al dashboard...</div>
           </div>,
           {
             position: "top-right",
@@ -196,7 +196,7 @@ const DisponibilidadForm = () => {
       console.error("Error al guardar disponibilidad:", error);
       toast.error(
         <div className={styles["disponibilidad-toast"]}>
-          <div>{error.message || "Error al registrar la disponibilidad"}</div>
+          <div>{error.message || "Error al registrar la disponibilidad de cuidado"}</div>
         </div>,
         {
           position: "top-right",
@@ -214,7 +214,7 @@ const DisponibilidadForm = () => {
     if (disponibilidades.length === 0) {
       toast.warning(
         <div className={styles["disponibilidad-toast"]}>
-          <div>Debes agregar al menos una disponibilidad</div>
+          <div>Debes agregar al menos una disponibilidad para ofrecer servicios de cuidado</div>
         </div>,
         {
           position: "top-right",
@@ -225,7 +225,19 @@ const DisponibilidadForm = () => {
       );
       return;
     }
-    navigate('/moduloAspirante');
+    
+    toast.success(
+      <div className={styles["disponibilidad-toast"]}>
+        <div>¡Perfil de cuidador profesional completado exitosamente!</div>
+      </div>,
+      {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeButton: false,
+        onClose: () => navigate('/moduloAspirante')
+      }
+    );
   };
 
   const manejarRegresar = () => {
@@ -238,7 +250,7 @@ const DisponibilidadForm = () => {
         <CVStepsNav idCV={idCV} currentStep="Disponibilidad" />
         <div className={styles["disponibilidad-contenedor"]}>
           <div className={styles["disponibilidad-spinner"]}></div>
-          <h2>Cargando disponibilidades...</h2>
+          <h2>Cargando disponibilidad para servicios de cuidado...</h2>
         </div>
       </div>
     );
@@ -251,43 +263,52 @@ const DisponibilidadForm = () => {
       <div className={styles["disponibilidad-contenedor"]}>
         <form onSubmit={manejarEnvio} className={styles["disponibilidad-form-container"]}>
           <h2 className={styles["disponibilidad-titulo-formulario"]}>
-            {formulario.isEditing ? 'Editar Disponibilidad' : 'Agregar Nueva Disponibilidad'}
+            {formulario.isEditing ? 'Editar Disponibilidad de Cuidado' : 'Configurar Disponibilidad para Servicios de Cuidado'}
           </h2>
 
           <div className={styles["disponibilidad-grupo-input"]}>
-            <label><FaCalendarAlt className={styles["disponibilidad-icono-input"]} /> Días disponibles *</label>
+            <label>
+              <FaCalendarAlt className={styles["disponibilidad-icono-input"]} /> 
+              Días Disponibles para Cuidado *
+            </label>
             <input
               type="text"
               name="dias_disponibles"
               onChange={manejarCambio}
               value={formulario.dias_disponibles}
-              placeholder="Ej: Lunes a Viernes, Fines de semana"
+              placeholder="Ej: Lunes a Viernes, Fines de semana, 24/7 disponible"
               required
               className={styles["disponibilidad-input"]}
             />
           </div>
 
           <div className={styles["disponibilidad-grupo-input"]}>
-            <label><FaClock className={styles["disponibilidad-icono-input"]} /> Horario preferido *</label>
+            <label>
+              <FaClock className={styles["disponibilidad-icono-input"]} /> 
+              Horario Preferido de Servicio *
+            </label>
             <input
               type="text"
               name="horario_preferido"
               onChange={manejarCambio}
               value={formulario.horario_preferido}
-              placeholder="Ej: 9:00 AM - 6:00 PM, Tiempo completo"
+              placeholder="Ej: 8:00 AM - 6:00 PM, Turnos nocturnos, Cuidado 24 horas"
               required
               className={styles["disponibilidad-input"]}
             />
           </div>
 
           <div className={styles["disponibilidad-grupo-input"]}>
-            <label><FaBusinessTime className={styles["disponibilidad-icono-input"]} /> Tipo de jornada *</label>
+            <label>
+              <FaBusinessTime className={styles["disponibilidad-icono-input"]} /> 
+              Modalidad de Cuidado *
+            </label>
             <input
               type="text"
               name="tipo_jornada"
               onChange={manejarCambio}
               value={formulario.tipo_jornada}
-              placeholder="Ej: Tiempo completo, Medio tiempo, Por proyectos"
+              placeholder="Ej: Cuidado interno, Cuidado externo, Por horas, Acompañamiento diurno"
               required
               className={styles["disponibilidad-input"]}
             />
@@ -302,7 +323,8 @@ const DisponibilidadForm = () => {
                 checked={formulario.disponibilidad_viaje}
                 className={styles["disponibilidad-checkbox"]}
               />
-              <FaPlane className={styles["disponibilidad-icono-input"]} /> ¿Disponible para viajar?
+              <FaRoute className={styles["disponibilidad-icono-input"]} /> 
+              ¿Disponible para trasladar pacientes o viajar a diferentes ubicaciones?
             </label>
           </div>
 
@@ -324,10 +346,10 @@ const DisponibilidadForm = () => {
               disabled={isSubmitting}
             >
               {isSubmitting
-                ? 'Guardando...'
+                ? 'Guardando disponibilidad...'
                 : formulario.isEditing
-                  ? 'Actualizar disponibilidad'
-                  : 'Guardar disponibilidad'}
+                  ? 'Actualizar Disponibilidad'
+                  : 'Guardar Disponibilidad'}
             </button>
 
             {formulario.isEditing && (
@@ -337,7 +359,7 @@ const DisponibilidadForm = () => {
                 onClick={reiniciarFormulario}
                 disabled={isSubmitting}
               >
-                Cancelar
+                Cancelar Edición
               </button>
             )}
 
@@ -348,7 +370,7 @@ const DisponibilidadForm = () => {
                 onClick={finalizarCV}
                 disabled={isSubmitting || disponibilidades.length === 0}
               >
-                Finalizar CV
+                <FaCheckCircle /> Finalizar Perfil de Cuidador
               </button>
             )}
           </div>
@@ -356,15 +378,18 @@ const DisponibilidadForm = () => {
 
         {disponibilidades.length > 0 ? (
           <div className={styles["disponibilidad-lista"]}>
-            <h3 className={styles["disponibilidad-titulo-lista"]}><FaCalendarAlt /> Disponibilidades registradas</h3>
+            <h3 className={styles["disponibilidad-titulo-lista"]}>
+              <FaHeartbeat /> 
+              Disponibilidad para Servicios de Cuidado ({disponibilidades.length})
+            </h3>
             <div className={styles["disponibilidad-contenedor-tabla"]}>
               <table className={styles["disponibilidad-tabla"]}>
                 <thead>
                   <tr>
-                    <th>Días disponibles</th>
-                    <th>Horario preferido</th>
-                    <th>Tipo de jornada</th>
-                    <th>Disponibilidad para viajar</th>
+                    <th>Días Disponibles</th>
+                    <th>Horario de Servicio</th>
+                    <th>Modalidad de Cuidado</th>
+                    <th>Disponibilidad para Traslados</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
@@ -374,19 +399,26 @@ const DisponibilidadForm = () => {
                       <td>{disp.dias_disponibles || 'No especificado'}</td>
                       <td>{disp.horario_preferido || 'No especificado'}</td>
                       <td>{disp.tipo_jornada || 'No especificado'}</td>
-                      <td>{disp.disponibilidad_viaje ? 'Sí' : 'No'}</td>
+                      <td>
+                        <span style={{ 
+                          color: disp.disponibilidad_viaje ? '#10b981' : '#64748b',
+                          fontWeight: '600'
+                        }}>
+                          {disp.disponibilidad_viaje ? 'Sí disponible' : 'No disponible'}
+                        </span>
+                      </td>
                       <td className={styles["disponibilidad-celda-acciones"]}>
                         <button
                           onClick={() => manejarEditar(disp)}
                           className={styles["disponibilidad-boton-editar"]}
-                          title="Editar"
+                          title="Editar disponibilidad de cuidado"
                         >
                           <FaEdit />
                         </button>
                         <button
                           onClick={() => manejarEliminar(disp.id_disponibilidad)}
                           className={styles["disponibilidad-boton-eliminar"]}
-                          title="Eliminar"
+                          title="Eliminar disponibilidad de cuidado"
                         >
                           <FaTrash />
                         </button>
@@ -399,7 +431,9 @@ const DisponibilidadForm = () => {
           </div>
         ) : (
           <div className={styles["disponibilidad-mensaje-vacio"]}>
-            No hay disponibilidades registradas aún
+            No hay disponibilidades de cuidado registradas.
+            <br />
+            Define tu disponibilidad para ofrecer servicios de cuidado de adultos mayores, incluyendo horarios, modalidades y ubicaciones.
           </div>
         )}
       </div>

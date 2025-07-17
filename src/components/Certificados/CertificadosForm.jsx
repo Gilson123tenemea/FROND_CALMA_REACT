@@ -10,7 +10,7 @@ import {
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import CVStepsNav from "../ModuloAspirante/CV/CVStepsNav";
-import { FaCertificate, FaUniversity, FaCalendarAlt, FaPaperclip, FaEdit, FaTrash, FaDownload, FaArrowLeft, FaSave } from "react-icons/fa";
+import { FaCertificate, FaUniversity, FaCalendarAlt, FaPaperclip, FaEdit, FaTrash, FaDownload, FaArrowLeft, FaSave, FaUserMd, FaHeartbeat } from "react-icons/fa";
 import { useFormPersistence } from '../../hooks/useFormPersistence';
 import styles from './CertificadosForm.module.css';
 
@@ -62,7 +62,7 @@ const CertificadosForm = () => {
         }
       } catch (error) {
         toast.error(error.message);
-        console.error("Error al cargar certificados:", error);
+        console.error("Error al cargar certificaciones:", error);
       } finally {
         setIsLoading(false);
       }
@@ -121,22 +121,22 @@ const CertificadosForm = () => {
   const manejarDescarga = async (id, nombreArchivo) => {
     try {
       await downloadCertificadoFile(id, nombreArchivo);
-      toast.success("Archivo descargado correctamente");
+      toast.success("Certificación descargada correctamente");
     } catch (error) {
-      toast.error(`Error: ${error.message}`);
+      toast.error(`Error al descargar: ${error.message}`);
       console.error("Detalles del error:", error);
     }
   };
 
   const manejarEliminar = async (id) => {
-    if (window.confirm("¿Estás seguro de que deseas eliminar este certificado?")) {
+    if (window.confirm("¿Estás seguro de que deseas eliminar esta certificación en cuidado geriátrico?")) {
       try {
         await deleteCertificado(id);
         setCertificados(certificados.filter(cert => cert.id_certificado !== id));
 
         toast.success(
           <div className={styles["certificados-toast"]}>
-            <div>Certificado eliminado correctamente</div>
+            <div>Certificación eliminada correctamente</div>
           </div>,
           {
             position: "top-right",
@@ -148,7 +148,7 @@ const CertificadosForm = () => {
       } catch (error) {
         toast.error(
           <div className={styles["certificados-toast"]}>
-            <div>Error al eliminar el certificado</div>
+            <div>Error al eliminar la certificación</div>
           </div>,
           {
             position: "top-right",
@@ -166,7 +166,7 @@ const CertificadosForm = () => {
     setIsSubmitting(true);
 
     if (!formulario.nombre_certificado || !formulario.nombre_institucion) {
-      toast.error("Nombre del certificado e institución son campos requeridos");
+      toast.error("El nombre de la certificación y la institución son campos obligatorios");
       setIsSubmitting(false);
       return;
     }
@@ -209,7 +209,7 @@ const CertificadosForm = () => {
 
         toast.success(
           <div className={styles["certificados-toast"]}>
-            <div>Certificado actualizado correctamente</div>
+            <div>Certificación en cuidado geriátrico actualizada correctamente</div>
           </div>,
           {
             position: "top-right",
@@ -230,7 +230,7 @@ const CertificadosForm = () => {
 
         toast.success(
           <div className={styles["certificados-toast"]}>
-            <div>Certificado guardado correctamente</div>
+            <div>Certificación en cuidado geriátrico guardada correctamente</div>
           </div>,
           {
             position: "top-right",
@@ -256,7 +256,7 @@ const CertificadosForm = () => {
       console.error("Error completo al guardar:", error);
       toast.error(
         <div className={styles["certificados-toast"]}>
-          <div>{error.message || "Error al registrar el certificado"}</div>
+          <div>{error.message || "Error al registrar la certificación"}</div>
         </div>,
         {
           position: "top-right",
@@ -274,7 +274,7 @@ const CertificadosForm = () => {
     if (certificados.length === 0) {
       toast.warning(
         <div className={styles["certificados-toast"]}>
-          <div>Debes agregar al menos un certificado</div>
+          <div>Debes agregar al menos una certificación en cuidado geriátrico para continuar</div>
         </div>,
         {
           position: "top-right",
@@ -298,7 +298,7 @@ const CertificadosForm = () => {
         <CVStepsNav idCV={idCV} currentStep="Certificados" />
         <div className={styles["certificados-contenedor"]}>
           <div className={styles["certificados-spinner"]}></div>
-          <h2>Cargando certificados...</h2>
+          <h2>Cargando certificaciones en cuidado geriátrico...</h2>
         </div>
       </div>
     );
@@ -311,37 +311,46 @@ const CertificadosForm = () => {
       <div className={styles["certificados-contenedor"]}>
         <form onSubmit={manejarEnvio} className={styles["certificados-form-container"]}>
           <h2 className={styles["certificados-titulo-formulario"]}>
-            {formulario.isEditing ? 'Editar Certificado' : 'Agregar Nuevo Certificado'}
+            {formulario.isEditing ? 'Editar Certificación Geriátrica' : 'Agregar Certificación en Cuidado Geriátrico'}
           </h2>
 
           <div className={styles["certificados-grupo-input"]}>
-            <label><FaCertificate className={styles["certificados-icono-input"]} /> Nombre del Certificado *</label>
+            <label>
+              <FaUserMd className={styles["certificados-icono-input"]} /> 
+              Nombre de la Certificación *
+            </label>
             <input
               type="text"
               name="nombre_certificado"
               onChange={manejarCambio}
               value={formulario.nombre_certificado}
-              placeholder="Ej: Desarrollo Web Avanzado"
+              placeholder="Ej: Cuidado de Adultos Mayores con Demencia, Primeros Auxilios Geriátricos"
               required
               className={styles["certificados-input"]}
             />
           </div>
 
           <div className={styles["certificados-grupo-input"]}>
-            <label><FaUniversity className={styles["certificados-icono-input"]} /> Institución *</label>
+            <label>
+              <FaUniversity className={styles["certificados-icono-input"]} /> 
+              Institución Certificadora *
+            </label>
             <input
               type="text"
               name="nombre_institucion"
               onChange={manejarCambio}
               value={formulario.nombre_institucion}
-              placeholder="Ej: Universidad Nacional, Platzi, Coursera"
+              placeholder="Ej: Cruz Roja, Instituto Geriátrico Nacional, Hospital Metropolitano"
               required
               className={styles["certificados-input"]}
             />
           </div>
 
           <div className={styles["certificados-grupo-input"]}>
-            <label><FaCalendarAlt className={styles["certificados-icono-input"]} /> Fecha de obtención</label>
+            <label>
+              <FaCalendarAlt className={styles["certificados-icono-input"]} /> 
+              Fecha de Obtención
+            </label>
             <input
               type="date"
               name="fecha"
@@ -354,19 +363,19 @@ const CertificadosForm = () => {
           <div className={styles["certificados-grupo-input"]}>
             <label>
               <FaPaperclip className={styles["certificados-icono-input"]} />
-              Archivo {formulario.isEditing ? '(Opcional - Cambiar)' : '(Opcional)'}
+              Certificado Digital {formulario.isEditing ? '(Opcional - Reemplazar)' : '(Opcional)'}
             </label>
             <input
               type="file"
               name="archivo"
               onChange={manejarCambioArchivo}
-              accept=".pdf,.jpg,.png"
+              accept=".pdf,.jpg,.png,.doc,.docx"
               className={styles["certificados-file-input"]}
             />
             {formulario.archivoNombre ? (
               <div className={styles["certificados-info-archivo"]}>
                 <span className={styles["certificados-nombre-archivo"]}>
-                  Nuevo archivo seleccionado: {formulario.archivoNombre}
+                  Nuevo certificado seleccionado: {formulario.archivoNombre}
                 </span>
                 <button
                   type="button"
@@ -382,9 +391,10 @@ const CertificadosForm = () => {
               </div>
             ) : formulario.nombreArchivoExistente && (
               <div className={styles["certificados-info-archivo"]}>
-                Archivo actual: {formulario.nombreArchivoExistente}
+                Certificado actual: {formulario.nombreArchivoExistente}
                 {formulario.isEditing && (
                   <button
+                    type="button"
                     className={styles["certificados-enlace-descarga"]}
                     onClick={() => manejarDescarga(formulario.id_certificado, formulario.nombreArchivoExistente)}
                   >
@@ -413,10 +423,10 @@ const CertificadosForm = () => {
               disabled={isSubmitting}
             >
               {isSubmitting
-                ? 'Guardando...'
+                ? 'Guardando certificación...'
                 : formulario.isEditing
-                  ? 'Actualizar certificado'
-                  : 'Guardar certificado'}
+                  ? 'Actualizar Certificación'
+                  : 'Guardar Certificación'}
             </button>
 
             {formulario.isEditing && (
@@ -426,7 +436,7 @@ const CertificadosForm = () => {
                 onClick={reiniciarFormulario}
                 disabled={isSubmitting}
               >
-                Cancelar
+                Cancelar Edición
               </button>
             )}
 
@@ -437,7 +447,7 @@ const CertificadosForm = () => {
                 onClick={irASiguiente}
                 disabled={isSubmitting || certificados.length === 0}
               >
-                Siguiente: Habilidades
+                Continuar: Habilidades →
               </button>
             )}
           </div>
@@ -445,15 +455,18 @@ const CertificadosForm = () => {
 
         {certificados.length > 0 ? (
           <div className={styles["certificados-lista"]}>
-            <h3 className={styles["certificados-titulo-lista"]}><FaCertificate /> Certificados registrados</h3>
+            <h3 className={styles["certificados-titulo-lista"]}>
+              <FaHeartbeat /> 
+              Certificaciones en Cuidado Geriátrico ({certificados.length})
+            </h3>
             <div className={styles["certificados-contenedor-tabla"]}>
               <table className={styles["certificados-tabla"]}>
                 <thead>
                   <tr>
-                    <th>Certificado</th>
+                    <th>Certificación</th>
                     <th>Institución</th>
                     <th>Fecha</th>
-                    <th>Archivo</th>
+                    <th>Certificado</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
@@ -473,20 +486,20 @@ const CertificadosForm = () => {
                               <FaDownload /> {cert.nombre_archivo || 'Descargar'}
                             </button>
                           </div>
-                        ) : 'No adjunto'}
+                        ) : 'Sin archivo'}
                       </td>
                       <td className={styles["certificados-celda-acciones"]}>
                         <button
                           onClick={() => manejarEditar(cert)}
                           className={styles["certificados-boton-editar"]}
-                          title="Editar"
+                          title="Editar certificación"
                         >
                           <FaEdit />
                         </button>
                         <button
                           onClick={() => manejarEliminar(cert.id_certificado)}
                           className={styles["certificados-boton-eliminar"]}
-                          title="Eliminar"
+                          title="Eliminar certificación"
                         >
                           <FaTrash />
                         </button>
@@ -499,7 +512,9 @@ const CertificadosForm = () => {
           </div>
         ) : (
           <div className={styles["certificados-mensaje-vacio"]}>
-            No hay certificados registrados aún
+            No hay certificaciones en cuidado geriátrico registradas.
+            <br />
+            Agrega tus certificaciones en primeros auxilios, cuidado de demencia, manejo de medicamentos u otras especializaciones.
           </div>
         )}
       </div>

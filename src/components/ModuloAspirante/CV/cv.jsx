@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaEdit, FaGlobe, FaLanguage, FaInfoCircle } from "react-icons/fa";
+import { FaEdit, FaGlobe, FaLanguage, FaInfoCircle, FaUserMd } from "react-icons/fa";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import styles from './CVForm.module.css';
@@ -136,7 +136,14 @@ const CVForm = ({ editMode = false }) => {
 
     const camposFaltantes = Object.entries(camposRequeridos)
       .filter(([_, value]) => !value)
-      .map(([key]) => key);
+      .map(([key]) => {
+        switch(key) {
+          case 'experiencia': return 'Experiencia en cuidado';
+          case 'zona_trabajo': return 'Zona de trabajo';
+          case 'idiomas': return 'Idiomas';
+          default: return key;
+        }
+      });
 
     if (camposFaltantes.length > 0) {
       toast.error(`Faltan campos requeridos: ${camposFaltantes.join(', ')}`);
@@ -163,7 +170,7 @@ const CVForm = ({ editMode = false }) => {
 
       toast.success(
         <div className={styles["cv-toast"]}>
-          <div>CV {isEditing ? 'actualizado' : 'creado'} correctamente</div>
+          <div>Perfil de cuidador {isEditing ? 'actualizado' : 'creado'} correctamente</div>
         </div>,
         {
           position: "top-right",
@@ -185,11 +192,11 @@ const CVForm = ({ editMode = false }) => {
           replace: true
         });
       } else {
-        throw new Error("No se pudo obtener el ID del CV");
+        throw new Error("No se pudo obtener el ID del perfil");
       }
 
     } catch (error) {
-      console.error("Error al guardar CV:", error);
+      console.error("Error al guardar perfil:", error);
       
       if (error.response?.status === 400) {
         const errorBackend = error.response.data?.error || 'Datos inválidos';
@@ -202,7 +209,7 @@ const CVForm = ({ editMode = false }) => {
       } else {
         toast.error(
           <div className={styles["cv-toast"]}>
-            <div>{error.message || 'Error al guardar el CV'}</div>
+            <div>{error.message || 'Error al guardar el perfil de cuidador'}</div>
           </div>
         );
       }
@@ -216,7 +223,7 @@ const CVForm = ({ editMode = false }) => {
       <div className={styles["cv-pagina"]}>
         <div className={styles["cv-contenedor"]}>
           <div className={styles["cv-spinner"]}></div>
-          <h2>Cargando CV...</h2>
+          <h2>Cargando perfil de cuidador...</h2>
         </div>
       </div>
     );
@@ -230,87 +237,101 @@ const CVForm = ({ editMode = false }) => {
         <div className={styles["cv-tarjeta"]}>
           {isFirstTime && (
             <div className={styles["cv-banner-bienvenida"]}>
-              <h3>¡Bienvenido a CALMA!</h3>
-              <p>Por favor, completa tu CV para comenzar a usar la plataforma.</p>
+              <h3>¡Bienvenido a la Plataforma de Cuidadores!</h3>
+              <p>Completa tu perfil profesional para conectar con familias que necesitan cuidado para sus adultos mayores.</p>
             </div>
           )}
           
-          <h2 className={styles["cv-titulo"]}>{isEditing ? 'Editar CV' : 'Registro de CV'}</h2>
+          <h2 className={styles["cv-titulo"]}>
+            {isEditing ? 'Actualizar Perfil de Cuidador' : 'Crear Perfil de Cuidador'}
+          </h2>
           <p className={styles["cv-subtitulo"]}>
             {isEditing
-              ? 'Modifica los campos que necesites actualizar'
-              : 'Completa los campos para registrar un CV'}
+              ? 'Mantén actualizada tu información profesional para mejores oportunidades'
+              : 'Comparte tu experiencia y habilidades en el cuidado de adultos mayores'}
           </p>
 
           <form onSubmit={manejarEnvio} className={styles["cv-formulario"]}>
             <div className={styles["cv-grupo-input"]}>
-              <label><FaEdit className={styles["cv-icono-input"]} /> Experiencia*</label>
+              <label>
+                <FaUserMd className={styles["cv-icono-input"]} /> 
+                Experiencia en Cuidado de Adultos Mayores*
+              </label>
               <input
                 type="text"
                 name="experiencia"
                 value={formulario.experiencia}
                 onChange={manejarCambio}
                 required
-                placeholder="Ej: 5 años cuidando adultos mayores con Alzheimer"
+                placeholder="Ej: 3 años cuidando adultos con demencia y movilidad reducida"
                 disabled={isSubmitting}
                 className={styles["cv-input"]}
               />
               <div className={styles["cv-ayuda-input"]}>
                 <FaInfoCircle className={styles["cv-icono-ayuda"]} />
-                Describe tu experiencia laboral relevante
+                Describe tu experiencia específica en el cuidado de personas mayores, incluyendo condiciones especiales que has atendido
               </div>
             </div>
 
             <div className={styles["cv-grupo-input"]}>
-              <label><FaGlobe className={styles["cv-icono-input"]} /> Zona de Trabajo*</label>
+              <label>
+                <FaGlobe className={styles["cv-icono-input"]} /> 
+                Zona de Cobertura y Disponibilidad*
+              </label>
               <input
                 type="text"
                 name="zona_trabajo"
                 value={formulario.zona_trabajo}
                 onChange={manejarCambio}
                 required
-                placeholder="Ej: Zona norte de la ciudad, Disponibilidad 24/7"
+                placeholder="Ej: Norte de Guayaquil, disponible fines de semana y noches"
                 disabled={isSubmitting}
                 className={styles["cv-input"]}
               />
               <div className={styles["cv-ayuda-input"]}>
                 <FaInfoCircle className={styles["cv-icono-ayuda"]} />
-                Indica tu disponibilidad geográfica o modalidad
+                Especifica las zonas donde puedes brindar servicios de cuidado y tu disponibilidad horaria
               </div>
             </div>
 
             <div className={styles["cv-grupo-input"]}>
-              <label><FaLanguage className={styles["cv-icono-input"]} /> Idiomas*</label>
+              <label>
+                <FaLanguage className={styles["cv-icono-input"]} /> 
+                Idiomas y Nivel de Comunicación*
+              </label>
               <input
                 type="text"
                 name="idiomas"
                 value={formulario.idiomas}
                 onChange={manejarCambio}
                 required
-                placeholder="Ej: Español (nativo), Lengua de señas (intermedio)"
+                placeholder="Ej: Español (nativo), Inglés (básico), experiencia con personas con dificultades auditivas"
                 disabled={isSubmitting}
                 className={styles["cv-input"]}
               />
               <div className={styles["cv-ayuda-input"]}>
                 <FaInfoCircle className={styles["cv-icono-ayuda"]} />
-                Lista los idiomas que dominas y tu nivel
+                Incluye idiomas que manejas y cualquier experiencia especial en comunicación con adultos mayores
               </div>
             </div>
 
             <div className={styles["cv-grupo-input"]}>
-              <label><FaEdit className={styles["cv-icono-input"]} /> Información Adicional</label>
+              <label>
+                <FaEdit className={styles["cv-icono-input"]} /> 
+                Certificaciones y Habilidades Especiales
+              </label>
               <input
                 type="text"
                 name="informacion_opcional"
                 value={formulario.informacion_opcional}
                 onChange={manejarCambio}
-                placeholder="Ej: Certificado en primeros auxilios, Movilización de pacientes"
+                placeholder="Ej: Certificado en primeros auxilios, manejo de medicamentos, fisioterapia básica"
                 disabled={isSubmitting}
                 className={styles["cv-input"]}
               />
               <div className={styles["cv-ayuda-input"]}>
                 <FaInfoCircle className={styles["cv-icono-ayuda"]} />
-                Agrega información adicional que consideres relevante
+                Menciona certificaciones médicas, cursos de cuidado geriátrico o habilidades especiales que posees
               </div>
             </div>
 
@@ -331,7 +352,12 @@ const CVForm = ({ editMode = false }) => {
                 className={styles["cv-boton-enviar"]}
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Procesando...' : isEditing ? 'Actualizar CV' : 'Guardar y Continuar'}
+                {isSubmitting 
+                  ? 'Guardando perfil...' 
+                  : isEditing 
+                    ? 'Actualizar Perfil' 
+                    : 'Crear Perfil y Continuar'
+                }
               </button>
             </div>
           </form>

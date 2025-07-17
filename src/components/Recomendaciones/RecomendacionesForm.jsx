@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import styles from './RecomendacionesForm.module.css';
 import CVStepsNav from "../ModuloAspirante/CV/CVStepsNav";
-import { FaUserTie, FaBriefcase, FaBuilding, FaPhone, FaEnvelope, FaLink, FaCalendarAlt, FaPaperclip, FaEdit, FaTrash, FaDownload } from "react-icons/fa";
+import { FaUserTie, FaBriefcase, FaBuilding, FaPhone, FaEnvelope, FaLink, FaCalendarAlt, FaPaperclip, FaEdit, FaTrash, FaDownload, FaHeartbeat } from "react-icons/fa";
 import { useLocation } from 'react-router-dom';
 import { useFormPersistence } from '../../hooks/useFormPersistence';
 
@@ -65,7 +65,7 @@ const RecomendacionesForm = () => {
         setRecomendaciones(formattedData);
       } catch (error) {
         console.error("Error al cargar recomendaciones:", error);
-        toast.error("Error al cargar recomendaciones");
+        toast.error("Error al cargar las recomendaciones profesionales");
       } finally {
         setIsLoading(false);
       }
@@ -132,21 +132,21 @@ const RecomendacionesForm = () => {
   const handleDownload = async (id, fileName) => {
     try {
       await downloadRecomendacionFile(id, fileName);
-      toast.success("Archivo descargado correctamente");
+      toast.success("Carta de recomendación descargada correctamente");
     } catch (error) {
       toast.error("Error al descargar el archivo: " + error.message);
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("¿Estás seguro de que deseas eliminar esta recomendación?")) {
+    if (window.confirm("¿Estás seguro de que deseas eliminar esta recomendación profesional?")) {
       try {
         await deleteRecomendacion(id);
         setRecomendaciones(recomendaciones.filter(rec => rec.id_recomendacion !== id));
 
         toast.success(
           <div className={styles["custom-toast"]}>
-            <div>Recomendación eliminada correctamente</div>
+            <div>Recomendación profesional eliminada correctamente</div>
           </div>,
           {
             position: "top-right",
@@ -158,7 +158,7 @@ const RecomendacionesForm = () => {
       } catch (error) {
         toast.error(
           <div className={styles["custom-toast"]}>
-            <div>Error al eliminar la recomendación</div>
+            <div>Error al eliminar la recomendación profesional</div>
           </div>,
           {
             position: "top-right",
@@ -176,13 +176,13 @@ const RecomendacionesForm = () => {
     setIsSubmitting(true);
 
     if (!formulario.nombre_recomendador || !formulario.cargo) {
-      toast.error("Nombre y cargo son campos requeridos");
+      toast.error("El nombre del recomendador y su cargo son campos obligatorios");
       setIsSubmitting(false);
       return;
     }
 
     if (!formulario.isEditing && !formulario.archivo) {
-      toast.error("Debes subir un archivo de recomendación");
+      toast.error("Debes adjuntar una carta de recomendación");
       setIsSubmitting(false);
       return;
     }
@@ -231,7 +231,7 @@ const RecomendacionesForm = () => {
           } : rec
         ));
 
-        toast.success("Recomendación actualizada correctamente");
+        toast.success("Recomendación profesional actualizada correctamente");
       } else {
         nuevaRecomendacion = await createRecomendacion(formData);
         setRecomendaciones(prev => [...prev, {
@@ -240,13 +240,13 @@ const RecomendacionesForm = () => {
           nombre_archivo: formulario.archivo?.name || ''
         }]);
 
-        toast.success("Recomendación guardada correctamente");
+        toast.success("Recomendación profesional guardada correctamente");
       }
 
       resetFormulario();
     } catch (error) {
       console.error("Error al guardar:", error);
-      toast.error(error.response?.data?.message || error.message || "Error al registrar la recomendación");
+      toast.error(error.response?.data?.message || error.message || "Error al registrar la recomendación profesional");
     } finally {
       setIsSubmitting(false);
     }
@@ -254,7 +254,7 @@ const RecomendacionesForm = () => {
 
   const irASiguiente = () => {
     if (recomendaciones.length === 0) {
-      toast.warning("Debes agregar al menos una recomendación");
+      toast.warning("Debes agregar al menos una recomendación profesional para continuar");
       return;
     }
     navigate(`/cv/${idCV}/certificados`);
@@ -262,7 +262,7 @@ const RecomendacionesForm = () => {
 
   const handleBack = () => {
     if (!idCV) {
-      toast.error("No se encontró el ID del CV");
+      toast.error("No se encontró el ID del perfil");
       return;
     }
     navigate(`/cv/${idCV}`);
@@ -274,7 +274,7 @@ const RecomendacionesForm = () => {
         <CVStepsNav idCV={idCV} currentStep="Recomendaciones" />
         <div className={styles["recomendaciones-loading-content"]}>
           <div className={styles["recomendaciones-loading-spinner"]}></div>
-          <h2>Cargando recomendaciones...</h2>
+          <h2>Cargando recomendaciones profesionales...</h2>
         </div>
       </div>
     );
@@ -286,78 +286,101 @@ const RecomendacionesForm = () => {
 
       <div className={styles["recomendaciones-content"]}>
         <form onSubmit={handleSubmit} className={styles["recomendaciones-form"]}>
-          <h2>{formulario.isEditing ? 'Editar Recomendación' : 'Agregar Nueva Recomendación'}</h2>
+          <h2>
+            {formulario.isEditing ? 'Editar Recomendación Profesional' : 'Agregar Recomendación Profesional'}
+          </h2>
 
           <div className={styles["input-group"]}>
-            <label><FaUserTie className={styles["input-icon"]} /> Nombre del recomendador *</label>
+            <label>
+              <FaUserTie className={styles["input-icon"]} /> 
+              Nombre del Recomendador *
+            </label>
             <input
               type="text"
               name="nombre_recomendador"
               onChange={handleChange}
               value={formulario.nombre_recomendador}
-              placeholder="Ej: Juan Pérez López"
+              placeholder="Ej: Dr. María González (médico supervisor)"
               required
             />
           </div>
 
           <div className={styles["input-group"]}>
-            <label><FaBriefcase className={styles["input-icon"]} /> Cargo</label>
+            <label>
+              <FaBriefcase className={styles["input-icon"]} /> 
+              Cargo y Especialidad *
+            </label>
             <input
               type="text"
               name="cargo"
               onChange={handleChange}
               value={formulario.cargo}
-              placeholder="Ej: Gerente de Proyectos"
+              placeholder="Ej: Geriatra, Coordinador de cuidados, Enfermero supervisor"
               required
             />
           </div>
 
           <div className={styles["input-group"]}>
-            <label><FaBuilding className={styles["input-icon"]} /> Empresa</label>
+            <label>
+              <FaBuilding className={styles["input-icon"]} /> 
+              Institución o Centro de Salud
+            </label>
             <input
               type="text"
               name="empresa"
               onChange={handleChange}
               value={formulario.empresa}
-              placeholder="Ej: Tech Solutions S.A."
+              placeholder="Ej: Hospital Metropolitano, Centro Geriátrico San José"
             />
           </div>
 
           <div className={styles["input-group"]}>
-            <label><FaPhone className={styles["input-icon"]} /> Teléfono</label>
+            <label>
+              <FaPhone className={styles["input-icon"]} /> 
+              Teléfono de Contacto
+            </label>
             <input
               type="text"
               name="telefono"
               onChange={handleChange}
               value={formulario.telefono}
-              placeholder="Ej: +52 55 1234 5678"
+              placeholder="Ej: +593 4 123-4567"
             />
           </div>
 
           <div className={styles["input-group"]}>
-            <label><FaEnvelope className={styles["input-icon"]} /> Email</label>
+            <label>
+              <FaEnvelope className={styles["input-icon"]} /> 
+              Correo Electrónico
+            </label>
             <input
               type="email"
               name="email"
               onChange={handleChange}
               value={formulario.email}
-              placeholder="Ej: juan.perez@empresa.com"
+              placeholder="Ej: dr.gonzalez@hospital.com"
             />
           </div>
 
           <div className={styles["input-group"]}>
-            <label><FaLink className={styles["input-icon"]} /> Relación</label>
+            <label>
+              <FaLink className={styles["input-icon"]} /> 
+              Relación Profesional
+            </label>
             <input
               type="text"
               name="relacion"
               onChange={handleChange}
               value={formulario.relacion}
-              placeholder="Ej: Jefe directo, Profesor, Colega"
+              placeholder="Ej: Supervisor directo, Médico tratante, Coordinador de equipo"
             />
           </div>
 
           <div className={styles["input-group"]}>
-            <label><FaCalendarAlt className={styles["input-icon"]} /> Fecha</label>
+            <label>
+              <FaCalendarAlt className={styles["input-icon"]} /> 
+              Fecha de la Recomendación
+            </label>
             <input
               type="date"
               name="fecha"
@@ -369,20 +392,20 @@ const RecomendacionesForm = () => {
           <div className={styles["input-group"]}>
             <label>
               <FaPaperclip className={styles["input-icon"]} />
-              Archivo {formulario.isEditing ? '(Opcional - Cambiar)' : '(Requerido)'}
+              Carta de Recomendación {formulario.isEditing ? '(Opcional - Reemplazar)' : '(Requerida)'}
             </label>
             <input
               type="file"
               name="archivo"
               onChange={handleFileChange}
-              accept=".pdf,.jpg,.png"
+              accept=".pdf,.jpg,.png,.doc,.docx"
               className={styles["file-input"]}
               required={!formulario.isEditing}
             />
             {formulario.archivoNombre ? (
               <div className={styles["file-info"]}>
                 <span className={styles["file-name"]}>
-                  Nuevo archivo seleccionado: {formulario.archivoNombre}
+                  Nueva carta seleccionada: {formulario.archivoNombre}
                 </span>
                 <button
                   type="button"
@@ -398,12 +421,12 @@ const RecomendacionesForm = () => {
               </div>
             ) : formulario.nombreArchivoExistente && (
               <div className={styles["file-info"]}>
-                Archivo actual: {formulario.nombreArchivoExistente}
+                Carta actual: {formulario.nombreArchivoExistente}
                 {formulario.isEditing && (
                   <button
+                    type="button"
                     className={styles["download-link"]}
                     onClick={() => handleDownload(formulario.id_recomendacion, formulario.nombreArchivoExistente)}
-                    style={{ marginLeft: '10px' }}
                   >
                     <FaDownload /> Descargar
                   </button>
@@ -418,12 +441,21 @@ const RecomendacionesForm = () => {
                 Regresar
               </button>
             )}
-            <button type="submit" className={styles["recomendaciones-submit-btn"]}>
-              {formulario.isEditing ? 'Actualizar' : 'Guardar'}
+            <button 
+              type="submit" 
+              className={styles["recomendaciones-submit-btn"]}
+              disabled={isSubmitting}
+            >
+              {isSubmitting 
+                ? 'Guardando...' 
+                : formulario.isEditing 
+                  ? 'Actualizar Recomendación' 
+                  : 'Guardar Recomendación'
+              }
             </button>
             {formulario.isEditing && (
               <button type="button" className={styles["recomendaciones-cancel-btn"]} onClick={resetFormulario}>
-                Cancelar
+                Cancelar Edición
               </button>
             )}
             {!formulario.isEditing && (
@@ -433,24 +465,27 @@ const RecomendacionesForm = () => {
                 onClick={irASiguiente}
                 disabled={recomendaciones.length === 0}
               >
-                Siguiente
+                Continuar →
               </button>
             )}
           </div>
         </form>
 
         <div className={styles["recomendaciones-table-section"]}>
-          <h3><FaPaperclip /> Recomendaciones registradas ({recomendaciones.length})</h3>
+          <h3>
+            <FaHeartbeat /> 
+            Recomendaciones Profesionales ({recomendaciones.length})
+          </h3>
           
           {recomendaciones.length > 0 ? (
             <div className={styles["recomendaciones-table-container"]}>
               <table className={styles["recomendaciones-table"]}>
                 <thead>
                   <tr>
-                    <th>Nombre</th>
-                    <th>Cargo</th>
-                    <th>Empresa</th>
-                    <th>Archivo</th>
+                    <th>Recomendador</th>
+                    <th>Cargo/Especialidad</th>
+                    <th>Institución</th>
+                    <th>Carta</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
@@ -468,18 +503,20 @@ const RecomendacionesForm = () => {
                           >
                             <FaDownload /> {rec.nombre_archivo}
                           </button>
-                        ) : 'No adjunto'}
+                        ) : 'Sin archivo'}
                       </td>
                       <td className={styles["recomendaciones-actions"]}>
                         <button 
                           className={styles["recomendaciones-edit-btn"]}
                           onClick={() => handleEdit(rec)}
+                          title="Editar recomendación"
                         >
                           <FaEdit />
                         </button>
                         <button 
                           className={styles["recomendaciones-delete-btn"]}
                           onClick={() => handleDelete(rec.id_recomendacion)}
+                          title="Eliminar recomendación"
                         >
                           <FaTrash />
                         </button>
@@ -491,7 +528,11 @@ const RecomendacionesForm = () => {
             </div>
           ) : (
             <div className={styles["recomendaciones-empty-message"]}>
-              No hay recomendaciones registradas
+              <FaHeartbeat style={{ fontSize: '2rem', marginBottom: '1rem', color: 'var(--text-muted)' }} />
+              <br />
+              No hay recomendaciones profesionales registradas.
+              <br />
+              Agrega al menos una recomendación de un profesional de la salud o supervisor.
             </div>
           )}
         </div>

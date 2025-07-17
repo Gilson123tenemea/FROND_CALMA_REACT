@@ -2,21 +2,103 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "./CVStepsNav.css";
+import styles from "./CVStepsNav.module.css";
 
-const pasos = [
-  { nombre: "CV", path: (idCV) => `/cv/${idCV}` },
-  { nombre: "Recomendaciones", path: (idCV) => `/recomendaciones/${idCV}` },
-  { nombre: "Certificados", path: (idCV) => `/cv/${idCV}/certificados` },
-  { nombre: "Habilidades", path: (idCV) => `/habilidades/${idCV}` },
-  { nombre: "Disponibilidad", path: (idCV) => `/disponibilidad/${idCV}` },
+const cuidadorSteps = [
+  { 
+    nombre: "Perfil", 
+    path: (idCV) => `/cv/${idCV}`,
+    descripcion: "Información personal y experiencia en cuidado"
+  },
+  { 
+    nombre: "Referencias", 
+    path: (idCV) => `/recomendaciones/${idCV}`,
+    descripcion: "Recomendaciones profesionales del sector salud"
+  },
+  { 
+    nombre: "Certificados", 
+    path: (idCV) => `/cv/${idCV}/certificados`,
+    descripcion: "Certificaciones en cuidado geriátrico"
+  },
+  { 
+    nombre: "Habilidades", 
+    path: (idCV) => `/habilidades/${idCV}`,
+    descripcion: "Competencias especializadas en cuidado"
+  },
+  { 
+    nombre: "Horarios", 
+    path: (idCV) => `/disponibilidad/${idCV}`,
+    descripcion: "Disponibilidad y modalidades de servicio"
+  },
 ];
 
-const CVStepsNav = ({ idCV, currentStep }) => {
+const CuidadorStepsNavigation = ({ idCV, currentStep }) => {
   const navigate = useNavigate();
-  const currentIndex = pasos.findIndex(p => p.nombre === currentStep);
+  
+  // Debug: Verificar qué valor está llegando
+  // Función para encontrar el índice del paso actual de forma más robusta
+  const findCurrentStepIndex = (currentStep) => {
+    if (!currentStep) return -1;
+    
+    // Primero intentar coincidencia exacta
+    let index = cuidadorSteps.findIndex(step => step.nombre === currentStep);
+    
+    if (index !== -1) return index;
+    
+    // Si no encuentra, intentar coincidencia sin case sensitive
+    index = cuidadorSteps.findIndex(step => 
+      step.nombre.toLowerCase() === currentStep.toLowerCase()
+    );
+    
+    if (index !== -1) return index;
+    
+    // Mapeo de nombres alternativos comunes
+    const nameMapping = {
+      'recomendaciones': 'Referencias',
+      'recomendacion': 'Referencias',
+      'referencias': 'Referencias',
+      'perfil': 'Perfil',
+      'profile': 'Perfil',
+      'personal': 'Perfil',
+      'certificados': 'Certificados',
+      'certificaciones': 'Certificados',
+      'certificates': 'Certificados',
+      'habilidades': 'Habilidades',
+      'competencias': 'Habilidades',
+      'skills': 'Habilidades',
+      'horarios': 'Horarios',
+      'disponibilidad': 'Horarios',
+      'schedule': 'Horarios',
+      'availability': 'Horarios'
+    };
+    
+    const normalizedStep = nameMapping[currentStep.toLowerCase()];
+    if (normalizedStep) {
+      index = cuidadorSteps.findIndex(step => step.nombre === normalizedStep);
+    }
+    
+    // Si aún no encuentra, usar la URL para detectar el paso
+    if (index === -1 && typeof window !== 'undefined') {
+      const pathname = window.location.pathname;
+      if (pathname.includes('/cv/') && !pathname.includes('/certificados') && !pathname.includes('/recomendaciones') && !pathname.includes('/habilidades') && !pathname.includes('/disponibilidad')) {
+        return 0; // Perfil
+      } else if (pathname.includes('/recomendaciones')) {
+        return 1; // Referencias
+      } else if (pathname.includes('/certificados')) {
+        return 2; // Certificados
+      } else if (pathname.includes('/habilidades')) {
+        return 3; // Habilidades
+      } else if (pathname.includes('/disponibilidad')) {
+        return 4; // Horarios
+      }
+    }
+    
+    return index;
+  };
+  
+  const currentStepIndex = findCurrentStepIndex(currentStep);
 
-  const isCVSaved = () => {
+  const validateCVSaved = () => {
     try {
       const savedCVs = JSON.parse(localStorage.getItem('savedCVs') || '{}');
       return !!savedCVs[idCV];
@@ -25,55 +107,153 @@ const CVStepsNav = ({ idCV, currentStep }) => {
     }
   };
 
-  const handleStepClick = (step, path) => {
-    const clickedIndex = pasos.findIndex(p => p.nombre === step.nombre);
+  // Función mejorada para determinar si un paso está completado
+  const isStepCompleted = (stepIndex) => {
+    // Un paso está completado si es anterior al paso actual
+    return stepIndex < currentStepIndex;
+  };
 
-    if (!isCVSaved() && clickedIndex > 0) {
+  const handleStepNavigation = (targetStep, stepPath) => {
+    const targetStepIndex = cuidadorSteps.findIndex(step => step.nombre === targetStep.nombre);
+
+    // Validar si el perfil básico está guardado antes de permitir navegación
+    if (!validateCVSaved() && targetStepIndex > 0) {
       toast.warning(
         <>
-          <strong>Debes guardar el CV primero</strong>
-          <div>Completa y guarda la información básica antes de continuar.</div>
+          <div style={{ fontWeight: '600', marginBottom: '0.5rem' }}>
+            🩺 Completa tu perfil básico primero
+          </div>
+          <div style={{ fontSize: '0.85rem', opacity: '0.9' }}>
+            Guarda tu información personal y experiencia en cuidado antes de continuar.
+          </div>
         </>,
-        { autoClose: 3000 }
+        { 
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: styles.toastWarning
+        }
       );
       return;
     }
 
-    if (clickedIndex <= currentIndex) {
-      navigate(path);
-    } else if (clickedIndex === currentIndex + 1) {
-      navigate(path);
+    // Permitir navegación hacia atrás o al siguiente paso
+    if (targetStepIndex <= currentStepIndex) {
+      navigate(stepPath);
+    } else if (targetStepIndex === currentStepIndex + 1) {
+      navigate(stepPath);
     } else {
+      // Mostrar mensaje informativo para pasos futuros
+      const currentStepData = cuidadorSteps[currentStepIndex];
+      
       toast.info(
         <>
-          <strong>Completa primero:</strong>
-          <div>{pasos[currentIndex].nombre}</div>
+          <div style={{ fontWeight: '600', marginBottom: '0.5rem' }}>
+            📋 Completa primero: {currentStepData.nombre}
+          </div>
+          <div style={{ fontSize: '0.85rem', opacity: '0.9' }}>
+            {currentStepData.descripcion}
+          </div>
         </>,
-        { autoClose: 3000 }
+        { 
+          autoClose: 3500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          className: styles.toastInfo
+        }
       );
     }
   };
 
+  // Función mejorada para obtener las clases CSS del paso
+  const getStepClassName = (stepIndex) => {
+    let className = styles.stepButton;
+    
+    if (stepIndex === currentStepIndex) {
+      // Paso actual (iluminado) - PRIORIDAD MÁXIMA
+      className += ` ${styles.stepActive}`;
+    } else if (stepIndex < currentStepIndex) {
+      // Paso completado (verdecito)
+      className += ` ${styles.stepCompleted}`;
+    } else {
+      // Paso futuro o no accesible
+      className += ` ${styles.stepPending}`;
+    }
+    
+    console.log(`Step ${stepIndex} (${cuidadorSteps[stepIndex]?.nombre}): currentStepIndex=${currentStepIndex}, className=${className}`);
+    
+    return className;
+  };
+
   return (
     <>
-      <div className="cv-steps-nav">
-        {pasos.map((p, i) => (
-          <React.Fragment key={i}>
+      <div 
+        className={styles.cuidadorStepsNavigation} 
+        role="navigation" 
+        aria-label="Progreso del perfil de cuidador profesional"
+      >
+        {cuidadorSteps.map((step, stepIndex) => (
+          <React.Fragment key={stepIndex}>
             <div
-              className={`step ${p.nombre === currentStep ? 'active' : ''} 
-                          ${i < currentIndex ? 'completed' : ''}`}
-              onClick={() => handleStepClick(p, p.path(idCV))}
+              className={getStepClassName(stepIndex)}
+              onClick={() => handleStepNavigation(step, step.path(idCV))}
+              role="button"
+              tabIndex={0}
+              aria-label={`${step.nombre}: ${step.descripcion}`}
+              aria-current={step.nombre === currentStep ? 'step' : undefined}
+              onKeyDown={(keyEvent) => {
+                if (keyEvent.key === 'Enter' || keyEvent.key === ' ') {
+                  keyEvent.preventDefault();
+                  handleStepNavigation(step, step.path(idCV));
+                }
+              }}
+              title={step.descripcion}
+              data-step={stepIndex}
+              data-current={currentStepIndex}
+              data-is-active={stepIndex === currentStepIndex}
             >
-              {p.nombre}
+              <span className={styles.stepNumber}>{stepIndex + 1}</span>
+              <span className={styles.stepName}>{step.nombre}</span>
             </div>
-            {i < pasos.length - 1 && <div className="step-arrow">→</div>}
+            {stepIndex < cuidadorSteps.length - 1 && (
+              <div 
+                className={`${styles.stepArrow} ${
+                  isStepCompleted(stepIndex) ? styles.stepArrowCompleted : ''
+                }`} 
+                aria-hidden="true"
+              >
+                →
+              </div>
+            )}
           </React.Fragment>
         ))}
       </div>
 
-      <ToastContainer />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        limit={3}
+        toastStyle={{
+          fontSize: '0.9rem',
+          lineHeight: '1.5',
+          borderRadius: '12px',
+          boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)'
+        }}
+      />
     </>
   );
 };
 
-export default CVStepsNav;
+export default CuidadorStepsNavigation;

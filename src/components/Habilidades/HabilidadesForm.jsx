@@ -9,7 +9,7 @@ import {
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import CVStepsNav from "../ModuloAspirante/CV/CVStepsNav";
-import { FaCode, FaChartLine, FaSave, FaArrowLeft, FaEdit, FaTrash } from "react-icons/fa";
+import { FaHandsHelping, FaChartLine, FaSave, FaArrowLeft, FaEdit, FaTrash, FaHeartbeat, FaUserMd } from "react-icons/fa";
 import { useFormPersistence } from '../../hooks/useFormPersistence';
 import styles from './HabilidadesForm.module.css';
 
@@ -55,7 +55,7 @@ const HabilidadesForm = () => {
           }
         }
       } catch (error) {
-        toast.error(error.message || "Error al cargar habilidades");
+        toast.error(error.message || "Error al cargar habilidades de cuidado");
         console.error("Error al cargar habilidades:", error);
       } finally {
         setIsLoading(false);
@@ -91,14 +91,14 @@ const HabilidadesForm = () => {
   };
 
   const manejarEliminar = async (id) => {
-    if (window.confirm("¿Estás seguro de que deseas eliminar esta habilidad?")) {
+    if (window.confirm("¿Estás seguro de que deseas eliminar esta habilidad de cuidado?")) {
       try {
         await deleteHabilidad(id);
         setHabilidades(habilidades.filter(hab => hab.id_habilidad !== id));
 
         toast.success(
           <div className={styles["habilidades-toast"]}>
-            <div>Habilidad eliminada correctamente</div>
+            <div>Habilidad de cuidado eliminada correctamente</div>
           </div>,
           {
             position: "top-right",
@@ -110,7 +110,7 @@ const HabilidadesForm = () => {
       } catch (error) {
         toast.error(
           <div className={styles["habilidades-toast"]}>
-            <div>Error al eliminar la habilidad</div>
+            <div>Error al eliminar la habilidad de cuidado</div>
           </div>,
           {
             position: "top-right",
@@ -128,7 +128,7 @@ const HabilidadesForm = () => {
     setIsSubmitting(true);
 
     if (!formulario.descripcion.trim()) {
-      toast.warning("Por favor ingresa una descripción para la habilidad");
+      toast.warning("Por favor describe una habilidad específica en el cuidado de adultos mayores");
       setIsSubmitting(false);
       return;
     }
@@ -149,7 +149,7 @@ const HabilidadesForm = () => {
 
         toast.success(
           <div className={styles["habilidades-toast"]}>
-            <div>Habilidad actualizada correctamente</div>
+            <div>Habilidad de cuidado actualizada correctamente</div>
           </div>,
           {
             position: "top-right",
@@ -164,7 +164,7 @@ const HabilidadesForm = () => {
 
         toast.success(
           <div className={styles["habilidades-toast"]}>
-            <div>Habilidad guardada correctamente</div>
+            <div>Habilidad de cuidado guardada correctamente</div>
           </div>,
           {
             position: "top-right",
@@ -180,7 +180,7 @@ const HabilidadesForm = () => {
       console.error("Error al guardar:", error);
       toast.error(
         <div className={styles["habilidades-toast"]}>
-          <div>{error.message || "Error al registrar la habilidad"}</div>
+          <div>{error.message || "Error al registrar la habilidad de cuidado"}</div>
         </div>,
         {
           position: "top-right",
@@ -198,7 +198,7 @@ const HabilidadesForm = () => {
     if (habilidades.length === 0) {
       toast.warning(
         <div className={styles["habilidades-toast"]}>
-          <div>Debes agregar al menos una habilidad</div>
+          <div>Debes agregar al menos una habilidad en el cuidado de adultos mayores</div>
         </div>,
         {
           position: "top-right",
@@ -226,7 +226,7 @@ const HabilidadesForm = () => {
         <CVStepsNav idCV={idCV} currentStep="Habilidades" />
         <div className={styles["habilidades-contenedor"]}>
           <div className={styles["habilidades-spinner"]}></div>
-          <h2>Cargando habilidades...</h2>
+          <h2>Cargando habilidades de cuidado...</h2>
         </div>
       </div>
     );
@@ -239,24 +239,30 @@ const HabilidadesForm = () => {
       <div className={styles["habilidades-contenedor"]}>
         <form onSubmit={manejarEnvio} className={styles["habilidades-form-container"]}>
           <h2 className={styles["habilidades-titulo-formulario"]}>
-            {formulario.isEditing ? 'Editar Habilidad' : 'Agregar Nueva Habilidad'}
+            {formulario.isEditing ? 'Editar Habilidad de Cuidado' : 'Agregar Habilidad en Cuidado Geriátrico'}
           </h2>
 
           <div className={styles["habilidades-grupo-input"]}>
-            <label><FaCode className={styles["habilidades-icono-input"]} /> Habilidad *</label>
+            <label>
+              <FaHandsHelping className={styles["habilidades-icono-input"]} /> 
+              Habilidad Especializada *
+            </label>
             <input
               type="text"
               name="descripcion"
               value={formulario.descripcion}
               onChange={manejarCambio}
-              placeholder="Ej: JavaScript, Diseño UX, Gestión de proyectos"
+              placeholder="Ej: Manejo de medicamentos, Movilización de pacientes, Cuidado de demencia"
               required
               className={styles["habilidades-input"]}
             />
           </div>
 
           <div className={styles["habilidades-grupo-input"]}>
-            <label><FaChartLine className={styles["habilidades-icono-input"]} /> Nivel *</label>
+            <label>
+              <FaChartLine className={styles["habilidades-icono-input"]} /> 
+              Nivel de Competencia *
+            </label>
             <select 
               name="nivel" 
               value={formulario.nivel} 
@@ -264,9 +270,9 @@ const HabilidadesForm = () => {
               className={styles["habilidades-select"]}
               required
             >
-              <option value="Básico">Básico</option>
-              <option value="Intermedio">Intermedio</option>
-              <option value="Avanzado">Avanzado</option>
+              <option value="Básico">Básico - Conocimientos iniciales</option>
+              <option value="Intermedio">Intermedio - Experiencia práctica</option>
+              <option value="Avanzado">Avanzado - Especialización profesional</option>
             </select>
           </div>
 
@@ -288,10 +294,10 @@ const HabilidadesForm = () => {
               disabled={isSubmitting}
             >
               {isSubmitting
-                ? 'Guardando...'
+                ? 'Guardando habilidad...'
                 : formulario.isEditing
-                  ? 'Actualizar habilidad'
-                  : 'Guardar habilidad'}
+                  ? 'Actualizar Habilidad'
+                  : 'Guardar Habilidad'}
             </button>
 
             {formulario.isEditing && (
@@ -301,7 +307,7 @@ const HabilidadesForm = () => {
                 onClick={reiniciarFormulario}
                 disabled={isSubmitting}
               >
-                Cancelar
+                Cancelar Edición
               </button>
             )}
 
@@ -312,7 +318,7 @@ const HabilidadesForm = () => {
                 onClick={irASiguiente}
                 disabled={isSubmitting || habilidades.length === 0}
               >
-                Siguiente: Disponibilidad
+                Continuar: Disponibilidad →
               </button>
             )}
           </div>
@@ -320,13 +326,16 @@ const HabilidadesForm = () => {
 
         {habilidades.length > 0 ? (
           <div className={styles["habilidades-lista"]}>
-            <h3 className={styles["habilidades-titulo-lista"]}><FaCode /> Habilidades registradas</h3>
+            <h3 className={styles["habilidades-titulo-lista"]}>
+              <FaHeartbeat /> 
+              Habilidades en Cuidado Geriátrico ({habilidades.length})
+            </h3>
             <div className={styles["habilidades-contenedor-tabla"]}>
               <table className={styles["habilidades-tabla"]}>
                 <thead>
                   <tr>
-                    <th>Habilidad</th>
-                    <th>Nivel</th>
+                    <th>Habilidad Especializada</th>
+                    <th>Nivel de Competencia</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
@@ -343,14 +352,14 @@ const HabilidadesForm = () => {
                         <button
                           onClick={() => manejarEditar(hab)}
                           className={styles["habilidades-boton-editar"]}
-                          title="Editar"
+                          title="Editar habilidad de cuidado"
                         >
                           <FaEdit />
                         </button>
                         <button
                           onClick={() => manejarEliminar(hab.id_habilidad)}
                           className={styles["habilidades-boton-eliminar"]}
-                          title="Eliminar"
+                          title="Eliminar habilidad de cuidado"
                         >
                           <FaTrash />
                         </button>
@@ -363,7 +372,9 @@ const HabilidadesForm = () => {
           </div>
         ) : (
           <div className={styles["habilidades-mensaje-vacio"]}>
-            No hay habilidades registradas aún
+            No hay habilidades de cuidado geriátrico registradas.
+            <br />
+            Agrega tus habilidades especializadas como manejo de medicamentos, cuidado de demencia, fisioterapia básica, etc.
           </div>
         )}
       </div>

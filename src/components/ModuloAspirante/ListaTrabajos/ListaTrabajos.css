@@ -1,58 +1,214 @@
+/* ===== CONTENEDOR PRINCIPAL ===== */
+.contenedor-trabajos {
+  padding: 2rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  min-height: 100vh;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* ===== TÍTULO PRINCIPAL ===== */
 .contenedor-trabajos h1 {
   font-size: 2.5rem;
   font-weight: 800;
-  color: #2563eb; /* azul vibrante */
-  margin-bottom: 2rem;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8, #3b82f6);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 2.5rem;
   text-align: center;
   letter-spacing: 1.2px;
-  text-shadow: 1px 1px 4px rgba(37, 99, 235, 0.5);
   font-family: 'Inter', system-ui, sans-serif;
   text-transform: uppercase;
-  border-bottom: 3px solid #2563eb;
-  padding-bottom: 0.5rem;
-  max-width: 360px;
+  position: relative;
+  max-width: fit-content;
   margin-left: auto;
   margin-right: auto;
 }
 
-.contenedor-trabajos {
-  padding: 2rem;
+.contenedor-trabajos h1::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
 }
 
-.contenedor-trabajos h1 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #111827;
-  margin-bottom: 1.5rem;
+/* ===== FILTROS SUPERIORES ===== */
+.filtros-superiores {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
 }
 
+.filtros-superiores input {
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #374151;
+  background: #f9fafb;
+  transition: all 0.3s ease;
+  min-width: 200px;
+  outline: none;
+}
+
+.filtros-superiores input:focus {
+  border-color: #2563eb;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  transform: translateY(-1px);
+}
+
+.filtros-superiores input::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+.filtros-superiores input[type="date"] {
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.filtros-superiores input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.5);
+  cursor: pointer;
+}
+
+/* ===== LAYOUT PRINCIPAL ===== */
 .layout-trabajos {
   display: flex;
+  gap: 2rem;
+  align-items: flex-start;
 }
 
+/* ===== LISTA DE TRABAJOS ===== */
 .lista-trabajos {
   flex: 1;
+  display: grid;
+  gap: 1.5rem;
 }
 
+/* ===== ESTADOS DE CARGA Y ERROR ===== */
+.lista-trabajos > p {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+
+.lista-trabajos > p[style*="red"] {
+  color: #dc2626 !important;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+}
+
+/* ===== SIN RESULTADOS ===== */
 .sin-resultados {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 3rem;
+  padding: 4rem 2rem;
   text-align: center;
   color: #6b7280;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+  margin-top: 2rem;
 }
 
 .sin-resultados svg {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.7;
 }
 
-
 .sin-resultados h3 {
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   font-weight: 600;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
   color: #374151;
 }
 
+.sin-resultados p {
+  font-size: 0.95rem;
+  color: #6b7280;
+  max-width: 300px;
+  line-height: 1.5;
+}
+
+/* ===== ESTADO DE CARGA MEJORADO ===== */
+.lista-trabajos > p:first-child {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+  color: #6b7280;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .contenedor-trabajos {
+    padding: 1rem;
+  }
+  
+  .contenedor-trabajos h1 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .filtros-superiores {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .filtros-superiores input {
+    min-width: unset;
+    width: 100%;
+  }
+  
+  .layout-trabajos {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .sin-resultados {
+    padding: 2rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .contenedor-trabajos h1 {
+    font-size: 1.75rem;
+    letter-spacing: 0.8px;
+  }
+  
+  .filtros-superiores {
+    margin-bottom: 1.5rem;
+  }
+}
