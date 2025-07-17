@@ -46,6 +46,7 @@ import AlergiaAlimentariaForm from './components/FichaPacienteAlergia/alergiaali
 import AlergiaMedicamentoForm from './components/FichaPacienteAlergiaMedicamento/alergiamedicamento';
 import InteresForm from './components/FichaPacienteInteres/interes';
 import TemaForm from './components/FichaPacienteTema/temasc';
+import PostulacionesAspirante from './components/ModuloAspirante/PostulacionesAspirante/PostulacionesAspirante';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -64,22 +65,31 @@ createRoot(document.getElementById('root')).render(
         <Route path="/contact" element={<Contacto />} />
 
         {/* Rutas protegidas para aspirantes */}
-        <Route 
-          path="/moduloAspirante/*" 
+        <Route
+          path="/moduloAspirante/*"
           element={
             <RequireCV>
               <ModuloAspirante />
             </RequireCV>
-          } 
+          }
         />
-        
-        <Route 
-          path="/moduloAspirante/perfilAspirante" 
+
+        <Route
+          path="/moduloAspirante/postulaciones/:userId"
+          element={
+            <RequireCV>
+              <PostulacionesAspirante />
+            </RequireCV>
+          }
+        />
+
+        <Route
+          path="/moduloAspirante/perfilAspirante"
           element={
             <RequireCV>
               <PerfilAspirante />
             </RequireCV>
-          } 
+          }
         />
 
         {/* Rutas de CV */}
@@ -89,79 +99,79 @@ createRoot(document.getElementById('root')).render(
         <Route path="/cv-aspirante/:idAspirante" element={<CVContratanteView />} />
 
 
-        
+
         {/* Rutas dependientes de CV (protegidas) */}
-        <Route 
-          path="/cv/:idCV/certificados" 
+        <Route
+          path="/cv/:idCV/certificados"
           element={
             <RequireCV>
               <CertificadosForm />
             </RequireCV>
-          } 
-        />     
-        
-        <Route 
-          path="/cv/:idCV/recomendaciones" 
+          }
+        />
+
+        <Route
+          path="/cv/:idCV/recomendaciones"
           element={
             <RequireCV>
               <RecomendacionesForm />
             </RequireCV>
-          } 
+          }
         />
-        
-        <Route 
-          path="/cv/:idCV/habilidades" 
+
+        <Route
+          path="/cv/:idCV/habilidades"
           element={
             <RequireCV>
               <HabilidadesForm />
             </RequireCV>
-          } 
+          }
         />
-        
-        <Route 
-          path="/cv/:idCV/disponibilidad" 
+
+        <Route
+          path="/cv/:idCV/disponibilidad"
           element={
             <RequireCV>
               <DisponibilidadForm />
             </RequireCV>
-          } 
+          }
         />
 
         {/* Otras rutas protegidas */}
-        <Route 
-          path="/recomendaciones/:idCV" 
+        <Route
+          path="/recomendaciones/:idCV"
           element={
             <RequireCV>
               <RecomendacionesForm />
             </RequireCV>
-          } 
+          }
         />
-        
-        <Route 
-          path="/habilidades/:idCV" 
+
+        <Route
+          path="/habilidades/:idCV"
           element={
             <RequireCV>
               <HabilidadesForm />
             </RequireCV>
-          } 
+          }
         />
-        
-        <Route 
-          path="/disponibilidad/:idCV" 
+
+        <Route
+          path="/disponibilidad/:idCV"
           element={
             <RequireCV>
               <DisponibilidadForm />
             </RequireCV>
-          } 
+          }
         />
-        
-        <Route 
-          path="/certificados/:idCV" 
+
+        <Route
+          path="/certificados/:idCV"
           element={
             <RequireCV>
               <CertificadosForm />
             </RequireCV>
-          } 
+          }
         />
 
         {/* Rutas de módulo contratante (no protegidas) */}
@@ -174,16 +184,16 @@ createRoot(document.getElementById('root')).render(
         <Route path="/moduloContratante/registropaciente" element={<RegistroPaciente />} />
         <Route path="/moduloContratante/visualizarpaciente" element={<Visualizarpaciente />} />
         <Route path="/moduloContratante/registropaciente/:idPaciente" element={<RegistroPaciente />} />
-        
-        <Route 
-  path="/fichas/nueva" 
-  element={<FichaPacienteForm />} 
-/>
-<Route 
-  path="/fichas/:id_ficha_paciente" 
-  element={<FichaPacienteForm editMode={true} />} 
-/>
-        <Route path="/fichas/:id_ficha_paciente" element={<FichaPacienteForm  key={location.pathname} />} />
+
+        <Route
+          path="/fichas/nueva"
+          element={<FichaPacienteForm />}
+        />
+        <Route
+          path="/fichas/:id_ficha_paciente"
+          element={<FichaPacienteForm editMode={true} />}
+        />
+        <Route path="/fichas/:id_ficha_paciente" element={<FichaPacienteForm key={location.pathname} />} />
         <Route path="/fichas/:id_ficha_paciente/medicamentos" element={<MedicamentoForm />} />
         <Route path="/fichas/:id_ficha_paciente/medicamentos/:idListaMedicamentos" element={<MedicamentoForm />} />
         <Route path="/fichas/:id_ficha_paciente/alergias-alimentarias" element={<AlergiaAlimentariaForm />} />
@@ -191,7 +201,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/fichas/:id_ficha_paciente/alergias-medicamentos" element={<AlergiaMedicamentoForm />} />
         <Route path="/fichas/:id_ficha_paciente/alergias-medicamentos/:id_alergiamed" element={<AlergiaMedicamentoForm />} />
         <Route path="/fichas/:id_ficha_paciente/intereses" element={<InteresForm />} />
-        <Route path="/fichas/:id_ficha_paciente/intereses/:idInteresesPersonales" element={<InteresForm />} />      
+        <Route path="/fichas/:id_ficha_paciente/intereses/:idInteresesPersonales" element={<InteresForm />} />
         <Route path="/fichas/:id_ficha_paciente/temas" element={<TemaForm />} />
         <Route path="/fichas/:id_ficha_paciente/temas/:idTemaConversacion" element={<TemaForm />} />
         {/* Otras rutas */}

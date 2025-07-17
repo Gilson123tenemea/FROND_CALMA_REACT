@@ -34,6 +34,8 @@ const HeaderAspirante = ({ userId, onOpenMensajes, onOpenNotificaciones, notific
         <nav className="nav-links">
           <Link to={`/moduloAspirante/trabajos?userId=${userId}`}>Trabajos</Link>
           <Link to={`/moduloAspirante/red?userId=${userId}`}>Mi Red</Link>
+          <Link to={`/moduloAspirante/postulaciones/${userId}`}>Mis Postulaciones</Link>
+
 
           <a href="#" onClick={handleMensajesClick} className="mensajes-emoji">
             💬 Mensajes
