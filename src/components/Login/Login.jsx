@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
-import './Login.css';
+import styles from './login.module.css';
 import Navbar from '../Shared/Navbar';
-import { FaFacebook, FaGoogle, FaArrowRight, FaEye, FaEyeSlash } from 'react-icons/fa';
+import {
+  FaFacebook,
+  FaGoogle,
+  FaArrowRight,
+  FaEye,
+  FaEyeSlash,
+  FaUser,
+  FaLock
+} from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { login } from '../../servicios/LoginService';
-import { checkIfAspiranteHasCV, getCVByAspiranteId } from '../../servicios/cvService';
+import { getCVByAspiranteId } from '../../servicios/cvService';
 import LoadingScreen from '../Shared/LoadingScreen';
 
 const Login = () => {
@@ -55,11 +63,10 @@ const Login = () => {
 
       const checkConnectionAndNavigate = async () => {
         if (navigator.onLine) {
-          // Redirección según rol
           if (data.rol === 'aspirante') {
             await handleAspiranteLogin(data);
           } else if (data.rol === 'contratante') {
-            navigate('/moduloContratante', { 
+            navigate('/moduloContratante', {
               state: { userId: data.contratanteId },
               replace: true
             });
@@ -91,59 +98,55 @@ const Login = () => {
     }
   };
 
-const handleAspiranteLogin = async (userData) => {
-  try {
-    console.log("Iniciando flujo para aspirante:", userData.aspiranteId);
-    
-    // 1. Obtener CV directamente por aspiranteId
-    const cvData = await getCVByAspiranteId(userData.aspiranteId);
-    console.log("CV encontrado:", cvData);
+  const handleAspiranteLogin = async (userData) => {
+    try {
+      console.log("Iniciando flujo para aspirante:", userData.aspiranteId);
 
-    // 2. Si no existe CV, redirigir a creación
-    if (!cvData) {
-      console.log("No se encontró CV, redirigiendo a creación");
-      navigate('/cv/new', {
+      const cvData = await getCVByAspiranteId(userData.aspiranteId);
+      console.log("CV encontrado:", cvData);
+
+      if (!cvData) {
+        console.log("No se encontró CV, redirigiendo a creación");
+        navigate('/cv/new', {
+          state: {
+            userId: userData.aspiranteId,
+            isFirstTime: true,
+            fromLogin: true
+          },
+          replace: true
+        });
+        return;
+      }
+
+      if (cvData.aspirante?.idAspirante?.toString() !== userData.aspiranteId?.toString()) {
+        throw new Error("El CV no pertenece al usuario actual");
+      }
+
+      console.log("Redirigiendo a módulo aspirante con CV ID:", cvData.id_cv);
+      navigate('/moduloAspirante', {
         state: {
           userId: userData.aspiranteId,
-          isFirstTime: true,
-          fromLogin: true
+          hasCV: true,
+          cvData: cvData,
+          cvId: cvData.id_cv
         },
         replace: true
       });
-      return;
+
+    } catch (error) {
+      console.error('Error en el flujo de login para aspirante:', error);
+      toast.error(error.message || 'Error al verificar tu información de CV');
+
+      navigate('/cv/new', {
+        state: {
+          userId: userData.aspiranteId,
+          error: error.message
+        },
+        replace: true
+      });
     }
+  };
 
-    // 3. Validar que el CV pertenece al usuario
-    if (cvData.aspirante?.idAspirante?.toString() !== userData.aspiranteId?.toString()) {
-      throw new Error("El CV no pertenece al usuario actual");
-    }
-
-    // 4. Redirigir al módulo aspirante con datos del CV
-    console.log("Redirigiendo a módulo aspirante con CV ID:", cvData.id_cv);
-    navigate('/moduloAspirante', {
-      state: {
-        userId: userData.aspiranteId,
-        hasCV: true,
-        cvData: cvData,
-        cvId: cvData.id_cv // Asegurar que pasamos el ID correcto
-      },
-      replace: true
-    });
-
-  } catch (error) {
-    console.error('Error en el flujo de login para aspirante:', error);
-    toast.error(error.message || 'Error al verificar tu información de CV');
-    
-    // Redirigir a creación de CV como fallback
-    navigate('/cv/new', {
-      state: { 
-        userId: userData.aspiranteId,
-        error: error.message
-      },
-      replace: true
-    });
-  }
-};
   const handleRecovery = async () => {
     if (!validateEmail(recoveryEmail)) {
       toast.error('Por favor ingresa un correo electrónico válido');
@@ -182,32 +185,37 @@ const handleAspiranteLogin = async (userData) => {
   };
 
   return (
-    <div className="login-page">
+    <div className={styles.loginPage}>
       {redirecting && <LoadingScreen />}
-
       <Navbar />
-      <div className="login-container">
-        <div className="login-card">
+
+      <div className={styles.loginContainer}>
+        <div className={styles.loginCard}>
           <h2>Bienvenido a CALMA</h2>
-          <p className="subtitle">Inicia sesión para continuar</p>
-          <div className="divider"><span>o</span></div>
 
           <form onSubmit={handleLogin}>
-            <div className="input-group">
+            {/* Usuario o Email */}
+            <div className={styles.loginInputGroup}>
               <label htmlFor="username">Usuario o Email</label>
-              <input
-                type="text"
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Ingresa tu usuario o email"
-                required
-              />
+              <div className={styles.loginInputWithIcon}>
+                <FaUser style={{ position: 'absolute', left: '1rem', color: '#9ca3af' }} />
+                <input
+                  type="text"
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Ingresa tu usuario o email"
+                  required
+                  style={{ paddingLeft: '2.5rem' }}
+                />
+              </div>
             </div>
 
-            <div className="login-input-group">
+            {/* Contraseña */}
+            <div className={styles.loginInputGroup}>
               <label htmlFor="password">Contraseña</label>
-              <div className="login-input-with-icon">
+              <div className={styles.loginInputWithIcon}>
+                <FaLock style={{ position: 'absolute', left: '1rem', color: '#9ca3af' }} />
                 <input
                   type={showPassword ? "text" : "password"}
                   id="password"
@@ -215,10 +223,11 @@ const handleAspiranteLogin = async (userData) => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Ingresa tu contraseña"
                   required
+                  style={{ paddingLeft: '2.5rem' }}
                 />
                 <button
                   type="button"
-                  className="login-password-toggle"
+                  className={styles.loginPasswordToggle}
                   onClick={() => setShowPassword(!showPassword)}
                   aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                 >
@@ -226,32 +235,34 @@ const handleAspiranteLogin = async (userData) => {
                 </button>
               </div>
             </div>
-            <div className="forgot-password">
+
+            {/* Recuperación */}
+            <div className={styles.forgotPassword}>
               <button
                 type="button"
-                className="forgot-password-link"
+                className={styles.forgotPasswordLink}
                 onClick={() => setShowRecoveryModal(true)}
               >
                 ¿Olvidaste tu contraseña?
               </button>
             </div>
 
-            <button type="submit" className="login-btn" disabled={loading}>
-              {loading ? 'Cargando...' : <>
-                Iniciar Sesión <FaArrowRight className="btn-icon" />
-              </>}
+            {/* Botón */}
+            <button type="submit" className={styles.loginBtn} disabled={loading}>
+              {loading ? 'Cargando...' : <>Iniciar Sesión <FaArrowRight className={styles.btnIcon} /></>}
             </button>
           </form>
 
-          <div className="register-link">
+          <div className={styles.registerLink}>
             ¿No tienes una cuenta? <Link to="/registro">Regístrate aquí</Link>
           </div>
         </div>
       </div>
 
+      {/* Modal de recuperación */}
       {showRecoveryModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
             <h3>Recuperar contraseña</h3>
             <p>Ingresa tu correo electrónico para recuperar tu contraseña.</p>
             <input
@@ -260,18 +271,18 @@ const handleAspiranteLogin = async (userData) => {
               value={recoveryEmail}
               onChange={(e) => setRecoveryEmail(e.target.value)}
             />
-            <div className="modal-buttons">
+            <div className={styles.modalButtons}>
               <button
                 onClick={handleRecovery}
                 disabled={recoveryLoading}
-                className="recovery-btn"
+                className={styles.recoveryBtn}
               >
                 {recoveryLoading ? 'Enviando...' : 'Recuperar contraseña'}
               </button>
               <button
                 onClick={() => setShowRecoveryModal(false)}
                 disabled={recoveryLoading}
-                className="cancel-btn"
+                className={styles.cancelBtn}
               >
                 Cancelar
               </button>
