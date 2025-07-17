@@ -17,11 +17,11 @@ const CVCompletoView = () => {
   const userData = JSON.parse(localStorage.getItem("userData"));
   const aspiranteId = userData?.aspiranteId;
   const [cvData, setCvData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
-    const cargarDatos = async () => {
+    const fetchCVData = async () => {
       try {
         if (!aspiranteId) {
           throw new Error("No se pudo identificar al usuario");
@@ -47,16 +47,16 @@ const CVCompletoView = () => {
         setCvData(data);
       } catch (err) {
         console.error("Error cargando CV:", err);
-        setError(err.message);
+        setErrorMessage(err.message);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
-    cargarDatos();
+    fetchCVData();
   }, [aspiranteId]);
 
-  const handleDownload = async (endpoint, id, fileName) => {
+  const downloadFile = async (endpoint, id, fileName) => {
     try {
       const response = await fetch(`http://localhost:8090/api/${endpoint}/${id}/descargar`, {
         method: 'GET',
@@ -80,8 +80,8 @@ const CVCompletoView = () => {
     }
   };
 
-  const getNivelNumero = (nivelTexto) => {
-    switch(nivelTexto) {
+  const getSkillLevel = (levelText) => {
+    switch(levelText) {
       case 'Básico': return 3;
       case 'Intermedio': return 4;
       case 'Avanzado': return 5;
@@ -89,25 +89,25 @@ const CVCompletoView = () => {
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="cv-view-loading-container">
+      <div className="cv-loading-container">
         <HeaderAspirante userId={aspiranteId} />
-        <div className="cv-view-loading-content">
-          <div className="cv-view-spinner"></div>
+        <div className="cv-loading-content">
+          <div className="cv-loading-spinner"></div>
           <p>Cargando información del CV...</p>
         </div>
       </div>
     );
   }
 
-  if (error) {
+  if (errorMessage) {
     return (
-      <div className="cv-view-error-container">
+      <div className="cv-error-container">
         <HeaderAspirante userId={aspiranteId} />
-        <div className="cv-view-error-content">
-          <div className="cv-view-error-icon">!</div>
-          <p className="cv-view-error-message">Error: {error}</p>
+        <div className="cv-error-content">
+          <div className="cv-error-icon">!</div>
+          <p className="cv-error-text">Error: {errorMessage}</p>
         </div>
       </div>
     );
@@ -115,9 +115,9 @@ const CVCompletoView = () => {
 
   if (!cvData) {
     return (
-      <div className="cv-view-empty-container">
+      <div className="cv-empty-container">
         <HeaderAspirante userId={aspiranteId} />
-        <div className="cv-view-empty-content">
+        <div className="cv-empty-content">
           <p>No se encontraron datos del CV</p>
         </div>
       </div>
@@ -128,65 +128,65 @@ const CVCompletoView = () => {
     <>
       <HeaderAspirante userId={aspiranteId} />
       
-      <div className="cv-view-main-container">
+      <div className="cv-main-container">
         {/* Sección del Aspirante */}
         {cvData.aspirante && (
-          <div className="cv-view-personal-section">
-            <div className="cv-view-section-header">
-              <FaUser className="cv-view-section-icon" />
+          <div className="cv-personal-section">
+            <div className="cv-section-header">
+              <FaUser className="cv-section-icon" />
               <h2>Información Personal</h2>
             </div>
             
-            <div className="cv-view-personal-content">
-              <div className="cv-view-photo-container">
+            <div className="cv-personal-content">
+              <div className="cv-photo-container">
                 {cvData.aspirante.foto ? (
                   <img 
                     src={cvData.aspirante.foto} 
                     alt="Foto del aspirante"
-                    className="cv-view-photo"
+                    className="cv-photo"
                   />
                 ) : (
-                  <div className="cv-view-default-photo">
+                  <div className="cv-default-photo">
                     <FaUser size={50} />
                   </div>
                 )}
               </div>
               
-              <div className="cv-view-details-grid">
-                <div className="cv-view-detail-item">
-                  <FaIdCard className="cv-view-detail-icon" />
-                  <span className="cv-view-detail-label">Cédula:</span>
-                  <span className="cv-view-detail-value">{cvData.aspirante.cedula || 'No especificado'}</span>
+              <div className="cv-details-grid">
+                <div className="cv-detail-item">
+                  <FaIdCard className="cv-detail-icon" />
+                  <span className="cv-detail-label">Cédula:</span>
+                  <span className="cv-detail-value">{cvData.aspirante.cedula || 'No especificado'}</span>
                 </div>
                 
-                <div className="cv-view-detail-item">
-                  <FaUser className="cv-view-detail-icon" />
-                  <span className="cv-view-detail-label">Nombre:</span>
-                  <span className="cv-view-detail-value">
+                <div className="cv-detail-item">
+                  <FaUser className="cv-detail-icon" />
+                  <span className="cv-detail-label">Nombre:</span>
+                  <span className="cv-detail-value">
                     {cvData.aspirante.nombres} {cvData.aspirante.apellidos}
                   </span>
                 </div>
                 
-                <div className="cv-view-detail-item">
-                  <FaEnvelope className="cv-view-detail-icon" />
-                  <span className="cv-view-detail-label">Correo:</span>
-                  <span className="cv-view-detail-value">{cvData.aspirante.correo || 'No especificado'}</span>
+                <div className="cv-detail-item">
+                  <FaEnvelope className="cv-detail-icon" />
+                  <span className="cv-detail-label">Correo:</span>
+                  <span className="cv-detail-value">{cvData.aspirante.correo || 'No especificado'}</span>
                 </div>
                 
-                <div className="cv-view-detail-item">
-                  <FaBirthdayCake className="cv-view-detail-icon" />
-                  <span className="cv-view-detail-label">Fecha Nacimiento:</span>
-                  <span className="cv-view-detail-value">
+                <div className="cv-detail-item">
+                  <FaBirthdayCake className="cv-detail-icon" />
+                  <span className="cv-detail-label">Fecha Nacimiento:</span>
+                  <span className="cv-detail-value">
                     {cvData.aspirante.fechaNacimiento 
                       ? new Date(cvData.aspirante.fechaNacimiento).toLocaleDateString() 
                       : 'No especificado'}
                   </span>
                 </div>
                 
-                <div className="cv-view-detail-item">
-                  <FaVenusMars className="cv-view-detail-icon" />
-                  <span className="cv-view-detail-label">Género:</span>
-                  <span className="cv-view-detail-value">{cvData.aspirante.genero || 'No especificado'}</span>
+                <div className="cv-detail-item">
+                  <FaVenusMars className="cv-detail-icon" />
+                  <span className="cv-detail-label">Género:</span>
+                  <span className="cv-detail-value">{cvData.aspirante.genero || 'No especificado'}</span>
                 </div>
               </div>
             </div>
@@ -194,36 +194,36 @@ const CVCompletoView = () => {
         )}
         
         {/* Sección del CV */}
-        <div className="cv-view-cv-section">
-          <div className="cv-view-section-header">
-            <FaBriefcase className="cv-view-section-icon" />
+        <div className="cv-summary-section">
+          <div className="cv-section-header">
+            <FaBriefcase className="cv-section-icon" />
             <h2>Currículum Vitae</h2>
           </div>
           
-          <div className="cv-view-details-grid">
-            <div className="cv-view-detail-item">
-              <FaBriefcase className="cv-view-detail-icon" />
-              <span className="cv-view-detail-label">Experiencia:</span>
-              <span className="cv-view-detail-value">{cvData.experiencia || 'No especificado'}</span>
+          <div className="cv-details-grid">
+            <div className="cv-detail-item">
+              <FaBriefcase className="cv-detail-icon" />
+              <span className="cv-detail-label">Experiencia:</span>
+              <span className="cv-detail-value">{cvData.experiencia || 'No especificado'}</span>
             </div>
             
-            <div className="cv-view-detail-item">
-              <FaMapMarkerAlt className="cv-view-detail-icon" />
-              <span className="cv-view-detail-label">Zona de trabajo:</span>
-              <span className="cv-view-detail-value">{cvData.zona_trabajo || 'No especificado'}</span>
+            <div className="cv-detail-item">
+              <FaMapMarkerAlt className="cv-detail-icon" />
+              <span className="cv-detail-label">Zona de trabajo:</span>
+              <span className="cv-detail-value">{cvData.zona_trabajo || 'No especificado'}</span>
             </div>
             
-            <div className="cv-view-detail-item">
-              <FaLanguage className="cv-view-detail-icon" />
-              <span className="cv-view-detail-label">Idiomas:</span>
-              <span className="cv-view-detail-value">{cvData.idiomas || 'No especificado'}</span>
+            <div className="cv-detail-item">
+              <FaLanguage className="cv-detail-icon" />
+              <span className="cv-detail-label">Idiomas:</span>
+              <span className="cv-detail-value">{cvData.idiomas || 'No especificado'}</span>
             </div>
             
             {cvData.informacion_opcional && (
-              <div className="cv-view-detail-item">
-                <FaInfoCircle className="cv-view-detail-icon" />
-                <span className="cv-view-detail-label">Información adicional:</span>
-                <span className="cv-view-detail-value">{cvData.informacion_opcional}</span>
+              <div className="cv-detail-item">
+                <FaInfoCircle className="cv-detail-icon" />
+                <span className="cv-detail-label">Información adicional:</span>
+                <span className="cv-detail-value">{cvData.informacion_opcional}</span>
               </div>
             )}
           </div>
@@ -231,45 +231,45 @@ const CVCompletoView = () => {
 
         {/* Sección de Disponibilidad */}
         {cvData.disponibilidades && cvData.disponibilidades.length > 0 && (
-          <div className="cv-view-availability-section">
-            <div className="cv-view-section-header">
-              <FaCalendarAlt className="cv-view-section-icon" />
+          <div className="cv-availability-section">
+            <div className="cv-section-header">
+              <FaCalendarAlt className="cv-section-icon" />
               <h2>Disponibilidad ({cvData.disponibilidades.length})</h2>
             </div>
             
-            <div className="cv-view-availability-list">
+            <div className="cv-availability-list">
               {cvData.disponibilidades.map((disp, index) => (
-                <div key={index} className="cv-view-availability-item">
-                  <div className="cv-view-availability-grid">
-                    <div className="cv-view-availability-detail">
-                      <FaCalendarAlt className="cv-view-detail-icon" />
+                <div key={index} className="cv-availability-card">
+                  <div className="cv-availability-grid">
+                    <div className="cv-availability-detail">
+                      <FaCalendarAlt className="cv-detail-icon" />
                       <div>
-                        <span className="cv-view-detail-label">Días disponibles:</span>
-                        <span className="cv-view-detail-value">{disp.dias_disponibles || 'No especificado'}</span>
+                        <span className="cv-detail-label">Días disponibles:</span>
+                        <span className="cv-detail-value">{disp.dias_disponibles || 'No especificado'}</span>
                       </div>
                     </div>
                     
-                    <div className="cv-view-availability-detail">
-                      <FaClock className="cv-view-detail-icon" />
+                    <div className="cv-availability-detail">
+                      <FaClock className="cv-detail-icon" />
                       <div>
-                        <span className="cv-view-detail-label">Horario preferido:</span>
-                        <span className="cv-view-detail-value">{disp.horario_preferido || 'No especificado'}</span>
+                        <span className="cv-detail-label">Horario preferido:</span>
+                        <span className="cv-detail-value">{disp.horario_preferido || 'No especificado'}</span>
                       </div>
                     </div>
                     
-                    <div className="cv-view-availability-detail">
-                      <FaBusinessTime className="cv-view-detail-icon" />
+                    <div className="cv-availability-detail">
+                      <FaBusinessTime className="cv-detail-icon" />
                       <div>
-                        <span className="cv-view-detail-label">Tipo de jornada:</span>
-                        <span className="cv-view-detail-value">{disp.tipo_jornada || 'No especificado'}</span>
+                        <span className="cv-detail-label">Tipo de jornada:</span>
+                        <span className="cv-detail-value">{disp.tipo_jornada || 'No especificado'}</span>
                       </div>
                     </div>
                     
-                    <div className="cv-view-availability-detail">
-                      <FaPlane className="cv-view-detail-icon" />
+                    <div className="cv-availability-detail">
+                      <FaPlane className="cv-detail-icon" />
                       <div>
-                        <span className="cv-view-detail-label">Disponibilidad para viajar:</span>
-                        <span className="cv-view-detail-value">
+                        <span className="cv-detail-label">Disponibilidad para viajar:</span>
+                        <span className="cv-detail-value">
                           {disp.disponibilidad_viaje ? 'Sí' : 'No'}
                         </span>
                       </div>
@@ -283,44 +283,44 @@ const CVCompletoView = () => {
 
         {/* Sección de Formación Académica */}
         {cvData.formacionAcademica && cvData.formacionAcademica.length > 0 && (
-          <div className="cv-view-education-section">
-            <div className="cv-view-section-header">
-              <FaGraduationCap className="cv-view-section-icon" />
+          <div className="cv-education-section">
+            <div className="cv-section-header">
+              <FaGraduationCap className="cv-section-icon" />
               <h2>Formación Académica ({cvData.formacionAcademica.length})</h2>
             </div>
             
-            <div className="cv-view-education-list">
+            <div className="cv-education-list">
               {cvData.formacionAcademica.map((formacion, index) => (
-                <div key={index} className="cv-view-education-item">
-                  <div className="cv-view-education-header">
+                <div key={index} className="cv-education-card">
+                  <div className="cv-education-header">
                     <h3>{formacion.titulo}</h3>
-                    <span className="cv-view-education-institution">{formacion.institucion}</span>
+                    <span className="cv-education-institution">{formacion.institucion}</span>
                   </div>
                   
-                  <div className="cv-view-education-details">
-                    <div className="cv-view-detail-item">
-                      <FaCalendarAlt className="cv-view-detail-icon" />
-                      <span className="cv-view-detail-label">Fecha de graduación:</span>
-                      <span className="cv-view-detail-value">
+                  <div className="cv-education-details">
+                    <div className="cv-detail-item">
+                      <FaCalendarAlt className="cv-detail-icon" />
+                      <span className="cv-detail-label">Fecha de graduación:</span>
+                      <span className="cv-detail-value">
                         {formacion.fechaGraduacion 
                           ? new Date(formacion.fechaGraduacion).toLocaleDateString() 
                           : 'En curso'}
                       </span>
                     </div>
                     
-                    <div className="cv-view-detail-item">
-                      <FaFileAlt className="cv-view-detail-icon" />
-                      <span className="cv-view-detail-label">Nivel de estudio:</span>
-                      <span className="cv-view-detail-value">{formacion.nivelEstudio || 'No especificado'}</span>
+                    <div className="cv-detail-item">
+                      <FaFileAlt className="cv-detail-icon" />
+                      <span className="cv-detail-label">Nivel de estudio:</span>
+                      <span className="cv-detail-value">{formacion.nivelEstudio || 'No especificado'}</span>
                     </div>
                     
                     {formacion.tiene_archivo && (
-                      <div className="cv-view-download-container">
+                      <div className="cv-download-container">
                         <button
-                          className="cv-view-download-button"
-                          onClick={() => handleDownload('formacion', formacion.id_formacion, formacion.nombre_archivo)}
+                          className="cv-download-button"
+                          onClick={() => downloadFile('formacion', formacion.id_formacion, formacion.nombre_archivo)}
                         >
-                          <FaDownload className="cv-view-download-icon" /> 
+                          <FaDownload className="cv-download-icon" /> 
                           <span>Descargar documento</span>
                         </button>
                       </div>
@@ -334,51 +334,51 @@ const CVCompletoView = () => {
 
         {/* Sección de Experiencia Laboral */}
         {cvData.experienciaLaboral && cvData.experienciaLaboral.length > 0 && (
-          <div className="cv-view-experience-section">
-            <div className="cv-view-section-header">
-              <FaBriefcase className="cv-view-section-icon" />
+          <div className="cv-experience-section">
+            <div className="cv-section-header">
+              <FaBriefcase className="cv-section-icon" />
               <h2>Experiencia Laboral ({cvData.experienciaLaboral.length})</h2>
             </div>
             
-            <div className="cv-view-experience-list">
+            <div className="cv-experience-list">
               {cvData.experienciaLaboral.map((exp, index) => (
-                <div key={index} className="cv-view-experience-item">
-                  <div className="cv-view-experience-header">
+                <div key={index} className="cv-experience-card">
+                  <div className="cv-experience-header">
                     <h3>{exp.puesto}</h3>
-                    <span className="cv-view-experience-company">{exp.empresa}</span>
+                    <span className="cv-experience-company">{exp.empresa}</span>
                   </div>
                   
-                  <div className="cv-view-experience-details">
-                    <div className="cv-view-detail-item">
-                      <FaCalendarAlt className="cv-view-detail-icon" />
-                      <span className="cv-view-detail-label">Periodo:</span>
-                      <span className="cv-view-detail-value">
+                  <div className="cv-experience-details">
+                    <div className="cv-detail-item">
+                      <FaCalendarAlt className="cv-detail-icon" />
+                      <span className="cv-detail-label">Periodo:</span>
+                      <span className="cv-detail-value">
                         {new Date(exp.fechaInicio).toLocaleDateString()} - 
                         {exp.fechaFin ? ` ${new Date(exp.fechaFin).toLocaleDateString()}` : ' Actualidad'}
                       </span>
                     </div>
                     
-                    <div className="cv-view-detail-item">
-                      <FaMapMarkerAlt className="cv-view-detail-icon" />
-                      <span className="cv-view-detail-label">Ubicación:</span>
-                      <span className="cv-view-detail-value">{exp.ubicacion || 'No especificado'}</span>
+                    <div className="cv-detail-item">
+                      <FaMapMarkerAlt className="cv-detail-icon" />
+                      <span className="cv-detail-label">Ubicación:</span>
+                      <span className="cv-detail-value">{exp.ubicacion || 'No especificado'}</span>
                     </div>
                     
                     {exp.descripcion && (
-                      <div className="cv-view-detail-item">
-                        <FaInfoCircle className="cv-view-detail-icon" />
-                        <span className="cv-view-detail-label">Descripción:</span>
-                        <span className="cv-view-detail-value">{exp.descripcion}</span>
+                      <div className="cv-detail-item">
+                        <FaInfoCircle className="cv-detail-icon" />
+                        <span className="cv-detail-label">Descripción:</span>
+                        <span className="cv-detail-value">{exp.descripcion}</span>
                       </div>
                     )}
                     
                     {exp.tiene_archivo && (
-                      <div className="cv-view-download-container">
+                      <div className="cv-download-container">
                         <button
-                          className="cv-view-download-button"
-                          onClick={() => handleDownload('experiencia', exp.id_experiencia, exp.nombre_archivo)}
+                          className="cv-download-button"
+                          onClick={() => downloadFile('experiencia', exp.id_experiencia, exp.nombre_archivo)}
                         >
-                          <FaDownload className="cv-view-download-icon" /> 
+                          <FaDownload className="cv-download-icon" /> 
                           <span>Descargar certificado laboral</span>
                         </button>
                       </div>
@@ -392,70 +392,70 @@ const CVCompletoView = () => {
 
         {/* Sección de Recomendaciones */}
         {cvData.recomendaciones && cvData.recomendaciones.length > 0 && (
-          <div className="cv-view-recommendations-section">
-            <div className="cv-view-section-header">
-              <FaUserTie className="cv-view-section-icon" />
+          <div className="cv-recommendations-section">
+            <div className="cv-section-header">
+              <FaUserTie className="cv-section-icon" />
               <h2>Recomendaciones ({cvData.recomendaciones.length})</h2>
             </div>
             
-            <div className="cv-view-recommendations-list">
+            <div className="cv-recommendations-list">
               {cvData.recomendaciones.map((recomendacion, index) => (
-                <div key={index} className="cv-view-recommendation-item">
-                  <div className="cv-view-recommendation-header">
+                <div key={index} className="cv-recommendation-card">
+                  <div className="cv-recommendation-header">
                     <h3>{recomendacion.nombre_recomendador}</h3>
-                    {recomendacion.cargo && <span className="cv-view-recommendation-position">{recomendacion.cargo}</span>}
+                    {recomendacion.cargo && <span className="cv-recommendation-position">{recomendacion.cargo}</span>}
                   </div>
                   
-                  <div className="cv-view-recommendation-details">
+                  <div className="cv-recommendation-details">
                     {recomendacion.empresa && (
-                      <div className="cv-view-detail-item">
-                        <FaBuilding className="cv-view-detail-icon" />
-                        <span className="cv-view-detail-label">Empresa:</span>
-                        <span className="cv-view-detail-value">{recomendacion.empresa}</span>
+                      <div className="cv-detail-item">
+                        <FaBuilding className="cv-detail-icon" />
+                        <span className="cv-detail-label">Empresa:</span>
+                        <span className="cv-detail-value">{recomendacion.empresa}</span>
                       </div>
                     )}
                     
                     {recomendacion.telefono && (
-                      <div className="cv-view-detail-item">
-                        <FaPhone className="cv-view-detail-icon" />
-                        <span className="cv-view-detail-label">Teléfono:</span>
-                        <span className="cv-view-detail-value">{recomendacion.telefono}</span>
+                      <div className="cv-detail-item">
+                        <FaPhone className="cv-detail-icon" />
+                        <span className="cv-detail-label">Teléfono:</span>
+                        <span className="cv-detail-value">{recomendacion.telefono}</span>
                       </div>
                     )}
                     
                     {recomendacion.email && (
-                      <div className="cv-view-detail-item">
-                        <FaEnvelope className="cv-view-detail-icon" />
-                        <span className="cv-view-detail-label">Email:</span>
-                        <span className="cv-view-detail-value">{recomendacion.email}</span>
+                      <div className="cv-detail-item">
+                        <FaEnvelope className="cv-detail-icon" />
+                        <span className="cv-detail-label">Email:</span>
+                        <span className="cv-detail-value">{recomendacion.email}</span>
                       </div>
                     )}
                     
                     {recomendacion.relacion && (
-                      <div className="cv-view-detail-item">
-                        <FaLink className="cv-view-detail-icon" />
-                        <span className="cv-view-detail-label">Relación:</span>
-                        <span className="cv-view-detail-value">{recomendacion.relacion}</span>
+                      <div className="cv-detail-item">
+                        <FaLink className="cv-detail-icon" />
+                        <span className="cv-detail-label">Relación:</span>
+                        <span className="cv-detail-value">{recomendacion.relacion}</span>
                       </div>
                     )}
                     
                     {recomendacion.fecha && (
-                      <div className="cv-view-detail-item">
-                        <FaCalendarAlt className="cv-view-detail-icon" />
-                        <span className="cv-view-detail-label">Fecha:</span>
-                        <span className="cv-view-detail-value">
+                      <div className="cv-detail-item">
+                        <FaCalendarAlt className="cv-detail-icon" />
+                        <span className="cv-detail-label">Fecha:</span>
+                        <span className="cv-detail-value">
                           {new Date(recomendacion.fecha).toLocaleDateString()}
                         </span>
                       </div>
                     )}
                     
                     {recomendacion.tiene_archivo && (
-                      <div className="cv-view-download-container">
+                      <div className="cv-download-container">
                         <button
-                          className="cv-view-download-button"
-                          onClick={() => handleDownload('recomendaciones', recomendacion.id_recomendacion, recomendacion.nombre_archivo)}
+                          className="cv-download-button"
+                          onClick={() => downloadFile('recomendaciones', recomendacion.id_recomendacion, recomendacion.nombre_archivo)}
                         >
-                          <FaDownload className="cv-view-download-icon" /> 
+                          <FaDownload className="cv-download-icon" /> 
                           <span>Descargar recomendación</span>
                         </button>
                       </div>
@@ -469,34 +469,34 @@ const CVCompletoView = () => {
 
         {/* Sección de Referencias Personales */}
         {cvData.referenciasPersonales && cvData.referenciasPersonales.length > 0 && (
-          <div className="cv-view-references-section">
-            <div className="cv-view-section-header">
-              <FaUserTie className="cv-view-section-icon" />
+          <div className="cv-references-section">
+            <div className="cv-section-header">
+              <FaUserTie className="cv-section-icon" />
               <h2>Referencias Personales ({cvData.referenciasPersonales.length})</h2>
             </div>
             
-            <div className="cv-view-references-list">
+            <div className="cv-references-list">
               {cvData.referenciasPersonales.map((ref, index) => (
-                <div key={index} className="cv-view-reference-item">
-                  <div className="cv-view-reference-header">
+                <div key={index} className="cv-reference-card">
+                  <div className="cv-reference-header">
                     <h3>{ref.nombre}</h3>
-                    {ref.parentesco && <span className="cv-view-reference-relationship">{ref.parentesco}</span>}
+                    {ref.parentesco && <span className="cv-reference-relationship">{ref.parentesco}</span>}
                   </div>
                   
-                  <div className="cv-view-reference-details">
+                  <div className="cv-reference-details">
                     {ref.telefono && (
-                      <div className="cv-view-detail-item">
-                        <FaPhone className="cv-view-detail-icon" />
-                        <span className="cv-view-detail-label">Teléfono:</span>
-                        <span className="cv-view-detail-value">{ref.telefono}</span>
+                      <div className="cv-detail-item">
+                        <FaPhone className="cv-detail-icon" />
+                        <span className="cv-detail-label">Teléfono:</span>
+                        <span className="cv-detail-value">{ref.telefono}</span>
                       </div>
                     )}
                     
                     {ref.email && (
-                      <div className="cv-view-detail-item">
-                        <FaEnvelope className="cv-view-detail-icon" />
-                        <span className="cv-view-detail-label">Email:</span>
-                        <span className="cv-view-detail-value">{ref.email}</span>
+                      <div className="cv-detail-item">
+                        <FaEnvelope className="cv-detail-icon" />
+                        <span className="cv-detail-label">Email:</span>
+                        <span className="cv-detail-value">{ref.email}</span>
                       </div>
                     )}
                   </div>
@@ -508,70 +508,70 @@ const CVCompletoView = () => {
 
         {/* Sección de Certificados */}
         {cvData.certificados && cvData.certificados.length > 0 && (
-          <div className="cv-view-certificates-section">
-            <div className="cv-view-section-header">
-              <FaCertificate className="cv-view-section-icon" />
+          <div className="cv-certificates-section">
+            <div className="cv-section-header">
+              <FaCertificate className="cv-section-icon" />
               <h2>Certificados ({cvData.certificados.length})</h2>
             </div>
             
-            <div className="cv-view-certificates-list">
+            <div className="cv-certificates-list">
               {cvData.certificados.map((certificado, index) => (
-                <div key={index} className="cv-view-certificate-item">
-                  <div className="cv-view-certificate-header">
+                <div key={index} className="cv-certificate-card">
+                  <div className="cv-certificate-header">
                     <h3>{certificado.nombre_certificado}</h3>
-                    <span className="cv-view-certificate-institution">{certificado.nombre_institucion}</span>
+                    <span className="cv-certificate-institution">{certificado.nombre_institucion}</span>
                   </div>
                   
-                  <div className="cv-view-certificate-details">
-                    <div className="cv-view-detail-item">
-                      <FaCalendarAlt className="cv-view-detail-icon" />
-                      <span className="cv-view-detail-label">Fecha de obtención:</span>
-                      <span className="cv-view-detail-value">
+                  <div className="cv-certificate-details">
+                    <div className="cv-detail-item">
+                      <FaCalendarAlt className="cv-detail-icon" />
+                      <span className="cv-detail-label">Fecha de obtención:</span>
+                      <span className="cv-detail-value">
                         {new Date(certificado.fecha).toLocaleDateString()}
                       </span>
                     </div>
 
                     {certificado.horas_duracion && (
-                      <div className="cv-view-detail-item">
-                        <FaClock className="cv-view-detail-icon" />
-                        <span className="cv-view-detail-label">Duración:</span>
-                        <span className="cv-view-detail-value">{certificado.horas_duracion} horas</span>
+                      <div className="cv-detail-item">
+                        <FaClock className="cv-detail-icon" />
+                        <span className="cv-detail-label">Duración:</span>
+                        <span className="cv-detail-value">{certificado.horas_duracion} horas</span>
                       </div>
                     )}
 
                     {certificado.codigo_certificado && (
-                      <div className="cv-view-detail-item">
-                        <FaHashtag className="cv-view-detail-icon" />
-                        <span className="cv-view-detail-label">Código:</span>
-                        <span className="cv-view-detail-value">{certificado.codigo_certificado}</span>
+                      <div className="cv-detail-item">
+                        <FaHashtag className="cv-detail-icon" />
+                        <span className="cv-detail-label">Código:</span>
+                        <span className="cv-detail-value">{certificado.codigo_certificado}</span>
                       </div>
                     )}
 
                     {certificado.url_certificado && (
-                      <div className="cv-view-detail-item">
-                        <FaGlobe className="cv-view-detail-icon" />
-                        <span className="cv-view-detail-label">URL:</span>
-                        <a href={certificado.url_certificado} target="_blank" rel="noopener noreferrer" className="cv-view-certificate-url">
+                      <div className="cv-detail-item">
+                        <FaGlobe className="cv-detail-icon" />
+                        <span className="cv-detail-label">URL:</span>
+                        <a href={certificado.url_certificado} target="_blank" rel="noopener noreferrer" className="cv-certificate-link">
                           Ver certificado
                         </a>
                       </div>
                     )}
 
                     {certificado.descripcion && (
-                      <div className="cv-view-detail-item">
-                        <FaInfoCircle className="cv-view-detail-icon" />
-                        <span className="cv-view-detail-label">Descripción:</span>
-                        <span className="cv-view-detail-value">{certificado.descripcion}</span>
+                      <div className="cv-detail-item">
+                        <FaInfoCircle className="cv-detail-icon" />
+                        <span className="cv-detail-label">Descripción:</span>
+                        <span className="cv-detail-value">{certificado.descripcion}</span>
                       </div>
                     )}
                     
                     {certificado.tiene_archivo && (
-                      <div className="cv-view-download-container">
+                      <div className="cv-download-container">
                         <button
-                          className="cv-view-download-button"
-                          onClick={() => handleDownload('certificados', certificado.id_certificado, certificado.nombre_archivo)}
+                          className="cv-download-button"
+                          onClick={() => downloadFile('certificados', certificado.id_certificado, certificado.nombre_archivo)}
                         >
-                          <FaDownload className="cv-view-download-icon" /> 
+                          <FaDownload className="cv-download-icon" /> 
                           <span>{certificado.nombre_archivo || 'Descargar certificado'}</span>
                         </button>
                       </div>
@@ -585,44 +585,44 @@ const CVCompletoView = () => {
 
         {/* Sección de Cursos Adicionales */}
         {cvData.cursos && cvData.cursos.length > 0 && (
-          <div className="cv-view-courses-section">
-            <div className="cv-view-section-header">
-              <FaCertificate className="cv-view-section-icon" />
+          <div className="cv-courses-section">
+            <div className="cv-section-header">
+              <FaCertificate className="cv-section-icon" />
               <h2>Cursos Adicionales ({cvData.cursos.length})</h2>
             </div>
             
-            <div className="cv-view-courses-list">
+            <div className="cv-courses-list">
               {cvData.cursos.map((curso, index) => (
-                <div key={index} className="cv-view-course-item">
-                  <div className="cv-view-course-header">
+                <div key={index} className="cv-course-card">
+                  <div className="cv-course-header">
                     <h3>{curso.nombreCurso}</h3>
-                    <span className="cv-view-course-institution">{curso.institucion}</span>
+                    <span className="cv-course-institution">{curso.institucion}</span>
                   </div>
                   
-                  <div className="cv-view-course-details">
-                    <div className="cv-view-detail-item">
-                      <FaCalendarAlt className="cv-view-detail-icon" />
-                      <span className="cv-view-detail-label">Fecha de finalización:</span>
-                      <span className="cv-view-detail-value">
+                  <div className="cv-course-details">
+                    <div className="cv-detail-item">
+                      <FaCalendarAlt className="cv-detail-icon" />
+                      <span className="cv-detail-label">Fecha de finalización:</span>
+                      <span className="cv-detail-value">
                         {new Date(curso.fechaFinalizacion).toLocaleDateString()}
                       </span>
                     </div>
                     
                     {curso.duracion && (
-                      <div className="cv-view-detail-item">
-                        <FaFileAlt className="cv-view-detail-icon" />
-                        <span className="cv-view-detail-label">Duración:</span>
-                        <span className="cv-view-detail-value">{curso.duracion}</span>
+                      <div className="cv-detail-item">
+                        <FaFileAlt className="cv-detail-icon" />
+                        <span className="cv-detail-label">Duración:</span>
+                        <span className="cv-detail-value">{curso.duracion}</span>
                       </div>
                     )}
                     
                     {curso.tiene_archivo && (
-                      <div className="cv-view-download-container">
+                      <div className="cv-download-container">
                         <button
-                          className="cv-view-download-button"
-                          onClick={() => handleDownload('cursos', curso.id_curso, curso.nombre_archivo)}
+                          className="cv-download-button"
+                          onClick={() => downloadFile('cursos', curso.id_curso, curso.nombre_archivo)}
                         >
-                          <FaDownload className="cv-view-download-icon" /> 
+                          <FaDownload className="cv-download-icon" /> 
                           <span>Descargar certificado</span>
                         </button>
                       </div>
@@ -636,25 +636,25 @@ const CVCompletoView = () => {
 
         {/* Sección de Habilidades */}
         {cvData.habilidades && cvData.habilidades.length > 0 && (
-          <div className="cv-view-skills-section">
-            <div className="cv-view-section-header">
-              <FaTools className="cv-view-section-icon" />
+          <div className="cv-skills-section">
+            <div className="cv-section-header">
+              <FaTools className="cv-section-icon" />
               <h2>Habilidades ({cvData.habilidades.length})</h2>
             </div>
             
-            <div className="cv-view-skills-list">
+            <div className="cv-skills-list">
               {cvData.habilidades.map((habilidad, index) => (
-                <div key={index} className="cv-view-skill-item">
-                  <div className="cv-view-skill-header">
+                <div key={index} className="cv-skill-card">
+                  <div className="cv-skill-header">
                     <h3>{habilidad.descripcion}</h3>
-                    <div className="cv-view-skill-level">
+                    <div className="cv-skill-level">
                       {[...Array(5)].map((_, i) => (
                         <FaStar 
                           key={i} 
-                          className={i < getNivelNumero(habilidad.nivel) ? 'cv-view-skill-star-filled' : 'cv-view-skill-star-empty'} 
+                          className={i < getSkillLevel(habilidad.nivel) ? 'cv-skill-star-filled' : 'cv-skill-star-empty'} 
                         />
                       ))}
-                      <span className="cv-view-skill-level-text">{habilidad.nivel}</span>
+                      <span className="cv-skill-level-text">{habilidad.nivel}</span>
                     </div>
                   </div>
                 </div>

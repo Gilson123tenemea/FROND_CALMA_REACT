@@ -1,78 +1,218 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import './HeaderContratante.css';
+import { Link, useNavigate } from 'react-router-dom'; // Añade useNavigate aquí
+import styles from './HeaderContratante.module.css';
 
-const HeaderContratante = ({ userId, onOpenMensajes, onOpenNotificaciones, notificacionesNoLeidas }) => {
-  const [mostrarSubmenu, setMostrarSubmenu] = useState(false);
-  const handleMensajesClick = (e) => {
+const HeaderContratante = ({ 
+  userId, 
+  onOpenMensajes, 
+  onOpenNotificaciones, 
+  notificacionesNoLeidas 
+}) => {
+  const [isPatientDropdownOpen, setIsPatientDropdownOpen] = useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const navigate = useNavigate(); // Declara el hook useNavigate
+
+
+  const handleMessagesClick = (e) => {
     e.preventDefault();
     console.log("ID del contratante:", userId);
     onOpenMensajes(userId);
   };
 
-  const handleNotificacionesClick = (e) => {
+  const handleNotificationsClick = (e) => {
     e.preventDefault();
     onOpenNotificaciones();
   };
 
-    const toggleSubmenu = () => {
-    setMostrarSubmenu(!mostrarSubmenu);
+  const togglePatientDropdown = () => {
+    setIsPatientDropdownOpen(!isPatientDropdownOpen);
   };
 
+  const toggleUserDropdown = () => {
+    setIsUserDropdownOpen(!isUserDropdownOpen);
+  };
+
+  const handleLogout = () => {
+  console.log("Ejecutando logout...");
+  localStorage.clear();
+  sessionStorage.clear();
+  console.log("Almacenamiento limpiado, redirigiendo...");
+  window.location.href = '/login'; // Esto es un fallback seguro
+  setIsUserDropdownOpen(false);
+};
   return (
-    <header className="header-contratante">
-      <div className="header-left">
-        <div className="logo">
-          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"></svg>
-          <h2>C A L M A</h2>
+    <header className={styles.contractorHeader}>
+      <div className={styles.leftSection}>
+        <div className={styles.brandLogo}>
+          <svg 
+            viewBox="0 0 48 48" 
+            fill="none" 
+            xmlns="http://www.w3.org/2000/svg"
+            className={styles.logoIcon}
+          >
+            <circle cx="24" cy="24" r="20" fill="#2563eb" opacity="0.1"/>
+            <path d="M24 8C15.163 8 8 15.163 8 24s7.163 16 16 16 16-7.163 16-16S32.837 8 24 8zm0 28c-6.627 0-12-5.373-12-12S17.373 12 24 12s12 5.373 12 12-5.373 12-12 12z" fill="#2563eb"/>
+            <path d="M28 20h-8v8h8v-8z" fill="#2563eb"/>
+          </svg>
+          <h2 className={styles.brandName}>C A L M A</h2>
         </div>
 
-        <nav className="nav-links">
-          <Link to={`/moduloContratante/publicaciones?userId=${userId}`}>Publicaciones</Link>
-          <Link to={`/moduloContratante/nueva-publicacion?userId=${userId}`}>Crear Publicación</Link>
-          <Link to={`/Calificacion/calificacion?userId=${userId}`}>Calificación</Link>
+        <nav className={styles.primaryNavigation}>
+          <Link 
+            to={`/moduloContratante/publicaciones?userId=${userId}`}
+            className={styles.navLink}
+          >
+            Publicaciones
+          </Link>
+          
+          <Link 
+            to={`/moduloContratante/nueva-publicacion?userId=${userId}`}
+            className={styles.navLink}
+          >
+            Crear Publicación
+          </Link>
+          
+          <Link 
+            to={`/Calificacion/calificacion?userId=${userId}`}
+            className={styles.navLink}
+          >
+            Calificación
+          </Link>
 
-          <a href="#" onClick={handleMensajesClick}>🗨️ Mensajes</a>
-          <Link to={`/moduloContratante/perfilContratante?userId=${userId}`}>Mi Perfil</Link>
+          <button 
+            onClick={handleMessagesClick}
+            className={styles.messagesButton}
+          >
+            <span className={styles.messageIcon}>💬</span>
+            Mensajes
+          </button>
+
           {/* Menú desplegable de Paciente */}
-          <div className="dropdown">
-            <button className="dropdown-btn" onClick={toggleSubmenu}>
-              Paciente ▼
+          <div className={styles.dropdownContainer}>
+            <button 
+              className={styles.dropdownTrigger} 
+              onClick={togglePatientDropdown}
+            >
+              Paciente
+              <svg 
+                className={`${styles.dropdownIcon} ${isPatientDropdownOpen ? styles.dropdownIconRotated : ''}`}
+                width="16" 
+                height="16" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </button>
-            {mostrarSubmenu && (
-              <div className="dropdown-content">
-                <Link to={`/moduloContratante/registropaciente?userId=${userId}`}>Registrar paciente</Link>
-                <Link to={`/moduloContratante/visualizarpaciente?userId=${userId}`}>Ver paciente</Link>
+            
+            {isPatientDropdownOpen && (
+              <div className={styles.dropdownMenu}>
+                <Link 
+                  to={`/moduloContratante/registropaciente?userId=${userId}`}
+                  className={styles.dropdownMenuItem}
+                >
+                  Registrar paciente
+                </Link>
+                <Link 
+                  to={`/moduloContratante/visualizarpaciente?userId=${userId}`}
+                  className={styles.dropdownMenuItem}
+                >
+                  Ver paciente
+                </Link>
               </div>
             )}
           </div>
-          <Link to={`/postulaciones/${userId}`}>Ver Postulaciones</Link>
-
-          <a
-            href="#"
-            onClick={handleNotificacionesClick}
-            className="notificaciones-emoji"
-            style={{ position: 'relative', display: 'inline-block' }}
+          
+          <Link 
+            to={`/postulaciones/${userId}`}
+            className={styles.navLink}
           >
-            🔔
+            Ver Postulaciones
+          </Link>
+
+          <button
+            onClick={handleNotificationsClick}
+            className={styles.notificationsButton}
+          >
+            <span className={styles.notificationIcon}>🔔</span>
             {notificacionesNoLeidas > 0 && (
-              <span className="badge-notificacion">{notificacionesNoLeidas}</span>
+              <span className={styles.notificationBadge}>
+                {notificacionesNoLeidas}
+              </span>
             )}
-          </a>
+          </button>
         </nav>
       </div>
 
-      <div className="header-right">
-        <div className="search-bar">
-          <div className="search-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-              <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
-            </svg>
-          </div>
-          <input type="text" placeholder="Buscar" />
-        </div>
+      <div className={styles.rightSection}>
+        <div className={styles.userDropdownContainer}>
+          <button 
+            onClick={toggleUserDropdown}
+            className={styles.userAvatar}
+            style={{ 
+              backgroundImage: 'url("https://lh3.googleusercontent.com/a/...")',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            }}
+          >
+            <div className={styles.avatarFallback}>U</div>
+          </button>
 
-        <div className="user-avatar" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/a/...")' }}></div>
+          {isUserDropdownOpen && (
+            <div className={styles.userDropdownMenu}>
+              <div className={styles.userDropdownHeader}>
+                <div className={styles.userDropdownAvatar}>
+                  <div className={styles.avatarFallback}>U</div>
+                </div>
+                <div className={styles.userDropdownInfo}>
+                  <span className={styles.userName}>Usuario</span>
+                  <span className={styles.userEmail}>usuario@example.com</span>
+                </div>
+              </div>
+              
+              <div className={styles.userDropdownDivider}></div>
+              
+              <Link 
+                to={`/moduloContratante/perfilContratante?userId=${userId}`}
+                className={styles.userDropdownItem}
+                onClick={() => setIsUserDropdownOpen(false)}
+              >
+                <svg 
+                  width="18" 
+                  height="18" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  xmlns="http://www.w3.org/2000/svg"
+                  className={styles.userDropdownIcon}
+                >
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Mi Perfil
+              </Link>
+              
+              <button 
+                onClick={handleLogout}
+                className={styles.userDropdownItem}
+              >
+                <svg 
+                  width="18" 
+                  height="18" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  xmlns="http://www.w3.org/2000/svg"
+                  className={styles.userDropdownIcon}
+                >
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <polyline points="16,17 21,12 16,7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <line x1="21" y1="12" x2="9" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Cerrar Sesión
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );
