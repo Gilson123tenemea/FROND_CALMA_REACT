@@ -16,7 +16,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { login } from '../../servicios/LoginService';
 import { getCVByAspiranteId } from '../../servicios/cvService';
 import LoadingScreen from '../Shared/LoadingScreen';
-
+import logo from '../../assets/logotransparente.png';
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -191,70 +191,81 @@ const Login = () => {
 
       <div className={styles.loginContainer}>
         <div className={styles.loginCard}>
-          <h2>Bienvenido a CALMA</h2>
+          {/* Sección izquierda con imagen y texto */}
+          <div className={styles.loginCardLeft}>
+            <h3 className={styles.welcomeTitle}>Bienvenido a CALMA</h3>
+          </div>
 
-          <form onSubmit={handleLogin}>
-            {/* Usuario o Email */}
-            <div className={styles.loginInputGroup}>
-              <label htmlFor="username">Usuario o Email</label>
-              <div className={styles.loginInputWithIcon}>
-                <FaUser style={{ position: 'absolute', left: '1rem', color: '#9ca3af' }} />
-                <input
-                  type="text"
-                  id="username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Ingresa tu usuario o email"
-                  required
-                  style={{ paddingLeft: '2.5rem' }}
-                />
-              </div>
-            </div>
+          {/* Sección derecha con el formulario */}
+          <div className={styles.loginCardRight}>
+            <div className={styles.loginCardRightContent}>
 
-            {/* Contraseña */}
-            <div className={styles.loginInputGroup}>
-              <label htmlFor="password">Contraseña</label>
-              <div className={styles.loginInputWithIcon}>
-                <FaLock style={{ position: 'absolute', left: '1rem', color: '#9ca3af' }} />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Ingresa tu contraseña"
-                  required
-                  style={{ paddingLeft: '2.5rem' }}
-                />
-                <button
-                  type="button"
-                  className={styles.loginPasswordToggle}
-                  onClick={() => setShowPassword(!showPassword)}
-                  aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-                >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+              <h3 className={styles.loginTitle}>Accede a tu cuenta</h3>
+              <form onSubmit={handleLogin}>
+                {/* Usuario o Email */}
+                <div className={styles.loginInputGroupv2}>
+                  <label htmlFor="username">Usuario o Email</label>
+                  <div className={styles.loginInputWithIcon}>
+                    <FaUser style={{ position: 'absolute', left: '1rem', color: '#9ca3af' }} />
+                    <input
+                      type="text"
+                      id="username"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      placeholder="Ingresa tu usuario o email"
+                      required
+                      style={{ paddingLeft: '2.5rem' }}
+                    />
+                  </div>
+                </div>
+
+                {/* Contraseña */}
+                <div className={styles.loginInputGroup}>
+                  <label htmlFor="password">Contraseña</label>
+                  <div className={styles.loginInputWithIcon}>
+                    <FaLock style={{ position: 'absolute', left: '1rem', color: '#9ca3af' }} />
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      id="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Ingresa tu contraseña"
+                      required
+                      style={{ paddingLeft: '2.5rem' }}
+                    />
+                    <button
+                      type="button"
+                      className={styles.loginPasswordToggle}
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                    >
+                      {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Recuperación */}
+                <div className={styles.forgotPassword}>
+                  <button
+                    type="button"
+                    className={styles.forgotPasswordLink}
+                    onClick={() => setShowRecoveryModal(true)}
+                  >
+                    ¿Olvidaste tu contraseña?
+                  </button>
+                </div>
+
+                {/* Botón de login */}
+                <button type="submit" className={styles.loginBtn} disabled={loading}>
+                  {loading ? 'Cargando...' : <>Iniciar Sesión <FaArrowRight className={styles.btnIcon} /></>}
                 </button>
-              </div>
+                <div className={styles.registerLink}>
+                  ¿No tienes una cuenta? <Link to="/registro">Regístrate aquí</Link>
+                </div>
+
+              </form>
+
             </div>
-
-            {/* Recuperación */}
-            <div className={styles.forgotPassword}>
-              <button
-                type="button"
-                className={styles.forgotPasswordLink}
-                onClick={() => setShowRecoveryModal(true)}
-              >
-                ¿Olvidaste tu contraseña?
-              </button>
-            </div>
-
-            {/* Botón */}
-            <button type="submit" className={styles.loginBtn} disabled={loading}>
-              {loading ? 'Cargando...' : <>Iniciar Sesión <FaArrowRight className={styles.btnIcon} /></>}
-            </button>
-          </form>
-
-          <div className={styles.registerLink}>
-            ¿No tienes una cuenta? <Link to="/registro">Regístrate aquí</Link>
           </div>
         </div>
       </div>

@@ -1,288 +1,580 @@
-
 .loginContainer {
   width: 100%;
-  max-width: 1280px; /* Ancho mucho más amplio */
-  padding: 2rem;
-  box-sizing: border-box;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  transform: translateX(300px); /* Menor desplazamiento a la derecha */
+  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4)),
+    url('https://i.vgy.me/uwk7Jl.png') center/cover;
+  background-attachment: fixed;
+  position: relative;
+  overflow: hidden;
+  
 }
 
-.loginCard {
+.loginContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  max-width: 50%; /* Ocupa todo el contenedor */
-  padding: 2rem 2.5rem; /* Más espacio interno */
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: pulseOverlay 4s ease-in-out infinite alternate;
+}
+
+/* Aqui se cambia el tamaño de los cuadros */
+.loginCard {
+  display: grid;
+  grid-template-columns: 1fr 450px; /* lado izquierdo flexible, lado derecho fijo */
+  width: 100%;
+  max-width: 1300px;
+  height: 600px;
+  margin: auto;
+  margin-top: 43px;
   border-radius: 20px;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 12px 40px rgba(31, 38, 135, 0.25);
-  text-align: center;
-  color: #1f2937;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  animation: slideInUp 0.8s ease-out;
+}
+
+.loginCardLeft {
+  background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=2070&q=80');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loginCardRight {
+  padding: 4rem;
+   margin-left: -450px; /* mueve el lado derecho hacia la izquierda */
+  position: relative; /* para que el margin no afecte otros elementos */
+  z-index: 2; /* que esté sobre la imagen */
+
+}
+.welcomeTitle {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: white; /* aquí debe estar */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  margin-top: -290px;
+}
+
+.loginCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border-radius: 40px;
+  z-index: -1;
+}
+
+/* Lado izquierdo - Información */
+
+.loginCard h2 {
+  position: absolute;
+  left: 40px;
+  top: 60px;
+  font-size: 3rem;
+  font-weight: 800;
+  color: white;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.subtitle {
+  position: absolute;
+  left: 40px;
+  top: 140px;
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  z-index: 1;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Lado derecho - Formulario */
+.loginCard form {
+    background: transparent !important; /* quitar fondo */
+  backdrop-filter: none !important; /* quitar efecto blur */
+
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  padding: 60px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 1;
+  backdrop-filter: blur(10px);
+}
+/* Opcional: Quitar fondo en inputs si quieres que también sean transparentes */
+.loginInputWithIcon input {
+  background: transparent !important;
+  border-bottom-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Quitar fondo en botones si quieres que también sean más transparentes */
+.loginBtn {
+  background: rgba(0, 0, 0, 0.5); /* un poco transparente para que no desaparezca */
+  color: white;
+}
+
+/* Quitar fondo y blur del contenedor derecho para evitar superposición */
+.loginCardRight {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  padding: 4rem;
+  position: relative;
+  z-index: 2;
+}
+/* ******************************************************************************************** */
+.loginInputGroup {
+  margin-bottom: 25px;
+  margin-top: 10px;
+}
+/* ******************************************************************************************** */
+.loginInputGroupv2 {
+  margin-bottom: 25px;
+  margin-top: 120px;
+}
+.loginTitle {
+  color: white;
+  font-weight: 600;
+  margin-bottom: 15px;
+  text-align: right;
+  margin-right: 40px; /* menos espacio a la derecha, más hacia la izquierda */
+  margin-top: 40px;
+}
+.loginInputGroup label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: white;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+.loginInputGroupv2 label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: white;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
 }
 
 
+.loginInputWithIcon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
 
+.loginInputWithIcon input {
+  width: 100%;
+  padding: 15px 20px;
+  padding-left: 50px;
+  border: none;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border-radius: 0;
+  box-sizing: border-box;
+}
 
+.loginInputWithIcon input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
 
-  /* --- Resto del CSS se mantiene igual --- */
+.loginInputWithIcon input:focus {
+  outline: none;
+  border-bottom-color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.loginPasswordToggle {
+  position: absolute;
+  right: 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+  padding: 5px;
+}
+
+.loginPasswordToggle:hover {
+  color: white;
+  transform: scale(1.1);
+}
+/* ******************************************************************************************** */
+.forgotPassword {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+
+}
+.forgotPasswordLink {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  text-decoration: underline;
+}
+
+.forgotPasswordLink:hover {
+  color: white;
+}
+/* ******************************************************************************************** */
+.loginBtn {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 15px 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 20px;
+}
+
+.loginBtn:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.loginBtn:active {
+  transform: translateY(0);
+}
+
+.btnIcon {
+  margin-left: 8px;
+  animation: slideRight 1.5s infinite alternate;
+}
+/* ******************************************************************************************** */
+.registerLink {
+  margin-top: 10px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  
+  /* Forzar que ocupe espacio fijo */
+  height: 1.5rem; /* o la altura exacta que necesites */
+  line-height: 1.5rem;
+  
+  /* Evita que colapse su espacio */
+  flex-shrink: 0; /* si está en flex container */
+}
+
+.registerLink a {
+  color: white;
+  text-decoration: underline;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.registerLink a:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Iconos de redes sociales */
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modalContent {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 40px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  color: white;
+  animation: modalSlideIn 0.4s ease-out;
+}
+
+.modalContent h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: white;
+  text-align: center;
+}
+
+.modalContent p {
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 25px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.modalContent input {
+  width: 100%;
+  padding: 15px 20px;
+  border: none;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 1rem;
+  margin-bottom: 25px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.modalContent input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.modalContent input:focus {
+  outline: none;
+  border-bottom-color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.modalButtons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.recoveryBtn,
+.cancelBtn {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  min-width: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.recoveryBtn {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+}
+
+.recoveryBtn:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: translateY(-2px);
+}
+
+.cancelBtn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.cancelBtn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Animaciones */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideRight {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes pulseOverlay {
+  from {
+    opacity: 0.3;
+  }
+
+  to {
+    opacity: 0.1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Toastify */
+.Toastify__toast-container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 600;
+}
+
+.Toastify__toast {
+  border-radius: 12px !important;
+  padding: 1rem 1.5rem !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
+  color: white !important;
+  font-size: 1rem !important;
+  background: rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  transition: all 0.3s ease !important;
+}
+
+.Toastify__toast--success {
+  background: rgba(34, 197, 94, 0.9) !important;
+}
+
+.Toastify__toast--error {
+  background: rgba(239, 68, 68, 0.9) !important;
+}
+
+.Toastify__toast--info {
+  background: rgba(59, 130, 246, 0.9) !important;
+}
+
+.Toastify__toast--warning {
+  background: rgba(245, 158, 11, 0.9) !important;
+}
+
+.Toastify__toast:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3) !important;
+}
+
+.Toastify__close-button {
+  color: white !important;
+  opacity: 0.8;
+}
+
+.Toastify__close-button:hover {
+  opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .loginCard {
+    max-width: 95%;
+    height: auto;
+    flex-direction: column;
+    min-height: 600px;
+  }
+
+  .loginCard::after {
+    width: 100%;
+    height: 50%;
+  }
 
   .loginCard h2 {
-    font-weight: 700;
-    font-size: 1.5rem;
-    margin-bottom: 0.15rem;
-    color: #374151;
+    font-size: 2rem;
+    left: 30px;
+    top: 40px;
   }
 
   .subtitle {
-    font-size: 0.95rem;
-    color: #6b7280;
-    margin-bottom: 0.9rem;
+    font-size: 1rem;
+    left: 30px;
+    top: 100px;
   }
 
-  .inputGroup input,
-  .loginInputWithIcon input {
+  .loginCard form {
     width: 100%;
-    border-radius: 12px;
-    padding: 0.65rem 0.9rem;
-    border: 1.8px solid #cbd5e1;
-    margin-top: 0.2rem;
-    margin-bottom: 0.7rem;
-    font-size: 0.95rem;
-    font-weight: 500;
-    transition: border-color 0.3s ease;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
-  }
-
-  .inputGroup input:focus,
-  .loginInputWithIcon input:focus {
-    outline: none;
-    border-color: #4f46e5;
-    box-shadow: 0 0 8px rgba(79, 70, 229, 0.4);
-  }
-
-  .loginInputWithIcon {
-    display: flex;
-    align-items: center;
-    position: relative;
-  }
-
-  .loginPasswordToggle {
-    position: absolute;
-    right: 1rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.1rem;
-    color: #4f46e5;
-    transition: color 0.3s ease;
-  }
-
-  .loginPasswordToggle:hover {
-    color: #4338ca;
-  }
-
-  .loginInputGroup label {
-    display: block;
-    font-weight: 600;
-    text-align: left;
-    margin-bottom: 0.25rem;
-    color: #374151;
-  }
-
-  .loginBtn {
-    background: linear-gradient(to right, #4f46e5, #6366f1);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    padding: 0.75rem;
-    font-size: 0.95rem;
-    width: 100%;
-    cursor: pointer;
-    font-weight: 700;
-    box-shadow: 0 5px 14px rgba(79, 70, 229, 0.35);
-    transition: background 0.35s ease, transform 0.25s ease, box-shadow 0.35s ease;
-  }
-
-  .loginBtn:hover {
-    background: linear-gradient(to right, #4338ca, #4f46e5);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(67, 56, 202, 0.5);
-  }
-
-  .btnIcon {
-    margin-left: 8px;
-    animation: slideRight 1s infinite alternate;
-  }
-
-  .forgotPassword {
-    margin-bottom: 0.9rem;
-    text-align: right;
-  }
-
-  .forgotPasswordLink {
-    background: none;
-    border: none;
-    color: #4f46e5;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: color 0.3s ease;
-  }
-
-  .forgotPasswordLink:hover {
-    color: #4338ca;
-  }
-
-  .registerLink {
-    margin-top: 1.1rem;
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: #374151;
-  }
-
-  .registerLink a {
-    color: #4f46e5;
-    text-decoration: none;
-    font-weight: 700;
-    transition: color 0.3s ease;
-  }
-
-  .registerLink a:hover {
-    color: #4338ca;
+    top: 50%;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.15);
   }
 
   .modalContent {
-    border-radius: 14px;
-    background: #f9fafb;
-    border: 1px solid #dbeafe;
-    padding: 2rem;
-    max-width: 400px;
-    width: 90%;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+    padding: 30px 20px;
   }
+}
 
-  .modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.28);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
+.loginCardLeft {
+  flex: 1;
+  background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA==&auto=format&fit=crop&w=2070&q=80');
+  background-size: cover;
+  /* Asegura que la imagen cubra todo */
+  background-position: center;
+  /* Centra la imagen */
+  background-repeat: no-repeat;
+  /* No repite la imagen */
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
 
-  .modalButtons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 1.4rem;
-  }
 
-  .recoveryBtn,
-  .cancelBtn {
-    padding: 0.75rem 1.25rem;
-    border: none;
-    border-radius: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
-  }
-
-  .recoveryBtn {
-    background-color: #2563eb;
-    color: white;
-  }
-
-  .recoveryBtn:hover {
-    background-color: #1d4ed8;
-  }
-
-  .cancelBtn {
-    background-color: #e5e7eb;
-    color: #111827;
-  }
-
-  .cancelBtn:hover {
-    background-color: #d1d5db;
-  }
-
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(40px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes slideRight {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(4px);
-    }
-  }
-
-  /* ==== Toastify ==== */
-  .Toastify__toast-container {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-weight: 600;
-  }
-
-  .Toastify__toast {
-    border-radius: 12px !important;
-    padding: 1rem 1.25rem !important;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-    color: #1f2937 !important;
-    font-size: 1rem !important;
-    background: linear-gradient(135deg, #f3f4f6, #e0e7ff) !important;
-    border-left: 8px solid transparent !important;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .Toastify__toast--success {
-    border-left-color: #4ade80 !important;
-    background: linear-gradient(135deg, #d1fae5, #bef264) !important;
-    color: #166534 !important;
-  }
-
-  .Toastify__toast--error {
-    border-left-color: #f87171 !important;
-    background: linear-gradient(135deg, #fee2e2, #fca5a5) !important;
-    color: #991b1b !important;
-  }
-
-  .Toastify__toast--info {
-    border-left-color: #60a5fa !important;
-    background: linear-gradient(135deg, #bfdbfe, #93c5fd) !important;
-    color: #1e40af !important;
-  }
-
-  .Toastify__toast--warning {
-    border-left-color: #facc15 !important;
-    background: linear-gradient(135deg, #fef3c7, #fde68a) !important;
-    color: #78350f !important;
-  }
-
-  .Toastify__toast:hover {
-    transform: translateX(8px);
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.25);
-  }
-
-  .Toastify__close-button {
-    color: #4f46e5 !important;
-    opacity: 0.8;
-    transition: opacity 0.25s ease;
-  }
-
-  .Toastify__close-button:hover {
-    opacity: 1;
-  }
+.loginCardLeft h2,
+.loginCardLeft .subtitle {
+  z-index: 2;
+  color: white;
+}

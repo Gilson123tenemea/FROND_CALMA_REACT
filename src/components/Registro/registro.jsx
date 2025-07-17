@@ -402,469 +402,487 @@ const Registro = () => {
         draggable
         pauseOnHover
       />
+      <div className={styles['']}>
+        <div className={styles['registroCard']}>
+          <div>
+            <h2>Crear Cuenta en CALMA</h2>
+            <p className={styles.subtitle}>Complete sus datos para registrarse</p>
 
-      <div className={styles['registro-container']}>
-        <div>
-          <h2>Crear Cuenta en CALMA</h2>
-          <p className={styles.subtitle}>Complete sus datos para registrarse</p>
-
-          {/* Selector de tipo de usuario */}
-          <div className={styles['role-selector']}>
-            <button
-              type="button"
-              className={`${styles['role-btn']} ${formData.tipoUsuario === 'aspirante' ? styles.active : ''}`}
-              onClick={() => handleUserTypeSelection('aspirante')}
-            >
-              <FaUser className={styles['role-icon']} />
-              Soy Aspirante
-            </button>
-            <button
-              type="button"
-              className={`${styles['role-btn']} ${formData.tipoUsuario === 'contratante' ? styles.active : ''}`}
-              onClick={() => handleUserTypeSelection('contratante')}
-            >
-              <FaBuilding className={styles['role-icon']} />
-              Soy Contratante
-            </button>
-          </div>
-
-          {showForm && (
-            <form onSubmit={handleSubmit} noValidate>
-              {/* Sección de datos personales comunes */}
-              <h3 className={styles['form-section-title']}>Información Personal</h3>
-
-              <div className={styles['input-row']}>
-                <div className={styles['input-group']}>
-                  <label htmlFor="cedula"><FaIdCard className={styles['input-icon']} /> Cédula</label>
-                  <input
-                    type="text"
-                    id="cedula"
-                    name="cedula"
-                    value={formData.cedula}
-                    onChange={handleChange}
-                    className={errors.cedula ? styles['input-error-registrio'] : ''}
-                    maxLength="10"
-                    placeholder="Ingrese la cédula"
-                  />
-                  {errors.cedula && <span className={styles['error-text-registrio']}>{errors.cedula}</span>}
-                </div>
-
-                <div className={styles['input-group']}>
-                  <label htmlFor="nombres"><FaUser className={styles['input-icon']} /> Nombres</label>
-                  <input
-                    type="text"
-                    id="nombres"
-                    name="nombres"
-                    value={formData.nombres}
-                    onChange={handleChange}
-                    className={errors.nombres ? styles['input-error-registrio'] : ''}
-                    placeholder="Ingrese los nombres"
-                  />
-                  {errors.nombres && <span className={styles['error-text-registrio']}>{errors.nombres}</span>}
-                </div>
-
-                <div className={styles['input-group']}>
-                  <label htmlFor="apellidos"><FaUser className={styles['input-icon']} /> Apellidos</label>
-                  <input
-                    type="text"
-                    id="apellidos"
-                    name="apellidos"
-                    value={formData.apellidos}
-                    onChange={handleChange}
-                    className={errors.apellidos ? styles['input-error-registrio'] : ''}
-                    placeholder="Ingrese los apellidos"
-                  />
-                  {errors.apellidos && <span className={styles['error-text-registrio']}>{errors.apellidos}</span>}
-                </div>
-              </div>
-
-              <div className={styles['input-row']}>
-                <div className={styles['input-group']}>
-                  <label htmlFor="correo"><FaEnvelope className={styles['input-icon']} /> Correo Electrónico</label>
-                  <input
-                    type="email"
-                    id="correo"
-                    name="correo"
-                    value={formData.correo}
-                    onChange={handleChange}
-                    className={errors.correo ? styles['input-error-registrio'] : ''}
-                    placeholder="Ingrese su correo electrónico"
-                  />
-                  {errors.correo && <span className={styles['error-text-registrio']}>{errors.correo}</span>}
-                </div>
-
-                <div className={styles['input-group']}>
-                  <label htmlFor="celular"><FaPhone className={styles['input-icon']} /> Celular</label>
-                  <input
-                    type="tel"
-                    id="celular"
-                    name="celular"
-                    value={formData.celular}
-                    onChange={handleChange}
-                    className={errors.celular ? styles['input-error-registrio'] : ''}
-                    maxLength="10"
-                    placeholder="Ingrese el número de celular"
-                  />
-                  {errors.celular && <span className={styles['error-text-registrio']}>{errors.celular}</span>}
-                </div>
-
-                <div className={styles['input-group']}>
-                  <label htmlFor="genero"><FaVenusMars className={styles['input-icon']} /> Género</label>
-                  <div className={styles['select-wrapper']}>
-                    <select
-                      id="genero"
-                      name="genero"
-                      value={formData.genero}
-                      onChange={handleChange}
-                      className={errors.genero ? styles['input-error-registrio'] : ''}
-                    >
-                      <option value="">Seleccione...</option>
-                      {generos.map((genero, index) => (
-                        <option key={index} value={genero}>{genero}</option>
-                      ))}
-                    </select>
-                    <FaChevronDown className={styles['select-arrow']} />
-                  </div>
-                  {errors.genero && <span className={styles['error-text-registrio']}>{errors.genero}</span>}
-                </div>
-              </div>
-
-              <div className={styles['input-group']}>
-                <label htmlFor="fechaNacimiento">
-                  <FaCalendarAlt className={styles['input-icon']} /> Fecha de Nacimiento
-                </label>
-                <input
-                  type="date"
-                  id="fechaNacimiento"
-                  name="fechaNacimiento"
-                  value={formData.fechaNacimiento}
-                  onChange={handleChange}
-                  className={`${errors.fechaNacimiento ? styles['input-error-registrio'] : ''} ${styles['input-small-width']}`}
-                  max={new Date().toISOString().split('T')[0]}
-                  placeholder="Seleccione su fecha de nacimiento"
-                />
-                {errors.fechaNacimiento && <span className={styles['error-text-registrio']}>{errors.fechaNacimiento}</span>}
-              </div>
-
-
-              <h3 className={styles['form-section-title']}>Ubicación</h3>
-
-              <div className={styles['location-row']}>
-                <div className={styles['input-group']}>
-                  {/* Provincia */}
-                  <label htmlFor="provincia"><FaMapMarkerAlt className={styles['input-icon']} /> Provincia</label>
-                  <div className={styles['select-wrapper']}>
-                    <select
-                      id="provincia"
-                      name="provincia"
-                      value={selectedProvincia}
-                      onChange={(e) => {
-                        setSelectedProvincia(e.target.value);
-                        handleChange(e);
-                      }}
-                      className={errors.provincia ? styles['input-error-registrio'] : ''}
-                    >
-                      <option value="">Seleccione...</option>
-                      {provincias.map((provincia) => (
-                        <option key={provincia.id_provincia} value={provincia.id_provincia}>
-                          {provincia.nombre}
-                        </option>
-                      ))}
-                    </select>
-                    <FaChevronDown className={styles['select-arrow']} />
-                  </div>
-                  {errors.provincia && <span className={styles['error-text-registrio']}>{errors.provincia}</span>}
-                </div>
-
-                <div className={styles['input-group']}>
-                  {/* Cantón */}
-                  <label htmlFor="canton"><FaMapMarkerAlt className={styles['input-icon']} /> Cantón</label>
-                  <div className={styles['select-wrapper']}>
-                    <select
-                      id="canton"
-                      name="canton"
-                      value={selectedCanton}
-                      onChange={(e) => {
-                        setSelectedCanton(e.target.value);
-                        handleChange(e);
-                      }}
-                      disabled={!selectedProvincia || cantones.length === 0}
-                      className={errors.canton ? styles['input-error-registrio'] : ''}
-                    >
-                      <option value="">
-                        {!selectedProvincia ? 'Seleccione una provincia primero' :
-                          cantones.length === 0 ? 'Cargando cantones...' : 'Seleccione un cantón'}
-                      </option>
-                      {cantones.map((canton) => (
-                        <option key={canton.id_canton} value={canton.id_canton}>
-                          {canton.nombre}
-                        </option>
-                      ))}
-                    </select>
-                    <FaChevronDown className={styles['select-arrow']} />
-                  </div>
-                  {errors.canton && <span className={styles['error-text-registrio']}>{errors.canton}</span>}
-                </div>
-
-                <div className={styles['input-group']}>
-                  {/* Parroquia */}
-                  <label htmlFor="parroquia"><FaMapMarkerAlt className={styles['input-icon']} /> Parroquia</label>
-                  <div className={styles['select-wrapper']}>
-                    <select
-                      id="parroquia"
-                      name="parroquia"
-                      value={formData.parroquia}
-                      onChange={handleChange}
-                      className={errors.parroquia ? styles['input-error-registrio'] : ''}
-                      disabled={!selectedCanton || parroquias.length === 0}
-                    >
-                      <option value="">
-                        {!selectedCanton ? 'Seleccione un cantón primero' :
-                          parroquias.length === 0 ? 'Cargando parroquias...' : 'Seleccione una parroquia'}
-                      </option>
-                      {parroquias.map((parroquia) => (
-                        <option key={parroquia.id_parroquia} value={parroquia.id_parroquia}>
-                          {parroquia.nombre}
-                        </option>
-                      ))}
-                    </select>
-                    <FaChevronDown className={styles['select-arrow']} />
-                  </div>
-                  {errors.parroquia && <span className={styles['error-text-registrio']}>{errors.parroquia}</span>}
-                </div>
-              </div>
-
-              {/* Campos específicos para aspirante */}
-              {formData.tipoUsuario === 'aspirante' && (
-                <>
-                  <h3 className={styles['form-section-title']}>Información Laboral</h3>
-
-                  <div className={styles['input-group']}>
-                    <label>Disponibilidad Inmediata</label>
-                    <div className={styles['radio-group']}>
-                      <label>
-                        <input
-                          type="radio"
-                          name="disponibilidad"
-                          value="si"
-                          checked={formData.disponibilidad === 'si'}
-                          onChange={handleChange}
-                        /> Sí
-                      </label>
-                      <label>
-                        <input
-                          type="radio"
-                          name="disponibilidad"
-                          value="no"
-                          checked={formData.disponibilidad === 'no'}
-                          onChange={handleChange}
-                        /> No
-                      </label>
-                    </div>
-                    {errors.disponibilidad && <span className={styles['error-text-registrio']}>{errors.disponibilidad}</span>}
-                  </div>
-
-                  <div className={styles['input-group']}>
-                    <label htmlFor="aspiracionSalarial"><FaMoneyBillWave className={styles['input-icon']} /> Aspiración Salarial (mensual)</label>
-                    <input
-                      type="number"
-                      id="aspiracionSalarial"
-                      name="aspiracionSalarial"
-                      value={formData.aspiracionSalarial}
-                      onChange={handleChange}
-                      className={errors.aspiracionSalarial ? styles['input-error-registrio'] : ''}
-                      min="0"
-                      step="0.01"
-                      placeholder="Ej: 1200.00"
-                    />
-                    {errors.aspiracionSalarial && <span className={styles['error-text-registrio']}>{errors.aspiracionSalarial}</span>}
-                  </div>
-
-                  <div className={styles['input-group']}>
-                    <label htmlFor="tipo_contrato"><FaFileContract className={styles['input-icon']} /> Tipo de Contrato Deseado</label>
-                    <div className={styles['select-wrapper']}>
-                      <select
-                        id="tipo_contrato"
-                        name="tipo_contrato"
-                        value={formData.tipo_contrato}
-                        onChange={handleChange}
-                        className={errors.tipo_contrato ? styles['input-error-registrio'] : ''}
-                      >
-                        <option value="">Seleccione...</option>
-                        {tiposContrato.map((tipo, index) => (
-                          <option key={index} value={tipo}>{tipo}</option>
-                        ))}
-                      </select>
-                      <FaChevronDown className={styles['select-arrow']} />
-                    </div>
-                    {errors.tipo_contrato && <span className={styles['error-text-registrio']}>{errors.tipo_contrato}</span>}
-                  </div>
-                </>
-              )}
-
-              {/* Campos específicos para contratante */}
-              {formData.tipoUsuario === 'contratante' && (
-                <>
-                  {/* Pregunta sobre representante de empresa */}
-                  <div className={styles['contratante-type']}>
-                    <label><FaQuestionCircle className={styles['input-icon']} /> ¿Representa una empresa?</label>
-                    <div className={styles['type-options']}>
-                      <button
-                        type="button"
-                        className={`${styles['type-btn']} ${formData.esRepresentante === true ? styles.active : ''}`}
-                        onClick={() => setFormData(prev => ({ ...prev, esRepresentante: true }))}
-                      >
-                        Sí
-                      </button>
-                      <button
-                        type="button"
-                        className={`${styles['type-btn']} ${formData.esRepresentante === false ? styles.active : ''}`}
-                        onClick={() => setFormData(prev => ({ ...prev, esRepresentante: false }))}
-                      >
-                        No
-                      </button>
-                    </div>
-                    {errors.esRepresentante && <span className={styles['error-message']}>{errors.esRepresentante}</span>}
-                  </div>
-
-                  <h3 className={styles['form-section-title']}>Información Laboral</h3>
-
-                  <div className={styles['input-group']}>
-                    <label htmlFor="ocupacion"><FaBriefcase className={styles['input-icon']} /> Ocupación</label>
-                    <div className={styles['select-wrapper']}>
-                      <select
-                        id="ocupacion"
-                        name="ocupacion"
-                        value={formData.ocupacion}
-                        onChange={handleChange}
-                        className={errors.ocupacion ? styles['input-error-registrio'] : ''}
-                      >
-                        <option value="">Seleccione...</option>
-                        {ocupaciones.map((ocupacion, index) => (
-                          <option key={index} value={ocupacion}>{ocupacion}</option>
-                        ))}
-                      </select>
-                      <FaChevronDown className={styles['select-arrow']} />
-                    </div>
-                    {errors.ocupacion && <span className={styles['error-text-registrio']}>{errors.ocupacion}</span>}
-                  </div>
-
-                  {/* Campos de empresa solo si es representante */}
-                  {formData.esRepresentante === true && (
-                    <>
-                      <h3 className={styles['form-section-title']}>Información de la Empresa</h3>
-
-                      <div className={styles['input-row']}>
-                        <div className={styles['input-group']}>
-                          <label htmlFor="nombreEmpresa"><FaBuilding className={styles['input-icon']} /> Nombre de la Empresa</label>
-                          <input
-                            type="text"
-                            id="nombreEmpresa"
-                            name="nombreEmpresa"
-                            value={formData.nombreEmpresa}
-                            onChange={handleChange}
-                            className={errors.nombreEmpresa ? styles['input-error-registrio'] : ''}
-                            placeholder="Ingrese el nombre de la empresa"
-                          />
-                          {errors.nombreEmpresa && <span className={styles['error-text-registrio']}>{errors.nombreEmpresa}</span>}
-                        </div>
-
-                        <div className={styles['input-group']}>
-                          <label htmlFor="rucEmpresa"><FaIdCard className={styles['input-icon']} /> RUC</label>
-                          <input
-                            type="text"
-                            id="rucEmpresa"
-                            name="rucEmpresa"
-                            value={formData.rucEmpresa}
-                            onChange={handleChange}
-                            className={errors.rucEmpresa ? styles['input-error-registrio'] : ''}
-                            maxLength="13"
-                            placeholder="Ingrese el RUC"
-                          />
-                          {errors.rucEmpresa && <span className={styles['error-text-registrio']}>{errors.rucEmpresa}</span>}
-                        </div>
-                      </div>
-                      <div className={styles['input-row']}>
-                        <div className={styles['input-group']}>
-                          <label htmlFor="correoEmpresa"><FaEnvelope className={styles['input-icon']} /> Correo Electrónico de la Empresa</label>
-                          <input
-                            type="email"
-                            id="correoEmpresa"
-                            name="correoEmpresa"
-                            value={formData.correoEmpresa}
-                            onChange={handleChange}
-                            className={errors.correoEmpresa ? styles['input-error-registrio'] : ''}
-                            placeholder="Ingrese el correo de la empresa"
-                          />
-                          {errors.correoEmpresa && <span className={styles['error-text-registrio']}>{errors.correoEmpresa}</span>}
-                        </div>
-
-                        <div className={styles['input-group']}>
-                          <label htmlFor="representanteLegal"><FaUser className={styles['input-icon']} /> Representante Legal</label>
-                          <input
-                            type="text"
-                            id="representanteLegal"
-                            name="representanteLegal"
-                            value={formData.representanteLegal}
-                            onChange={handleChange}
-                            className={errors.representanteLegal ? styles['input-error-registrio'] : ''}
-                            placeholder="Ingrese el nombre del representante legal"
-                          />
-                          {errors.representanteLegal && <span className={styles['error-text-registrio']}>{errors.representanteLegal}</span>}
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </>
-              )}
-
-              {/* Sección de seguridad */}
-              <h3 className={styles['form-section-title']}>Seguridad</h3>
-
-              <div className={styles['input-group']}>
-                <label htmlFor="contrasena"><FaLock className={styles['input-icon']} /> Contraseña</label>
-                <input
-                  type="password"
-                  id="contrasena"
-                  name="contrasena"
-                  value={formData.contrasena}
-                  onChange={handleChange}
-                  className={errors.contrasena ? styles['input-error-registrio'] : ''}
-                />
-                {errors.contrasena && <span className={styles['error-text-registrio']}>{errors.contrasena}</span>}
-              </div>
-
-              <div className={styles['input-group']}>
-                <label htmlFor="confirmarContrasena"><FaLock className={styles['input-icon']} /> Confirmar Contraseña</label>
-                <input
-                  type="password"
-                  id="confirmarContrasena"
-                  name="confirmarContrasena"
-                  value={formData.confirmarContrasena}
-                  onChange={handleChange}
-                  className={errors.confirmarContrasena ? styles['input-error-registrio'] : ''}
-                />
-                {errors.confirmarContrasena && <span className={styles['error-text-registrio']}>{errors.confirmarContrasena}</span>}
-              </div>
-
-              <div className={styles['terms-container']}>
-                <label className={styles['terms-checkbox']}>
-                  <input
-                    type="checkbox"
-                    id="terminos"
-                    required
-                  />
-                  <span className={styles.checkmark}></span>
-                  <span className={styles['terms-text']}>Acepto los términos y condiciones</span>
-                </label>
-              </div>
-
-              <button type="submit" className={styles['submit-btn']} disabled={isSubmitting}>
-                {isSubmitting ? 'Registrando...' : 'Crear Cuenta'}
+            {/* Selector de tipo de usuario */}
+            <div className={styles['role-selector']}>
+              <button
+                type="button"
+                className={`${styles['role-btn']} ${formData.tipoUsuario === 'aspirante' ? styles.active : ''}`}
+                onClick={() => handleUserTypeSelection('aspirante')}
+              >
+                <FaUser className={styles['role-icon']} />
+                Soy Aspirante
               </button>
-            </form>
-          )}
+              <button
+                type="button"
+                className={`${styles['role-btn']} ${formData.tipoUsuario === 'contratante' ? styles.active : ''}`}
+                onClick={() => handleUserTypeSelection('contratante')}
+              >
+                <FaBuilding className={styles['role-icon']} />
+                Soy Contratante
+              </button>
+            </div>
 
+            {showForm && (
+              <form onSubmit={handleSubmit} noValidate>
+                {/* Sección de datos personales comunes */}
+                <h3 className={styles['form-section-title']}>Información Personal</h3>
+
+                <div className={styles['input-row']}>
+                  <div className={styles['input-group']}>
+                    <label htmlFor="cedula"><FaIdCard className={styles['input-icon']} /> Cédula</label>
+                    <input
+                      type="text"
+                      id="cedula"
+                      name="cedula"
+                      value={formData.cedula}
+                      onChange={handleChange}
+                      className={errors.cedula ? styles['input-error-registrio'] : ''}
+                      maxLength="10"
+                      placeholder="Ingrese la cédula"
+                    />
+                    {errors.cedula && <span className={styles['error-text-registrio']}>{errors.cedula}</span>}
+                  </div>
+
+                  <div className={styles['input-group']}>
+                    <label htmlFor="nombres"><FaUser className={styles['input-icon']} /> Nombres</label>
+                    <input
+                      type="text"
+                      id="nombres"
+                      name="nombres"
+                      value={formData.nombres}
+                      onChange={handleChange}
+                      className={errors.nombres ? styles['input-error-registrio'] : ''}
+                      placeholder="Ingrese los nombres"
+                    />
+                    {errors.nombres && <span className={styles['error-text-registrio']}>{errors.nombres}</span>}
+                  </div>
+
+                  <div className={styles['input-group']}>
+                    <label htmlFor="apellidos"><FaUser className={styles['input-icon']} /> Apellidos</label>
+                    <input
+                      type="text"
+                      id="apellidos"
+                      name="apellidos"
+                      value={formData.apellidos}
+                      onChange={handleChange}
+                      className={errors.apellidos ? styles['input-error-registrio'] : ''}
+                      placeholder="Ingrese los apellidos"
+                    />
+                    {errors.apellidos && <span className={styles['error-text-registrio']}>{errors.apellidos}</span>}
+                  </div>
+                </div>
+
+                <div className={styles['input-row']}>
+                  <div className={styles['input-group']}>
+                    <label htmlFor="correo"><FaEnvelope className={styles['input-icon']} /> Correo Electrónico</label>
+                    <input
+                      type="email"
+                      id="correo"
+                      name="correo"
+                      value={formData.correo}
+                      onChange={handleChange}
+                      className={errors.correo ? styles['input-error-registrio'] : ''}
+                      placeholder="Ingrese su correo electrónico"
+                    />
+                    {errors.correo && <span className={styles['error-text-registrio']}>{errors.correo}</span>}
+                  </div>
+
+                  <div className={styles['input-group']}>
+                    <label htmlFor="celular"><FaPhone className={styles['input-icon']} /> Celular</label>
+                    <input
+                      type="tel"
+                      id="celular"
+                      name="celular"
+                      value={formData.celular}
+                      onChange={handleChange}
+                      className={errors.celular ? styles['input-error-registrio'] : ''}
+                      maxLength="10"
+                      placeholder="Ingrese el número de celular"
+                    />
+                    {errors.celular && <span className={styles['error-text-registrio']}>{errors.celular}</span>}
+                  </div>
+
+                  <div className={styles['input-group']}>
+                    <label htmlFor="genero"><FaVenusMars className={styles['input-icon']} /> Género</label>
+                    <div className={styles['select-wrapper']}>
+                      <select
+                        id="genero"
+                        name="genero"
+                        value={formData.genero}
+                        onChange={handleChange}
+                        className={errors.genero ? styles['input-error-registrio'] : ''}
+                      >
+                        <option value="">Seleccione...</option>
+                        {generos.map((genero, index) => (
+                          <option key={index} value={genero}>{genero}</option>
+                        ))}
+                      </select>
+                      <FaChevronDown className={styles['select-arrow']} />
+                    </div>
+                    {errors.genero && <span className={styles['error-text-registrio']}>{errors.genero}</span>}
+                  </div>
+                </div>
+
+                <div className={styles['input-group']}>
+                  <label htmlFor="fechaNacimiento">
+                    <FaCalendarAlt className={styles['input-icon']} /> Fecha de Nacimiento
+                  </label>
+                  <input
+                    type="date"
+                    id="fechaNacimiento"
+                    name="fechaNacimiento"
+                    value={formData.fechaNacimiento}
+                    onChange={handleChange}
+                    className={`${errors.fechaNacimiento ? styles['input-error-registrio'] : ''} ${styles['input-small-width']}`}
+                    max={new Date().toISOString().split('T')[0]}
+                    placeholder="Seleccione su fecha de nacimiento"
+                  />
+                  {errors.fechaNacimiento && <span className={styles['error-text-registrio']}>{errors.fechaNacimiento}</span>}
+                </div>
+
+
+                <h3 className={styles['form-section-title']}>Ubicación</h3>
+
+                <div className={styles['location-row']}>
+                  <div className={styles['input-group']}>
+                    {/* Provincia */}
+                    <label htmlFor="provincia"><FaMapMarkerAlt className={styles['input-icon']} /> Provincia</label>
+                    <div className={styles['select-wrapper']}>
+                      <select
+                        id="provincia"
+                        name="provincia"
+                        value={selectedProvincia}
+                        onChange={(e) => {
+                          setSelectedProvincia(e.target.value);
+                          handleChange(e);
+                        }}
+                        className={errors.provincia ? styles['input-error-registrio'] : ''}
+                      >
+                        <option value="">Seleccione...</option>
+                        {provincias.map((provincia) => (
+                          <option key={provincia.id_provincia} value={provincia.id_provincia}>
+                            {provincia.nombre}
+                          </option>
+                        ))}
+                      </select>
+                      <FaChevronDown className={styles['select-arrow']} />
+                    </div>
+                    {errors.provincia && <span className={styles['error-text-registrio']}>{errors.provincia}</span>}
+                  </div>
+
+                  <div className={styles['input-group']}>
+                    {/* Cantón */}
+                    <label htmlFor="canton"><FaMapMarkerAlt className={styles['input-icon']} /> Cantón</label>
+                    <div className={styles['select-wrapper']}>
+                      <select
+                        id="canton"
+                        name="canton"
+                        value={selectedCanton}
+                        onChange={(e) => {
+                          setSelectedCanton(e.target.value);
+                          handleChange(e);
+                        }}
+                        disabled={!selectedProvincia || cantones.length === 0}
+                        className={errors.canton ? styles['input-error-registrio'] : ''}
+                      >
+                        <option value="">
+                          {!selectedProvincia ? 'Seleccione una provincia primero' :
+                            cantones.length === 0 ? 'Cargando cantones...' : 'Seleccione un cantón'}
+                        </option>
+                        {cantones.map((canton) => (
+                          <option key={canton.id_canton} value={canton.id_canton}>
+                            {canton.nombre}
+                          </option>
+                        ))}
+                      </select>
+                      <FaChevronDown className={styles['select-arrow']} />
+                    </div>
+                    {errors.canton && <span className={styles['error-text-registrio']}>{errors.canton}</span>}
+                  </div>
+
+                  <div className={styles['input-group']}>
+                    {/* Parroquia */}
+                    <label htmlFor="parroquia"><FaMapMarkerAlt className={styles['input-icon']} /> Parroquia</label>
+                    <div className={styles['select-wrapper']}>
+                      <select
+                        id="parroquia"
+                        name="parroquia"
+                        value={formData.parroquia}
+                        onChange={handleChange}
+                        className={errors.parroquia ? styles['input-error-registrio'] : ''}
+                        disabled={!selectedCanton || parroquias.length === 0}
+                      >
+                        <option value="">
+                          {!selectedCanton ? 'Seleccione un cantón primero' :
+                            parroquias.length === 0 ? 'Cargando parroquias...' : 'Seleccione una parroquia'}
+                        </option>
+                        {parroquias.map((parroquia) => (
+                          <option key={parroquia.id_parroquia} value={parroquia.id_parroquia}>
+                            {parroquia.nombre}
+                          </option>
+                        ))}
+                      </select>
+                      <FaChevronDown className={styles['select-arrow']} />
+                    </div>
+                    {errors.parroquia && <span className={styles['error-text-registrio']}>{errors.parroquia}</span>}
+                  </div>
+                </div>
+
+                {/* Campos específicos para aspirante */}
+                {formData.tipoUsuario === 'aspirante' && (
+                  <>
+                    <h3 className={styles['form-section-title']}>Información Laboral</h3>
+
+                    <div className={styles['input-group']}>
+                      <label>Disponibilidad Inmediata</label>
+                      <div className={styles['radio-group']}>
+                        <label>
+                          <input
+                            type="radio"
+                            name="disponibilidad"
+                            value="si"
+                            checked={formData.disponibilidad === 'si'}
+                            onChange={handleChange}
+                          /> Sí
+                        </label>
+                        <label>
+                          <input
+                            type="radio"
+                            name="disponibilidad"
+                            value="no"
+                            checked={formData.disponibilidad === 'no'}
+                            onChange={handleChange}
+                          /> No
+                        </label>
+                      </div>
+                      {errors.disponibilidad && <span className={styles['error-text-registrio']}>{errors.disponibilidad}</span>}
+                    </div>
+
+                    <div className={styles['row-group']}>
+                      <div className={styles['input-group']}>
+                        <label htmlFor="aspiracionSalarial">
+                          <FaMoneyBillWave className={styles['input-icon']} /> Aspiración Salarial (mensual)
+                        </label>
+                        <input
+                          type="number"
+                          id="aspiracionSalarial"
+                          name="aspiracionSalarial"
+                          value={formData.aspiracionSalarial}
+                          onChange={handleChange}
+                          className={errors.aspiracionSalarial ? styles['input-error-registrio'] : ''}
+                          min="0"
+                          step="0.01"
+                          placeholder="Ej: 1200.00"
+                        />
+                        {errors.aspiracionSalarial && <span className={styles['error-text-registrio']}>{errors.aspiracionSalarial}</span>}
+                      </div>
+
+                      <div className={styles['input-group']}>
+                        <label htmlFor="tipo_contrato">
+                          <FaFileContract className={styles['input-icon']} /> Tipo de Contrato Deseado
+                        </label>
+                        <div className={styles['select-wrapper']}>
+                          <select
+                            id="tipo_contrato"
+                            name="tipo_contrato"
+                            value={formData.tipo_contrato}
+                            onChange={handleChange}
+                            className={errors.tipo_contrato ? styles['input-error-registrio'] : ''}
+                          >
+                            <option value="">Seleccione...</option>
+                            {tiposContrato.map((tipo, index) => (
+                              <option key={index} value={tipo}>{tipo}</option>
+                            ))}
+                          </select>
+                          <FaChevronDown className={styles['select-arrow']} />
+                        </div>
+                        {errors.tipo_contrato && <span className={styles['error-text-registrio']}>{errors.tipo_contrato}</span>}
+                      </div>
+                    </div>
+
+                  </>
+                )}
+
+                {/* Campos específicos para contratante */}
+                {formData.tipoUsuario === 'contratante' && (
+                  <>
+                    {/* Pregunta sobre representante de empresa */}
+                    <div className={styles['contratante-type']}>
+                      <label><FaQuestionCircle className={styles['input-icon']} /> ¿Representa una empresa?</label>
+                      <div className={styles['type-options']}>
+                        <button
+                          type="button"
+                          className={`${styles['type-btn']} ${formData.esRepresentante === true ? styles.active : ''}`}
+                          onClick={() => setFormData(prev => ({ ...prev, esRepresentante: true }))}
+                        >
+                          Sí
+                        </button>
+                        <button
+                          type="button"
+                          className={`${styles['type-btn']} ${formData.esRepresentante === false ? styles.active : ''}`}
+                          onClick={() => setFormData(prev => ({ ...prev, esRepresentante: false }))}
+                        >
+                          No
+                        </button>
+                      </div>
+                      {errors.esRepresentante && <span className={styles['error-message']}>{errors.esRepresentante}</span>}
+                    </div>
+
+                    <h3 className={styles['form-section-title']}>Información Laboral</h3>
+
+                    <div className={styles['input-group']}>
+                      <label htmlFor="ocupacion"><FaBriefcase className={styles['input-icon']} /> Ocupación</label>
+                      <div className={styles['select-wrapper']}>
+                        <select
+                          id="ocupacion"
+                          name="ocupacion"
+                          value={formData.ocupacion}
+                          onChange={handleChange}
+                          className={errors.ocupacion ? styles['input-error-registrio'] : ''}
+                        >
+                          <option value="">Seleccione...</option>
+                          {ocupaciones.map((ocupacion, index) => (
+                            <option key={index} value={ocupacion}>{ocupacion}</option>
+                          ))}
+                        </select>
+                        <FaChevronDown className={styles['select-arrow']} />
+                      </div>
+                      {errors.ocupacion && <span className={styles['error-text-registrio']}>{errors.ocupacion}</span>}
+                    </div>
+
+                    {/* Campos de empresa solo si es representante */}
+                    {formData.esRepresentante === true && (
+                      <>
+                        <h3 className={styles['form-section-title']}>Información de la Empresa</h3>
+
+                        <div className={styles['input-row']}>
+                          <div className={styles['input-group']}>
+                            <label htmlFor="nombreEmpresa"><FaBuilding className={styles['input-icon']} /> Nombre de la Empresa</label>
+                            <input
+                              type="text"
+                              id="nombreEmpresa"
+                              name="nombreEmpresa"
+                              value={formData.nombreEmpresa}
+                              onChange={handleChange}
+                              className={errors.nombreEmpresa ? styles['input-error-registrio'] : ''}
+                              placeholder="Ingrese el nombre de la empresa"
+                            />
+                            {errors.nombreEmpresa && <span className={styles['error-text-registrio']}>{errors.nombreEmpresa}</span>}
+                          </div>
+
+                          <div className={styles['input-group']}>
+                            <label htmlFor="rucEmpresa"><FaIdCard className={styles['input-icon']} /> RUC</label>
+                            <input
+                              type="text"
+                              id="rucEmpresa"
+                              name="rucEmpresa"
+                              value={formData.rucEmpresa}
+                              onChange={handleChange}
+                              className={errors.rucEmpresa ? styles['input-error-registrio'] : ''}
+                              maxLength="13"
+                              placeholder="Ingrese el RUC"
+                            />
+                            {errors.rucEmpresa && <span className={styles['error-text-registrio']}>{errors.rucEmpresa}</span>}
+                          </div>
+                        </div>
+                        <div className={styles['input-row']}>
+                          <div className={styles['input-group']}>
+                            <label htmlFor="correoEmpresa"><FaEnvelope className={styles['input-icon']} /> Correo Electrónico de la Empresa</label>
+                            <input
+                              type="email"
+                              id="correoEmpresa"
+                              name="correoEmpresa"
+                              value={formData.correoEmpresa}
+                              onChange={handleChange}
+                              className={errors.correoEmpresa ? styles['input-error-registrio'] : ''}
+                              placeholder="Ingrese el correo de la empresa"
+                            />
+                            {errors.correoEmpresa && <span className={styles['error-text-registrio']}>{errors.correoEmpresa}</span>}
+                          </div>
+
+                          <div className={styles['input-group']}>
+                            <label htmlFor="representanteLegal"><FaUser className={styles['input-icon']} /> Representante Legal</label>
+                            <input
+                              type="text"
+                              id="representanteLegal"
+                              name="representanteLegal"
+                              value={formData.representanteLegal}
+                              onChange={handleChange}
+                              className={errors.representanteLegal ? styles['input-error-registrio'] : ''}
+                              placeholder="Ingrese el nombre del representante legal"
+                            />
+                            {errors.representanteLegal && <span className={styles['error-text-registrio']}>{errors.representanteLegal}</span>}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </>
+                )}
+
+                {/* Sección de seguridad */}
+                <h3 className={styles['form-section-title']}>Seguridad</h3>
+
+                <div className={styles['row-group']}>
+                  <div className={styles['input-group']}>
+                    <label htmlFor="contrasena">
+                      <FaLock className={styles['input-icon']} /> Contraseña
+                    </label>
+                    <input
+                      type="password"
+                      id="contrasena"
+                      name="contrasena"
+                      value={formData.contrasena}
+                      onChange={handleChange}
+                      className={errors.contrasena ? styles['input-error-registrio'] : ''}
+                    />
+                    {errors.contrasena && (
+                      <span className={styles['error-text-registrio']}>{errors.contrasena}</span>
+                    )}
+                  </div>
+
+                  <div className={styles['input-group']}>
+                    <label htmlFor="confirmarContrasena">
+                      <FaLock className={styles['input-icon']} /> Confirmar Contraseña
+                    </label>
+                    <input
+                      type="password"
+                      id="confirmarContrasena"
+                      name="confirmarContrasena"
+                      value={formData.confirmarContrasena}
+                      onChange={handleChange}
+                      className={errors.confirmarContrasena ? styles['input-error-registrio'] : ''}
+                    />
+                    {errors.confirmarContrasena && (
+                      <span className={styles['error-text-registrio']}>{errors.confirmarContrasena}</span>
+                    )}
+                  </div>
+                </div>
+                <div className={styles['terms-container']}>
+                  <label className={styles['terms-checkbox']}>
+                    <input
+                      type="checkbox"
+                      id="terminos"
+                      required
+                    />
+                    <span className={styles.checkmark}></span>
+                    <span className={styles['terms-text']}>Acepto los términos y condiciones</span>
+                  </label>
+                </div>
+
+                <button type="submit" className={styles['submit-btn']} disabled={isSubmitting}>
+                  {isSubmitting ? 'Registrando...' : 'Crear Cuenta'}
+                </button>
+
+              </form>
+
+            )}
+          </div>
           <div className={styles['login-link']}>
             ¿Ya tienes una cuenta? <a href="/login">Inicia sesión aquí</a>
           </div>

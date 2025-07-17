@@ -20,8 +20,6 @@
   --error-color: #ef4444;
   --error-light: #fef2f2;
   --success-color: #10b981;
-  --background-primary: #ffffff;
-  --background-secondary: #f8fafc;
   --background-gradient: linear-gradient(135deg, #667eea 0%);
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -32,7 +30,26 @@
   --radius-lg: 12px;
   --radius-xl: 16px;
 }
+.registroCard {
+  width: 100%;
+  max-width: 1400px;
+  margin: 30px auto;
+  padding: 40px;
+  border-radius: 20px;
 
+  /* Fondo transparente */
+  background: rgba(255, 255, 255, 0.15);  /* transparencia clara */
+
+  /* Blur para efecto vidrio */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  /* Borde sutil para delimitar */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+
+  /* Sombra para profundidad */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
 /* Reset y estilos base */
 body {
   font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -40,6 +57,16 @@ body {
   color: var(--text-color);
   line-height: 1.6;
   font-size: 14px;
+}
+.row-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.row-group .input-group {
+  flex: 1;
+  min-width: 250px; /* puedes ajustar esto según el diseño */
 }
 
 /* Inputs base con mejor diseño */
