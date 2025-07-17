@@ -9,7 +9,7 @@ import {
 } from "../../servicios/recomendacionesService";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import './RecomendacionesForm.css';
+import styles from './RecomendacionesForm.module.css';
 import CVStepsNav from "../ModuloAspirante/CV/CVStepsNav";
 import { FaUserTie, FaBriefcase, FaBuilding, FaPhone, FaEnvelope, FaLink, FaCalendarAlt, FaPaperclip, FaEdit, FaTrash, FaDownload } from "react-icons/fa";
 import { useLocation } from 'react-router-dom';
@@ -49,7 +49,6 @@ const RecomendacionesForm = () => {
         const data = await getRecomendacionesByCVId(idCV);
         console.log("Datos recibidos de la API:", JSON.stringify(data, null, 2));
         
-        // Asegura que los datos tengan la estructura correcta
         const formattedData = data.map(item => ({
           id_recomendacion: item.id_recomendacion,
           nombre_recomendador: item.nombre_recomendador || 'No especificado',
@@ -104,7 +103,7 @@ const RecomendacionesForm = () => {
       nombreArchivoExistente: "",
       isEditing: false
     });
-    const fileInput = document.querySelector('.file-input');
+    const fileInput = document.querySelector(`.${styles["file-input"]}`);
     if (fileInput) {
       fileInput.value = '';
     }
@@ -127,7 +126,7 @@ const RecomendacionesForm = () => {
       isEditing: true
     });
 
-    document.querySelector('.form-recomendaciones').scrollIntoView({ behavior: 'smooth' });
+    document.querySelector(`.${styles["form-recomendaciones"]}`).scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleDownload = async (id, fileName) => {
@@ -146,7 +145,7 @@ const RecomendacionesForm = () => {
         setRecomendaciones(recomendaciones.filter(rec => rec.id_recomendacion !== id));
 
         toast.success(
-          <div className="custom-toast">
+          <div className={styles["custom-toast"]}>
             <div>Recomendación eliminada correctamente</div>
           </div>,
           {
@@ -158,7 +157,7 @@ const RecomendacionesForm = () => {
         );
       } catch (error) {
         toast.error(
-          <div className="custom-toast">
+          <div className={styles["custom-toast"]}>
             <div>Error al eliminar la recomendación</div>
           </div>,
           {
@@ -176,14 +175,12 @@ const RecomendacionesForm = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Validación básica
     if (!formulario.nombre_recomendador || !formulario.cargo) {
       toast.error("Nombre y cargo son campos requeridos");
       setIsSubmitting(false);
       return;
     }
 
-    // Validación de archivo solo para nuevas recomendaciones
     if (!formulario.isEditing && !formulario.archivo) {
       toast.error("Debes subir un archivo de recomendación");
       setIsSubmitting(false);
@@ -273,10 +270,10 @@ const RecomendacionesForm = () => {
 
   if (isLoading) {
     return (
-      <div className="recomendaciones-loading-container">
+      <div className={styles["recomendaciones-loading-container"]}>
         <CVStepsNav idCV={idCV} currentStep="Recomendaciones" />
-        <div className="recomendaciones-loading-content">
-          <div className="recomendaciones-loading-spinner"></div>
+        <div className={styles["recomendaciones-loading-content"]}>
+          <div className={styles["recomendaciones-loading-spinner"]}></div>
           <h2>Cargando recomendaciones...</h2>
         </div>
       </div>
@@ -284,15 +281,15 @@ const RecomendacionesForm = () => {
   }
 
   return (
-    <div className="recomendaciones-container">
+    <div className={styles["recomendaciones-container"]}>
       <CVStepsNav idCV={idCV} currentStep="Recomendaciones" />
 
-      <div className="recomendaciones-content">
-        <form onSubmit={handleSubmit} className="recomendaciones-form">
+      <div className={styles["recomendaciones-content"]}>
+        <form onSubmit={handleSubmit} className={styles["recomendaciones-form"]}>
           <h2>{formulario.isEditing ? 'Editar Recomendación' : 'Agregar Nueva Recomendación'}</h2>
 
-          <div className="input-group">
-            <label><FaUserTie className="input-icon" /> Nombre del recomendador *</label>
+          <div className={styles["input-group"]}>
+            <label><FaUserTie className={styles["input-icon"]} /> Nombre del recomendador *</label>
             <input
               type="text"
               name="nombre_recomendador"
@@ -303,8 +300,8 @@ const RecomendacionesForm = () => {
             />
           </div>
 
-          <div className="input-group">
-            <label><FaBriefcase className="input-icon" /> Cargo</label>
+          <div className={styles["input-group"]}>
+            <label><FaBriefcase className={styles["input-icon"]} /> Cargo</label>
             <input
               type="text"
               name="cargo"
@@ -315,8 +312,8 @@ const RecomendacionesForm = () => {
             />
           </div>
 
-          <div className="input-group">
-            <label><FaBuilding className="input-icon" /> Empresa</label>
+          <div className={styles["input-group"]}>
+            <label><FaBuilding className={styles["input-icon"]} /> Empresa</label>
             <input
               type="text"
               name="empresa"
@@ -326,8 +323,8 @@ const RecomendacionesForm = () => {
             />
           </div>
 
-          <div className="input-group">
-            <label><FaPhone className="input-icon" /> Teléfono</label>
+          <div className={styles["input-group"]}>
+            <label><FaPhone className={styles["input-icon"]} /> Teléfono</label>
             <input
               type="text"
               name="telefono"
@@ -337,8 +334,8 @@ const RecomendacionesForm = () => {
             />
           </div>
 
-          <div className="input-group">
-            <label><FaEnvelope className="input-icon" /> Email</label>
+          <div className={styles["input-group"]}>
+            <label><FaEnvelope className={styles["input-icon"]} /> Email</label>
             <input
               type="email"
               name="email"
@@ -348,8 +345,8 @@ const RecomendacionesForm = () => {
             />
           </div>
 
-          <div className="input-group">
-            <label><FaLink className="input-icon" /> Relación</label>
+          <div className={styles["input-group"]}>
+            <label><FaLink className={styles["input-icon"]} /> Relación</label>
             <input
               type="text"
               name="relacion"
@@ -359,8 +356,8 @@ const RecomendacionesForm = () => {
             />
           </div>
 
-          <div className="input-group">
-            <label><FaCalendarAlt className="input-icon" /> Fecha</label>
+          <div className={styles["input-group"]}>
+            <label><FaCalendarAlt className={styles["input-icon"]} /> Fecha</label>
             <input
               type="date"
               name="fecha"
@@ -369,9 +366,9 @@ const RecomendacionesForm = () => {
             />
           </div>
 
-          <div className="input-group">
+          <div className={styles["input-group"]}>
             <label>
-              <FaPaperclip className="input-icon" />
+              <FaPaperclip className={styles["input-icon"]} />
               Archivo {formulario.isEditing ? '(Opcional - Cambiar)' : '(Requerido)'}
             </label>
             <input
@@ -379,17 +376,17 @@ const RecomendacionesForm = () => {
               name="archivo"
               onChange={handleFileChange}
               accept=".pdf,.jpg,.png"
-              className="file-input"
+              className={styles["file-input"]}
               required={!formulario.isEditing}
             />
             {formulario.archivoNombre ? (
-              <div className="file-info">
-                <span className="file-name">
+              <div className={styles["file-info"]}>
+                <span className={styles["file-name"]}>
                   Nuevo archivo seleccionado: {formulario.archivoNombre}
                 </span>
                 <button
                   type="button"
-                  className="clear-file-btn"
+                  className={styles["clear-file-btn"]}
                   onClick={() => setFormulario({
                     ...formulario,
                     archivo: null,
@@ -400,11 +397,11 @@ const RecomendacionesForm = () => {
                 </button>
               </div>
             ) : formulario.nombreArchivoExistente && (
-              <div className="file-info">
+              <div className={styles["file-info"]}>
                 Archivo actual: {formulario.nombreArchivoExistente}
                 {formulario.isEditing && (
                   <button
-                    className="download-link"
+                    className={styles["download-link"]}
                     onClick={() => handleDownload(formulario.id_recomendacion, formulario.nombreArchivoExistente)}
                     style={{ marginLeft: '10px' }}
                   >
@@ -415,24 +412,24 @@ const RecomendacionesForm = () => {
             )}
           </div>
 
-           <div className="recomendaciones-button-group">
+          <div className={styles["recomendaciones-button-group"]}>
             {!formulario.isEditing && (
-              <button type="button" className="recomendaciones-back-btn" onClick={handleBack}>
+              <button type="button" className={styles["recomendaciones-back-btn"]} onClick={handleBack}>
                 Regresar
               </button>
             )}
-            <button type="submit" className="recomendaciones-submit-btn">
+            <button type="submit" className={styles["recomendaciones-submit-btn"]}>
               {formulario.isEditing ? 'Actualizar' : 'Guardar'}
             </button>
             {formulario.isEditing && (
-              <button type="button" className="recomendaciones-cancel-btn" onClick={resetFormulario}>
+              <button type="button" className={styles["recomendaciones-cancel-btn"]} onClick={resetFormulario}>
                 Cancelar
               </button>
             )}
             {!formulario.isEditing && (
               <button 
                 type="button" 
-                className="recomendaciones-next-btn" 
+                className={styles["recomendaciones-next-btn"]} 
                 onClick={irASiguiente}
                 disabled={recomendaciones.length === 0}
               >
@@ -442,12 +439,12 @@ const RecomendacionesForm = () => {
           </div>
         </form>
 
-        <div className="recomendaciones-table-section">
+        <div className={styles["recomendaciones-table-section"]}>
           <h3><FaPaperclip /> Recomendaciones registradas ({recomendaciones.length})</h3>
           
           {recomendaciones.length > 0 ? (
-            <div className="recomendaciones-table-container">
-              <table className="recomendaciones-table">
+            <div className={styles["recomendaciones-table-container"]}>
+              <table className={styles["recomendaciones-table"]}>
                 <thead>
                   <tr>
                     <th>Nombre</th>
@@ -466,22 +463,22 @@ const RecomendacionesForm = () => {
                       <td>
                         {rec.tiene_archivo ? (
                           <button 
-                            className="recomendaciones-download-btn"
+                            className={styles["recomendaciones-download-btn"]}
                             onClick={() => handleDownload(rec.id_recomendacion, rec.nombre_archivo)}
                           >
                             <FaDownload /> {rec.nombre_archivo}
                           </button>
                         ) : 'No adjunto'}
                       </td>
-                      <td className="recomendaciones-actions">
+                      <td className={styles["recomendaciones-actions"]}>
                         <button 
-                          className="recomendaciones-edit-btn"
+                          className={styles["recomendaciones-edit-btn"]}
                           onClick={() => handleEdit(rec)}
                         >
                           <FaEdit />
                         </button>
                         <button 
-                          className="recomendaciones-delete-btn"
+                          className={styles["recomendaciones-delete-btn"]}
                           onClick={() => handleDelete(rec.id_recomendacion)}
                         >
                           <FaTrash />
@@ -493,7 +490,7 @@ const RecomendacionesForm = () => {
               </table>
             </div>
           ) : (
-            <div className="recomendaciones-empty-message">
+            <div className={styles["recomendaciones-empty-message"]}>
               No hay recomendaciones registradas
             </div>
           )}

@@ -11,7 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import CVStepsNav from "../ModuloAspirante/CV/CVStepsNav";
 import { FaCalendarAlt, FaClock, FaBusinessTime, FaPlane, FaSave, FaArrowLeft, FaEdit, FaTrash } from "react-icons/fa";
 import { useFormPersistence } from '../../hooks/useFormPersistence';
-import './DisponibilidadForm.css';
+import styles from './DisponibilidadForm.module.css';
 
 const DisponibilidadForm = () => {
   const { idCV } = useParams();
@@ -96,7 +96,7 @@ const DisponibilidadForm = () => {
       isEditing: true
     });
 
-    document.querySelector('.disponibilidad-form-container').scrollIntoView({ behavior: 'smooth' });
+    document.querySelector(`.${styles["disponibilidad-form-container"]}`).scrollIntoView({ behavior: 'smooth' });
   };
 
   const manejarEliminar = async (id) => {
@@ -106,7 +106,7 @@ const DisponibilidadForm = () => {
         setDisponibilidades(disponibilidades.filter(disp => disp.id_disponibilidad !== id));
 
         toast.success(
-          <div className="disponibilidad-toast">
+          <div className={styles["disponibilidad-toast"]}>
             <div>Disponibilidad eliminada correctamente</div>
           </div>,
           {
@@ -118,7 +118,7 @@ const DisponibilidadForm = () => {
         );
       } catch (error) {
         toast.error(
-          <div className="disponibilidad-toast">
+          <div className={styles["disponibilidad-toast"]}>
             <div>Error al eliminar la disponibilidad</div>
           </div>,
           {
@@ -161,7 +161,7 @@ const DisponibilidadForm = () => {
         ));
 
         toast.success(
-          <div className="disponibilidad-toast">
+          <div className={styles["disponibilidad-toast"]}>
             <div>Disponibilidad actualizada correctamente</div>
           </div>,
           {
@@ -176,7 +176,7 @@ const DisponibilidadForm = () => {
         setDisponibilidades([...disponibilidades, respuesta]);
 
         toast.success(
-          <div className="disponibilidad-toast">
+          <div className={styles["disponibilidad-toast"]}>
             <div>¡CV completado correctamente! Redirigiendo...</div>
           </div>,
           {
@@ -195,7 +195,7 @@ const DisponibilidadForm = () => {
     } catch (error) {
       console.error("Error al guardar disponibilidad:", error);
       toast.error(
-        <div className="disponibilidad-toast">
+        <div className={styles["disponibilidad-toast"]}>
           <div>{error.message || "Error al registrar la disponibilidad"}</div>
         </div>,
         {
@@ -213,7 +213,7 @@ const DisponibilidadForm = () => {
   const finalizarCV = () => {
     if (disponibilidades.length === 0) {
       toast.warning(
-        <div className="disponibilidad-toast">
+        <div className={styles["disponibilidad-toast"]}>
           <div>Debes agregar al menos una disponibilidad</div>
         </div>,
         {
@@ -234,10 +234,10 @@ const DisponibilidadForm = () => {
 
   if (isLoading) {
     return (
-      <div className="disponibilidad-pagina">
+      <div className={styles["disponibilidad-pagina"]}>
         <CVStepsNav idCV={idCV} currentStep="Disponibilidad" />
-        <div className="disponibilidad-contenedor">
-          <div className="disponibilidad-spinner"></div>
+        <div className={styles["disponibilidad-contenedor"]}>
+          <div className={styles["disponibilidad-spinner"]}></div>
           <h2>Cargando disponibilidades...</h2>
         </div>
       </div>
@@ -245,17 +245,17 @@ const DisponibilidadForm = () => {
   }
 
   return (
-    <div className="disponibilidad-pagina">
+    <div className={styles["disponibilidad-pagina"]}>
       <CVStepsNav idCV={idCV} currentStep="Disponibilidad" />
 
-      <div className="disponibilidad-contenedor">
-        <form onSubmit={manejarEnvio} className="disponibilidad-form-container">
-          <h2 className="disponibilidad-titulo-formulario">
+      <div className={styles["disponibilidad-contenedor"]}>
+        <form onSubmit={manejarEnvio} className={styles["disponibilidad-form-container"]}>
+          <h2 className={styles["disponibilidad-titulo-formulario"]}>
             {formulario.isEditing ? 'Editar Disponibilidad' : 'Agregar Nueva Disponibilidad'}
           </h2>
 
-          <div className="disponibilidad-grupo-input">
-            <label><FaCalendarAlt className="disponibilidad-icono-input" /> Días disponibles *</label>
+          <div className={styles["disponibilidad-grupo-input"]}>
+            <label><FaCalendarAlt className={styles["disponibilidad-icono-input"]} /> Días disponibles *</label>
             <input
               type="text"
               name="dias_disponibles"
@@ -263,12 +263,12 @@ const DisponibilidadForm = () => {
               value={formulario.dias_disponibles}
               placeholder="Ej: Lunes a Viernes, Fines de semana"
               required
-              className="disponibilidad-input"
+              className={styles["disponibilidad-input"]}
             />
           </div>
 
-          <div className="disponibilidad-grupo-input">
-            <label><FaClock className="disponibilidad-icono-input" /> Horario preferido *</label>
+          <div className={styles["disponibilidad-grupo-input"]}>
+            <label><FaClock className={styles["disponibilidad-icono-input"]} /> Horario preferido *</label>
             <input
               type="text"
               name="horario_preferido"
@@ -276,12 +276,12 @@ const DisponibilidadForm = () => {
               value={formulario.horario_preferido}
               placeholder="Ej: 9:00 AM - 6:00 PM, Tiempo completo"
               required
-              className="disponibilidad-input"
+              className={styles["disponibilidad-input"]}
             />
           </div>
 
-          <div className="disponibilidad-grupo-input">
-            <label><FaBusinessTime className="disponibilidad-icono-input" /> Tipo de jornada *</label>
+          <div className={styles["disponibilidad-grupo-input"]}>
+            <label><FaBusinessTime className={styles["disponibilidad-icono-input"]} /> Tipo de jornada *</label>
             <input
               type="text"
               name="tipo_jornada"
@@ -289,28 +289,28 @@ const DisponibilidadForm = () => {
               value={formulario.tipo_jornada}
               placeholder="Ej: Tiempo completo, Medio tiempo, Por proyectos"
               required
-              className="disponibilidad-input"
+              className={styles["disponibilidad-input"]}
             />
           </div>
 
-          <div className="disponibilidad-grupo-checkbox">
+          <div className={styles["disponibilidad-grupo-checkbox"]}>
             <label>
               <input
                 type="checkbox"
                 name="disponibilidad_viaje"
                 onChange={manejarCambio}
                 checked={formulario.disponibilidad_viaje}
-                className="disponibilidad-checkbox"
+                className={styles["disponibilidad-checkbox"]}
               />
-              <FaPlane className="disponibilidad-icono-input" /> ¿Disponible para viajar?
+              <FaPlane className={styles["disponibilidad-icono-input"]} /> ¿Disponible para viajar?
             </label>
           </div>
 
-          <div className="disponibilidad-grupo-botones">
+          <div className={styles["disponibilidad-grupo-botones"]}>
             {!formulario.isEditing && (
               <button
                 type="button"
-                className="disponibilidad-boton-regresar"
+                className={styles["disponibilidad-boton-regresar"]}
                 onClick={manejarRegresar}
                 disabled={isSubmitting}
               >
@@ -320,7 +320,7 @@ const DisponibilidadForm = () => {
 
             <button
               type="submit"
-              className="disponibilidad-boton-enviar"
+              className={styles["disponibilidad-boton-enviar"]}
               disabled={isSubmitting}
             >
               {isSubmitting
@@ -333,7 +333,7 @@ const DisponibilidadForm = () => {
             {formulario.isEditing && (
               <button
                 type="button"
-                className="disponibilidad-boton-cancelar"
+                className={styles["disponibilidad-boton-cancelar"]}
                 onClick={reiniciarFormulario}
                 disabled={isSubmitting}
               >
@@ -344,7 +344,7 @@ const DisponibilidadForm = () => {
             {!formulario.isEditing && (
               <button
                 type="button"
-                className="disponibilidad-boton-finalizar"
+                className={styles["disponibilidad-boton-finalizar"]}
                 onClick={finalizarCV}
                 disabled={isSubmitting || disponibilidades.length === 0}
               >
@@ -355,10 +355,10 @@ const DisponibilidadForm = () => {
         </form>
 
         {disponibilidades.length > 0 ? (
-          <div className="disponibilidad-lista">
-            <h3 className="disponibilidad-titulo-lista"><FaCalendarAlt /> Disponibilidades registradas</h3>
-            <div className="disponibilidad-contenedor-tabla">
-              <table className="disponibilidad-tabla">
+          <div className={styles["disponibilidad-lista"]}>
+            <h3 className={styles["disponibilidad-titulo-lista"]}><FaCalendarAlt /> Disponibilidades registradas</h3>
+            <div className={styles["disponibilidad-contenedor-tabla"]}>
+              <table className={styles["disponibilidad-tabla"]}>
                 <thead>
                   <tr>
                     <th>Días disponibles</th>
@@ -370,22 +370,22 @@ const DisponibilidadForm = () => {
                 </thead>
                 <tbody>
                   {disponibilidades.map((disp, index) => (
-                    <tr key={index} className="disponibilidad-fila">
+                    <tr key={index} className={styles["disponibilidad-fila"]}>
                       <td>{disp.dias_disponibles || 'No especificado'}</td>
                       <td>{disp.horario_preferido || 'No especificado'}</td>
                       <td>{disp.tipo_jornada || 'No especificado'}</td>
                       <td>{disp.disponibilidad_viaje ? 'Sí' : 'No'}</td>
-                      <td className="disponibilidad-celda-acciones">
+                      <td className={styles["disponibilidad-celda-acciones"]}>
                         <button
                           onClick={() => manejarEditar(disp)}
-                          className="disponibilidad-boton-editar"
+                          className={styles["disponibilidad-boton-editar"]}
                           title="Editar"
                         >
                           <FaEdit />
                         </button>
                         <button
                           onClick={() => manejarEliminar(disp.id_disponibilidad)}
-                          className="disponibilidad-boton-eliminar"
+                          className={styles["disponibilidad-boton-eliminar"]}
                           title="Eliminar"
                         >
                           <FaTrash />
@@ -398,7 +398,7 @@ const DisponibilidadForm = () => {
             </div>
           </div>
         ) : (
-          <div className="disponibilidad-mensaje-vacio">
+          <div className={styles["disponibilidad-mensaje-vacio"]}>
             No hay disponibilidades registradas aún
           </div>
         )}

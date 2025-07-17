@@ -11,8 +11,8 @@ import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import CVStepsNav from "../ModuloAspirante/CV/CVStepsNav";
 import { FaCertificate, FaUniversity, FaCalendarAlt, FaPaperclip, FaEdit, FaTrash, FaDownload, FaArrowLeft, FaSave } from "react-icons/fa";
-import './CertificadosForm.css';
 import { useFormPersistence } from '../../hooks/useFormPersistence';
+import styles from './CertificadosForm.module.css';
 
 const CertificadosForm = () => {
   const { idCV } = useParams();
@@ -42,7 +42,7 @@ const CertificadosForm = () => {
       setIsLoading(true);
       try {
         const data = await getCertificadosByCVId(idCV);
-        console.log('Certificados cargados:', data); // Para depuración
+        console.log('Certificados cargados:', data);
         setCertificados(data);
 
         if (!location.state?.fromHabilidades) {
@@ -96,7 +96,7 @@ const CertificadosForm = () => {
       nombreArchivoExistente: "",
       isEditing: false
     });
-    const fileInput = document.querySelector('.certificados-file-input');
+    const fileInput = document.querySelector(`.${styles["certificados-file-input"]}`);
     if (fileInput) {
       fileInput.value = '';
     }
@@ -115,7 +115,7 @@ const CertificadosForm = () => {
       isEditing: true
     });
 
-    document.querySelector('.certificados-form-container').scrollIntoView({ behavior: 'smooth' });
+    document.querySelector(`.${styles["certificados-form-container"]}`).scrollIntoView({ behavior: 'smooth' });
   };
 
   const manejarDescarga = async (id, nombreArchivo) => {
@@ -135,7 +135,7 @@ const CertificadosForm = () => {
         setCertificados(certificados.filter(cert => cert.id_certificado !== id));
 
         toast.success(
-          <div className="certificados-toast">
+          <div className={styles["certificados-toast"]}>
             <div>Certificado eliminado correctamente</div>
           </div>,
           {
@@ -147,7 +147,7 @@ const CertificadosForm = () => {
         );
       } catch (error) {
         toast.error(
-          <div className="certificados-toast">
+          <div className={styles["certificados-toast"]}>
             <div>Error al eliminar el certificado</div>
           </div>,
           {
@@ -208,7 +208,7 @@ const CertificadosForm = () => {
         ));
 
         toast.success(
-          <div className="certificados-toast">
+          <div className={styles["certificados-toast"]}>
             <div>Certificado actualizado correctamente</div>
           </div>,
           {
@@ -229,7 +229,7 @@ const CertificadosForm = () => {
         ]);
 
         toast.success(
-          <div className="certificados-toast">
+          <div className={styles["certificados-toast"]}>
             <div>Certificado guardado correctamente</div>
           </div>,
           {
@@ -255,7 +255,7 @@ const CertificadosForm = () => {
     } catch (error) {
       console.error("Error completo al guardar:", error);
       toast.error(
-        <div className="certificados-toast">
+        <div className={styles["certificados-toast"]}>
           <div>{error.message || "Error al registrar el certificado"}</div>
         </div>,
         {
@@ -273,7 +273,7 @@ const CertificadosForm = () => {
   const irASiguiente = () => {
     if (certificados.length === 0) {
       toast.warning(
-        <div className="certificados-toast">
+        <div className={styles["certificados-toast"]}>
           <div>Debes agregar al menos un certificado</div>
         </div>,
         {
@@ -294,10 +294,10 @@ const CertificadosForm = () => {
 
   if (isLoading) {
     return (
-      <div className="certificados-pagina">
+      <div className={styles["certificados-pagina"]}>
         <CVStepsNav idCV={idCV} currentStep="Certificados" />
-        <div className="certificados-contenedor">
-          <div className="certificados-spinner"></div>
+        <div className={styles["certificados-contenedor"]}>
+          <div className={styles["certificados-spinner"]}></div>
           <h2>Cargando certificados...</h2>
         </div>
       </div>
@@ -305,17 +305,17 @@ const CertificadosForm = () => {
   }
 
   return (
-    <div className="certificados-pagina">
+    <div className={styles["certificados-pagina"]}>
       <CVStepsNav idCV={idCV} currentStep="Certificados" />
 
-      <div className="certificados-contenedor">
-        <form onSubmit={manejarEnvio} className="certificados-form-container">
-          <h2 className="certificados-titulo-formulario">
+      <div className={styles["certificados-contenedor"]}>
+        <form onSubmit={manejarEnvio} className={styles["certificados-form-container"]}>
+          <h2 className={styles["certificados-titulo-formulario"]}>
             {formulario.isEditing ? 'Editar Certificado' : 'Agregar Nuevo Certificado'}
           </h2>
 
-          <div className="certificados-grupo-input">
-            <label><FaCertificate className="certificados-icono-input" /> Nombre del Certificado *</label>
+          <div className={styles["certificados-grupo-input"]}>
+            <label><FaCertificate className={styles["certificados-icono-input"]} /> Nombre del Certificado *</label>
             <input
               type="text"
               name="nombre_certificado"
@@ -323,12 +323,12 @@ const CertificadosForm = () => {
               value={formulario.nombre_certificado}
               placeholder="Ej: Desarrollo Web Avanzado"
               required
-              className="certificados-input"
+              className={styles["certificados-input"]}
             />
           </div>
 
-          <div className="certificados-grupo-input">
-            <label><FaUniversity className="certificados-icono-input" /> Institución *</label>
+          <div className={styles["certificados-grupo-input"]}>
+            <label><FaUniversity className={styles["certificados-icono-input"]} /> Institución *</label>
             <input
               type="text"
               name="nombre_institucion"
@@ -336,24 +336,24 @@ const CertificadosForm = () => {
               value={formulario.nombre_institucion}
               placeholder="Ej: Universidad Nacional, Platzi, Coursera"
               required
-              className="certificados-input"
+              className={styles["certificados-input"]}
             />
           </div>
 
-          <div className="certificados-grupo-input">
-            <label><FaCalendarAlt className="certificados-icono-input" /> Fecha de obtención</label>
+          <div className={styles["certificados-grupo-input"]}>
+            <label><FaCalendarAlt className={styles["certificados-icono-input"]} /> Fecha de obtención</label>
             <input
               type="date"
               name="fecha"
               onChange={manejarCambio}
               value={formulario.fecha}
-              className="certificados-input"
+              className={styles["certificados-input"]}
             />
           </div>
 
-          <div className="certificados-grupo-input">
+          <div className={styles["certificados-grupo-input"]}>
             <label>
-              <FaPaperclip className="certificados-icono-input" />
+              <FaPaperclip className={styles["certificados-icono-input"]} />
               Archivo {formulario.isEditing ? '(Opcional - Cambiar)' : '(Opcional)'}
             </label>
             <input
@@ -361,16 +361,16 @@ const CertificadosForm = () => {
               name="archivo"
               onChange={manejarCambioArchivo}
               accept=".pdf,.jpg,.png"
-              className="certificados-file-input"
+              className={styles["certificados-file-input"]}
             />
             {formulario.archivoNombre ? (
-              <div className="certificados-info-archivo">
-                <span className="certificados-nombre-archivo">
+              <div className={styles["certificados-info-archivo"]}>
+                <span className={styles["certificados-nombre-archivo"]}>
                   Nuevo archivo seleccionado: {formulario.archivoNombre}
                 </span>
                 <button
                   type="button"
-                  className="certificados-boton-limpiar"
+                  className={styles["certificados-boton-limpiar"]}
                   onClick={() => setFormulario({
                     ...formulario,
                     archivo: null,
@@ -381,11 +381,11 @@ const CertificadosForm = () => {
                 </button>
               </div>
             ) : formulario.nombreArchivoExistente && (
-              <div className="certificados-info-archivo">
+              <div className={styles["certificados-info-archivo"]}>
                 Archivo actual: {formulario.nombreArchivoExistente}
                 {formulario.isEditing && (
                   <button
-                    className="certificados-enlace-descarga"
+                    className={styles["certificados-enlace-descarga"]}
                     onClick={() => manejarDescarga(formulario.id_certificado, formulario.nombreArchivoExistente)}
                   >
                     <FaDownload /> Descargar
@@ -395,11 +395,11 @@ const CertificadosForm = () => {
             )}
           </div>
 
-          <div className="certificados-grupo-botones">
+          <div className={styles["certificados-grupo-botones"]}>
             {!formulario.isEditing && (
               <button
                 type="button"
-                className="certificados-boton-regresar"
+                className={styles["certificados-boton-regresar"]}
                 onClick={manejarRegresar}
                 disabled={isSubmitting}
               >
@@ -409,7 +409,7 @@ const CertificadosForm = () => {
 
             <button
               type="submit"
-              className="certificados-boton-enviar"
+              className={styles["certificados-boton-enviar"]}
               disabled={isSubmitting}
             >
               {isSubmitting
@@ -422,7 +422,7 @@ const CertificadosForm = () => {
             {formulario.isEditing && (
               <button
                 type="button"
-                className="certificados-boton-cancelar"
+                className={styles["certificados-boton-cancelar"]}
                 onClick={reiniciarFormulario}
                 disabled={isSubmitting}
               >
@@ -433,7 +433,7 @@ const CertificadosForm = () => {
             {!formulario.isEditing && (
               <button
                 type="button"
-                className="certificados-boton-siguiente"
+                className={styles["certificados-boton-siguiente"]}
                 onClick={irASiguiente}
                 disabled={isSubmitting || certificados.length === 0}
               >
@@ -444,10 +444,10 @@ const CertificadosForm = () => {
         </form>
 
         {certificados.length > 0 ? (
-          <div className="certificados-lista">
-            <h3 className="certificados-titulo-lista"><FaCertificate /> Certificados registrados</h3>
-            <div className="certificados-contenedor-tabla">
-              <table className="certificados-tabla">
+          <div className={styles["certificados-lista"]}>
+            <h3 className={styles["certificados-titulo-lista"]}><FaCertificate /> Certificados registrados</h3>
+            <div className={styles["certificados-contenedor-tabla"]}>
+              <table className={styles["certificados-tabla"]}>
                 <thead>
                   <tr>
                     <th>Certificado</th>
@@ -459,15 +459,15 @@ const CertificadosForm = () => {
                 </thead>
                 <tbody>
                   {certificados.map((cert, index) => (
-                    <tr key={index} className="certificados-fila">
+                    <tr key={index} className={styles["certificados-fila"]}>
                       <td>{cert.nombre_certificado || 'No especificado'}</td>
                       <td>{cert.nombre_institucion || 'No especificada'}</td>
                       <td>{cert.fecha ? new Date(cert.fecha).toLocaleDateString() : 'No especificada'}</td>
                       <td>
                         {cert.tiene_archivo ? (
-                          <div className="certificados-contenedor-descarga">
+                          <div className={styles["certificados-contenedor-descarga"]}>
                             <button
-                              className="certificados-enlace-descarga"
+                              className={styles["certificados-enlace-descarga"]}
                               onClick={() => manejarDescarga(cert.id_certificado, cert.nombre_archivo)}
                             >
                               <FaDownload /> {cert.nombre_archivo || 'Descargar'}
@@ -475,17 +475,17 @@ const CertificadosForm = () => {
                           </div>
                         ) : 'No adjunto'}
                       </td>
-                      <td className="certificados-celda-acciones">
+                      <td className={styles["certificados-celda-acciones"]}>
                         <button
                           onClick={() => manejarEditar(cert)}
-                          className="certificados-boton-editar"
+                          className={styles["certificados-boton-editar"]}
                           title="Editar"
                         >
                           <FaEdit />
                         </button>
                         <button
                           onClick={() => manejarEliminar(cert.id_certificado)}
-                          className="certificados-boton-eliminar"
+                          className={styles["certificados-boton-eliminar"]}
                           title="Eliminar"
                         >
                           <FaTrash />
@@ -498,7 +498,7 @@ const CertificadosForm = () => {
             </div>
           </div>
         ) : (
-          <div className="certificados-mensaje-vacio">
+          <div className={styles["certificados-mensaje-vacio"]}>
             No hay certificados registrados aún
           </div>
         )}

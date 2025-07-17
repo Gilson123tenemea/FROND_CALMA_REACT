@@ -1,0 +1,203 @@
+/* Estilos principales del header */
+.aspiranteHeader {
+  margin: 0;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: 70px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Contenedor del logo y navegación */
+.aspiranteHeaderContainer {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* Estilos del logo */
+.aspiranteLogo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: transform 0.2s;
+}
+
+.aspiranteLogo:hover {
+  transform: scale(1.02);
+}
+
+.aspiranteLogo svg {
+  width: 32px;
+  height: 32px;
+}
+
+.aspiranteLogoText {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #4F46E5;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+/* Navegación principal */
+.aspiranteNav {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.aspiranteNavLink {
+  text-decoration: none;
+  color: #4B5563;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.5rem 0;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.aspiranteNavLink:hover {
+  color: #4F46E5;
+}
+
+.aspiranteNavLink::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #4F46E5;
+  transition: width 0.3s ease;
+}
+
+.aspiranteNavLink:hover::after {
+  width: 100%;
+}
+
+/* Botones con iconos */
+.aspiranteIconButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #4B5563;
+  font-size: 0.95rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.aspiranteIconButton:hover {
+  background-color: #F3F4F6;
+  color: #4F46E5;
+}
+
+.aspiranteIcon {
+  font-size: 1.1rem;
+}
+
+.aspiranteIconText {
+  font-weight: 500;
+}
+
+/* Botón de notificaciones */
+.aspiranteNotificationButton {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.aspiranteNotificationButton:hover {
+  background-color: #F3F4F6;
+}
+
+.aspiranteNotificationBadge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background-color: #EF4444;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+}
+
+/* Contenedor de acciones (logout) */
+.aspiranteHeaderActions {
+  display: flex;
+  align-items: center;
+}
+
+/* Botón de cerrar sesión */
+.aspiranteLogoutButton {
+  background-color: #F3F4F6;
+  color: #4B5563;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.aspiranteLogoutButton:hover {
+  background-color: #E5E7EB;
+  color: #1F2937;
+}
+
+/* Estilos responsivos */
+@media (max-width: 1024px) {
+  .aspiranteNav {
+    gap: 1rem;
+  }
+  
+  .aspiranteNavLink {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .aspiranteHeader {
+    padding: 1rem;
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .aspiranteHeaderContainer {
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  
+  .aspiranteNav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.8rem;
+  }
+  
+  .aspiranteHeaderActions {
+    width: 100%;
+    justify-content: center;
+  }
+}

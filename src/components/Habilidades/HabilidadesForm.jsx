@@ -10,8 +10,8 @@ import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import CVStepsNav from "../ModuloAspirante/CV/CVStepsNav";
 import { FaCode, FaChartLine, FaSave, FaArrowLeft, FaEdit, FaTrash } from "react-icons/fa";
-import './HabilidadesForm.css';
 import { useFormPersistence } from '../../hooks/useFormPersistence';
+import styles from './HabilidadesForm.module.css';
 
 const HabilidadesForm = () => {
   const { idCV } = useParams();
@@ -36,7 +36,7 @@ const HabilidadesForm = () => {
       setIsLoading(true);
       try {
         const data = await getHabilidadesByCVId(idCV);
-        console.log('Habilidades cargadas:', data); // Para depuración
+        console.log('Habilidades cargadas:', data);
         setHabilidades(data);
 
         if (!location.state?.fromCertificados) {
@@ -87,7 +87,7 @@ const HabilidadesForm = () => {
       isEditing: true
     });
 
-    document.querySelector('.habilidades-form-container').scrollIntoView({ behavior: 'smooth' });
+    document.querySelector(`.${styles["habilidades-form-container"]}`).scrollIntoView({ behavior: 'smooth' });
   };
 
   const manejarEliminar = async (id) => {
@@ -97,7 +97,7 @@ const HabilidadesForm = () => {
         setHabilidades(habilidades.filter(hab => hab.id_habilidad !== id));
 
         toast.success(
-          <div className="habilidades-toast">
+          <div className={styles["habilidades-toast"]}>
             <div>Habilidad eliminada correctamente</div>
           </div>,
           {
@@ -109,7 +109,7 @@ const HabilidadesForm = () => {
         );
       } catch (error) {
         toast.error(
-          <div className="habilidades-toast">
+          <div className={styles["habilidades-toast"]}>
             <div>Error al eliminar la habilidad</div>
           </div>,
           {
@@ -148,7 +148,7 @@ const HabilidadesForm = () => {
         ));
 
         toast.success(
-          <div className="habilidades-toast">
+          <div className={styles["habilidades-toast"]}>
             <div>Habilidad actualizada correctamente</div>
           </div>,
           {
@@ -163,7 +163,7 @@ const HabilidadesForm = () => {
         setHabilidades([...habilidades, nuevaHabilidad]);
 
         toast.success(
-          <div className="habilidades-toast">
+          <div className={styles["habilidades-toast"]}>
             <div>Habilidad guardada correctamente</div>
           </div>,
           {
@@ -179,7 +179,7 @@ const HabilidadesForm = () => {
     } catch (error) {
       console.error("Error al guardar:", error);
       toast.error(
-        <div className="habilidades-toast">
+        <div className={styles["habilidades-toast"]}>
           <div>{error.message || "Error al registrar la habilidad"}</div>
         </div>,
         {
@@ -197,7 +197,7 @@ const HabilidadesForm = () => {
   const irASiguiente = () => {
     if (habilidades.length === 0) {
       toast.warning(
-        <div className="habilidades-toast">
+        <div className={styles["habilidades-toast"]}>
           <div>Debes agregar al menos una habilidad</div>
         </div>,
         {
@@ -222,10 +222,10 @@ const HabilidadesForm = () => {
 
   if (isLoading) {
     return (
-      <div className="habilidades-pagina">
+      <div className={styles["habilidades-pagina"]}>
         <CVStepsNav idCV={idCV} currentStep="Habilidades" />
-        <div className="habilidades-contenedor">
-          <div className="habilidades-spinner"></div>
+        <div className={styles["habilidades-contenedor"]}>
+          <div className={styles["habilidades-spinner"]}></div>
           <h2>Cargando habilidades...</h2>
         </div>
       </div>
@@ -233,17 +233,17 @@ const HabilidadesForm = () => {
   }
 
   return (
-    <div className="habilidades-pagina">
+    <div className={styles["habilidades-pagina"]}>
       <CVStepsNav idCV={idCV} currentStep="Habilidades" />
       
-      <div className="habilidades-contenedor">
-        <form onSubmit={manejarEnvio} className="habilidades-form-container">
-          <h2 className="habilidades-titulo-formulario">
+      <div className={styles["habilidades-contenedor"]}>
+        <form onSubmit={manejarEnvio} className={styles["habilidades-form-container"]}>
+          <h2 className={styles["habilidades-titulo-formulario"]}>
             {formulario.isEditing ? 'Editar Habilidad' : 'Agregar Nueva Habilidad'}
           </h2>
 
-          <div className="habilidades-grupo-input">
-            <label><FaCode className="habilidades-icono-input" /> Habilidad *</label>
+          <div className={styles["habilidades-grupo-input"]}>
+            <label><FaCode className={styles["habilidades-icono-input"]} /> Habilidad *</label>
             <input
               type="text"
               name="descripcion"
@@ -251,17 +251,17 @@ const HabilidadesForm = () => {
               onChange={manejarCambio}
               placeholder="Ej: JavaScript, Diseño UX, Gestión de proyectos"
               required
-              className="habilidades-input"
+              className={styles["habilidades-input"]}
             />
           </div>
 
-          <div className="habilidades-grupo-input">
-            <label><FaChartLine className="habilidades-icono-input" /> Nivel *</label>
+          <div className={styles["habilidades-grupo-input"]}>
+            <label><FaChartLine className={styles["habilidades-icono-input"]} /> Nivel *</label>
             <select 
               name="nivel" 
               value={formulario.nivel} 
               onChange={manejarCambio}
-              className="habilidades-select"
+              className={styles["habilidades-select"]}
               required
             >
               <option value="Básico">Básico</option>
@@ -270,11 +270,11 @@ const HabilidadesForm = () => {
             </select>
           </div>
 
-          <div className="habilidades-grupo-botones">
+          <div className={styles["habilidades-grupo-botones"]}>
             {!formulario.isEditing && (
               <button 
                 type="button" 
-                className="habilidades-boton-regresar" 
+                className={styles["habilidades-boton-regresar"]} 
                 onClick={manejarRegresar}
                 disabled={isSubmitting}
               >
@@ -284,7 +284,7 @@ const HabilidadesForm = () => {
 
             <button 
               type="submit" 
-              className="habilidades-boton-enviar"
+              className={styles["habilidades-boton-enviar"]}
               disabled={isSubmitting}
             >
               {isSubmitting
@@ -297,7 +297,7 @@ const HabilidadesForm = () => {
             {formulario.isEditing && (
               <button
                 type="button"
-                className="habilidades-boton-cancelar"
+                className={styles["habilidades-boton-cancelar"]}
                 onClick={reiniciarFormulario}
                 disabled={isSubmitting}
               >
@@ -308,7 +308,7 @@ const HabilidadesForm = () => {
             {!formulario.isEditing && (
               <button 
                 type="button" 
-                className="habilidades-boton-siguiente"
+                className={styles["habilidades-boton-siguiente"]}
                 onClick={irASiguiente}
                 disabled={isSubmitting || habilidades.length === 0}
               >
@@ -319,10 +319,10 @@ const HabilidadesForm = () => {
         </form>
 
         {habilidades.length > 0 ? (
-          <div className="habilidades-lista">
-            <h3 className="habilidades-titulo-lista"><FaCode /> Habilidades registradas</h3>
-            <div className="habilidades-contenedor-tabla">
-              <table className="habilidades-tabla">
+          <div className={styles["habilidades-lista"]}>
+            <h3 className={styles["habilidades-titulo-lista"]}><FaCode /> Habilidades registradas</h3>
+            <div className={styles["habilidades-contenedor-tabla"]}>
+              <table className={styles["habilidades-tabla"]}>
                 <thead>
                   <tr>
                     <th>Habilidad</th>
@@ -332,24 +332,24 @@ const HabilidadesForm = () => {
                 </thead>
                 <tbody>
                   {habilidades.map((hab, index) => (
-                    <tr key={index} className="habilidades-fila">
+                    <tr key={index} className={styles["habilidades-fila"]}>
                       <td>{hab.descripcion || 'No especificada'}</td>
                       <td>
-                        <span className={`habilidades-badge habilidades-nivel-${hab.nivel.toLowerCase()}`}>
+                        <span className={`${styles["habilidades-badge"]} ${styles[`habilidades-nivel-${hab.nivel.toLowerCase()}`]}`}>
                           {hab.nivel}
                         </span>
                       </td>
-                      <td className="habilidades-celda-acciones">
+                      <td className={styles["habilidades-celda-acciones"]}>
                         <button
                           onClick={() => manejarEditar(hab)}
-                          className="habilidades-boton-editar"
+                          className={styles["habilidades-boton-editar"]}
                           title="Editar"
                         >
                           <FaEdit />
                         </button>
                         <button
                           onClick={() => manejarEliminar(hab.id_habilidad)}
-                          className="habilidades-boton-eliminar"
+                          className={styles["habilidades-boton-eliminar"]}
                           title="Eliminar"
                         >
                           <FaTrash />
@@ -362,7 +362,7 @@ const HabilidadesForm = () => {
             </div>
           </div>
         ) : (
-          <div className="habilidades-mensaje-vacio">
+          <div className={styles["habilidades-mensaje-vacio"]}>
             No hay habilidades registradas aún
           </div>
         )}

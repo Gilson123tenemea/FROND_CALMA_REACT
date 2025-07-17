@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
-import './PostulacionesAspirante.css';
+import { FaCalendarAlt, FaBuilding, FaMapMarkerAlt, FaMoneyBillWave, FaClock, FaSun, FaClipboardList, FaCheckCircle, FaTimesCircle, FaHourglassHalf } from 'react-icons/fa';
+import styles from './PostulacionesAspirante.module.css';
+import HeaderAspirante from '../HeaderAspirante/HeaderAspirante';
 
 const PostulacionesAspirante = () => {
   const { userId } = useParams();
   const [postulaciones, setPostulaciones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const userData = JSON.parse(localStorage.getItem("userData"));
+  const aspiranteId = userData?.aspiranteId;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -15,15 +19,12 @@ const PostulacionesAspirante = () => {
         setLoading(true);
         setError(null);
 
-        // Paso 1: Obtener idAspirante
         const aspiranteResponse = await axios.get(`http://localhost:8090/api/aspirantes/usuario/${userId}`);
         if (!aspiranteResponse.data) {
           throw new Error('No se pudo obtener el aspirante');
         }
 
         const aspiranteId = aspiranteResponse.data.idAspirante;
-
-        // Paso 2: Obtener postulaciones
         const postulacionesResponse = await axios.get(`http://localhost:8090/api/realizar/aspirante/${aspiranteId}`);
 
         if (postulacionesResponse.data && Array.isArray(postulacionesResponse.data)) {
@@ -50,9 +51,7 @@ const PostulacionesAspirante = () => {
       const options = {
         year: 'numeric',
         month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+        day: 'numeric'
       };
       return new Date(fecha).toLocaleDateString('es-ES', options);
     } catch {
@@ -62,80 +61,122 @@ const PostulacionesAspirante = () => {
 
   if (loading) {
     return (
-      <div className="postulaciones-loading">
-        <div className="spinner"></div>
-        <p>Cargando tus postulaciones...</p>
-      </div>
+      <>
+        <HeaderAspirante userId={aspiranteId || userId} />
+        <div className={styles.loadingContainer}>
+          <div className={styles.spinner}></div>
+          <p>Cargando tus postulaciones...</p>
+        </div>
+      </>
     );
   }
 
   if (error) {
     return (
-      <div className="postulaciones-error">
-        <p>{error}</p>
-        <button onClick={() => window.location.reload()}>Reintentar</button>
-      </div>
+      <>
+        <HeaderAspirante userId={aspiranteId || userId} />
+        <div className={styles.errorContainer}>
+          <div className={styles.errorIcon}>⚠️</div>
+          <p>{error}</p>
+          <button className={styles.retryButton} onClick={() => window.location.reload()}>
+            Reintentar
+          </button>
+        </div>
+      </>
     );
   }
 
   if (postulaciones.length === 0) {
     return (
-      <div className="postulaciones-empty">
-        <p>📭 No has realizado ninguna postulación aún.</p>
-        <Link to={`/moduloAspirante/trabajos?userId=${userId}`} className="btn-buscar-trabajos">
-          Buscar trabajos disponibles
-        </Link>
-      </div>
+      <>
+        <HeaderAspirante userId={aspiranteId || userId} />
+        <div className={styles.emptyContainer}>
+          <div className={styles.emptyIcon}>📭</div>
+          <h2>No has realizado ninguna postulación aún</h2>
+          <p>Explora las ofertas disponibles y aplica a las que coincidan con tu perfil</p>
+          <Link to={`/moduloAspirante/trabajos?userId=${userId}`} className={styles.searchButton}>
+            Buscar trabajos disponibles
+          </Link>
+        </div>
+      </>
     );
   }
 
+  const getEstadoIcon = (estado) => {
+    if (estado === null) return <FaHourglassHalf className={styles.pendingIcon} />;
+    return estado ? <FaCheckCircle className={styles.acceptedIcon} /> : <FaTimesCircle className={styles.rejectedIcon} />;
+  };
+
   return (
-    <div className="postulaciones-container">
-      <h1>📋 Mis Postulaciones</h1>
-      <p className="resumen">
-        Has aplicado a {postulaciones.length} {postulaciones.length === 1 ? 'oferta' : 'ofertas'}
-      </p>
+    <>
+      <HeaderAspirante userId={aspiranteId || userId} />
+      <div className={styles.container}>
+        <header className={styles.header}>
+          <h1>Mis Postulaciones</h1>
+          <div className={styles.badge}>
+            {postulaciones.length} {postulaciones.length === 1 ? 'postulación' : 'postulaciones'}
+          </div>
+        </header>
 
-      <div className="postulaciones-grid">
-        {postulaciones.map((postulacion) => {
-          const empleo = postulacion.postulacion.postulacion_empleo;
-          const estado = postulacion.postulacion.estado;
+        <div className={styles.grid}>
+          {postulaciones.map((postulacion) => {
+            const empleo = postulacion.postulacion.postulacion_empleo;
+            const estado = postulacion.postulacion.estado;
 
-          return (
-            <div className="postulacion-card" key={postulacion.id_realizar}>
-              <div className="postulacion-header">
-                <h2>{empleo.titulo}</h2>
-                <span className={`estado-badge ${estado === null ? 'pendiente' :
-                  estado ? 'aceptada' : 'rechazada'
-                }`}>
-                  {estado === null ? '🟡 Pendiente' :
-                    estado ? '✅ Aceptada' : '❌ Rechazada'}
-                </span>
+            return (
+              <div className={`${styles.card} ${estado === null ? styles.pending : estado ? styles.accepted : styles.rejected}`} key={postulacion.id_realizar}>
+                <div className={styles.cardHeader}>
+                  <h2>{empleo.titulo}</h2>
+                  <div className={`${styles.statusBadge} ${estado === null ? styles.pending : estado ? styles.accepted : styles.rejected}`}>
+                    {getEstadoIcon(estado)}
+                    {estado === null ? 'Pendiente' : estado ? 'Aceptada' : 'Rechazada'}
+                  </div>
+                </div>
+
+                <div className={styles.details}>
+                  <div className={styles.detailItem}>
+                    <FaCalendarAlt className={styles.detailIcon} />
+                    <span><strong>Postulación:</strong> {formatoFecha(postulacion.fecha)}</span>
+                  </div>
+                  <div className={styles.detailItem}>
+                    <FaBuilding className={styles.detailIcon} />
+                    <span><strong>Contratante:</strong> {empleo.contratante?.nombre || 'No especificado'}</span>
+                  </div>
+                  <div className={styles.detailItem}>
+                    <FaMapMarkerAlt className={styles.detailIcon} />
+                    <span><strong>Ubicación:</strong> {empleo.parroquia?.nombre || 'No especificada'}</span>
+                  </div>
+                  <div className={styles.detailItem}>
+                    <FaMoneyBillWave className={styles.detailIcon} />
+                    <span><strong>Salario:</strong> {empleo.salario_estimado ? `$${empleo.salario_estimado.toFixed(2)}` : 'No especificado'}</span>
+                  </div>
+                  <div className={styles.detailItem}>
+                    <FaClock className={styles.detailIcon} />
+                    <span><strong>Jornada:</strong> {empleo.jornada}</span>
+                  </div>
+                  <div className={styles.detailItem}>
+                    <FaSun className={styles.detailIcon} />
+                    <span><strong>Turno:</strong> {empleo.turno}</span>
+                  </div>
+                </div>
+
+                <div className={styles.description}>
+                  <h3><FaClipboardList className={styles.descriptionIcon} /> Descripción del puesto</h3>
+                  <p>{empleo.descripcion || 'No hay descripción disponible'}</p>
+                </div>
+
+                <div className={styles.footer}>
+                  <div className={styles.deadline}>
+                    <FaCalendarAlt className={styles.footerIcon} />
+                    <span>Fecha límite: {formatoFecha(empleo.fecha_limite)}</span>
+                  </div>
+                </div>
               </div>
-
-              <div className="postulacion-detalle">
-                <p><strong>📅 Fecha de postulación:</strong> {formatoFecha(postulacion.fecha)}</p>
-                <p><strong>🏢 Contratante:</strong> No especificado</p>
-                <p><strong>📍 Ubicación:</strong> {empleo.parroquia?.nombre || 'No especificada'}</p>
-                <p><strong>💰 Salario ofrecido:</strong> {empleo.salario_estimado ?
-                  `$${empleo.salario_estimado.toFixed(2)}` : 'No especificado'}</p>
-                <p><strong>🕰️ Jornada:</strong> {empleo.jornada}</p>
-                <p><strong>🌞 Turno:</strong> {empleo.turno}</p>
-                <p><strong>📅 Fecha límite:</strong> {formatoFecha(empleo.fecha_limite)}</p>
-              </div>
-
-              <div className="postulacion-descripcion">
-                <h3>📝 Descripción del puesto</h3>
-                <p>{empleo.descripcion}</p>
-
-                <h3>📋 Requisitos</h3>
-                <p>{empleo.requisitos}</p>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { FaEdit, FaGlobe, FaLanguage, FaInfoCircle } from "react-icons/fa";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import './cv.css';
+import styles from './CVForm.module.css';
 import { createCV, getCVById, updateCV, getCVByAspiranteId, checkIfAspiranteHasCV } from "../../../servicios/cvService";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import HeaderAspirante from "../HeaderAspirante/HeaderAspirante";
 import CVStepsNav from "./CVStepsNav";
 
 const CVForm = ({ editMode = false }) => {
@@ -49,7 +48,6 @@ const CVForm = ({ editMode = false }) => {
           throw new Error("No se pudo identificar al aspirante");
         }
 
-        // Caso 1: Creación de nuevo CV
         if (idCV === "new") {
           const tieneCV = await checkIfAspiranteHasCV(effectiveAspiranteId);
           
@@ -66,7 +64,6 @@ const CVForm = ({ editMode = false }) => {
           return;
         }
         
-        // Caso 2: Edición de CV existente
         if (idCV) {
           const datosCV = await getCVById(idCV);
           
@@ -85,7 +82,6 @@ const CVForm = ({ editMode = false }) => {
           return;
         }
         
-        // Caso 3: Redirección según tenga CV o no
         const tieneCV = await checkIfAspiranteHasCV(effectiveAspiranteId);
         
         if (tieneCV) {
@@ -132,7 +128,6 @@ const CVForm = ({ editMode = false }) => {
       return;
     }
 
-    // Validación de campos requeridos
     const camposRequeridos = {
       experiencia: formulario.experiencia?.trim(),
       zona_trabajo: formulario.zona_trabajo?.trim(),
@@ -150,7 +145,6 @@ const CVForm = ({ editMode = false }) => {
     }
 
     try {
-      // Preparar datos para enviar
       const datosCV = {
         ...formulario,
         aspirante: { idAspirante: effectiveAspiranteId },
@@ -167,9 +161,8 @@ const CVForm = ({ editMode = false }) => {
         respuesta = await createCV(datosCV);
       }
 
-      // Manejo de respuesta exitosa
       toast.success(
-        <div className="cv-toast">
+        <div className={styles["cv-toast"]}>
           <div>CV {isEditing ? 'actualizado' : 'creado'} correctamente</div>
         </div>,
         {
@@ -180,7 +173,6 @@ const CVForm = ({ editMode = false }) => {
         }
       );
       
-      // Redirección a Recomendaciones después de guardar
       const cvId = respuesta?.id_cv || idCV;
       
       if (cvId) {
@@ -203,13 +195,13 @@ const CVForm = ({ editMode = false }) => {
         const errorBackend = error.response.data?.error || 'Datos inválidos';
         const mensajeBackend = error.response.data?.message || 'Verifica la información proporcionada';
         toast.error(
-          <div className="cv-toast">
+          <div className={styles["cv-toast"]}>
             <div>{errorBackend}: {mensajeBackend}</div>
           </div>
         );
       } else {
         toast.error(
-          <div className="cv-toast">
+          <div className={styles["cv-toast"]}>
             <div>{error.message || 'Error al guardar el CV'}</div>
           </div>
         );
@@ -221,10 +213,9 @@ const CVForm = ({ editMode = false }) => {
 
   if (isLoading) {
     return (
-      <div className="cv-pagina">
-        <HeaderAspirante userId={aspiranteId} />
-        <div className="cv-contenedor">
-          <div className="cv-spinner"></div>
+      <div className={styles["cv-pagina"]}>
+        <div className={styles["cv-contenedor"]}>
+          <div className={styles["cv-spinner"]}></div>
           <h2>Cargando CV...</h2>
         </div>
       </div>
@@ -232,124 +223,121 @@ const CVForm = ({ editMode = false }) => {
   }
 
   return (
-    <>
-      <HeaderAspirante userId={aspiranteId} />
-      <div className="cv-pagina">
-        {!isFirstTime && <CVStepsNav idCV={idCV} currentStep="CV" />}
+    <div className={styles["cv-pagina"]}>
+      {!isFirstTime && <CVStepsNav idCV={idCV} currentStep="CV" />}
 
-        <div className="cv-contenedor">
-          <div className="cv-tarjeta">
-            {isFirstTime && (
-              <div className="cv-banner-bienvenida">
-                <h3>¡Bienvenido a CALMA!</h3>
-                <p>Por favor, completa tu CV para comenzar a usar la plataforma.</p>
-              </div>
-            )}
-            
-            <h2 className="cv-titulo">{isEditing ? 'Editar CV' : 'Registro de CV'}</h2>
-            <p className="cv-subtitulo">
-              {isEditing
-                ? 'Modifica los campos que necesites actualizar'
-                : 'Completa los campos para registrar un CV'}
-            </p>
+      <div className={styles["cv-contenedor"]}>
+        <div className={styles["cv-tarjeta"]}>
+          {isFirstTime && (
+            <div className={styles["cv-banner-bienvenida"]}>
+              <h3>¡Bienvenido a CALMA!</h3>
+              <p>Por favor, completa tu CV para comenzar a usar la plataforma.</p>
+            </div>
+          )}
+          
+          <h2 className={styles["cv-titulo"]}>{isEditing ? 'Editar CV' : 'Registro de CV'}</h2>
+          <p className={styles["cv-subtitulo"]}>
+            {isEditing
+              ? 'Modifica los campos que necesites actualizar'
+              : 'Completa los campos para registrar un CV'}
+          </p>
 
-            <form onSubmit={manejarEnvio} className="cv-formulario">
-              <div className="cv-grupo-input">
-                <label><FaEdit className="cv-icono-input" /> Experiencia*</label>
-                <input
-                  type="text"
-                  name="experiencia"
-                  value={formulario.experiencia}
-                  onChange={manejarCambio}
-                  required
-                  placeholder="Ej: 5 años cuidando adultos mayores con Alzheimer"
-                  disabled={isSubmitting}
-                  className="cv-input"
-                />
-                <div className="cv-ayuda-input">
-                  <FaInfoCircle className="cv-icono-ayuda" />
-                  Describe tu experiencia laboral relevante
-                </div>
+          <form onSubmit={manejarEnvio} className={styles["cv-formulario"]}>
+            <div className={styles["cv-grupo-input"]}>
+              <label><FaEdit className={styles["cv-icono-input"]} /> Experiencia*</label>
+              <input
+                type="text"
+                name="experiencia"
+                value={formulario.experiencia}
+                onChange={manejarCambio}
+                required
+                placeholder="Ej: 5 años cuidando adultos mayores con Alzheimer"
+                disabled={isSubmitting}
+                className={styles["cv-input"]}
+              />
+              <div className={styles["cv-ayuda-input"]}>
+                <FaInfoCircle className={styles["cv-icono-ayuda"]} />
+                Describe tu experiencia laboral relevante
               </div>
+            </div>
 
-              <div className="cv-grupo-input">
-                <label><FaGlobe className="cv-icono-input" /> Zona de Trabajo*</label>
-                <input
-                  type="text"
-                  name="zona_trabajo"
-                  value={formulario.zona_trabajo}
-                  onChange={manejarCambio}
-                  required
-                  placeholder="Ej: Zona norte de la ciudad, Disponibilidad 24/7"
-                  disabled={isSubmitting}
-                  className="cv-input"
-                />
-                <div className="cv-ayuda-input">
-                  <FaInfoCircle className="cv-icono-ayuda" />
-                  Indica tu disponibilidad geográfica o modalidad
-                </div>
+            <div className={styles["cv-grupo-input"]}>
+              <label><FaGlobe className={styles["cv-icono-input"]} /> Zona de Trabajo*</label>
+              <input
+                type="text"
+                name="zona_trabajo"
+                value={formulario.zona_trabajo}
+                onChange={manejarCambio}
+                required
+                placeholder="Ej: Zona norte de la ciudad, Disponibilidad 24/7"
+                disabled={isSubmitting}
+                className={styles["cv-input"]}
+              />
+              <div className={styles["cv-ayuda-input"]}>
+                <FaInfoCircle className={styles["cv-icono-ayuda"]} />
+                Indica tu disponibilidad geográfica o modalidad
               </div>
+            </div>
 
-              <div className="cv-grupo-input">
-                <label><FaLanguage className="cv-icono-input" /> Idiomas*</label>
-                <input
-                  type="text"
-                  name="idiomas"
-                  value={formulario.idiomas}
-                  onChange={manejarCambio}
-                  required
-                  placeholder="Ej: Español (nativo), Lengua de señas (intermedio)"
-                  disabled={isSubmitting}
-                  className="cv-input"
-                />
-                <div className="cv-ayuda-input">
-                  <FaInfoCircle className="cv-icono-ayuda" />
-                  Lista los idiomas que dominas y tu nivel
-                </div>
+            <div className={styles["cv-grupo-input"]}>
+              <label><FaLanguage className={styles["cv-icono-input"]} /> Idiomas*</label>
+              <input
+                type="text"
+                name="idiomas"
+                value={formulario.idiomas}
+                onChange={manejarCambio}
+                required
+                placeholder="Ej: Español (nativo), Lengua de señas (intermedio)"
+                disabled={isSubmitting}
+                className={styles["cv-input"]}
+              />
+              <div className={styles["cv-ayuda-input"]}>
+                <FaInfoCircle className={styles["cv-icono-ayuda"]} />
+                Lista los idiomas que dominas y tu nivel
               </div>
+            </div>
 
-              <div className="cv-grupo-input">
-                <label><FaEdit className="cv-icono-input" /> Información Adicional</label>
-                <input
-                  type="text"
-                  name="informacion_opcional"
-                  value={formulario.informacion_opcional}
-                  onChange={manejarCambio}
-                  placeholder="Ej: Certificado en primeros auxilios, Movilización de pacientes"
-                  disabled={isSubmitting}
-                  className="cv-input"
-                />
-                <div className="cv-ayuda-input">
-                  <FaInfoCircle className="cv-icono-ayuda" />
-                  Agrega información adicional que consideres relevante
-                </div>
+            <div className={styles["cv-grupo-input"]}>
+              <label><FaEdit className={styles["cv-icono-input"]} /> Información Adicional</label>
+              <input
+                type="text"
+                name="informacion_opcional"
+                value={formulario.informacion_opcional}
+                onChange={manejarCambio}
+                placeholder="Ej: Certificado en primeros auxilios, Movilización de pacientes"
+                disabled={isSubmitting}
+                className={styles["cv-input"]}
+              />
+              <div className={styles["cv-ayuda-input"]}>
+                <FaInfoCircle className={styles["cv-icono-ayuda"]} />
+                Agrega información adicional que consideres relevante
               </div>
+            </div>
 
-              <div className="cv-grupo-checkbox" style={{ display: 'none' }}>
-                <input
-                  type="checkbox"
-                  name="estado"
-                  id="estado"
-                  checked={true}
-                  readOnly
-                  hidden
-                />
-              </div>
+            <div className={styles["cv-grupo-checkbox"]} style={{ display: 'none' }}>
+              <input
+                type="checkbox"
+                name="estado"
+                id="estado"
+                checked={true}
+                readOnly
+                hidden
+              />
+            </div>
 
-              <div className="cv-grupo-botones">
-                <button
-                  type="submit"
-                  className="cv-boton-enviar"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? 'Procesando...' : isEditing ? 'Actualizar CV' : 'Guardar y Continuar'}
-                </button>
-              </div>
-            </form>
-          </div>
+            <div className={styles["cv-grupo-botones"]}>
+              <button
+                type="submit"
+                className={styles["cv-boton-enviar"]}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Procesando...' : isEditing ? 'Actualizar CV' : 'Guardar y Continuar'}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
