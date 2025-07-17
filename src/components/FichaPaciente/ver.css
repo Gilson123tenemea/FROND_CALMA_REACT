@@ -1,0 +1,395 @@
+/* Importar fuente elegante */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Variables CSS para colores */
+:root {
+    --primary-blue: #2c3e50;
+    --soft-blue: #85a3cc;
+    --pastel-blue: #0a2f66;
+    --light-blue: #ffffff;
+    --white: #ffffff;
+    --text-primary: #2c3e50;
+    --text-secondary: #5a6c7d;
+    --border-color: #d1e7dd;
+    --shadow: 0 2px 10px rgba(44, 62, 80, 0.1);
+    --shadow-hover: 0 4px 20px rgba(44, 62, 80, 0.15);
+    --success-color: #164d9e;
+    --danger-color: #0d2f72;
+}
+
+/* Contenedor principal */
+.fpv-main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--light-blue);
+    min-height: 100vh;
+}
+
+/* Header */
+.fpv-header-wrapper {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--primary-blue), var(--soft-blue));
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+}
+
+.fpv-main-title {
+    color: var(--white);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.fpv-main-title::before {
+    content: "🏥";
+    margin-right: 1rem;
+}
+
+/* Tarjeta de ficha */
+.fpv-ficha-card {
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+    border: 2px solid var(--pastel-blue);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.fpv-ficha-card:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+/* Header de la tarjeta */
+.fpv-card-header {
+    background: linear-gradient(135deg, var(--pastel-blue), var(--light-blue));
+    padding: 2rem;
+    border-bottom: 2px solid var(--soft-blue);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.fpv-card-title {
+    color: var(--primary-blue);
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.fpv-card-title::before {
+    content: "📋";
+    margin-right: 0.5rem;
+}
+
+.fpv-registration-date {
+    background: var(--pastel-blue);
+    color: var(--primary-blue);
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-weight: 500;
+    border: 1px solid var(--soft-blue);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.fpv-registration-date::before {
+    content: "📅";
+    margin-right: 4rem;
+}
+
+/* Grid de contenido */
+.fpv-content-grid {
+    padding: 2rem;
+}
+
+/* Secciones */
+.fpv-info-section {
+    margin-bottom: 3rem;
+}
+
+.fpv-section-title {
+    color: var(--primary-blue);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid var(--soft-blue);
+    position: relative;
+}
+
+/* Iconos para títulos de sección */
+.fpv-section-title:nth-of-type(1)::before { content: "⚕️"; margin-right: 0.5rem; }
+.fpv-section-title:nth-of-type(2)::before { content: "💬"; margin-right: 0.5rem; }
+.fpv-section-title:nth-of-type(3)::before { content: "🍽️"; margin-right: 0.5rem; }
+.fpv-section-title:nth-of-type(4)::before { content: "🌅"; margin-right: 0.5rem; }
+
+/* Items de información */
+.fpv-info-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: var(--light-blue);
+    border-radius: 12px;
+    border-left: 4px solid var(--soft-blue);
+    transition: all 0.3s ease;
+}
+
+.fpv-info-item:hover {
+    background: var(--pastel-blue);
+    transform: translateX(5px);
+}
+
+.fpv-label {
+    font-weight: 500;
+    color: var(--text-primary);
+    min-width: 200px;
+    margin-right: 1rem;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.fpv-value {
+    color: var(--text-secondary);
+    font-weight: 400;
+    line-height: 1.6;
+    flex: 1;
+}
+
+/* Iconos para labels específicos */
+.fpv-label:has-text("Diagnóstico")::before { content: "🔬"; margin-right: 0.5rem; }
+.fpv-label:has-text("Condiciones")::before { content: "💪"; margin-right: 0.5rem; }
+.fpv-label:has-text("Estado de ánimo")::before { content: "😊"; margin-right: 0.5rem; }
+.fpv-label:has-text("Rutina Médica")::before { content: "📋"; margin-right: 0.5rem; }
+.fpv-label:has-text("Riesgo")::before { content: "⚠️"; margin-right: 0.5rem; }
+.fpv-label:has-text("Observaciones")::before { content: "👁️"; margin-right: 0.5rem; }
+.fpv-label:has-text("Comunicación")::before { content: "💬"; margin-right: 0.5rem; }
+.fpv-label:has-text("Otras Comunicaciones")::before { content: "📢"; margin-right: 0.5rem; }
+.fpv-label:has-text("Usa Pañal")::before { content: "🧷"; margin-right: 0.5rem; }
+.fpv-label:has-text("acompañamiento")::before { content: "👥"; margin-right: 0.5rem; }
+.fpv-label:has-text("Tipo de Dieta")::before { content: "🥗"; margin-right: 0.5rem; }
+.fpv-label:has-text("alimentación")::before { content: "🍴"; margin-right: 0.5rem; }
+.fpv-label:has-text("Levantarse")::before { content: "🌅"; margin-right: 0.5rem; }
+.fpv-label:has-text("Acostarse")::before { content: "🌙"; margin-right: 0.5rem; }
+.fpv-label:has-text("Siestas")::before { content: "😴"; margin-right: 0.5rem; }
+.fpv-label:has-text("Baño")::before { content: "🛁"; margin-right: 0.5rem; }
+
+/* Campos grandes */
+.fpv-large-field {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.fpv-large-field .fpv-label {
+    margin-bottom: 0.5rem;
+    min-width: auto;
+}
+
+.fpv-large-text {
+    background: var(--white);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    width: 100%;
+    min-height: 80px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Valores booleanos */
+.fpv-boolean {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    text-align: center;
+    min-width: 60px;
+}
+
+.fpv-yes {
+    background: var(--success-color);
+    color: var(--white);
+}
+
+.fpv-no {
+    background: var(--danger-color);
+    color: var(--white);
+}
+
+/* Contenedor de listas */
+.fpv-lists-container {
+    padding: 2rem;
+    background: var(--pastel-blue);
+    border-top: 2px solid var(--soft-blue);
+}
+
+.fpv-list-section {
+    margin-bottom: 2.5rem;
+    background: var(--white);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+}
+
+.fpv-list-title {
+    color: var(--primary-blue);
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--soft-blue);
+}
+
+/* Iconos para títulos de lista */
+.fpv-list-title:contains("Medicamentos")::before { content: "💊"; margin-right: 0.5rem; }
+.fpv-list-title:contains("Alergias Alimentarias")::before { content: "🚫"; margin-right: 0.5rem; }
+.fpv-list-title:contains("Alergias a Medicamentos")::before { content: "⚠️"; margin-right: 0.5rem; }
+.fpv-list-title:contains("Temas de Conversación")::before { content: "💭"; margin-right: 0.5rem; }
+.fpv-list-title:contains("Intereses Personales")::before { content: "❤️"; margin-right: 0.5rem; }
+
+/* Listas */
+.fpv-medication-list,
+.fpv-allergy-list,
+.fpv-med-allergy-list,
+.fpv-conversation-list,
+.fpv-interests-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Items de medicamentos */
+.fpv-medication-item {
+    background: var(--light-blue);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border-radius: 12px;
+    border-left: 4px solid var(--success-color);
+    transition: all 0.3s ease;
+}
+
+.fpv-medication-item:hover {
+    background: var(--pastel-blue);
+    transform: translateX(5px);
+}
+
+.fpv-medication-item p {
+    margin: 0.5rem 0;
+    display: flex;
+    align-items: center;
+}
+
+.fpv-field-label {
+    font-weight: 500;
+    color: var(--text-primary);
+    min-width: 200px;
+    margin-right: 1rem;
+}
+
+.fpv-field-value {
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+/* Iconos para campos de medicamentos */
+.fpv-field-label:contains("Medicación activa")::before { content: "✅"; margin-right: 0.5rem; }
+.fpv-field-label:contains("Nombre del Medicamento")::before { content: "💊"; margin-right: 0.5rem; }
+.fpv-field-label:contains("Dosis")::before { content: "⚖️"; margin-right: 0.5rem; }
+.fpv-field-label:contains("Frecuencia")::before { content: "⏰"; margin-right: 0.5rem; }
+.fpv-field-label:contains("Vía de Administración")::before { content: "💉"; margin-right: 0.5rem; }
+.fpv-field-label:contains("Condición Tratada")::before { content: "🎯"; margin-right: 0.5rem; }
+.fpv-field-label:contains("Reacciones Esperadas")::before { content: "⚡"; margin-right: 0.5rem; }
+
+/* Items de otras listas */
+.fpv-allergy-item,
+.fpv-med-allergy-item,
+.fpv-conversation-item,
+.fpv-interests-item {
+    background: var(--light-blue);
+    padding: 1rem 1.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 25px;
+    border-left: 4px solid var(--soft-blue);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.fpv-allergy-item:hover,
+.fpv-med-allergy-item:hover,
+.fpv-conversation-item:hover,
+.fpv-interests-item:hover {
+    background: var(--pastel-blue);
+    transform: translateX(5px);
+}
+
+.fpv-allergy-item::before { content: "🚫"; margin-right: 0.5rem; }
+.fpv-med-allergy-item::before { content: "⚠️"; margin-right: 0.5rem; }
+.fpv-conversation-item::before { content: "💭"; margin-right: 0.5rem; }
+.fpv-interests-item::before { content: "❤️"; margin-right: 0.5rem; }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .fpv-main-container {
+        padding: 1rem;
+    }
+    
+    .fpv-card-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .fpv-info-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .fpv-label {
+        min-width: auto;
+        margin-bottom: 0.5rem;
+    }
+    
+    .fpv-main-title {
+        font-size: 2rem;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fpv-ficha-card {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--light-blue);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--soft-blue);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-blue);
+}

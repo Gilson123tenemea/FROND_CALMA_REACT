@@ -33,11 +33,11 @@ const VisualizarPacientes = () => {
     <>
       <HeaderContratante userId={idContratante} />
       <div className={styles["pacientes-container-vistavisu"]}>
-         <h4>Pacientes Registrados</h4>
+        <h4>Pacientes Registrados</h4>
         <div className={styles["pacientes-lista-vistavisu"]}>
           {pacientes.map((paciente, index) => (
             <div key={index} className={styles["paciente-card-vistavisu"]}>
-              
+
               {/* Contenedor de la imagen */}
               <div className={styles["paciente-foto-container"]}>
                 <img
@@ -49,11 +49,18 @@ const VisualizarPacientes = () => {
 
               {/* Contenedor de toda la info textual */}
               <div className={styles["paciente-info-vistavisu"]}>
-                
+
                 {/* Nombre */}
                 <div className={styles["paciente-nombre-container"]}>
                   <h4>{paciente.nombres} {paciente.apellidos}</h4>
+                  
                 </div>
+                 <Link
+                    to={`/moduloContratante/ficha/${paciente.idPaciente}`}
+                    className={styles["btn-ver-ficha-vistavisu"]}
+                  >
+                    Ver Ficha Clínica
+                  </Link>
 
                 {/* Datos en cuadrícula elegante */}
                 <div className={styles["paciente-datos-container"]}>
@@ -61,47 +68,47 @@ const VisualizarPacientes = () => {
                     <strong data-field="cedula">Cédula</strong>
                     <span className="valor-dato">{paciente.cedula}</span>
                   </p>
-                  
+
                   <p>
                     <strong data-field="genero">Género</strong>
                     <span className="valor-dato">{paciente.genero}</span>
                   </p>
-                  
+
                   <p>
                     <strong data-field="fecha">Fecha de Nacimiento</strong>
                     <span className="valor-dato">{new Date(paciente.fechaNacimiento).toLocaleDateString()}</span>
                   </p>
-                  
+
                   <p>
                     <strong data-field="sangre">Tipo de Sangre</strong>
                     <span className="valor-dato">{paciente.tipoSangre}</span>
                   </p>
-                  
+
                   <p>
                     <strong data-field="provincia">Provincia</strong>
                     <span className="valor-dato">{paciente.provincia}</span>
                   </p>
-                  
+
                   <p>
                     <strong data-field="canton">Cantón</strong>
                     <span className="valor-dato">{paciente.canton}</span>
                   </p>
-                  
+
                   <p>
                     <strong data-field="parroquia">Parroquia</strong>
                     <span className="valor-dato">{paciente.parroquia}</span>
                   </p>
-                  
+
                   <p>
                     <strong data-field="direccion">Dirección</strong>
                     <span className="valor-dato">{paciente.direccion}</span>
                   </p>
-                  
+
                   <p>
                     <strong data-field="alergia">Alergias</strong>
                     <span className="valor-dato">{paciente.alergia}</span>
                   </p>
-                  
+
                   <p>
                     <strong data-field="contacto">Contacto de Emergencia</strong>
                     <span className="valor-dato">{paciente.contactoEmergencia} ({paciente.parentesco})</span>
@@ -117,6 +124,8 @@ const VisualizarPacientes = () => {
                   >
                     Editar
                   </Link>
+                 
+
                 </div>
               </div>
             </div>

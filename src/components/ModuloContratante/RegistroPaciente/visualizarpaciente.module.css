@@ -457,3 +457,17 @@ h4 {
   font-weight: 600;
   box-shadow: 0 2px 4px rgba(178, 176, 205, 0.1);
 }
+.btn-ver-ficha-vistavisu {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 16px 255px;
+  border-radius: 9px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.btn-ver-ficha-vistavisu:hover {
+  background-color: #0056b3;
+}

@@ -41,6 +41,7 @@ import SobreNosotros from './components/Login/SobreNosotros';
 import Empleo from './components/Login/Empleo';
 import Contacto from './components/Login/Contacto';
 import FichaPacienteForm from './components/FichaPaciente/ficha';
+import FichaPacienteVer from './components/FichaPaciente/verficha';
 import MedicamentoForm from './components/FichaPacienteMedicamentos/medicacionform';
 import AlergiaAlimentariaForm from './components/FichaPacienteAlergia/alergiaali';
 import AlergiaMedicamentoForm from './components/FichaPacienteAlergiaMedicamento/alergiamedicamento';
@@ -183,6 +184,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/registropaciente" element={<RegistroPaciente />} />
         <Route path="/moduloContratante/registropaciente" element={<RegistroPaciente />} />
         <Route path="/moduloContratante/visualizarpaciente" element={<Visualizarpaciente />} />
+        <Route path="/moduloContratante/ficha/:idPaciente" element={<FichaPacienteVer />} />
         <Route path="/moduloContratante/registropaciente/:idPaciente" element={<RegistroPaciente />} />
 
         <Route
