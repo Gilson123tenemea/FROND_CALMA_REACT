@@ -844,7 +844,7 @@ const Registro = () => {
                     {errors.contrasena && (
                       <span className={styles['error-text-registrio']}>{errors.contrasena}</span>
                     )}
-                  </div>
+                  </div> 
 
                   <div className={styles['input-group']}>
                     <label htmlFor="confirmarContrasena">
