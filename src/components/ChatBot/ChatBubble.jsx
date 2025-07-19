@@ -10,31 +10,54 @@ const ChatBubble = () => {
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState(null);
 
-  const toggleChat = () => setAbierto(!abierto);
+  const toggleChat = () => {
+    setAbierto(!abierto);
+    if (!abierto && conversacion.length === 0) {
+      // Agrega mensaje de bienvenida al abrir el chat por primera vez
+      setConversacion([
+        {
+          from: 'bot',
+          type: 'welcome',
+          text: `¡Bienvenida a Calma! Soy tu asistente virtual y estoy aquí para ayudarte.`,
+        },
+      ]);
+    }
+  };
 
   const enviarPregunta = async () => {
     if (!pregunta.trim()) return;
 
-    setConversacion(prev => [...prev, { from: 'user', text: pregunta }]);
+    setConversacion((prev) => [...prev, { from: 'user', text: pregunta }]);
     setPregunta('');
     setCargando(true);
     setError(null);
 
     try {
-      const res = await axios.post('http://localhost:8090/api/chatbot/preguntar', { pregunta });
-      console.log("Respuesta completa del backend:", res.data);
-
-      if (res.data && res.data.respuesta) {
-        setConversacion(prev => [...prev, { from: 'bot', text: res.data.respuesta }]);
+      // Verifica si la pregunta es sobre cómo postularse
+      if (pregunta.toLowerCase().includes('postular') || pregunta.toLowerCase().includes('registrar')) {
+        setConversacion((prev) => [
+          ...prev,
+          {
+            from: 'bot',
+            text: 'Para postularte a Calma, primero debes registrarte en nuestra plataforma. Puedes hacerlo desde aquí 👉 <a href="/registro" target="_blank">Ir al registro</a>',
+          },
+        ]);
       } else {
-        setConversacion(prev => [...prev, {
-          from: 'bot',
-          text: '⚠️ No se pudo obtener una respuesta válida del chatbot.',
-        }]);
+        const res = await axios.post('http://localhost:8090/api/chatbot/preguntar', { pregunta });
+
+        if (res.data && res.data.respuesta) {
+          setConversacion((prev) => [...prev, { from: 'bot', text: res.data.respuesta }]);
+        } else {
+          setConversacion((prev) => [
+            ...prev,
+            { from: 'bot', text: '⚠️ No se pudo obtener una respuesta válida del chatbot.' },
+          ]);
+        }
       }
     } catch (e) {
+      console.error(e);
       setError('Error al comunicarse con el chatbot.');
-      setConversacion(prev => [...prev, { from: 'bot', text: '⚠️ Hubo un error al obtener respuesta.' }]);
+      setConversacion((prev) => [...prev, { from: 'bot', text: '⚠️ Hubo un error al obtener respuesta.' }]);
     } finally {
       setCargando(false);
     }
@@ -47,27 +70,56 @@ const ChatBubble = () => {
 
   return (
     <>
-      {/* Burbuja flotante */}
       <button className="chat-bubble" onClick={toggleChat} aria-label="Abrir chat">
         💬
       </button>
 
-      {/* Panel de chat */}
       {abierto && (
         <div className="chat-panel">
           <div className="chat-header">
             <h4>🤖 Asistente de Empleos</h4>
-            <button className="close-btn" onClick={toggleChat} aria-label="Cerrar chat">×</button>
+            <button className="close-btn" onClick={toggleChat} aria-label="Cerrar chat">
+              ×
+            </button>
           </div>
 
           <div className="chat-messages">
-            {conversacion.length === 0 && <p className="chat-placeholder">Haz una pregunta sobre empleos temporales.</p>}
+            {conversacion.map((msg, idx) => {
+              if (msg.type === 'welcome') {
+                return (
+                  <div key={idx} className="chat-message bot">
+                    <div className="chat-welcome">
+                      <div className="chat-welcome-title">
+                        <span>🤖</span> Bienvenida a Calma
+                      </div>
+                      <div>
+                        Soy tu asistente virtual. Puedes preguntarme sobre:
+                        <ul style={{ margin: '6px 0 0 18px' }}>
+                          <li>Empleos disponibles</li>
+                          <li>Cómo registrarte</li>
+                          <li>Qué es Calma</li>
+                          <li>Requisitos para postular</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
 
-            {conversacion.map((msg, idx) => (
-              <div key={idx} className={`chat-message ${msg.from}`}>
-                {msg.from === 'user' ? '👤' : '🤖'} {msg.text}
-              </div>
-            ))}
+              return (
+                <div key={idx} className={`chat-message ${msg.from}`}>
+                  {msg.from === 'user' ? '👤' : '🤖'}{' '}
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: msg.text.replace(
+                        /\[(.*?)\]\((.*?)\)/g,
+                        '<a href="$2" target="_blank">$1</a>'
+                      ),
+                    }}
+                  />
+                </div>
+              );
+            })}
 
             {cargando && <div className="chat-message bot">🤖 Escribiendo...</div>}
           </div>
@@ -76,7 +128,7 @@ const ChatBubble = () => {
             <input
               type="text"
               value={pregunta}
-              onChange={e => setPregunta(e.target.value)}
+              onChange={(e) => setPregunta(e.target.value)}
               placeholder="Escribe tu pregunta..."
               disabled={cargando}
             />
