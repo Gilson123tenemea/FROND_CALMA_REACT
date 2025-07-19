@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Añade useNavigate aquí
+import { Link, useNavigate } from 'react-router-dom';
 import styles from './HeaderContratante.module.css';
 
 const HeaderContratante = ({ 
@@ -10,8 +10,8 @@ const HeaderContratante = ({
 }) => {
   const [isPatientDropdownOpen, setIsPatientDropdownOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
-  const navigate = useNavigate(); // Declara el hook useNavigate
-
+  const [isCalificacionDropdownOpen, setIsCalificacionDropdownOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleMessagesClick = (e) => {
     e.preventDefault();
@@ -26,6 +26,12 @@ const HeaderContratante = ({
 
   const togglePatientDropdown = () => {
     setIsPatientDropdownOpen(!isPatientDropdownOpen);
+    setIsCalificacionDropdownOpen(false); // Cerrar otros dropdowns
+  };
+
+  const toggleCalificacionDropdown = () => {
+    setIsCalificacionDropdownOpen(!isCalificacionDropdownOpen);
+    setIsPatientDropdownOpen(false); // Cerrar otros dropdowns
   };
 
   const toggleUserDropdown = () => {
@@ -33,13 +39,14 @@ const HeaderContratante = ({
   };
 
   const handleLogout = () => {
-  console.log("Ejecutando logout...");
-  localStorage.clear();
-  sessionStorage.clear();
-  console.log("Almacenamiento limpiado, redirigiendo...");
-  window.location.href = '/login'; // Esto es un fallback seguro
-  setIsUserDropdownOpen(false);
-};
+    console.log("Ejecutando logout...");
+    localStorage.clear();
+    sessionStorage.clear();
+    console.log("Almacenamiento limpiado, redirigiendo...");
+    window.location.href = '/login';
+    setIsUserDropdownOpen(false);
+  };
+
   return (
     <header className={styles.contractorHeader}>
       <div className={styles.leftSection}>
@@ -72,12 +79,46 @@ const HeaderContratante = ({
             Crear Publicación
           </Link>
           
-          <Link 
-            to={`/Calificacion/calificacion?userId=${userId}`}
-            className={styles.navLink}
-          >
-            Calificación
-          </Link>
+          {/* Menú desplegable de Calificaciones */}
+          <div className={styles.dropdownContainer}>
+            <button 
+              className={styles.dropdownTrigger} 
+              onClick={toggleCalificacionDropdown}
+            >
+              Calificaciones
+              <svg 
+                className={`${styles.dropdownIcon} ${isCalificacionDropdownOpen ? styles.dropdownIconRotated : ''}`}
+                width="16" 
+                height="16" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            
+            {isCalificacionDropdownOpen && (
+              <div className={styles.dropdownMenu}>
+                <Link 
+                  to={`/trabajos-aceptados?userId=${userId}`}
+                  className={styles.dropdownMenuItem}
+                  onClick={() => setIsCalificacionDropdownOpen(false)}
+                >
+                  <span className={styles.menuItemIcon}>📋</span>
+                  Trabajos Aceptados
+                </Link>
+                <Link 
+                  to={`/Calificacion/calificacion?userId=${userId}`}
+                  className={styles.dropdownMenuItem}
+                  onClick={() => setIsCalificacionDropdownOpen(false)}
+                >
+                  <span className={styles.menuItemIcon}>⭐</span>
+                  Nueva Calificación
+                </Link>
+              </div>
+            )}
+          </div>
 
           <button 
             onClick={handleMessagesClick}
@@ -111,13 +152,17 @@ const HeaderContratante = ({
                 <Link 
                   to={`/moduloContratante/registropaciente?userId=${userId}`}
                   className={styles.dropdownMenuItem}
+                  onClick={() => setIsPatientDropdownOpen(false)}
                 >
+                  <span className={styles.menuItemIcon}>👤</span>
                   Registrar paciente
                 </Link>
                 <Link 
                   to={`/moduloContratante/visualizarpaciente?userId=${userId}`}
                   className={styles.dropdownMenuItem}
+                  onClick={() => setIsPatientDropdownOpen(false)}
                 >
+                  <span className={styles.menuItemIcon}>👥</span>
                   Ver paciente
                 </Link>
               </div>

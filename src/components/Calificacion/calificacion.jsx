@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import './Calificacion.css';
 import Navbar from '../Shared/Navbar';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Calificacion = ({ id_postulacion, idContratante }) => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  
   const userId = searchParams.get('userId');
+  const idPostulacionParam = searchParams.get('idPostulacion');
+  const aspiranteNombre = searchParams.get('aspirante');
+  const isViewMode = searchParams.get('view') === 'true';
   
   const [puntaje, setPuntaje] = useState(0);
   const [comentario, setComentario] = useState('');
@@ -28,8 +33,17 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
       const respuesta = await fetch('http://localhost:8090/api/calificaciones');
       if (respuesta.ok) {
         const datos = await respuesta.json();
+        
+        // Si estamos en modo vista específica, filtrar por postulación
+        let datosFiltrados = datos;
+        if (idPostulacionParam && isViewMode) {
+          datosFiltrados = datos.filter(cal => 
+            cal.postulacion.id_postulacion === parseInt(idPostulacionParam)
+          );
+        }
+        
         // Ordenar por fecha descendente (más reciente primero)
-        const datosOrdenados = datos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+        const datosOrdenados = datosFiltrados.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
         setCalificaciones(datosOrdenados);
       }
     } catch (error) {
@@ -45,11 +59,21 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
       return;
     }
 
+    if (puntaje === 0) {
+      toast.error('Por favor selecciona una calificación.');
+      return;
+    }
+
+    if (!comentario.trim()) {
+      toast.error('Por favor escribe un comentario.');
+      return;
+    }
+
     const nuevaCalificacion = {
       puntaje,
-      comentario,
+      comentario: comentario.trim(),
       fecha: new Date().toISOString(),
-      postulacion: { id_postulacion: 1 },
+      postulacion: { id_postulacion: parseInt(idPostulacionParam) || 1 },
       contratante: { idContratante: parseInt(userId) }
     };
 
@@ -67,13 +91,23 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
         setPuntaje(0);
         setComentario('');
         cargarCalificaciones(); // Recargar comentarios
+        
+        // Redirigir de vuelta a trabajos aceptados después de 2 segundos
+        setTimeout(() => {
+          navigate(`/trabajos-aceptados?userId=${userId}`);
+        }, 2000);
       } else {
-        toast.error('Error al enviar la calificación.');
+        const errorData = await respuesta.text();
+        toast.error(`Error al enviar la calificación: ${errorData}`);
       }
     } catch (error) {
       console.error(error);
       toast.error('Ocurrió un error inesperado.');
     }
+  };
+
+  const manejarVolver = () => {
+    navigate(`/trabajos-aceptados?userId=${userId}`);
   };
 
   const puedeEditar = (fecha) => {
@@ -105,7 +139,7 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
           puntaje: puntajeEditando,
           comentario: comentarioEditando,
           fecha: new Date().toISOString(),
-          postulacion: { id_postulacion: 1 },
+          postulacion: { id_postulacion: parseInt(idPostulacionParam) || 1 },
           contratante: { idContratante: parseInt(userId) }
         }),
       });
@@ -165,49 +199,78 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
       <ToastContainer />
       
       <div className="calificacion-content">
-        <div className="calificacion-form animate-fade-in">
-          <form onSubmit={manejarEnvio}>
-            <h2>Califique el Servicio</h2>
-
-            <div className="estrellas-input">
-              {[1, 2, 3, 4, 5].map((valor) => (
-                <span
-                  key={valor}
-                  className={valor <= puntaje ? 'estrella activa' : 'estrella'}
-                  onClick={() => setPuntaje(valor)}
-                >
-                  ★
-                </span>
-              ))}
+        {/* Header con información del aspirante y botón volver */}
+        <div className="calificacion-header">
+          <button onClick={manejarVolver} className="btn-volver">
+            ← Volver a Trabajos Aceptados
+          </button>
+          
+          {aspiranteNombre && (
+            <div className="info-aspirante">
+              <h2>
+                {isViewMode ? 'Calificación de' : 'Calificar a'}: {aspiranteNombre}
+              </h2>
+              <p className="id-postulacion">
+                Postulación ID: {idPostulacionParam}
+              </p>
             </div>
-
-            <textarea
-              placeholder="Escribe un comentario..."
-              value={comentario}
-              onChange={(e) => setComentario(e.target.value)}
-              required
-            ></textarea>
-
-            <button type="submit" className="btn-enviar">
-              Enviar Calificación
-            </button>
-          </form>
+          )}
         </div>
 
-        {/* Cuadrito de comentarios al lado */}
+        {/* Formulario de calificación (solo si no es modo vista) */}
+        {!isViewMode && (
+          <div className="calificacion-form animate-fade-in">
+            <form onSubmit={manejarEnvio}>
+              <h3>Califique el Servicio</h3>
+
+              <div className="estrellas-input">
+                {[1, 2, 3, 4, 5].map((valor) => (
+                  <span
+                    key={valor}
+                    className={valor <= puntaje ? 'estrella activa' : 'estrella'}
+                    onClick={() => setPuntaje(valor)}
+                  >
+                    ★
+                  </span>
+                ))}
+              </div>
+
+              <textarea
+                placeholder="Escribe un comentario sobre el trabajo realizado..."
+                value={comentario}
+                onChange={(e) => setComentario(e.target.value)}
+                required
+                rows="4"
+              ></textarea>
+
+              <button type="submit" className="btn-enviar">
+                Enviar Calificación
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* Cuadrito de comentarios */}
         <div className="comentarios-cuadrito">
-          <h3>Comentarios Recientes</h3>
+          <h3>
+            {isViewMode ? 'Calificaciones para esta postulación' : 'Comentarios Recientes'}
+          </h3>
           <div className="comentarios-lista">
             {calificaciones.length === 0 ? (
               <div className="no-comentarios">
-                <p>No hay comentarios aún</p>
+                <p>
+                  {isViewMode 
+                    ? 'No hay calificaciones para esta postulación' 
+                    : 'No hay comentarios aún'
+                  }
+                </p>
                 <span className="icono-comentarios">💬</span>
               </div>
             ) : (
               calificaciones.map((calificacion, index) => (
                 <div 
                   key={calificacion.id_calificacion} 
-                  className={`comentario-item ${index === 0 ? 'comentario-reciente' : ''}`}
+                  className={`comentario-item ${index === 0 && !isViewMode ? 'comentario-reciente' : ''}`}
                 >
                   <div className="comentario-header">
                     <div className="estrellas-comentario">
@@ -238,7 +301,7 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
                       <span className="fecha-comentario">
                         {formatearFecha(calificacion.fecha)}
                       </span>
-                      {index === 0 && (
+                      {index === 0 && !isViewMode && (
                         <span className="badge-nuevo">Nuevo</span>
                       )}
                     </div>
@@ -250,6 +313,7 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
                         value={comentarioEditando}
                         onChange={(e) => setComentarioEditando(e.target.value)}
                         className="textarea-editar"
+                        rows="3"
                       />
                     ) : (
                       <p>{calificacion.comentario}</p>
@@ -281,7 +345,7 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
                       </button>
                     </div>
 
-                    {puedeEditar(calificacion.fecha) && (
+                    {puedeEditar(calificacion.fecha) && !isViewMode && (
                       <div className="acciones-editar">
                         {editandoId === calificacion.id_calificacion ? (
                           <>

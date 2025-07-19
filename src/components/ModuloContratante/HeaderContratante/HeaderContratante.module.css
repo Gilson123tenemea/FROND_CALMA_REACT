@@ -497,3 +497,133 @@
     max-width: 300px;
   }
 }
+/* ===== ESTILOS ADICIONALES PARA DROPDOWNS ===== */
+/* Agregar al final de HeaderContratante.module.css */
+
+.menuItemIcon {
+  margin-right: 8px;
+  font-size: 14px;
+  display: inline-block;
+  width: 18px;
+  text-align: center;
+}
+
+/* Mejoras para dropdown items */
+.dropdownMenuItem {
+  display: flex !important;
+  align-items: center;
+  padding: 12px 16px !important;
+  color: #374151;
+  text-decoration: none;
+  font-size: 14px !important;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  margin: 2px 0;
+  border-bottom: none !important;
+}
+
+.dropdownMenuItem:hover {
+  background-color: #f3f4f6 !important;
+  color: #2563eb !important;
+  transform: translateX(4px);
+}
+
+/* Estilos mejorados para el dropdown container */
+.dropdownContainer {
+  position: relative;
+  display: inline-block;
+}
+
+/* Trigger mejorado */
+.dropdownTrigger {
+  background: none;
+  border: none;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.dropdownTrigger:hover {
+  background-color: #f3f4f6;
+  color: #2563eb;
+}
+
+/* Icono del dropdown */
+.dropdownIcon {
+  transition: transform 0.2s ease;
+  width: 16px;
+  height: 16px;
+}
+
+.dropdownIconRotated {
+  transform: rotate(180deg);
+}
+
+/* Menu del dropdown mejorado */
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 8px;
+  min-width: 200px;
+  z-index: 1000;
+  animation: dropdownFadeIn 0.2s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive mejorado para dropdowns */
+@media (max-width: 768px) {
+  .dropdownMenu {
+    min-width: 180px;
+    left: -50px;
+  }
+  
+  .menuItemIcon {
+    font-size: 12px;
+    width: 16px;
+  }
+  
+  .dropdownMenuItem {
+    padding: 10px 12px !important;
+    font-size: 13px !important;
+  }
+  
+  .dropdownTrigger {
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dropdownMenu {
+    left: -75px;
+    min-width: 160px;
+  }
+  
+  .dropdownMenuItem {
+    padding: 8px 10px !important;
+    font-size: 12px !important;
+  }
+}

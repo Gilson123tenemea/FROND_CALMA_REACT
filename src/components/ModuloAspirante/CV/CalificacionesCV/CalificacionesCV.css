@@ -1,0 +1,269 @@
+/* CalificacionesCV.css */
+.calificaciones-cv-container {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+/* Loading */
+.calificaciones-cv-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  justify-content: center;
+  color: #666;
+}
+
+.loading-spinner-small {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e5e7eb;
+  border-top: 2px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Estado vacío */
+.calificaciones-cv-vacio {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+.icono-sin-calificaciones {
+  font-size: 3rem;
+  color: #d1d5db;
+  margin-bottom: 1rem;
+}
+
+/* Header de calificaciones */
+.calificaciones-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.calificaciones-header h3 {
+  margin: 0;
+  color: #333;
+  font-size: 1.4rem;
+}
+
+.calificaciones-promedio {
+  text-align: right;
+}
+
+.estrellas-promedio {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+  justify-content: flex-end;
+}
+
+.datos-promedio {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.numero-promedio {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.total-calificaciones {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* Estrellas */
+.estrella-activa {
+  color: #fbbf24;
+}
+
+.estrella-media {
+  color: #fbbf24;
+}
+
+.estrella-inactiva {
+  color: #d1d5db;
+}
+
+.grande {
+  font-size: 1.4rem;
+}
+
+.normal {
+  font-size: 1.1rem;
+}
+
+.pequeno {
+  font-size: 0.9rem;
+}
+
+.estrella-pequena {
+  font-size: 0.8rem;
+  color: #fbbf24;
+}
+
+/* Distribución de estrellas */
+.distribucion-estrellas {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.fila-distribucion {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.fila-distribucion:last-child {
+  margin-bottom: 0;
+}
+
+.numero-estrella {
+  width: 20px;
+  text-align: center;
+  font-weight: 600;
+  color: #333;
+}
+
+.barra-progreso {
+  flex: 1;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.barra-relleno {
+  height: 100%;
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  transition: width 0.3s ease;
+}
+
+.cantidad-votos {
+  width: 30px;
+  text-align: right;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* Últimas calificaciones */
+.ultimas-calificaciones h4 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+
+
+.calificacion-reciente {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid #667eea;
+}
+
+.calificacion-reciente:last-child {
+  margin-bottom: 0;
+}
+
+.calificacion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.estrellas-pequenas {
+  display: flex;
+  gap: 0.2rem;
+}
+
+.fecha-calificacion {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.comentario-preview {
+  margin: 0 0 0.75rem 0;
+  line-height: 1.5;
+  color: #444;
+}
+
+.info-contratante {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.icono-usuario {
+  color: #667eea;
+}
+
+/* Botón ver todas */
+.btn-ver-todas {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.btn-ver-todas:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.icono-comentarios {
+  font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .calificaciones-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .calificaciones-promedio {
+    text-align: center;
+  }
+  
+  .estrellas-promedio {
+    justify-content: center;
+  }
+  
+  .datos-promedio {
+    align-items: center;
+  }
+  
+  .calificacion-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+}

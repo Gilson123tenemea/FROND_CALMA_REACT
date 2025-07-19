@@ -16,6 +16,7 @@ import ResetPassword from './components/Login/ResetPassword';
 import ModuloAspirante from './components/ModuloAspirante/ModuloAspirante';
 import ModuloContratante from './components/ModuloContratante/ModuloContratante';
 
+
 // Componentes varios
 import RegistroPaciente from './components/ModuloContratante/RegistroPaciente/registropaciente';
 import Visualizarpaciente from './components/ModuloContratante/RegistroPaciente/visualizarpaciente';
@@ -26,15 +27,16 @@ import CVCompletoView from './components/ModuloAspirante/CV/CVCompletoView';
 import Postulaciones from './components/ModuloContratante/Postulaciones/Postulaciones';
 import CVContratanteView from './components/ModuloAspirante/CV/CVContratanteView';
 
-
 // Componentes de CV relacionados
 import RecomendacionesForm from './components/Recomendaciones/RecomendacionesForm';
 import CertificadosForm from './components/Certificados/CertificadosForm';
 import HabilidadesForm from './components/Habilidades/HabilidadesForm';
 import DisponibilidadForm from './components/Disponibilidad/DisponibilidadForm';
 
-// Otros componentes
+// Componentes de calificaciones - NUEVOS
 import Calificacion from './components/Calificacion/calificacion';
+import TrabajosAceptados from './components/ModuloContratante/TrabajosAceptados/TrabajosAceptados';
+// Otros componentes
 import Soluciones from './components/Login/Soluciones';
 import Servicios from './components/Login/Servicios';
 import SobreNosotros from './components/Login/SobreNosotros';
@@ -48,6 +50,10 @@ import AlergiaMedicamentoForm from './components/FichaPacienteAlergiaMedicamento
 import InteresForm from './components/FichaPacienteInteres/interes';
 import TemaForm from './components/FichaPacienteTema/temasc';
 import PostulacionesAspirante from './components/ModuloAspirante/PostulacionesAspirante/PostulacionesAspirante';
+import TodasLasCalificaciones from './components/ModuloAspirante/Calificaciones/TodasLasCalificaciones';
+import Calificacionescv from './components/ModuloAspirante/CV/CalificacionesCV/CalificacionesCV';
+
+
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -93,13 +99,14 @@ createRoot(document.getElementById('root')).render(
           }
         />
 
+<Route path="/aspirante/:aspiranteId/calificaciones" element={<TodasLasCalificaciones />} />
+
+
         {/* Rutas de CV */}
         <Route path="/moduloAspirante/cv" element={<CVForm />} />
         <Route path="/cv/:idCV" element={<CVForm editMode={false} />} />
         <Route path="/cv/:idCV/edit" element={<CVForm editMode={true} />} />
         <Route path="/cv-aspirante/:idAspirante" element={<CVContratanteView />} />
-
-
 
         {/* Rutas dependientes de CV (protegidas) */}
         <Route
@@ -206,7 +213,9 @@ createRoot(document.getElementById('root')).render(
         <Route path="/fichas/:id_ficha_paciente/intereses/:idInteresesPersonales" element={<InteresForm />} />
         <Route path="/fichas/:id_ficha_paciente/temas" element={<TemaForm />} />
         <Route path="/fichas/:id_ficha_paciente/temas/:idTemaConversacion" element={<TemaForm />} />
-        {/* Otras rutas */}
+        
+        {/* Rutas de calificaciones - NUEVAS */}
+        <Route path="/trabajos-aceptados" element={<TrabajosAceptados />} />
         <Route path="/Calificacion/calificacion" element={<Calificacion />} />
       </Routes>
     </Router>

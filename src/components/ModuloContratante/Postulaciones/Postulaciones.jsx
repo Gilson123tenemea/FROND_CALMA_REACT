@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import styles from './Postulaciones.module.css';
 
 const Postulaciones = () => {
@@ -20,6 +22,14 @@ const Postulaciones = () => {
       } catch (err) {
         console.error('Error axios:', err);
         setError(`❌ Error al cargar postulaciones: ${err.message}`);
+        toast.error('Error al cargar postulaciones', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
       } finally {
         setLoading(false);
       }
@@ -42,7 +52,26 @@ const Postulaciones = () => {
             }
         );
 
-        alert(`✅ Postulación ${nuevoEstado === null ? 'marcada como pendiente' : nuevoEstado ? 'aceptada' : 'rechazada'} correctamente`);
+        const mensaje = nuevoEstado === null 
+          ? 'Postulación marcada como pendiente' 
+          : nuevoEstado 
+            ? 'Postulación aceptada correctamente' 
+            : 'Postulación rechazada correctamente';
+
+        const tipoToast = nuevoEstado === null 
+          ? 'info' 
+          : nuevoEstado 
+            ? 'success' 
+            : 'error';
+
+        toast[tipoToast](mensaje, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
 
         setRealizaciones(prev =>
             prev.map(r => {
@@ -60,7 +89,14 @@ const Postulaciones = () => {
         );
     } catch (error) {
         console.error('Error al actualizar el estado:', error);
-        alert('❌ Error al actualizar la postulación');
+        toast.error('Error al actualizar la postulación', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
     }
 };
 
@@ -102,9 +138,9 @@ const Postulaciones = () => {
   };
 
   const getEstadoClass = (estado) => {
-    if (estado === null) return `${styles.estadoBadge} ${styles.estadoPendiente}`;
-    if (estado) return `${styles.estadoBadge} ${styles.estadoAceptada}`;
-    return `${styles.estadoBadge} ${styles.estadoRechazada}`;
+    if (estado === null) return `${styles.postulacionesEstadoBadge} ${styles.postulacionesEstadoPendiente}`;
+    if (estado) return `${styles.postulacionesEstadoBadge} ${styles.postulacionesEstadoAceptada}`;
+    return `${styles.postulacionesEstadoBadge} ${styles.postulacionesEstadoRechazada}`;
   };
 
   const getEstadoTexto = (estado) => {
@@ -114,222 +150,239 @@ const Postulaciones = () => {
   };
 
   if (loading) return (
-    <div className={styles.loadingContainer}>
-      <div className={styles.loadingSpinner}></div>
-      <p className={styles.loadingText}>⏳ Cargando postulaciones...</p>
+    <div className={styles.postulacionesLoadingContainer}>
+      <div className={styles.postulacionesLoadingSpinner}></div>
+      <p className={styles.postulacionesLoadingText}>⏳ Cargando postulaciones...</p>
     </div>
   );
   
   if (error) return (
-    <div className={styles.errorContainer}>
-      <div className={styles.errorIcon}>⚠️</div>
-      <p className={styles.errorText}>{error}</p>
+    <div className={styles.postulacionesErrorContainer}>
+      <div className={styles.postulacionesErrorIcon}>⚠️</div>
+      <p className={styles.postulacionesErrorText}>{error}</p>
     </div>
   );
   
   if (realizaciones.length === 0) return (
-    <div className={styles.emptyContainer}>
-      <div className={styles.emptyIcon}>📭</div>
-      <p className={styles.emptyText}>No hay postulaciones disponibles</p>
+    <div className={styles.postulacionesEmptyContainer}>
+      <div className={styles.postulacionesEmptyIcon}>📭</div>
+      <p className={styles.postulacionesEmptyText}>No hay postulaciones disponibles</p>
     </div>
   );
 
   return (
-    <div className={styles.mainWrapper}>
-      <div className={styles.headerSection}>
-        <h2 className={styles.mainTitle}>
-          <span className={styles.titleIcon}>📄</span>
-          Postulaciones del Contratante
-          <span className={styles.userBadge}>#{userId}</span>
-        </h2>
-        
-        <div className={styles.statsBar}>
-          <div className={styles.statItem}>
-            <span className={styles.statNumber}>{filtradas.length}</span>
-            <span className={styles.statLabel}>Postulaciones</span>
-          </div>
-          <div className={styles.statItem}>
-            <span className={styles.statNumber}>
-              {filtradas.filter(r => r.postulacion?.estado === true).length}
-            </span>
-            <span className={styles.statLabel}>Aceptadas</span>
-          </div>
-          <div className={styles.statItem}>
-            <span className={styles.statNumber}>
-              {filtradas.filter(r => r.postulacion?.estado === null).length}
-            </span>
-            <span className={styles.statLabel}>Pendientes</span>
-          </div>
-        </div>
-      </div>
-
-      <div className={styles.filterSection}>
-        <div className={styles.filterWrapper}>
-          <div className={styles.searchGroup}>
-            <div className={styles.inputContainer}>
-              <i className={`${styles.inputIcon} fas fa-search`}></i>
-              <input
-                type="text"
-                className={styles.searchInput}
-                placeholder="Buscar por título de oferta..."
-                value={filtroTitulo}
-                onChange={handleTituloChange}
-              />
-            </div>
-          </div>
+    <>
+      <div className={styles.postulacionesMainWrapper}>
+        <div className={styles.postulacionesHeaderSection}>
+          <h2 className={styles.postulacionesMainTitle}>
+            <span className={styles.postulacionesTitleIcon}>📄</span>
+            Postulaciones del Contratante
+            <span className={styles.postulacionesUserBadge}>#{userId}</span>
+          </h2>
           
-          <div className={styles.dateGroup}>
-            <div className={styles.inputContainer}>
-              <i className={`${styles.inputIcon} fas fa-calendar-alt`}></i>
-              <input
-                type="date"
-                className={styles.dateInput}
-                value={filtroFecha}
-                onChange={handleFechaChange}
-              />
+          <div className={styles.postulacionesStatsBar}>
+            <div className={styles.postulacionesStatItem}>
+              <span className={styles.postulacionesStatNumber}>{filtradas.length}</span>
+              <span className={styles.postulacionesStatLabel}>Postulaciones</span>
+            </div>
+            <div className={styles.postulacionesStatItem}>
+              <span className={styles.postulacionesStatNumber}>
+                {filtradas.filter(r => r.postulacion?.estado === true).length}
+              </span>
+              <span className={styles.postulacionesStatLabel}>Aceptadas</span>
+            </div>
+            <div className={styles.postulacionesStatItem}>
+              <span className={styles.postulacionesStatNumber}>
+                {filtradas.filter(r => r.postulacion?.estado === null).length}
+              </span>
+              <span className={styles.postulacionesStatLabel}>Pendientes</span>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className={styles.cardsGrid}>
-        {filtradas.map((r) => {
-          const { id_realizar, fecha, aspirante, postulacion } = r;
-          const usuario = aspirante?.usuario;
-          const publicacion = postulacion?.postulacion_empleo;
-
-          return (
-            <div className={styles.applicationCard} key={id_realizar}>
-              <div className={styles.cardHeader}>
-                <div className={styles.applicantInfo}>
-                  <div className={styles.applicantAvatar}>
-                    {usuario ? `${usuario.nombres[0]}${usuario.apellidos[0]}` : 'ND'}
-                  </div>
-                  <div className={styles.applicantDetails}>
-                    <h3 className={styles.applicantName}>
-                      {usuario ? `${usuario.nombres} ${usuario.apellidos}` : 'No disponible'}
-                    </h3>
-                    <p className={styles.applicantEmail}>
-                      <i className={`${styles.infoIcon} fas fa-envelope`}></i>
-                      {usuario?.correo || 'No disponible'}
-                    </p>
-                  </div>
-                </div>
-                <div className={getEstadoClass(postulacion?.estado)}>
-                  {getEstadoTexto(postulacion?.estado)}
-                </div>
-              </div>
-
-              <div className={styles.cardContent}>
-                <div className={styles.jobSection}>
-                  <h4 className={styles.jobTitle}>
-                    <i className={`${styles.sectionIcon} fas fa-briefcase`}></i>
-                    {publicacion?.titulo || 'No disponible'}
-                  </h4>
-                  <p className={styles.jobDescription}>
-                    {publicacion?.descripcion || 'Sin descripción'}
-                  </p>
-                </div>
-
-                <div className={styles.detailsGrid}>
-                  <div className={styles.detailItem}>
-                    <i className={`${styles.detailIcon} fas fa-calendar-plus`}></i>
-                    <span className={styles.detailLabel}>Postulado:</span>
-                    <span className={styles.detailValue}>
-                      {fecha ? new Date(fecha).toLocaleDateString() : 'N/D'}
-                    </span>
-                  </div>
-                  
-                  <div className={styles.detailItem}>
-                    <i className={`${styles.detailIcon} fas fa-calendar-times`}></i>
-                    <span className={styles.detailLabel}>Fecha límite:</span>
-                    <span className={styles.detailValue}>
-                      {publicacion?.fecha_limite ? new Date(publicacion.fecha_limite).toLocaleDateString() : 'N/D'}
-                    </span>
-                  </div>
-                  
-                  <div className={styles.detailItem}>
-                    <i className={`${styles.detailIcon} fas fa-clock`}></i>
-                    <span className={styles.detailLabel}>Jornada:</span>
-                    <span className={styles.detailValue}>
-                      {publicacion?.jornada || 'N/D'}
-                    </span>
-                  </div>
-                  
-                  <div className={styles.detailItem}>
-                    <i className={`${styles.detailIcon} fas fa-dollar-sign`}></i>
-                    <span className={styles.detailLabel}>Salario:</span>
-                    <span className={styles.detailValue}>
-                      {publicacion?.salario_estimado ? `$${publicacion.salario_estimado.toLocaleString()}` : 'N/D'}
-                    </span>
-                  </div>
-                  
-                  <div className={styles.detailItem}>
-                    <i className={`${styles.detailIcon} fas fa-sun`}></i>
-                    <span className={styles.detailLabel}>Turno:</span>
-                    <span className={styles.detailValue}>
-                      {publicacion?.turno || 'N/D'}
-                    </span>
-                  </div>
-                </div>
-
-                {publicacion?.requisitos && (
-                  <div className={styles.requirementsSection}>
-                    <h5 className={styles.requirementsTitle}>
-                      <i className={`${styles.sectionIcon} fas fa-list-check`}></i>
-                      Requisitos
-                    </h5>
-                    <p className={styles.requirementsText}>
-                      {publicacion.requisitos}
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              <div className={styles.cardActions}>
-                <button
-                  className={`${styles.actionBtn} ${styles.btnAccept}`}
-                  onClick={() =>
-                    actualizarEstado(
-                      postulacion?.id_postulacion,
-                      publicacion?.id_postulacion_empleo,
-                      true,
-                      aspirante?.idAspirante
-                    )
-                  }
-                >
-                  <i className={`${styles.btnIcon} fas fa-check`}></i>
-                  Aceptar
-                </button>
-                
-                <button
-                  className={`${styles.actionBtn} ${styles.btnReject}`}
-                  onClick={() =>
-                    actualizarEstado(
-                      postulacion?.id_postulacion,
-                      publicacion?.id_postulacion_empleo,
-                      false,
-                      aspirante?.idAspirante
-                    )
-                  }
-                >
-                  <i className={`${styles.btnIcon} fas fa-times`}></i>
-                  Rechazar
-                </button>
-                
-                <button
-                  className={`${styles.actionBtn} ${styles.btnCv}`}
-                  onClick={() => verCV(aspirante?.idAspirante)}
-                >
-                  <i className={`${styles.btnIcon} fas fa-file-alt`}></i>
-                  Ver CV
-                </button>
+        <div className={styles.postulacionesFilterSection}>
+          <div className={styles.postulacionesFilterWrapper}>
+            <div className={styles.postulacionesSearchGroup}>
+              <div className={styles.postulacionesInputContainer}>
+                <i className={`${styles.postulacionesInputIcon} fas fa-search`}></i>
+                <input
+                  type="text"
+                  className={styles.postulacionesSearchInput}
+                  placeholder="Buscar por título de oferta..."
+                  value={filtroTitulo}
+                  onChange={handleTituloChange}
+                />
               </div>
             </div>
-          );
-        })}
+            
+            <div className={styles.postulacionesDateGroup}>
+              <div className={styles.postulacionesInputContainer}>
+                <i className={`${styles.postulacionesInputIcon} fas fa-calendar-alt`}></i>
+                <input
+                  type="date"
+                  className={styles.postulacionesDateInput}
+                  value={filtroFecha}
+                  onChange={handleFechaChange}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.postulacionesCardsGrid}>
+          {filtradas.map((r) => {
+            const { id_realizar, fecha, aspirante, postulacion } = r;
+            const usuario = aspirante?.usuario;
+            const publicacion = postulacion?.postulacion_empleo;
+
+            return (
+              <div className={styles.postulacionesApplicationCard} key={id_realizar}>
+                <div className={styles.postulacionesCardHeader}>
+                  <div className={styles.postulacionesApplicantInfo}>
+                    <div className={styles.postulacionesApplicantAvatar}>
+                      {usuario ? `${usuario.nombres[0]}${usuario.apellidos[0]}` : 'ND'}
+                    </div>
+                    <div className={styles.postulacionesApplicantDetails}>
+                      <h3 className={styles.postulacionesApplicantName}>
+                        {usuario ? `${usuario.nombres} ${usuario.apellidos}` : 'No disponible'}
+                      </h3>
+                      <p className={styles.postulacionesApplicantEmail}>
+                        <i className={`${styles.postulacionesInfoIcon} fas fa-envelope`}></i>
+                        {usuario?.correo || 'No disponible'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className={getEstadoClass(postulacion?.estado)}>
+                    {getEstadoTexto(postulacion?.estado)}
+                  </div>
+                </div>
+
+                <div className={styles.postulacionesCardContent}>
+                  <div className={styles.postulacionesJobSection}>
+                    <h4 className={styles.postulacionesJobTitle}>
+                      <i className={`${styles.postulacionesSectionIcon} fas fa-briefcase`}></i>
+                      {publicacion?.titulo || 'No disponible'}
+                    </h4>
+                    <p className={styles.postulacionesJobDescription}>
+                      {publicacion?.descripcion || 'Sin descripción'}
+                    </p>
+                  </div>
+
+                  <div className={styles.postulacionesDetailsGrid}>
+                    <div className={styles.postulacionesDetailItem}>
+                      <i className={`${styles.postulacionesDetailIcon} fas fa-calendar-plus`}></i>
+                      <span className={styles.postulacionesDetailLabel}>Postulado:</span>
+                      <span className={styles.postulacionesDetailValue}>
+                        {fecha ? new Date(fecha).toLocaleDateString() : 'N/D'}
+                      </span>
+                    </div>
+                    
+                    <div className={styles.postulacionesDetailItem}>
+                      <i className={`${styles.postulacionesDetailIcon} fas fa-calendar-times`}></i>
+                      <span className={styles.postulacionesDetailLabel}>Fecha límite:</span>
+                      <span className={styles.postulacionesDetailValue}>
+                        {publicacion?.fecha_limite ? new Date(publicacion.fecha_limite).toLocaleDateString() : 'N/D'}
+                      </span>
+                    </div>
+                    
+                    <div className={styles.postulacionesDetailItem}>
+                      <i className={`${styles.postulacionesDetailIcon} fas fa-clock`}></i>
+                      <span className={styles.postulacionesDetailLabel}>Jornada:</span>
+                      <span className={styles.postulacionesDetailValue}>
+                        {publicacion?.jornada || 'N/D'}
+                      </span>
+                    </div>
+                    
+                    <div className={styles.postulacionesDetailItem}>
+                      <i className={`${styles.postulacionesDetailIcon} fas fa-dollar-sign`}></i>
+                      <span className={styles.postulacionesDetailLabel}>Salario:</span>
+                      <span className={styles.postulacionesDetailValue}>
+                        {publicacion?.salario_estimado ? `${publicacion.salario_estimado.toLocaleString()}` : 'N/D'}
+                      </span>
+                    </div>
+                    
+                    <div className={styles.postulacionesDetailItem}>
+                      <i className={`${styles.postulacionesDetailIcon} fas fa-sun`}></i>
+                      <span className={styles.postulacionesDetailLabel}>Turno:</span>
+                      <span className={styles.postulacionesDetailValue}>
+                        {publicacion?.turno || 'N/D'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {publicacion?.requisitos && (
+                    <div className={styles.postulacionesRequirementsSection}>
+                      <h5 className={styles.postulacionesRequirementsTitle}>
+                        <i className={`${styles.postulacionesSectionIcon} fas fa-list-check`}></i>
+                        Requisitos
+                      </h5>
+                      <p className={styles.postulacionesRequirementsText}>
+                        {publicacion.requisitos}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                <div className={styles.postulacionesCardActions}>
+                  <button
+                    className={`${styles.postulacionesActionBtn} ${styles.postulacionesBtnAccept}`}
+                    onClick={() =>
+                      actualizarEstado(
+                        postulacion?.id_postulacion,
+                        publicacion?.id_postulacion_empleo,
+                        true,
+                        aspirante?.idAspirante
+                      )
+                    }
+                  >
+                    <i className={`${styles.postulacionesBtnIcon} fas fa-check`}></i>
+                    Aceptar
+                  </button>
+                  
+                  <button
+                    className={`${styles.postulacionesActionBtn} ${styles.postulacionesBtnReject}`}
+                    onClick={() =>
+                      actualizarEstado(
+                        postulacion?.id_postulacion,
+                        publicacion?.id_postulacion_empleo,
+                        false,
+                        aspirante?.idAspirante
+                      )
+                    }
+                  >
+                    <i className={`${styles.postulacionesBtnIcon} fas fa-times`}></i>
+                    Rechazar
+                  </button>
+                  
+                  <button
+                    className={`${styles.postulacionesActionBtn} ${styles.postulacionesBtnCv}`}
+                    onClick={() => verCV(aspirante?.idAspirante)}
+                  >
+                    <i className={`${styles.postulacionesBtnIcon} fas fa-file-alt`}></i>
+                    Ver CV
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
-    </div>
+
+      {/* Contenedor de notificaciones Toast */}
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        className="postulacionesToastContainer"
+      />
+    </>
   );
 };
 

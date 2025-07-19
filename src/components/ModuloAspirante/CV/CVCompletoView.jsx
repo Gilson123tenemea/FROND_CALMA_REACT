@@ -10,6 +10,7 @@ import {
 } from 'react-icons/fa';
 import { useParams } from "react-router-dom";
 import HeaderAspirante from "../HeaderAspirante/HeaderAspirante";
+import CalificacionesCV from './CalificacionesCV/CalificacionesCV';
 import styles from './CVView.module.css';
 
 const CVCompletoView = () => {
@@ -192,6 +193,15 @@ const CVCompletoView = () => {
             </div>
           </div>
         )}
+
+        {/* Sección de Calificaciones - MOVIDA AQUÍ */}
+        <div className={styles.cvRatingsSection}>
+          <div className={styles.cvSectionHeader}>
+            <FaStar className={styles.cvSectionIcon} />
+            <h2>Calificaciones de Trabajos</h2>
+          </div>
+          <CalificacionesCV aspiranteId={cvData.aspirante?.idAspirante} />
+        </div>
         
         {/* Sección del CV */}
         <div className={styles.cvSummarySection}>
