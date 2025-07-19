@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './SobreNosotros.css';
+import styles from './SobreNosotros.module.css';
 import Footer from "../Footer/footer";
 import Navbar from '../Shared/Navbar';
 
@@ -59,43 +59,52 @@ const SobreNosotros = () => {
   };
 
   return (
-    <div className="sobre-nosotros-page">
+    <div className={styles.sobreNosotrosPage}>
       <Navbar />
       
-      <header className="sobre-nosotros-hero">
-        <div className="hero-content">
-          <h1>Nuestra Historia</h1>
-          <p>Conoce el propósito y la pasión que impulsan a CALMA</p>
+      <header className={styles.hero}>
+        <div className={styles.heroContent}>
+          <div className={styles.heroText}>
+            <h1 className={styles.heroTitle}>Nuestra Historia</h1>
+            <p className={styles.heroSubtitle}>Conoce el propósito y la pasión que impulsan a CALMA</p>
+            <button className={styles.heroButton}>Conocer más</button>
+          </div>
+          <div className={styles.heroImageContainer}>
+            <img 
+              src="https://images.unsplash.com/photo-1573497620053-ea5300f94f21?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" 
+              alt="Profesional cuidando a un adulto mayor" 
+              className={styles.heroImage}
+            />
+          </div>
         </div>
-        <div className="hero-image" aria-hidden="true"></div>
       </header>
 
-      <div className="sobre-nosotros-container">
+      <div className={styles.container}>
         {/* Origen */}
-        <section className="origen-section">
-          <div className="origen-content">
-            <h2-color>El Origen de CALMA</h2-color>
+        <section className={styles.origen}>
+          <div className={styles.origenContent}>
+            <h2>El Origen de CALMA</h2>
             <p>
               CALMA nació de la necesidad personal de sus fundadores de encontrar cuidado de calidad para sus seres queridos. 
               Frustrados por la falta de opciones confiables y accesibles, decidimos crear una solución que combina tecnología 
               y cuidado humano para transformar la experiencia del cuidado geriátrico.
             </p>
-            <div className="origen-image"></div>
+            <div className={styles.origenImage}></div>
           </div>
         </section>
 
         {/* Misión y Visión */}
-        <section className="mision-vision-section">
-          <div className="mision-card">
-            <div className="card-icon">🎯</div>
+        <section className={styles.misionVision}>
+          <div className={styles.misionCard}>
+            <div className={styles.cardIcon}>🎯</div>
             <h3>Nuestra Misión</h3>
             <p>
               Conectar familias con cuidadores excepcionales mediante una plataforma tecnológica que garantiza seguridad, 
               confianza y tranquilidad en el cuidado de adultos mayores.
             </p>
           </div>
-          <div className="vision-card">
-            <div className="card-icon">🌎</div>
+          <div className={styles.visionCard}>
+            <div className={styles.cardIcon}>🌎</div>
             <h3>Nuestra Visión</h3>
             <p>
               Ser el referente en cuidado geriátrico en Latinoamérica, reconocidos por nuestra innovación tecnológica y 
@@ -105,28 +114,28 @@ const SobreNosotros = () => {
         </section>
 
         {/* Estadísticas */}
-        <section className="estadisticas-section">
-          <h2-color>CALMA en Números</h2-color>
+        <section className={styles.estadisticas}>
+          <h2>CALMA en Números</h2>
           <p>El impacto que hemos logrado juntos</p>
-          <div className="estadisticas-grid">
+          <div className={styles.estadisticasGrid}>
             {estadisticas.map((stat, index) => (
-              <div key={index} className="estadistica-card">
-                <div className="estadistica-icon">{stat.icono}</div>
-                <div className="estadistica-numero">{stat.numero}</div>
-                <div className="estadistica-label">{stat.label}</div>
+              <div key={index} className={styles.estadisticaCard}>
+                <div className={styles.estadisticaIcon}>{stat.icono}</div>
+                <div className={styles.estadisticaNumero}>{stat.numero}</div>
+                <div className={styles.estadisticaLabel}>{stat.label}</div>
               </div>
             ))}
           </div>
         </section>
 
         {/* Valores */}
-        <section className="valores-section">
-          <h2-color>Nuestros Valores Fundamentales</h2-color>
+        <section className={styles.valores}>
+          <h2>Nuestros Valores Fundamentales</h2>
           <p>Los principios que guían cada decisión en CALMA</p>
-          <div className="valores-grid">
+          <div className={styles.valoresGrid}>
             {valores.map((valor, index) => (
-              <div key={index} className="valor-card">
-                <div className="valor-icon">{valor.icono}</div>
+              <div key={index} className={styles.valorCard}>
+                <div className={styles.valorIcon}>{valor.icono}</div>
                 <h3>{valor.titulo}</h3>
                 <p>{valor.descripcion}</p>
               </div>
@@ -135,35 +144,35 @@ const SobreNosotros = () => {
         </section>
 
         {/* Equipo */}
-        <section className="equipo-section">
-          <h2-color>El Equipo CALMA</h2-color>
+        <section className={styles.equipo}>
+          <h2>El Equipo CALMA</h2>
           <p>Las personas detrás de esta iniciativa</p>
-          <div className="equipo-grid">
+          <div className={styles.equipoGrid}>
             {equipo.map((miembro) => (
-              <div key={miembro.id} className="miembro-card">
+              <div key={miembro.id} className={styles.miembroCard}>
                 <div 
-                  className="miembro-image"
+                  className={styles.miembroImage}
                   style={{ backgroundImage: "url('https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80')" }}
                 ></div>
-                <div className="miembro-info">
-                  <div className="miembro-header">
-                    <span className="miembro-icono">{miembro.icono}</span>
+                <div className={styles.miembroInfo}>
+                  <div className={styles.miembroHeader}>
+                    <span className={styles.miembroIcono}>{miembro.icono}</span>
                     <h3>{miembro.nombre}</h3>
                   </div>
-                  <p className="miembro-rol">{miembro.rol}</p>
-                  <p className="miembro-descripcion">{miembro.descripcion}</p>
+                  <p className={styles.miembroRol}>{miembro.rol}</p>
+                  <p className={styles.miembroDescripcion}>{miembro.descripcion}</p>
                   <button 
-                    className="miembro-btn"
+                    className={styles.miembroBtn}
                     onClick={() => toggleMiembro(miembro.id)}
                   >
                     {miembroSeleccionado === miembro.id ? 'Ocultar detalles' : 'Ver más'}
                   </button>
                   {miembroSeleccionado === miembro.id && (
-                    <div className="miembro-detalles">
+                    <div className={styles.miembroDetalles}>
                       <h4>Enfoque:</h4>
-                      <div className="skills-list">
+                      <div className={styles.skillsList}>
                         {miembro.skills.map((skill, index) => (
-                          <span key={index} className="skill-tag">{skill}</span>
+                          <span key={index} className={styles.skillTag}>{skill}</span>
                         ))}
                       </div>
                     </div>
@@ -175,16 +184,16 @@ const SobreNosotros = () => {
         </section>
 
         {/* Tecnologías */}
-        <section className="tecnologias-section">
-          <h2-color>Nuestra Tecnología</h2-color>
+        <section className={styles.tecnologias}>
+          <h2>Nuestra Tecnología</h2>
           <p>Plataforma diseñada para brindar seguridad y tranquilidad</p>
-          <div className="tecnologias-grid">
+          <div className={styles.tecnologiasGrid}>
             {tecnologias.map((tech, index) => (
-              <div key={index} className="tech-category">
+              <div key={index} className={styles.techCategory}>
                 <h3>{tech.categoria}</h3>
-                <div className="tech-items">
+                <div className={styles.techItems}>
                   {tech.items.map((item, i) => (
-                    <span key={i} className="tech-item">{item}</span>
+                    <span key={i} className={styles.techItem}>{item}</span>
                   ))}
                 </div>
               </div>
@@ -192,18 +201,20 @@ const SobreNosotros = () => {
           </div>
         </section>
       </div>
-        {/* CTA */}
-        <section className="cta-section">
-          <div className="cta-content">
-            <h2-color>¿Listo para experimentar CALMA?</h2-color>
-            <p>Descubre cómo podemos ayudarte a encontrar el cuidado perfecto para tu ser querido</p>
-            <div className="cta-buttons">
-              <button className="cta-btn-primary">Encontrar Cuidador</button>
-              <button className="cta-btn-secondary">Registrarse</button>
-            </div>
+      
+      {/* CTA */}
+      <section className={styles.cta}>
+        <div className={styles.ctaContent}>
+          <h2>¿Listo para experimentar CALMA?</h2>
+          <p>Descubre cómo podemos ayudarte a encontrar el cuidado perfecto para tu ser querido</p>
+          <div className={styles.ctaButtons}>
+            <button className={styles.ctaBtnPrimary}>Encontrar Cuidador</button>
+            <button className={styles.ctaBtnSecondary}>Registrarse</button>
           </div>
-        </section>
-        <Footer />
+        </div>
+      </section>
+      
+      <Footer />
     </div>
   );
 };

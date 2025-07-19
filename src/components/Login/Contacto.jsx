@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './Contacto.css';
+import styles from './Contacto.module.css';
 import Footer from "../Footer/footer";
 import Navbar from '../Shared/Navbar';
 
@@ -126,36 +126,46 @@ const Contacto = () => {
   };
 
   return (
-    <div className="contacto-page">
+    <div className={styles.contactoPage}>
       <Navbar />
 
-      <main className="contacto-container">
+      <main className={styles.contactoContainer}>
         {/* Hero Section */}
-        <section class="contacto-hero">
-          <div class="hero-content">
-            <div class="hero-text">
-              <h1 class="contacto-titulo">Contáctanos</h1>
-              <p class="contacto-subtitulo">
+        <section className={styles.contactoHero}>
+          <div className={styles.heroContent}>
+            <div className={styles.heroText}>
+              <h1 className={styles.contactoTitulo}>Contáctanos</h1>
+              <p className={styles.contactoSubtitulo}>
                 Estamos aquí para ayudarte. Completa el formulario o comunícate con nosotros directamente.
               </p>
+              <div className={styles.heroButtons}>
+                <a href="#formulario" className={styles.heroButtonPrimary}>Ir al Formulario</a>
+                <a href="#contacto-directo" className={styles.heroButtonSecondary}>Contacto Directo</a>
+              </div>
             </div>
-            <div class="hero-illustration"></div>
+            <div className={styles.heroIllustration}>
+              <img 
+                src="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" 
+                alt="Equipo de soporte profesional trabajando" 
+                className={styles.heroImage}
+              />
+            </div>
           </div>
         </section>
 
-
         {/* Main Content */}
-        <div className="contacto-content">
+        <div className={styles.contactoContent} id="formulario">
           {/* Form Section */}
-          <section className="contacto-form-section">
-            <div className="form-header">
-              <h2-contacto1>Envíanos un mensaje</h2-contacto1>
+          <section className={styles.contactoFormSection}>
+            <div className={styles.formHeader}>
+              <h2>Envíanos un mensaje</h2>
               <p>Completa el formulario y te responderemos lo antes posible</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="contacto-form" noValidate>
-              <div className="form-row">
-                <div className="form-group">
+            <form onSubmit={handleSubmit} className={styles.contactoForm} noValidate>
+              {/* ... (resto del formulario permanece igual) ... */}
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
                   <label htmlFor="nombre">Nombre Completo *</label>
                   <input
                     type="text"
@@ -163,15 +173,15 @@ const Contacto = () => {
                     name="nombre"
                     value={formData.nombre}
                     onChange={handleInputChange}
-                    className={errors.nombre ? 'error' : ''}
+                    className={errors.nombre ? styles.error : ''}
                     placeholder="Tu nombre completo"
                     aria-invalid={!!errors.nombre}
                     aria-describedby={errors.nombre ? 'nombre-error' : undefined}
                   />
-                  {errors.nombre && <span id="nombre-error" className="error-message">{errors.nombre}</span>}
+                  {errors.nombre && <span id="nombre-error" className={styles.errorMessage}>{errors.nombre}</span>}
                 </div>
 
-                <div className="form-group">
+                <div className={styles.formGroup}>
                   <label htmlFor="email">Email *</label>
                   <input
                     type="email"
@@ -179,23 +189,23 @@ const Contacto = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className={errors.email ? 'error' : ''}
+                    className={errors.email ? styles.error : ''}
                     placeholder="tu@email.com"
                     aria-invalid={!!errors.email}
                     aria-describedby={errors.email ? 'email-error' : undefined}
                   />
-                  {errors.email && <span id="email-error" className="error-message">{errors.email}</span>}
+                  {errors.email && <span id="email-error" className={styles.errorMessage}>{errors.email}</span>}
                 </div>
               </div>
 
-              <div className="form-group">
+              <div className={styles.formGroup}>
                 <label htmlFor="tipoContacto">Tipo de Consulta</label>
                 <select
                   id="tipoContacto"
                   name="tipoContacto"
                   value={formData.tipoContacto}
                   onChange={handleInputChange}
-                  className="form-select"
+                  className={styles.formSelect}
                 >
                   {tiposContacto.map(tipo => (
                     <option key={tipo.value} value={tipo.value}>
@@ -205,7 +215,7 @@ const Contacto = () => {
                 </select>
               </div>
 
-              <div className="form-group">
+              <div className={styles.formGroup}>
                 <label htmlFor="asunto">Asunto *</label>
                 <input
                   type="text"
@@ -213,36 +223,36 @@ const Contacto = () => {
                   name="asunto"
                   value={formData.asunto}
                   onChange={handleInputChange}
-                  className={errors.asunto ? 'error' : ''}
+                  className={errors.asunto ? styles.error : ''}
                   placeholder="Breve descripción del tema"
                   aria-invalid={!!errors.asunto}
                   aria-describedby={errors.asunto ? 'asunto-error' : undefined}
                 />
-                {errors.asunto && <span id="asunto-error" className="error-message">{errors.asunto}</span>}
+                {errors.asunto && <span id="asunto-error" className={styles.errorMessage}>{errors.asunto}</span>}
               </div>
 
-              <div className="form-group">
+              <div className={styles.formGroup}>
                 <label htmlFor="mensaje">Mensaje *</label>
                 <textarea
                   id="mensaje"
                   name="mensaje"
                   value={formData.mensaje}
                   onChange={handleInputChange}
-                  className={errors.mensaje ? 'error' : ''}
+                  className={errors.mensaje ? styles.error : ''}
                   placeholder="Escribe tu mensaje aquí... (mínimo 10 caracteres)"
                   rows="6"
                   aria-invalid={!!errors.mensaje}
                   aria-describedby={errors.mensaje ? 'mensaje-error' : undefined}
                 ></textarea>
-                {errors.mensaje && <span id="mensaje-error" className="error-message">{errors.mensaje}</span>}
-                <div className="char-counter">
+                {errors.mensaje && <span id="mensaje-error" className={styles.errorMessage}>{errors.mensaje}</span>}
+                <div className={styles.charCounter}>
                   {formData.mensaje.length}/500 caracteres
                 </div>
               </div>
 
               <button
                 type="submit"
-                className={`submit-btn ${isSubmitting ? 'submitting' : ''}`}
+                className={`${styles.submitBtn} ${isSubmitting ? styles.submitting : ''}`}
                 disabled={isSubmitting}
                 aria-busy={isSubmitting}
               >
@@ -250,13 +260,13 @@ const Contacto = () => {
               </button>
 
               {submitStatus === 'success' && (
-                <div className="success-message" role="alert">
+                <div className={styles.successMessage} role="alert">
                   ✅ ¡Mensaje enviado exitosamente! Te responderemos pronto.
                 </div>
               )}
 
               {submitStatus === 'error' && (
-                <div className="error-message-form" role="alert">
+                <div className={styles.errorMessageForm} role="alert">
                   ❌ Error al enviar el mensaje. Por favor, intenta de nuevo.
                 </div>
               )}
@@ -264,29 +274,29 @@ const Contacto = () => {
           </section>
 
           {/* Info Section */}
-          <section className="contacto-info-section">
-            <div className="info-card">
+          <section className={styles.contactoInfoSection} id="contacto-directo">
+            <div className={styles.infoCard}>
               <h3>Información de contacto</h3>
               <p>También puedes contactarnos directamente</p>
 
-              <div className="contact-method">
-                <div className="contact-icon" aria-hidden="true">📧</div>
+              <div className={styles.contactMethod}>
+                <div className={styles.contactIcon} aria-hidden="true">📧</div>
                 <div>
                   <h4>Correo electrónico</h4>
                   <a href="mailto:contacto@calma.com">contacto@calma.com</a>
                 </div>
               </div>
 
-              <div className="contact-method">
-                <div className="contact-icon" aria-hidden="true">📞</div>
+              <div className={styles.contactMethod}>
+                <div className={styles.contactIcon} aria-hidden="true">📞</div>
                 <div>
                   <h4>Teléfono</h4>
                   <a href="tel:+593991234567">+593 99 123 4567</a>
                 </div>
               </div>
 
-              <div className="contact-method">
-                <div className="contact-icon" aria-hidden="true">🕒</div>
+              <div className={styles.contactMethod}>
+                <div className={styles.contactIcon} aria-hidden="true">🕒</div>
                 <div>
                   <h4>Horario de atención</h4>
                   <p>Lunes a Viernes: 9:00 AM - 6:00 PM</p>
@@ -296,20 +306,20 @@ const Contacto = () => {
             </div>
 
             {/* Social Media */}
-            <div className="info-card">
+            <div className={styles.infoCard}>
               <h3>Síguenos en redes</h3>
-              <div className="social-grid">
+              <div className={styles.socialGrid}>
                 {redesSociales.map((red, index) => (
                   <a
                     key={index}
                     href={red.url}
-                    className="social-item"
+                    className={styles.socialItem}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{ backgroundColor: red.color }}
                     aria-label={`${red.nombre} (se abre en nueva pestaña)`}
                   >
-                    <span className="social-icon" aria-hidden="true">{red.icono}</span>
+                    <span className={styles.socialIcon} aria-hidden="true">{red.icono}</span>
                     <span>{red.nombre}</span>
                   </a>
                 ))}
@@ -319,11 +329,11 @@ const Contacto = () => {
         </div>
 
         {/* FAQ Section */}
-        <section className="faq-section">
-          <h2-contacto1>Preguntas frecuentes</h2-contacto1>
-          <div className="faq-grid">
+        <section className={styles.faqSection}>
+          <h2>Preguntas frecuentes</h2>
+          <div className={styles.faqGrid}>
             {faqs.map((faq, index) => (
-              <div key={index} className="faq-item">
+              <div key={index} className={styles.faqItem}>
                 <h3>{faq.pregunta}</h3>
                 <p>{faq.respuesta}</p>
               </div>
@@ -331,24 +341,24 @@ const Contacto = () => {
           </div>
         </section>
       </main>
-      <section className="contactosection1-cta">
-        <div className="contactosection-content">
-          <h2-contacto>¿Listo para unirte a nuestro equipo?</h2-contacto>
+      
+      <section className={styles.contactosection1Cta}>
+        <div className={styles.contactosectionContent}>
+          <h2>¿Listo para unirte a nuestro equipo?</h2>
           <p>
             Si no encuentras una vacante que se ajuste a tu perfil pero crees que puedes contribuir,
             envíanos tu CV y te contactaremos cuando tengamos una oportunidad.
           </p>
-          <div className="contactosection-buttons">
-            <button className="primarycontacto-cta">Enviar CV</button>
-            <button className="secondarycontacto-cta">Contactar Reclutador</button>
+          <div className={styles.contactosectionButtons}>
+            <button className={styles.primarycontactoCta}>Enviar CV</button>
+            <button className={styles.secondarycontactoCta}>Contactar Reclutador</button>
           </div>
         </div>
       </section>
+      
       <Footer />
     </div>
-
   );
 };
-
 
 export default Contacto;

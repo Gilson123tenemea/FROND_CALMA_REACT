@@ -10,10 +10,12 @@
   --black: #212529;
   --success: #28a745;
   --error: #dc3545;
+  --primary-accent: #3a86ff;
+  --secondary-accent: #8338ec;
 }
 
 /* Estilos generales */
-.empleo-page {
+.page {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: var(--black);
   background-color: var(--light-gray);
@@ -22,40 +24,75 @@
 }
 
 /* Hero Section */
-.empleo-hero {
+.hero {
   background: linear-gradient(135deg, var(--electric-blue), var(--electric-blue-dark));
   color: var(--white);
-  padding: 100px 0;
+  padding: 60px 0;
   position: relative;
   overflow: hidden;
+}
+
+.heroContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: 30px;
 }
 
-.hero-content {
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 0 80px;
-  position: relative;
-  z-index: 2;
+.heroText {
+  flex: 1;
   text-align: center;
+  z-index: 2;
 }
 
-.empleo-titulo {
+.heroImageContainer {
+  flex: 1;
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+.heroImage {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 12px;
+  transition: transform 0.5s ease;
+}
+
+.heroImage:hover {
+  transform: scale(1.02);
+}
+
+.title {
   font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 700;
   margin-bottom: 20px;
   line-height: 1.2;
+  background: linear-gradient(to right, #fff, #c9d6ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.empleo-subtitulo {
+.subtitle {
   font-size: clamp(1rem, 2vw, 1.25rem);
-  max-width: 700px;
+  max-width: 600px;
   margin: 0 auto 30px;
   opacity: 0.9;
 }
 
-.hero-cta {
+.heroButton {
   background-color: var(--white);
   color: var(--electric-blue);
   border: none;
@@ -66,48 +103,45 @@
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-.hero-cta:hover {
+.heroButton:hover {
   background-color: rgba(255, 255, 255, 0.9);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.hero-image {
-  display: none;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
 /* Ofertas Section */
-.empleo-ofertas {
+.jobOffers {
   padding: 80px 20px;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-.section-header {
+.sectionHeader {
   text-align: center;
   margin-bottom: 50px;
 }
 
-.section-header h2-empleo {
+.sectionHeader h2 {
   font-size: clamp(1.75rem, 3vw, 2.2rem);
   color: var(--electric-blue-dark);
   margin-bottom: 15px;
 }
 
-.section-header p {
+.sectionHeader p {
   color: var(--dark-gray);
   font-size: 1.1rem;
 }
 
-.ofertas-grid {
+.offersGrid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 30px;
 }
 
-.oferta-card {
+.offerCard {
   background: var(--white);
   border-radius: 12px;
   overflow: hidden;
@@ -115,19 +149,19 @@
   transition: all 0.3s ease;
 }
 
-.oferta-card:hover {
+.offerCard:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
-.card-image {
+.cardImage {
   height: 200px;
   background-size: cover;
   background-position: center;
   position: relative;
 }
 
-.card-badge {
+.cardBadge {
   position: absolute;
   top: 15px;
   right: 15px;
@@ -139,17 +173,17 @@
   font-weight: 600;
 }
 
-.card-content {
+.cardContent {
   padding: 25px;
 }
 
-.card-content h3 {
+.cardContent h3 {
   font-size: 1.4rem;
   color: var(--electric-blue-dark);
   margin-bottom: 10px;
 }
 
-.ubicacion {
+.location {
   color: var(--dark-gray);
   margin-bottom: 15px;
   display: flex;
@@ -157,23 +191,27 @@
   gap: 5px;
 }
 
-.requisitos h4 {
+.requirements {
+  margin-bottom: 20px;
+}
+
+.requirements h4 {
   font-size: 1.1rem;
   margin: 20px 0 10px;
   color: var(--electric-blue);
 }
 
-.requisitos ul {
+.requirements ul {
   padding-left: 20px;
   margin-bottom: 25px;
 }
 
-.requisitos li {
+.requirements li {
   margin-bottom: 8px;
   color: var(--black);
 }
 
-.card-cta {
+.cardButton {
   background-color: var(--electric-blue);
   color: var(--white);
   border: none;
@@ -189,139 +227,169 @@
   justify-content: center;
 }
 
-.card-cta:hover {
+.cardButton:hover {
   background-color: var(--electric-blue-dark);
 }
 
-.card-cta .arrow {
+.arrow {
   transition: transform 0.3s ease;
 }
 
-.card-cta:hover .arrow {
+.cardButton:hover .arrow {
   transform: translateX(3px);
 }
 
 /* CTA Section */
-.empleo-cta {
+.ctaSection {
   background: linear-gradient(135deg, var(--electric-blue-light), var(--electric-blue));
   color: var(--white);
   padding: 80px 20px;
   text-align: center;
 }
 
-.cta-content {
+.ctaContent {
   max-width: 800px;
   margin: 0 auto;
 }
 
-.empleo-cta h2-empleo {
+.ctaSection h2 {
   font-size: clamp(1.5rem, 3vw, 2rem);
   margin-bottom: 20px;
 }
 
-.empleo-cta p {
+.ctaSection p {
   margin-bottom: 30px;
   opacity: 0.9;
   font-size: 1.1rem;
 }
 
-.cta-buttons {
+.ctaButtons {
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
   justify-content: center;
 }
 
-.primary-cta {
+.primaryButton {
   background-color: var(--white);
   color: var(--electric-blue);
   border: none;
   padding: 12px 30px;
-  border-radius: 8px;
+  border-radius: 30px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-.primary-cta:hover {
+.primaryButton:hover {
   background-color: rgba(255, 255, 255, 0.9);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
-.secondary-cta {
+.secondaryButton {
   background-color: transparent;
   color: var(--white);
   border: 2px solid var(--white);
   padding: 12px 30px;
-  border-radius: 8px;
+  border-radius: 30px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-.secondary-cta:hover {
+.secondaryButton:hover {
   background-color: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
 /* Media Queries para pantallas más grandes */
 @media (min-width: 768px) {
-  .empleo-hero {
-    padding: 120px 0;
+  .hero {
+    padding: 80px 0;
   }
   
-  .hero-content {
+  .heroContent {
+    flex-direction: row;
+    padding: 0 40px;
+    align-items: center;
+    gap: 50px;
+  }
+  
+  .heroText {
     text-align: left;
-    padding-left: 40px;
+  }
+  
+  .heroImageContainer {
     max-width: 50%;
   }
   
-  .hero-image {
-    display: block;
-    position: absolute;
-    right: 5%;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 40%;
-    height: 80%;
-    background-image: url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80');
-    background-size: cover;
-    background-position: center;
-    border-radius: 12px;
-    opacity: 0.9;
+  .heroImage {
+    max-height: 500px;
+    width: 100%;
   }
   
-  .ofertas-grid {
+  .offersGrid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (min-width: 1024px) {
-  .ofertas-grid {
-    grid-template-columns: repeat(3, 1fr);
+  .hero {
+    padding: 100px 0;
   }
   
-  .empleo-hero {
-    padding: 150px 0;
+  .heroContent {
+    gap: 80px;
+  }
+  
+  .heroImage {
+    max-height: 500px;
+  }
+  
+  .offersGrid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
 /* Mejoras para modo oscuro */
 @media (prefers-color-scheme: dark) {
-  .empleo-page {
+  .page {
     background-color: #121212;
+    color: #f0f0f0;
   }
   
-  .oferta-card {
+  .offerCard {
     background-color: #1e1e1e;
     color: #f0f0f0;
   }
   
-  .requisitos li {
+  .cardContent h3 {
+    color: var(--electric-blue-light);
+  }
+  
+  .requirements li {
     color: #e0e0e0;
   }
   
-  .ubicacion {
+  .location {
     color: #b0b0b0;
+  }
+  
+  .sectionHeader h2, 
+  .sectionHeader p,
+  .ctaSection h2 {
+    color: #f0f0f0;
+  }
+  
+  .formGroup input,
+  .formGroup textarea,
+  .formSelect {
+    background-color: #2d2d2d;
+    color: var(--white);
+    border-color: #444;
   }
 }

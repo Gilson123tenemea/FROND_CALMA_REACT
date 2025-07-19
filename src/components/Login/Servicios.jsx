@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './Servicios.css';
+import styles from './Servicios.module.css';
 import Footer from "../Footer/footer";
 import Navbar from '../Shared/Navbar';
 
@@ -53,53 +53,52 @@ const Servicios = () => {
   };
 
   return (
-    <div className="servicios-page">
+    <div className={styles.serviciosPage}>
       <Navbar />
 
-      {/* Reemplaza el servicios-hero actual con este código */}
-      <div className="servicios-hero">
-        <div className="hero-container">
-          <div className="hero-text-content">
+      <div className={styles.serviciosHero}>
+        <div className={styles.heroContainer}>
+          <div className={styles.heroTextContent}>
             <h1>Nuestros Servicios</h1>
             <p>
               <strong>CALMA</strong> es una plataforma que conecta a personas apasionadas por el cuidado con familias que necesitan apoyo para el bienestar de sus adultos mayores.
             </p>
           </div>
-          <div className="hero-image-container">
+          <div className={styles.heroImageContainer}>
             <img
               src="https://images.unsplash.com/photo-1581056771107-24ca5f033842?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
               alt="Cuidadora ayudando a adulto mayor"
-              className="hero-side-image"
+              className={styles.heroSideImage}
             />
           </div>
         </div>
       </div>
 
-      <div className="servicios-container">
-        <div className="servicios-grid">
+      <div className={styles.serviciosContainer}>
+        <div className={styles.serviciosGrid}>
           {servicios.map((servicio) => (
-            <div key={servicio.id} className="servicio-card">
+            <div key={servicio.id} className={styles.servicioCard}>
               <div
-                className="servicio-card-image"
+                className={styles.servicioCardImage}
                 style={{ backgroundImage: `url(${servicio.imagen})` }}
               ></div>
-              <div className="servicio-card-content">
-                <div className="servicio-card-header">
-                  <span className="servicio-icon">{servicio.icono}</span>
+              <div className={styles.servicioCardContent}>
+                <div className={styles.servicioCardHeader}>
+                  <span className={styles.servicioIcon}>{servicio.icono}</span>
                   <h3>{servicio.titulo}</h3>
                 </div>
 
-                <p className="servicio-description">{servicio.descripcion}</p>
+                <p className={styles.servicioDescription}>{servicio.descripcion}</p>
 
                 <button
-                  className="servicio-button"
+                  className={styles.servicioButton}
                   onClick={() => toggleServicio(servicio.id)}
                 >
                   {servicioSeleccionado === servicio.id ? 'Ver menos' : 'Ver más detalles'}
                 </button>
 
                 {servicioSeleccionado === servicio.id && (
-                  <div className="servicio-details">
+                  <div className={styles.servicioDetails}>
                     <ul>
                       {servicio.detalles.map((detalle, index) => (
                         <li key={index}>{detalle}</li>
@@ -112,13 +111,13 @@ const Servicios = () => {
           ))}
         </div>
       </div>
-      <div className="servicios-cta">
-        <div className="cta-content">
-          <h2-servicios>¿Listo para comenzar?</h2-servicios>
+      <div className={styles.serviciosCta}>
+        <div className={styles.ctaContent}>
+          <h2 className={styles.ctaTitle}>¿Listo para comenzar?</h2>
           <p>Únete a nuestra comunidad y descubre cómo CALMA puede ayudarte</p>
-          <div className="cta-buttons">
-            <button className="cta-button-primary">Buscar Cuidador</button>
-            <button className="cta-button-secondary">Ser Cuidador</button>
+          <div className={styles.ctaButtons}>
+            <button className={styles.ctaButtonPrimary}>Buscar Cuidador</button>
+            <button className={styles.ctaButtonSecondary}>Ser Cuidador</button>
           </div>
         </div>
       </div>

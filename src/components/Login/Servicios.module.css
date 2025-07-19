@@ -13,7 +13,7 @@
 }
 
 /* Estilos generales */
-.servicios-page {
+.serviciosPage {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: var(--black);
   background-color: var(--light-gray);
@@ -22,14 +22,14 @@
 }
 
 /* Hero Section - Diseño Mejorado */
-.servicios-hero {
+.serviciosHero {
   background: linear-gradient(135deg, var(--electric-blue), var(--electric-blue-dark));
   color: var(--white);
   padding: 80px 20px;
-  margin-top: 60px;
+  margin-top: 0px;
 }
 
-.hero-container {
+.heroContainer {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
@@ -38,19 +38,19 @@
   gap: 60px;
 }
 
-.hero-text-content {
+.heroTextContent {
   flex: 1;
   text-align: center;
 }
 
-.hero-image-container {
+.heroImageContainer {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.hero-side-image {
+.heroSideImage {
   width: 100%;
   max-width: 400px;
   border-radius: 12px;
@@ -58,64 +58,64 @@
   transition: transform 0.3s ease;
 }
 
-.hero-side-image:hover {
+.heroSideImage:hover {
   transform: scale(1.03);
 }
 
-.servicios-hero h1 {
+.serviciosHero h1 {
   font-size: clamp(2rem, 5vw, 2.8rem);
   margin-bottom: 1.5rem;
   line-height: 1.2;
 }
 
-.servicios-hero p {
+.serviciosHero p {
   font-size: clamp(1rem, 2vw, 1.2rem);
   max-width: 600px;
   margin: 0 auto;
   line-height: 1.6;
 }
 
-.servicios-hero strong {
+.serviciosHero strong {
   color: var(--white);
   font-weight: 700;
 }
 
 /* Responsive Design */
 @media (min-width: 768px) {
-  .hero-container {
+  .heroContainer {
     flex-direction: row;
     align-items: center;
     gap: 80px;
   }
   
-  .hero-text-content {
+  .heroTextContent {
     text-align: left;
   }
   
-  .hero-side-image {
+  .heroSideImage {
     max-width: 450px;
   }
 }
 
 @media (min-width: 1024px) {
-  .servicios-hero {
+  .serviciosHero {
     padding: 80px 40px;
   }
   
-  .hero-container {
+  .heroContainer {
     gap: 80px;
   }
 }
 
 /* Servicios Container */
-.servicios-container {
+.serviciosContainer {
   max-width: 1200px;
   margin: 0 auto;
   padding: 60px 20px;
 }
 
 /* Servicios Grid */
-.servicios-grid {
+.serviciosGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 30px;
@@ -123,7 +123,7 @@
 }
 
 /* Servicio Card */
-.servicio-card {
+.servicioCard {
   background: var(--white);
   border-radius: 12px;
   overflow: hidden;
@@ -131,28 +131,28 @@
   transition: all 0.3s ease;
 }
 
-.servicio-card:hover {
+.servicioCard:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
-.servicio-card-image {
+.servicioCardImage {
   height: 200px;
   background-size: cover;
   background-position: center;
 }
 
-.servicio-card-content {
+.servicioCardContent {
   padding: 25px;
 }
 
-.servicio-card-header {
+.servicioCardHeader {
   display: flex;
   align-items: center;
   margin-bottom: 20px;
 }
 
-.servicio-icon {
+.servicioIcon {
   font-size: 2rem;
   background-color: var(--electric-blue);
   color: var(--white);
@@ -165,19 +165,19 @@
   margin-right: 15px;
 }
 
-.servicio-card h3 {
+.servicioCard h3 {
   font-size: 1.4rem;
   color: var(--electric-blue-dark);
   margin: 0;
 }
 
-.servicio-description {
+.servicioDescription {
   color: var(--dark-gray);
   margin-bottom: 20px;
   line-height: 1.6;
 }
 
-.servicio-button {
+.servicioButton {
   background-color: var(--electric-blue);
   color: var(--white);
   border: none;
@@ -189,31 +189,31 @@
   width: 100%;
 }
 
-.servicio-button:hover {
+.servicioButton:hover {
   background-color: var(--electric-blue-dark);
 }
 
-.servicio-details {
+.servicioDetails {
   margin-top: 20px;
   padding-top: 20px;
   border-top: 1px solid var(--medium-gray);
   animation: slideDown 0.3s ease;
 }
 
-.servicio-details ul {
+.servicioDetails ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.servicio-details li {
+.servicioDetails li {
   padding: 8px 0;
   color: var(--black);
   position: relative;
   padding-left: 25px;
 }
 
-.servicio-details li::before {
+.servicioDetails li::before {
   content: '✓';
   position: absolute;
   left: 0;
@@ -233,7 +233,7 @@
 }
 
 /* CTA Section */
-.servicios-cta {
+.serviciosCta {
   background: linear-gradient(135deg, var(--electric-blue-light), var(--electric-blue));
   color: var(--white);
   padding: 50px;
@@ -242,30 +242,30 @@
   line-height: 1.6;
 }
 
-.cta-content {
+.ctaContent {
   max-width: 800px;
   margin: 0 auto;
 }
 
-.servicios-cta h2-servicios {
+.ctaTitle {
   font-size: 2rem;
   margin-bottom: 15px;
 }
 
-.servicios-cta p {
+.serviciosCta p {
   font-size: 1.1rem;
   margin-bottom: 30px;
   opacity: 0.9;
 }
 
-.cta-buttons {
+.ctaButtons {
   display: flex;
   gap: 15px;
   justify-content: center;
   flex-wrap: wrap;
 }
 
-.cta-button-primary, .cta-button-secondary {
+.ctaButtonPrimary, .ctaButtonSecondary {
   padding: 12px 30px;
   border-radius: 8px;
   font-weight: 600;
@@ -274,79 +274,79 @@
   min-width: 180px;
 }
 
-.cta-button-primary {
+.ctaButtonPrimary {
   background-color: var(--white);
   color: var(--electric-blue);
   border: none;
 }
 
-.cta-button-primary:hover {
+.ctaButtonPrimary:hover {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
 }
 
-.cta-button-secondary {
+.ctaButtonSecondary {
   background-color: transparent;
   color: var(--white);
   border: 2px solid var(--white);
 }
 
-.cta-button-secondary:hover {
+.ctaButtonSecondary:hover {
   background-color: rgba(255, 255, 255, 0.1);
   transform: translateY(-2px);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .servicios-hero {
+  .serviciosHero {
     padding: 80px 20px;
   }
   
-  .servicios-hero h1 {
+  .serviciosHero h1 {
     font-size: 2rem;
   }
   
-  .servicios-hero p {
+  .serviciosHero p {
     font-size: 1rem;
   }
   
-  .servicios-container {
+  .serviciosContainer {
     padding: 40px 15px;
   }
   
-  .servicios-grid {
+  .serviciosGrid {
     grid-template-columns: 1fr;
   }
   
-  .cta-buttons {
+  .ctaButtons {
     flex-direction: column;
     align-items: center;
   }
   
-  .cta-button-primary, .cta-button-secondary {
+  .ctaButtonPrimary, .ctaButtonSecondary {
     width: 100%;
   }
 }
 
 /* Modo oscuro */
 @media (prefers-color-scheme: dark) {
-  .servicios-page {
+  .serviciosPage {
     background-color: #121212;
   }
   
-  .servicio-card {
+  .servicioCard {
     background-color: #1e1e1e;
   }
   
-  .servicio-card h3 {
+  .servicioCard h3 {
     color: var(--electric-blue-light);
   }
   
-  .servicio-description, .servicio-details li {
+  .servicioDescription, .servicioDetails li {
     color: #e0e0e0;
   }
   
-  .servicio-details {
+  .servicioDetails {
     border-top-color: #333;
   }
 }

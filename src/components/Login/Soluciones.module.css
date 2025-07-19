@@ -1,8 +1,8 @@
 /* Variables de color */
 :root {
-  --electric-blue: #0050d8;         /* Azul eléctrico vibrante y profundo */
-  --electric-blue-light: #4d94ff;   /* Azul claro (puedes dejar este igual) */
-  --electric-blue-dark: #002a80;   
+  --electric-blue: #0a1f44;
+  --electric-blue-light: #2a4a8a;
+  --electric-blue-dark: #06122b;   
   --white: #ffffff;
   --light-gray: #f5f7fa;
   --medium-gray: #e1e5eb;
@@ -10,105 +10,150 @@
   --black: #212529;
   --success: #28a745;
   --error: #dc3545;
+  --primary-accent: #3a86ff;
+  --secondary-accent: #8338ec;
 }
 
 /* Estilos generales */
-.soluciones-page {
+.solucionesPage {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: var(--black);
   background-color: var(--light-gray);
   min-height: 100vh;
   line-height: 1.6;
-  margin-top: 10px;
 }
 
 /* Hero Section */
-.soluciones-hero {
-  background: linear-gradient( var(--electric-blue-dark));
+.solucionesHero {
+  background: linear-gradient(to right, var(--electric-blue-dark), var(--electric-blue));
   color: var(--white);
-  padding: 100px 20px;
+  padding: 80px 20px;
   position: relative;
   overflow: hidden;
+  margin-top: 0px;
+}
+
+.heroContent {
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  margin-top: 60px;
+  gap: 30px;
 }
 
-.hero-content {
-  max-width: 800px;
+.heroText {
+  flex: 1;
+  text-align: center;
   z-index: 2;
 }
 
-.soluciones-hero h1 {
-  font-size: 2.8rem;
+.heroImageContainer {
+  flex: 1;
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+.heroImage {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 12px;
+  transition: transform 0.5s ease;
+}
+
+.heroImage:hover {
+  transform: scale(1.02);
+}
+
+.heroTitle {
+  font-size: clamp(2rem, 5vw, 2.8rem);
   font-weight: 700;
   margin-bottom: 20px;
   line-height: 1.2;
+  background: linear-gradient(to right, #fff, #c9d6ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.soluciones-hero p {
-  font-size: 1.5rem;
-  font-weight: 500;
-  margin-bottom: 30px;
+.heroSubtitle {
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  max-width: 700px;
+  margin: 0 auto 30px;
   opacity: 0.9;
 }
 
-.hero-description {
+.heroDescription {
   max-width: 700px;
-  margin: 0 auto;
+  margin: 0 auto 30px;
 }
 
-.hero-description p {
+.heroDescription p {
   font-size: 1.1rem;
   line-height: 1.8;
+  opacity: 0.9;
 }
 
-.hero-image {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 20%;
-  height: 100%;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-                    url('https://images.unsplash.com/photo-1573497620053-ea5300f94f21?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80');
-  background-size: cover;
-  background-position: center;
+.heroButton {
+  background-color: var(--white);
+  color: var(--electric-blue);
+  border: none;
+  padding: 12px 30px;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
+.heroButton:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
 
 /* Section Header */
-.section-header {
+.sectionHeader {
   text-align: center;
   margin-bottom: 50px;
 }
 
-.section-header h2-soluciones {
+.sectionTitle {
   font-size: 2.2rem;
-  color: var(--electric-blue-dark);
+  color: var(--electric-blue);
   margin-bottom: 15px;
 }
 
-.section-header p {
+.sectionHeader p {
   color: var(--dark-gray);
   font-size: 1.1rem;
 }
 
 /* Solutions Grid */
-.soluciones-grid-section {
+.solucionesGridSection {
   padding: 80px 20px;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-.soluciones-grid {
+.solucionesGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 30px;
 }
 
-.solucion-card {
+.solucionCard {
   background: var(--white);
   border-radius: 12px;
   overflow: hidden;
@@ -116,23 +161,23 @@
   transition: all 0.3s ease;
 }
 
-.solucion-card:hover {
+.solucionCard:hover {
   transform: translateY(-10px);
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
 }
 
-.card-image {
+.cardImage {
   height: 200px;
   background-size: cover;
   background-position: center;
   position: relative;
 }
 
-.card-content {
+.cardContent {
   padding: 25px;
 }
 
-.card-icon {
+.cardIcon {
   width: 60px;
   height: 60px;
   background: linear-gradient(135deg, var(--electric-blue), var(--electric-blue-dark));
@@ -143,35 +188,35 @@
   margin-top: 10px;
   margin-bottom: 20px;
   color: var(--white);
-  box-shadow: 0 5px 15px rgba(0, 102, 255, 0.3);
+  box-shadow: 0 5px 15px rgba(10, 31, 68, 0.3);
 }
 
-.solucion-card h3 {
+.solucionCard h3 {
   font-size: 1.4rem;
-  color: var(--electric-blue-dark);
+  color: var(--electric-blue);
   margin-bottom: 15px;
 }
 
-.card-description {
+.cardDescription {
   color: var(--dark-gray);
   margin-bottom: 20px;
   line-height: 1.6;
 }
 
-.card-features {
+.cardFeatures {
   list-style: none;
   padding: 0;
   margin-bottom: 25px;
 }
 
-.card-features li {
+.cardFeatures li {
   padding: 8px 0;
   padding-left: 25px;
   position: relative;
   color: var(--black);
 }
 
-.card-features li::before {
+.cardFeatures li::before {
   content: "✓";
   position: absolute;
   left: 0;
@@ -179,7 +224,7 @@
   font-weight: bold;
 }
 
-.card-button {
+.cardButton {
   background: var(--electric-blue);
   color: var(--white);
   border: none;
@@ -191,25 +236,25 @@
   width: 100%;
 }
 
-.card-button:hover {
+.cardButton:hover {
   background: var(--electric-blue-dark);
 }
 
 /* Team Section */
-.team-section {
+.teamSection {
   padding: 80px 20px;
   background: var(--white);
   max-width: 1200px;
   margin: 0 auto;
 }
 
-.team-grid {
+.teamGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
 }
 
-.team-card {
+.teamCard {
   height: 250px;
   border-radius: 12px;
   overflow: hidden;
@@ -217,7 +262,7 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
 }
 
-.member-image {
+.memberImage {
   width: 100%;
   height: 100%;
   background-size: cover;
@@ -225,11 +270,11 @@
   transition: transform 0.5s ease;
 }
 
-.team-card:hover .member-image {
+.teamCard:hover .memberImage {
   transform: scale(1.1);
 }
 
-.member-overlay {
+.memberOverlay {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -240,36 +285,37 @@
   text-align: center;
 }
 
-.member-overlay h3 {
+.memberOverlay h3 {
   font-size: 1.2rem;
   margin: 0;
 }
 
 /* CTA Section */
-.cta-section {
+.ctaSection {
   background: linear-gradient(135deg, var(--electric-blue), var(--electric-blue-dark));
   color: var(--white);
   padding: 80px 20px;
   text-align: center;
 }
 
-.cta-content {
+.ctaContent {
   max-width: 800px;
   margin: 0 auto;
 }
 
-.cta-section h2-soluciones {
+.ctaSection .sectionTitle {
   font-size: 2rem;
   margin-bottom: 20px;
+  color: var(--white);
 }
 
-.cta-section p {
+.ctaSection p {
   font-size: 1.2rem;
   margin-bottom: 30px;
   opacity: 0.9;
 }
 
-.cta-button {
+.ctaButton {
   background: var(--white);
   color: var(--electric-blue);
   border: none;
@@ -283,13 +329,13 @@
   gap: 10px;
 }
 
-.cta-button:hover {
+.ctaButton:hover {
   transform: translateY(-3px);
   box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
 }
 
 /* Modal */
-.modal-overlay {
+.modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -303,7 +349,7 @@
   backdrop-filter: blur(5px);
 }
 
-.modal-content {
+.modalContent {
   background: var(--white);
   border-radius: 12px;
   overflow: hidden;
@@ -315,7 +361,7 @@
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
 
-.modal-close {
+.modalClose {
   position: absolute;
   top: 15px;
   right: 15px;
@@ -333,56 +379,56 @@
   transition: all 0.3s ease;
 }
 
-.modal-close:hover {
+.modalClose:hover {
   background: rgba(0, 0, 0, 0.4);
 }
 
-.modal-image {
+.modalImage {
   height: 250px;
   background-size: cover;
   background-position: center;
 }
 
-.modal-details {
+.modalDetails {
   padding: 30px;
   overflow-y: auto;
 }
 
-.modal-details h3 {
+.modalDetails h3 {
   font-size: 1.8rem;
-  color: var(--electric-blue-dark);
+  color: var(--electric-blue);
   margin-bottom: 15px;
 }
 
-.modal-details p {
+.modalDetails p {
   color: var(--dark-gray);
   margin-bottom: 25px;
   line-height: 1.7;
 }
 
-.modal-features {
+.modalFeatures {
   margin-bottom: 30px;
 }
 
-.modal-features h4 {
+.modalFeatures h4 {
   font-size: 1.2rem;
-  color: var(--electric-blue-dark);
+  color: var(--electric-blue);
   margin-bottom: 15px;
 }
 
-.modal-features ul {
+.modalFeatures ul {
   list-style: none;
   padding: 0;
 }
 
-.modal-features li {
+.modalFeatures li {
   padding: 10px 0;
   padding-left: 30px;
   position: relative;
   color: var(--black);
 }
 
-.modal-features li::before {
+.modalFeatures li::before {
   content: "✓";
   position: absolute;
   left: 0;
@@ -390,7 +436,7 @@
   font-weight: bold;
 }
 
-.modal-button {
+.modalButton {
   background: var(--electric-blue);
   color: var(--white);
   border: none;
@@ -402,61 +448,65 @@
   width: 100%;
 }
 
-.modal-button:hover {
+.modalButton:hover {
   background: var(--electric-blue-dark);
 }
 
 /* Responsive Design */
 @media (min-width: 768px) {
-  .soluciones-hero {
-    padding: 120px 20px;
-    flex-direction: row;
-    text-align: left;
+  .solucionesHero {
+    padding: 100px 20px;
   }
 
-  .hero-content {
+  .heroContent {
+    flex-direction: row;
+    gap: 50px;
+  }
+
+  .heroText {
+    text-align: left;
     max-width: 50%;
   }
 
-  .hero-image {
-    opacity: 0.4;
+  .heroImageContainer {
+    max-width: 45%;
   }
 
-  .modal-content {
+  .modalContent {
     grid-template-columns: 1fr 1fr;
   }
 
-  .modal-image {
+  .modalImage {
     height: auto;
   }
 }
 
 @media (min-width: 1024px) {
-  .soluciones-hero {
-    padding: 150px 20px;
+  .solucionesHero {
+    padding: 120px 20px;
   }
 
-  .hero-image {
-    opacity: 0.6;
+  .heroContent {
+    gap: 80px;
   }
 }
 
 /* Dark Mode */
 @media (prefers-color-scheme: dark) {
-  .soluciones-page {
+  .solucionesPage {
     background-color: #121212;
   }
 
-  .solucion-card, .team-section {
+  .solucionCard, .teamSection {
     background-color: #1e1e1e;
     color: #f0f0f0;
   }
 
-  .card-features li, .modal-features li {
+  .cardFeatures li, .modalFeatures li {
     color: #e0e0e0;
   }
 
-  .card-description, .modal-details p {
+  .cardDescription, .modalDetails p {
     color: #b0b0b0;
   }
 }

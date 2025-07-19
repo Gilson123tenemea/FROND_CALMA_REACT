@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Clock, Home, Phone, DollarSign, Users, Heart, X } from 'lucide-react';
-import './Soluciones.css';
+import styles from './Soluciones.module.css';
 import Footer from "../Footer/footer";
 import Navbar from '../Shared/Navbar';
 
@@ -104,50 +104,59 @@ const Soluciones = () => {
   ];
 
   return (
-    <div className="soluciones-page">
+    <div className={styles.solucionesPage}>
       <Navbar />
 
       {/* Hero Banner */}
-      <header className="soluciones-hero">
-        <div className="hero-content">
-          <h1>Soluciones de cuidado personalizado</h1>
-          <p>Encuentra el apoyo perfecto para tus seres queridos</p>
-          <div className="hero-description">
-            <p>
-              En CALMA entendemos que cada familia tiene necesidades únicas.
-              Nuestras soluciones flexibles se adaptan a tu situación particular,
-              brindando la tranquilidad que mereces.
-            </p>
+      <header className={styles.solucionesHero}>
+        <div className={styles.heroContent}>
+          <div className={styles.heroText}>
+            <h1 className={styles.heroTitle}>Soluciones de cuidado personalizado</h1>
+            <p className={styles.heroSubtitle}>Encuentra el apoyo perfecto para tus seres queridos</p>
+            <div className={styles.heroDescription}>
+              <p>
+                En CALMA entendemos que cada familia tiene necesidades únicas.
+                Nuestras soluciones flexibles se adaptan a tu situación particular,
+                brindando la tranquilidad que mereces.
+              </p>
+            </div>
+            <button className={styles.heroButton}>Conocer más</button>
+          </div>
+          <div className={styles.heroImageContainer}>
+            <img 
+              src="https://images.unsplash.com/photo-1573497620053-ea5300f94f21?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" 
+              alt="Profesional cuidando a un adulto mayor" 
+              className={styles.heroImage}
+            />
           </div>
         </div>
-        <div className="hero-image"></div>
       </header>
 
       {/* Solutions Grid */}
-      <section className="soluciones-grid-section">
-        <div className="section-header">
-          <h2-soluciones>Nuestras soluciones</h2-soluciones>
+      <section className={styles.solucionesGridSection}>
+        <div className={styles.sectionHeader}>
+          <h2 className={styles.sectionTitle}>Nuestras soluciones</h2>
           <p>Descubre cómo podemos ayudarte</p>
         </div>
 
-        <div className="soluciones-grid">
+        <div className={styles.solucionesGrid}>
           {solutions.map((solution) => (
-            <div key={solution.id} className="solucion-card">
+            <div key={solution.id} className={styles.solucionCard}>
               <div
-                className="card-image"
+                className={styles.cardImage}
                 style={{ backgroundImage: `url(${solution.image})` }}
               ></div>
-              <div className="card-content">
-                <div className="card-icon">{solution.icon}</div>
+              <div className={styles.cardContent}>
+                <div className={styles.cardIcon}>{solution.icon}</div>
                 <h3>{solution.title}</h3>
-                <p className="card-description">{solution.description}</p>
-                <ul className="card-features">
+                <p className={styles.cardDescription}>{solution.description}</p>
+                <ul className={styles.cardFeatures}>
                   {solution.features.map((feature, index) => (
                     <li key={index}>{feature}</li>
                   ))}
                 </ul>
                 <button
-                  className="card-button"
+                  className={styles.cardButton}
                   onClick={() => setSelectedSolution(solution.id)}
                 >
                   Más información
@@ -159,20 +168,20 @@ const Soluciones = () => {
       </section>
 
       {/* Team Section */}
-      <section className="team-section">
-        <div className="section-header">
-          <h2-soluciones>Nuestro equipo de profesionales</h2-soluciones>
+      <section className={styles.teamSection}>
+        <div className={styles.sectionHeader}>
+          <h2 className={styles.sectionTitle}>Nuestro equipo de profesionales</h2>
           <p>Profesionales capacitados con vocación de servicio</p>
         </div>
 
-        <div className="team-grid">
+        <div className={styles.teamGrid}>
           {teamPhotos.map((member) => (
-            <div key={member.id} className="team-card">
+            <div key={member.id} className={styles.teamCard}>
               <div
-                className="member-image"
+                className={styles.memberImage}
                 style={{ backgroundImage: `url(${member.image})` }}
               ></div>
-              <div className="member-overlay">
+              <div className={styles.memberOverlay}>
                 <h3>{member.title}</h3>
               </div>
             </div>
@@ -181,11 +190,11 @@ const Soluciones = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="cta-section">
-        <div className="cta-content">
-          <h2-soluciones>¿Necesitas ayuda para elegir?</h2-soluciones>
+      <section className={styles.ctaSection}>
+        <div className={styles.ctaContent}>
+          <h2 className={styles.sectionTitle}>¿Necesitas ayuda para elegir?</h2>
           <p>Nuestros especialistas te guiarán para encontrar la mejor solución</p>
-          <button className="cta-button">
+          <button className={styles.ctaButton}>
             <Heart size={20} />
             <span>Contactar ahora</span>
           </button>
@@ -194,24 +203,24 @@ const Soluciones = () => {
 
       {/* Modal */}
       {selectedSolution && (
-        <div className="modal-overlay" onClick={() => setSelectedSolution(null)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className={styles.modalOverlay} onClick={() => setSelectedSolution(null)}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
             <button
-              className="modal-close"
+              className={styles.modalClose}
               onClick={() => setSelectedSolution(null)}
             >
               <X size={24} />
             </button>
 
-            <div className="modal-image" style={{
+            <div className={styles.modalImage} style={{
               backgroundImage: `url(${solutions.find(s => s.id === selectedSolution)?.image})`
             }}></div>
 
-            <div className="modal-details">
+            <div className={styles.modalDetails}>
               <h3>{solutions.find(s => s.id === selectedSolution)?.title}</h3>
               <p>{solutions.find(s => s.id === selectedSolution)?.description}</p>
 
-              <div className="modal-features">
+              <div className={styles.modalFeatures}>
                 <h4>Beneficios:</h4>
                 <ul>
                   {solutions.find(s => s.id === selectedSolution)?.features.map((feature, index) => (
@@ -220,14 +229,14 @@ const Soluciones = () => {
                 </ul>
               </div>
 
-              <button className="modal-button">
+              <button className={styles.modalButton}>
                 Solicitar información
               </button>
             </div>
           </div>
         </div>
       )}
-       <Footer />
+      <Footer />
     </div>
   );
 };
