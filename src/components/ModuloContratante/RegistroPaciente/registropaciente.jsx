@@ -13,6 +13,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+import TerminosModal from "../../TerminosyCondiciones/terminos";
 
 const RegistroPaciente = () => {
   const generos = ['Masculino', 'Femenino'];
@@ -21,15 +22,21 @@ const RegistroPaciente = () => {
   const userId = searchParams.get('userId');
   const alergias = ["Ninguna", "Otra", "Penicilina", "Ibuprofeno", "Sulfas", "Naproxeno", "Diclofenaco", "Soya", "Gluten", "Caspa de perro", "Caspa de gato", "Rinitis", "Dermatitis", "Urticaria", "Eczema", "Anafilaxia", "Conjuntivitis", "Angioedema", "Hipersensibilidad", "Atopia", "Vasculitis"];
   const [cedulasRegistradas, setCedulasRegistradas] = useState(new Set());
-  
+
   const [provincias, setProvincias] = useState([]);
   const [cantones, setCantones] = useState([]);
   const [parroquias, setParroquias] = useState([]);
   const navigate = useNavigate();
-  
+
   const [datosCargados, setDatosCargados] = useState(false);
   const rawIdPaciente = searchParams.get("idPaciente");
   const idPaciente = (rawIdPaciente && rawIdPaciente !== "undefined" && rawIdPaciente !== "null") ? rawIdPaciente : null;
+
+
+  const [terminosAceptados, setTerminosAceptados] = useState(false);
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const abrirModal = () => setModalAbierto(true);
+  const cerrarModal = () => setModalAbierto(false);
 
   const [ubicacion, setUbicacion] = useState({
     provincia: '',
@@ -191,6 +198,17 @@ const RegistroPaciente = () => {
         });
     }
   }, [idPaciente]);
+
+  const handleAbrirModal = () => {
+    setModalAbierto(true);
+  };
+
+  const handleGuardarTerminos = (aceptado) => {
+    setTerminosAceptados(aceptado);
+    setModalAbierto(false);
+  };
+
+
 
   useEffect(() => {
     const cargarCedulasRegistradas = async () => {
@@ -955,10 +973,31 @@ const RegistroPaciente = () => {
               ))}
             </div>
             {/* Fila 9: Términos y botón */}
-            <div className={styles["terms-checkbox-paci"]} style={{ marginBottom: '15px' }}>
-              <input type="checkbox" id="terminos" required />
-              <label htmlFor="terminos">Acepto los términos y condiciones</label>
+            <div className={styles["terms-checkbox-paci"]} style={{ marginBottom: '15px', display: 'flex', alignItems: 'center' }}>
+              <input
+                type="checkbox"
+                id="terminos"
+                required
+                checked={terminosAceptados}
+                readOnly
+                className={styles.checkmark}
+                style={{ marginRight: '8px' }}
+              />
+              <span
+                className={styles['terms-text']}
+                onClick={handleAbrirModal}
+                style={{ cursor: 'pointer' }}
+              >
+                Acepto los <u>Términos y Condiciones</u>
+              </span>
             </div>
+
+            <TerminosModal
+              isOpen={modalAbierto}
+              onClose={() => setModalAbierto(false)}
+              onSave={handleGuardarTerminos}
+            />
+
 
             <button type="submit" className={styles["submit-btn-paci"]}>
               {idPaciente ? "Actualizar Paciente" : "Registrar Paciente"}

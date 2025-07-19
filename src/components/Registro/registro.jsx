@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import TerminosModal from "./../TerminosyCondiciones/terminos";
 import {
   FaUser, FaBuilding, FaIdCard, FaEnvelope, FaPhone, FaVenusMars,
   FaCalendarAlt, FaMapMarkerAlt, FaLock, FaChevronDown, FaQuestionCircle,
@@ -12,6 +13,7 @@ import { registrarAspirante, registrarContratante } from '../../servicios/regist
 import Navbar from '../Shared/Navbar';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 
 const Registro = () => {
   // Estados para el formulario
@@ -57,6 +59,12 @@ const Registro = () => {
   const generos = ['Masculino', 'Femenino', 'Otro'];
   const tiposContrato = ['Tiempo completo', 'Medio tiempo', 'Por horas', 'Por proyecto'];
   const ocupaciones = ['Ingeniero', 'Médico', 'Abogado', 'Arquitecto', 'Comerciante', 'Educador', 'Otro'];
+
+  const [terminosAceptados, setTerminosAceptados] = useState(false);
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const abrirModal = () => setModalAbierto(true);
+  const cerrarModal = () => setModalAbierto(false);
+
 
   // Cargar provincias al inicio
   useEffect(() => {
@@ -113,6 +121,16 @@ const Registro = () => {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
+
+  const handleAbrirModal = () => {
+    setModalAbierto(true);
+  };
+
+  const handleGuardarTerminos = (aceptado) => {
+    setTerminosAceptados(aceptado);
+    setModalAbierto(false);
+  };
+
 
   const handleUserTypeSelection = (type) => {
     setFormData(prev => ({
@@ -844,7 +862,7 @@ const Registro = () => {
                     {errors.contrasena && (
                       <span className={styles['error-text-registrio']}>{errors.contrasena}</span>
                     )}
-                  </div> 
+                  </div>
 
                   <div className={styles['input-group']}>
                     <label htmlFor="confirmarContrasena">
@@ -863,17 +881,29 @@ const Registro = () => {
                     )}
                   </div>
                 </div>
+                {/* Aquí cambia tu checkbox para que el texto "términos y condiciones" sea un botón que abra el modal */}
                 <div className={styles['terms-container']}>
                   <label className={styles['terms-checkbox']}>
                     <input
                       type="checkbox"
                       id="terminos"
                       required
+                      checked={terminosAceptados}
+                      readOnly
                     />
                     <span className={styles.checkmark}></span>
-                    <span className={styles['terms-text']}>Acepto los términos y condiciones</span>
+                    <span className={styles['terms-text']} onClick={handleAbrirModal}>
+                      Acepto los <u>Términos y Condiciones</u>
+                    </span>
                   </label>
                 </div>
+
+                {/* Aquí renderizas el modal */}
+                <TerminosModal
+                  isOpen={modalAbierto}
+                  onClose={() => setModalAbierto(false)}
+                  onSave={handleGuardarTerminos}
+                />
 
                 <button type="submit" className={styles['submit-btn']} disabled={isSubmitting}>
                   {isSubmitting ? 'Registrando...' : 'Crear Cuenta'}
