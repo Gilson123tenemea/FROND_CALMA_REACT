@@ -145,12 +145,6 @@ const PerfilAspirante = () => {
       errores.tipo_contrato = 'El tipo de contrato es obligatorio';
     }
 
-    // Validar contraseña (mínimo 6 caracteres)
-    if (!data.contrasena || data.contrasena.length < 8) {
-      errores.contrasena = 'La contraseña debe tener al menos 8 caracteres';
-    }
-
-
     return errores;
   };
 
@@ -201,7 +195,6 @@ const PerfilAspirante = () => {
           correo: aspirante.correo || '',
           genero: aspirante.genero || '',
           fechaNacimiento: fechaFormateada,
-          contrasena: '',
           disponibilidad: aspirante.disponibilidad || false,
           aspiracionSalarial: aspirante.aspiracionSalarial || null,
           tipo_contrato: aspirante.tipoContrato || '',
@@ -311,7 +304,6 @@ const PerfilAspirante = () => {
         aspiracionSalarial: parseFloat(editData.aspiracionSalarial) || 0,
         disponibilidad: editData.disponibilidad,
         tipo_contrato: editData.tipo_contrato,
-        contrasena: editData.contrasena,
       };
 
       const response = await fetch(`http://localhost:8090/api/registro/aspirante/${aspiranteId}`, {
@@ -576,43 +568,6 @@ const PerfilAspirante = () => {
                     <option value="Contrato temporal">Contrato temporal</option>
                   </select>
                   {errores.tipo_contrato && <p className={styles["error-text-aspirante"]}>{errores.tipo_contrato}</p>}
-                </div>
-              </div>
-
-              <h3>Seguridad</h3>
-
-              <div className={styles["grid-2-columns-aspirante"]}>
-                <div className={styles["field-box-aspirante"]} style={{ position: 'relative' }}>
-                  <label>Contraseña</label>
-                  <input
-                    type={mostrarContrasena ? "text" : "password"}
-                    name="contrasena"
-                    autoComplete="off"
-                    inputMode="text"
-                    value={isEditing ? editData.contrasena : '***********'}
-                    onChange={handleInputChange}
-                    className={`${styles["form-input-aspirante"]} ${errores.contrasena ? styles["input-error-aspirante"] : ''}`}
-                    disabled={!isEditing}
-                  />
-                  {isEditing && (
-                    <button
-                      type="button"
-                      onClick={() => setMostrarContrasena(prev => !prev)}
-                      style={{
-                        position: 'absolute',
-                        right: '20px',
-                        top: '45px',
-                        background: 'transparent',
-                        border: 'none',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      {mostrarContrasena ? '🙈' : '👁️'}
-                    </button>
-                  )}
-                  {errores.contrasena && (
-                    <p className={styles["error-text-aspirante"]}>{errores.contrasena}</p>
-                  )}
                 </div>
               </div>
 
