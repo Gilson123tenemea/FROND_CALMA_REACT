@@ -972,33 +972,6 @@ const RegistroPaciente = () => {
                 </div>
               ))}
             </div>
-            {/* Fila 9: Términos y botón */}
-            <div className={styles["terms-checkbox-paci"]} style={{ marginBottom: '15px', display: 'flex', alignItems: 'center' }}>
-              <input
-                type="checkbox"
-                id="terminos"
-                required
-                checked={terminosAceptados}
-                readOnly
-                className={styles.checkmark}
-                style={{ marginRight: '8px' }}
-              />
-              <span
-                className={styles['terms-text']}
-                onClick={handleAbrirModal}
-                style={{ cursor: 'pointer' }}
-              >
-                Acepto los <u>Términos y Condiciones</u>
-              </span>
-            </div>
-
-            <TerminosModal
-              isOpen={modalAbierto}
-              onClose={() => setModalAbierto(false)}
-              onSave={handleGuardarTerminos}
-            />
-
-
             <button type="submit" className={styles["submit-btn-paci"]}>
               {idPaciente ? "Actualizar Paciente" : "Registrar Paciente"}
             </button>
