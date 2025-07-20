@@ -1,182 +1,207 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Client } from "@stomp/stompjs";
 
 function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
   const [mensaje, setMensaje] = useState("");
   const [mensajes, setMensajes] = useState([]);
   const [conectado, setConectado] = useState(false);
-  const [stompCliente, setStompCliente] = useState(null);
-  
-  // Referencias
-  const mensajesIds = useRef(new Set());
 
-  // Cargar historial al inicio
+  const mensajesIds = useRef(new Set());
+  const mensajesEndRef = useRef(null);
+  const stompRef = useRef(null);
+  const isConnecting = useRef(false);
+
+  // OPTIMIZACIÓN: Memoizar normalización de IDs
+  const normalizarId = useCallback((id) => {
+    if (id === null || id === undefined) return null;
+    if (typeof id === 'number') return id;
+    const parsed = parseInt(id, 10);
+    return isNaN(parsed) ? id : parsed;
+  }, []);
+
+  // OPTIMIZACIÓN: Memoizar IDs normalizados
+  const usuarioActual = useMemo(() => normalizarId(nombrePropio), [nombrePropio, normalizarId]);
+  const destinatario = useMemo(() => normalizarId(destinatarioProp), [destinatarioProp, normalizarId]);
+
+  // OPTIMIZACIÓN: Memoizar canal de conversación
+  const canalConversacion = useMemo(() => {
+    if (!usuarioActual || !destinatario) return null;
+    const menor = Math.min(usuarioActual, destinatario);
+    const mayor = Math.max(usuarioActual, destinatario);
+    return `/tema/conversacion/${menor}-${mayor}`;
+  }, [usuarioActual, destinatario]);
+
+  // OPTIMIZACIÓN: Memoizar debug info
+  const debugInfo = useMemo(() => 
+    `Usuarios: ${usuarioActual} ↔ ${destinatario} | Mensajes: ${mensajes.length} | Conectado: ${conectado}`,
+    [usuarioActual, destinatario, mensajes.length, conectado]
+  );
+
+  console.log(`🔍 INIT: Usuario=${usuarioActual}, Destinatario=${destinatario}, Canal=${canalConversacion}`);
+
+  // Cargar historial - OPTIMIZADO
   useEffect(() => {
+    if (!usuarioActual || !destinatario) {
+      console.log("❌ Faltan parámetros para cargar historial");
+      return;
+    }
+
     const cargarHistorial = async () => {
-      if (nombrePropio && destinatarioProp) {
-        try {
-          console.log("🔄 Cargando historial...");
-          console.log("📋 Parámetros:", { nombrePropio, destinatarioProp });
+      try {
+        console.log(`📥 Cargando historial: ${usuarioActual} ↔ ${destinatario}`);
+        const response = await fetch(
+          `http://localhost:8090/api/chat/historial?aspiranteId=${usuarioActual}&contratistaId=${destinatario}`
+        );
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log("📥 Historial recibido:", data.length, "mensajes");
           
-          const response = await fetch(`http://localhost:8090/api/chat/historial?aspiranteId=${nombrePropio}&contratistaId=${destinatarioProp}`);
+          // Limpiar y procesar mensajes
+          mensajesIds.current.clear();
+          const mensajesUnicos = data.filter(m => {
+            if (!m.id) return false;
+            if (mensajesIds.current.has(m.id)) return false;
+            mensajesIds.current.add(m.id);
+            return true;
+          });
           
-          if (response.ok) {
-            const data = await response.json();
-            console.log("✅ Historial cargado:", data);
-            console.log("📊 Cantidad de mensajes recibidos:", data.length);
-            
-            // Debug: mostrar cada mensaje
-            data.forEach((msg, index) => {
-              console.log(`📝 Mensaje ${index + 1}:`, {
-                id: msg.id,
-                nombre: msg.nombre,
-                contenido: msg.contenido,
-                aspiranteId: msg.aspiranteId,
-                contratistaId: msg.contratistaId
-              });
-            });
-            
-            // NO filtrar por IDs duplicados por ahora, mostrar todo
-            setMensajes(data);
-            
-            // Agregar IDs al Set para evitar duplicados futuros
-            data.forEach(msg => {
-              if (msg.id) {
-                mensajesIds.current.add(msg.id);
-              }
-            });
-            
-            console.log("📦 Mensajes establecidos en estado:", data.length);
-            
-          } else {
-            console.log("⚠️ No se pudo cargar historial:", response.status);
-          }
-        } catch (error) {
-          console.error("❌ Error al cargar historial:", error);
+          setMensajes(mensajesUnicos);
+        } else {
+          console.warn("⚠️ Error historial:", response.status);
+          setMensajes([]);
         }
+      } catch (e) {
+        console.error("❌ Error historial:", e);
+        setMensajes([]);
       }
     };
 
     cargarHistorial();
-  }, [nombrePropio, destinatarioProp]);
+  }, [usuarioActual, destinatario]); // Dependencias optimizadas
 
-  // Debug: mostrar cuando cambia el estado de mensajes
+  // Scroll automático - OPTIMIZADO
   useEffect(() => {
-    console.log("🔄 Estado de mensajes actualizado:", mensajes.length, "mensajes");
-    console.log("📋 Mensajes actuales:", mensajes);
-  }, [mensajes]);
+    if (mensajesEndRef.current && mensajes.length > 0) {
+      const timeoutId = setTimeout(() => {
+        mensajesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [mensajes.length]); // Solo cuando cambia el número de mensajes
 
-  // Conectar WebSocket
+  // Conexión WebSocket - OPTIMIZADA
   useEffect(() => {
-    if (!nombrePropio) return;
+    if (!usuarioActual || !destinatario || !canalConversacion || isConnecting.current) return;
 
-    console.log("🔌 Conectando WebSocket...");
+    // Cleanup anterior
+    if (stompRef.current) {
+      console.log("♻️ Desconectando cliente anterior");
+      stompRef.current.deactivate();
+      stompRef.current = null;
+    }
+
+    isConnecting.current = true;
+    console.log(`🔌 Conectando WebSocket: ${usuarioActual} ↔ ${destinatario}`);
+    console.log(`🔗 Canal objetivo: ${canalConversacion}`);
     
     const cliente = new Client({
       brokerURL: "ws://localhost:8090/ws",
-      debug: function (str) {
-        console.log("📡 WebSocket:", str);
-      },
+      debug: str => console.log("📡", str),
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
     });
 
-    cliente.onConnect = () => {
-      console.log("✅ WebSocket conectado");
-      setConectado(true);
+    stompRef.current = cliente;
 
-      // Suscribirse a mensajes
-      cliente.subscribe("/tema/mensajes", (mensaje) => {
-        console.log("📩 Mensaje recibido:", mensaje.body);
-        const nuevoMsg = JSON.parse(mensaje.body);
-        
-        console.log("🔍 Analizando mensaje:", {
-          aspiranteId: nuevoMsg.aspiranteId,
-          contratistaId: nuevoMsg.contratistaId,
-          miId: nombrePropio,
-          destinatarioId: destinatarioProp
-        });
-        
-        // Mostrar mensaje si es de esta conversación
-        const esDeEstaConversacion = 
-          (String(nuevoMsg.aspiranteId) === String(nombrePropio) && String(nuevoMsg.contratistaId) === String(destinatarioProp)) ||
-          (String(nuevoMsg.aspiranteId) === String(destinatarioProp) && String(nuevoMsg.contratistaId) === String(nombrePropio));
-        
-        console.log("📨 ¿Es de esta conversación?", esDeEstaConversacion);
-        
-        if (esDeEstaConversacion) {
-          if (!mensajesIds.current.has(nuevoMsg.id)) {
-            console.log("➕ Agregando nuevo mensaje");
-            mensajesIds.current.add(nuevoMsg.id);
-            setMensajes((prev) => {
-              const nuevosMensajes = [...prev, nuevoMsg];
-              console.log("📦 Nuevos mensajes totales:", nuevosMensajes.length);
-              return nuevosMensajes;
-            });
-          } else {
-            console.log("⚠️ Mensaje duplicado ignorado");
+    cliente.onConnect = () => {
+      console.log("✅ WebSocket Conectado");
+      setConectado(true);
+      isConnecting.current = false;
+
+      // Suscribirse al canal de conversación
+      console.log("🔔 Suscribiéndose a:", canalConversacion);
+      cliente.subscribe(canalConversacion, (msg) => {
+        try {
+          const data = JSON.parse(msg.body);
+          console.log("📨 Mensaje recibido:", data.contenido, "de usuario", data.remitenteId);
+
+          if (data.id && data.contenido && !mensajesIds.current.has(data.id)) {
+            mensajesIds.current.add(data.id);
+            setMensajes(prev => [...prev, data]);
           }
-        } else {
-          console.log("❌ Mensaje ignorado - no es de esta conversación");
+        } catch (e) {
+          console.error("❌ Error procesando mensaje:", e);
+        }
+      });
+
+      // Notificaciones personales
+      cliente.subscribe(`/tema/notificacion/${usuarioActual}`, (msg) => {
+        try {
+          const notificacion = JSON.parse(msg.body);
+          console.log("🔔 Notificación:", notificacion.tipo);
+        } catch (e) {
+          console.error("❌ Error notificación:", e);
         }
       });
     };
 
     cliente.onDisconnect = () => {
-      console.log("❌ WebSocket desconectado");
+      console.log("❌ WebSocket Desconectado");
       setConectado(false);
+      isConnecting.current = false;
     };
 
     cliente.onStompError = (frame) => {
-      console.error("❌ Error STOMP:", frame);
+      console.error("❌ STOMP error:", frame);
       setConectado(false);
+      isConnecting.current = false;
     };
 
     cliente.activate();
-    setStompCliente(cliente);
 
-    // Cleanup
     return () => {
+      console.log("🧹 Cleanup WebSocket");
+      isConnecting.current = false;
       if (cliente) {
-        console.log("🔌 Desconectando WebSocket...");
         cliente.deactivate();
       }
       setConectado(false);
-      // NO limpiar mensajes al desconectar para debug
-      mensajesIds.current.clear();
     };
-  }, [nombrePropio]);
+  }, [usuarioActual, destinatario, canalConversacion]); // Dependencias memoizadas
 
-  // Enviar mensaje
-  const enviarMensaje = () => {
-    if (stompCliente && conectado && mensaje.trim() && nombrePropio && destinatarioProp) {
-      console.log("📤 Enviando mensaje:", mensaje);
-      console.log("📋 Datos del mensaje:", {
-        nombre: nombrePropio,
-        aspiranteId: nombrePropio,
-        contratistaId: destinatarioProp
-      });
-      
-      stompCliente.publish({
-        destination: "/app/envio",
-        body: JSON.stringify({
-          nombre: nombrePropio,
-          contenido: mensaje.trim(),
-          color: "#1976d2",
-          aspiranteId: nombrePropio,
-          contratistaId: destinatarioProp,
-          remitenteId: nombrePropio,
-        }),
-      });
-      
-      setMensaje("");
-    } else {
-      console.log("⚠️ No se puede enviar - WebSocket:", conectado, "Mensaje:", mensaje.trim());
+  const enviarMensaje = useCallback(() => {
+    const contenido = mensaje.trim();
+    if (!stompRef.current?.connected || !contenido) {
+      console.log("❌ No se puede enviar");
+      return;
     }
-  };
 
-  const formatearFecha = (fecha) => {
+    const mensajeData = {
+      nombre: String(usuarioActual),
+      contenido,
+      color: "#1976d2",
+      aspiranteId: usuarioActual,
+      contratistaId: destinatario,
+      remitenteId: usuarioActual,
+      fechaEnvio: new Date().toISOString()
+    };
+
+    console.log("📤 Enviando:", contenido, "a canal:", canalConversacion);
+
+    try {
+      stompRef.current.publish({
+        destination: "/app/envio",
+        body: JSON.stringify(mensajeData),
+      });
+      setMensaje("");
+    } catch (e) {
+      console.error("❌ Error envio:", e);
+    }
+  }, [mensaje, usuarioActual, destinatario, canalConversacion]);
+
+  const formatearFecha = useCallback((fecha) => {
     if (!fecha) return "";
     return new Date(fecha).toLocaleString("es-EC", {
       day: "2-digit",
@@ -185,165 +210,122 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
+  }, []);
 
-  console.log("🎨 Renderizando con", mensajes.length, "mensajes");
+  // Renderizado de mensajes optimizado
+  const mensajesRenderizados = useMemo(() => {
+    return mensajes.map((msg, index) => {
+      const esPropio = normalizarId(msg.remitenteId || msg.nombre) === usuarioActual;
+      
+      return (
+        <div 
+          key={`msg-${msg.id || index}`} 
+          style={{
+            display: "flex", 
+            justifyContent: esPropio ? "flex-end" : "flex-start",
+            marginBottom: "10px"
+          }}
+        >
+          <div style={{
+            maxWidth: "75%", 
+            padding: "12px 16px",
+            borderRadius: esPropio ? "18px 18px 5px 18px" : "18px 18px 18px 5px",
+            backgroundColor: esPropio ? "#1976d2" : "white", 
+            color: esPropio ? "white" : "black",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.1)", 
+            border: esPropio ? "none" : "1px solid #e0e0e0",
+            minHeight: "20px"
+          }}>
+            <div style={{ 
+              fontWeight: "bold", fontSize: "12px", marginBottom: "5px", opacity: 0.8 
+            }}>
+              Usuario {msg.remitenteId || msg.nombre} {esPropio ? "(Tú)" : ""} | ID: {msg.id?.slice(-4)}
+            </div>
+            <div style={{ wordBreak: "break-word" }}>
+              {msg.contenido || "Sin contenido"}
+            </div>
+            <div style={{ fontSize: "10px", opacity: 0.7, textAlign: "right", marginTop: "5px" }}>
+              {formatearFecha(msg.fechaEnvio)}
+            </div>
+          </div>
+        </div>
+      );
+    });
+  }, [mensajes, usuarioActual, formatearFecha, normalizarId]);
+
+  if (!usuarioActual || !destinatario) {
+    return (
+      <div style={{ padding: "20px", textAlign: "center" }}>
+        ❌ Error: Parámetros de usuario incorrectos
+        <br/>nombrePropio: {nombrePropio}
+        <br/>destinatarioProp: {destinatarioProp}
+      </div>
+    );
+  }
 
   return (
     <div style={{
-      position: "fixed",
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100%",
-      backgroundColor: "rgba(0,0,0,0.5)",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      zIndex: 9999
+      position: "fixed", top: 0, left: 0, width: "100%", height: "100%",
+      backgroundColor: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "center", 
+      alignItems: "center", zIndex: 9999
     }}>
       <div style={{
-        width: "450px",
-        height: "600px",
-        backgroundColor: "white",
-        borderRadius: "15px",
-        display: "flex",
-        flexDirection: "column",
-        boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+        width: "450px", height: "600px", backgroundColor: "white", borderRadius: "15px",
+        display: "flex", flexDirection: "column", boxShadow: "0 10px 30px rgba(0,0,0,0.3)", 
         overflow: "hidden"
       }}>
-        
+
         {/* Header */}
         <div style={{
-          padding: "15px 20px",
-          backgroundColor: "#1976d2",
-          color: "white",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center"
+          padding: "15px 20px", backgroundColor: "#1976d2", color: "white", display: "flex",
+          justifyContent: "space-between", alignItems: "center"
         }}>
           <div>
             <h3 style={{ margin: 0, fontSize: "16px" }}>
-              Chat con Usuario {destinatarioProp}
+              Chat: Usuario {usuarioActual} ↔ Usuario {destinatario}
             </h3>
-            <small style={{ opacity: 0.9, fontSize: "12px" }}>
-              {conectado ? "🟢 Conectado" : "🔴 Desconectado"} | {mensajes.length} mensajes
+            <small style={{ fontSize: "11px" }}>
+              <span style={{
+                display: "inline-block", width: "8px", height: "8px", borderRadius: "50%",
+                backgroundColor: conectado ? "#4caf50" : "#f44336", marginRight: "5px"
+              }}></span>
+              {debugInfo}
             </small>
           </div>
-          <button 
-            onClick={onCerrarChat}
-            style={{
-              background: "none",
-              border: "none",
-              color: "white",
-              fontSize: "20px",
-              cursor: "pointer",
-              padding: "0",
-              width: "30px",
-              height: "30px",
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center"
-            }}
-          >
-            ×
-          </button>
+          <button onClick={onCerrarChat} style={{
+            background: "none", border: "none", color: "white", fontSize: "20px", cursor: "pointer"
+          }}>×</button>
         </div>
 
-        {/* Debug Info */}
+        {/* Mensajes */}
         <div style={{
-          padding: "10px",
-          backgroundColor: "#f0f0f0",
-          fontSize: "12px",
-          borderBottom: "1px solid #ddd"
+          flex: 1, padding: "15px", overflowY: "auto", backgroundColor: "#f5f5f5", 
+          display: "flex", flexDirection: "column", gap: "10px", minHeight: "400px"
         }}>
-          <strong>Debug:</strong> YoID={nombrePropio} | DestinatarioID={destinatarioProp} | Mensajes={mensajes.length}
-        </div>
+          {/* Debug info */}
+          <div style={{
+            fontSize: "12px", padding: "8px 12px", backgroundColor: "#e3f2fd", 
+            borderRadius: "8px", marginBottom: "10px", color: "#1565c0"
+          }}>
+            📊 Debug: {mensajes.length} mensajes | Canal: {canalConversacion}
+          </div>
 
-        {/* Área de mensajes */}
-        <div style={{
-          flex: 1,
-          padding: "15px",
-          overflowY: "auto",
-          backgroundColor: "#f5f5f5",
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px"
-        }}>
           {mensajes.length === 0 ? (
             <div style={{
-              textAlign: "center",
-              color: "#666",
-              fontStyle: "italic",
-              marginTop: "50px"
+              textAlign: "center", color: "#666", fontStyle: "italic", marginTop: "50px"
             }}>
               {conectado ? "No hay mensajes. ¡Envía el primero!" : "Conectando..."}
             </div>
           ) : (
-            mensajes.map((msg, index) => {
-              const esPropio = String(msg.nombre) === String(nombrePropio);
-              const fecha = formatearFecha(msg.fechaEnvio);
-              
-              console.log(`🎨 Renderizando mensaje ${index + 1}:`, {
-                id: msg.id,
-                nombre: msg.nombre,
-                contenido: msg.contenido,
-                esPropio
-              });
-              
-              return (
-                <div 
-                  key={msg.id || index}
-                  style={{
-                    display: "flex",
-                    justifyContent: esPropio ? "flex-end" : "flex-start"
-                  }}
-                >
-                  <div style={{
-                    maxWidth: "75%",
-                    padding: "12px 16px",
-                    borderRadius: esPropio ? "18px 18px 5px 18px" : "18px 18px 18px 5px",
-                    backgroundColor: esPropio ? "#1976d2" : "white",
-                    color: esPropio ? "white" : "black",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                    border: esPropio ? "none" : "1px solid #e0e0e0"
-                  }}>
-                    <div style={{ 
-                      fontWeight: "bold", 
-                      fontSize: "12px", 
-                      marginBottom: "5px",
-                      opacity: 0.8
-                    }}>
-                      {msg.nombre} {esPropio ? "(Tú)" : ""}
-                    </div>
-                    <div style={{ marginBottom: "5px" }}>
-                      {msg.contenido}
-                    </div>
-                    {fecha && (
-                      <div style={{ 
-                        fontSize: "10px", 
-                        opacity: 0.7,
-                        textAlign: "right"
-                      }}>
-                        {fecha}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })
+            mensajesRenderizados
           )}
+          <div ref={mensajesEndRef} />
         </div>
 
-        {/* Footer de escritura */}
+        {/* Footer */}
         <div style={{
-          padding: "15px",
-          backgroundColor: "white",
-          borderTop: "1px solid #e0e0e0",
-          display: "flex",
-          gap: "10px",
-          alignItems: "center"
+          padding: "15px", backgroundColor: "white", borderTop: "1px solid #e0e0e0",
+          display: "flex", gap: "10px", alignItems: "center", minHeight: "70px"
         }}>
           <input
             type="text"
@@ -351,52 +333,33 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
             onChange={(e) => setMensaje(e.target.value)}
             placeholder={conectado ? "Escribe un mensaje..." : "Conectando..."}
             disabled={!conectado}
-            style={{
-              flex: 1,
-              padding: "12px 16px",
-              border: `2px solid ${conectado ? "#1976d2" : "#ccc"}`,
-              borderRadius: "20px",
-              outline: "none",
-              fontSize: "14px",
-              backgroundColor: conectado ? "white" : "#f5f5f5"
-            }}
             onKeyDown={(e) => {
-              if (e.key === "Enter") {
+              if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
                 enviarMensaje();
               }
             }}
             maxLength={500}
+            style={{
+              flex: 1, padding: "12px 16px", 
+              border: `2px solid ${conectado ? "#1976d2" : "#ccc"}`,
+              borderRadius: "20px", outline: "none", fontSize: "14px", 
+              backgroundColor: conectado ? "white" : "#f5f5f5"
+            }}
           />
-          
           <button
             onClick={enviarMensaje}
             disabled={!mensaje.trim() || !conectado}
             style={{
-              padding: "12px 20px",
-              backgroundColor: (mensaje.trim() && conectado) ? "#1976d2" : "#ccc",
-              color: "white",
-              border: "none",
-              borderRadius: "20px",
-              cursor: (mensaje.trim() && conectado) ? "pointer" : "not-allowed",
-              fontSize: "14px",
-              fontWeight: "500"
+              padding: "12px 20px", 
+              backgroundColor: mensaje.trim() && conectado ? "#1976d2" : "#ccc",
+              color: "white", border: "none", borderRadius: "20px", 
+              cursor: mensaje.trim() && conectado ? "pointer" : "not-allowed",
+              minWidth: "80px"
             }}
           >
             {conectado ? "Enviar" : "●●●"}
           </button>
-        </div>
-
-        {/* Contador */}
-        <div style={{
-          padding: "5px 15px",
-          backgroundColor: "#f9f9f9",
-          fontSize: "11px",
-          color: "#666",
-          textAlign: "right",
-          borderTop: "1px solid #f0f0f0"
-        }}>
-          {mensaje.length}/500
         </div>
       </div>
     </div>

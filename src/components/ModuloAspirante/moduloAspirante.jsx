@@ -22,34 +22,34 @@ const ModuloAspirante = () => {
   // Funciones auxiliares para notificaciones
   const getNotificationType = (descripcion) => {
     const desc = descripcion.toLowerCase();
-    
+
     // Para aceptaciones
-    if (desc.includes('aceptada') || desc.includes('aceptado') || desc.includes('aprobado') || 
-        desc.includes('cumple con los requisitos') || desc.includes('felicitaciones')) {
+    if (desc.includes('aceptada') || desc.includes('aceptado') || desc.includes('aprobado') ||
+      desc.includes('cumple con los requisitos') || desc.includes('felicitaciones')) {
       return 'success';
     }
-    
+
     // Para rechazos
-    if (desc.includes('rechazada') || desc.includes('rechazado') || desc.includes('cancelado') || 
-        desc.includes('lamentamos') || desc.includes('no ha sido aceptada') || 
-        desc.includes('no cumple')) {
+    if (desc.includes('rechazada') || desc.includes('rechazado') || desc.includes('cancelado') ||
+      desc.includes('lamentamos') || desc.includes('no ha sido aceptada') ||
+      desc.includes('no cumple')) {
       return 'warning';
     }
-    
+
     // Para información general
     return 'info';
   };
 
   const getTimeAgo = (fecha) => {
     if (!fecha) return 'Fecha no disponible';
-    
+
     const now = new Date();
     const notificationDate = new Date(fecha);
     const diffMs = now - notificationDate;
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
-    
+
     if (diffMins < 1) return 'Ahora mismo';
     if (diffMins < 60) return `Hace ${diffMins} min`;
     if (diffHours < 24) return `Hace ${diffHours} hora${diffHours > 1 ? 's' : ''}`;
@@ -59,17 +59,17 @@ const ModuloAspirante = () => {
 
   const getNotificationIcon = (descripcion) => {
     const desc = descripcion.toLowerCase();
-    
+
     // Si contiene "lamentamos" → es rechazo
     if (desc.includes('lamentamos')) {
       return '❌';
     }
-    
+
     // Si contiene "felicitaciones" → es aceptación  
     if (desc.includes('felicitaciones')) {
       return '✅';
     }
-    
+
     // Por defecto
     return 'ℹ️';
   };
@@ -81,30 +81,50 @@ const ModuloAspirante = () => {
     return 'pendiente';
   };
 
-  useEffect(() => {
-    const aspiranteIdFromState = location.state?.aspiranteId;
-    const aspiranteId = aspiranteIdFromState || JSON.parse(localStorage.getItem('userData'))?.aspiranteId;
+useEffect(() => {
+  const aspiranteIdFromState = location.state?.aspiranteId;
+  const aspiranteId = aspiranteIdFromState || JSON.parse(localStorage.getItem('userData'))?.aspiranteId;
 
-    if (!aspiranteId) {
-      console.warn('No se encontró idAspirante ni en location.state ni en localStorage.');
-      return;
-    }
+  // 🔍 DEBUG - AÑADIR ESTOS LOGS
+  console.log('=== DEBUG MODULO ASPIRANTE ===');
+  console.log('📍 location.state completo:', location.state);
+  console.log('📍 localStorage userData:', JSON.parse(localStorage.getItem('userData')));
+  console.log('📍 aspiranteId calculado:', aspiranteId);
+  console.log('📍 Tipo de aspiranteId:', typeof aspiranteId);
 
-    setIdAspirante(aspiranteId);
+  if (!aspiranteId) {
+    console.warn('❌ No se encontró idAspirante');
+    return;
+  }
 
-    axios.get(`http://localhost:8090/api/usuarios/buscar_aspirante/${aspiranteId}`)
-      .then((response) => {
-        const idUsuario = response.data?.id || response.data?.idUsuario || response.data;
-        if (!idUsuario) {
-          console.error('Respuesta inesperada: no contiene ID de usuario.');
-          return;
-        }
-        setUserId(idUsuario);
-      })
-      .catch((error) => {
-        console.error('Error al obtener el ID del usuario:', error);
-      });
-  }, [location.state]);
+  setIdAspirante(aspiranteId);
+
+  axios.get(`http://localhost:8090/api/usuarios/buscar_aspirante/${aspiranteId}`)
+    .then((response) => {
+      // 🔍 DEBUG - VERIFICAR RESPUESTA API
+      console.log('📥 Respuesta API completa:', response.data);
+      console.log('📥 Tipo de respuesta:', typeof response.data);
+      
+      const idUsuario = response.data?.id || response.data?.idUsuario || response.data;
+      
+      console.log('🎯 userId final calculado:', idUsuario);
+      console.log('🎯 Tipo de userId:', typeof idUsuario);
+      
+      // ❗ VERIFICACIÓN CRÍTICA
+      if (idUsuario == aspiranteId) {
+        console.log('✅ userId coincide con aspiranteId');
+      } else {
+        console.error('❌ PROBLEMA: userId no coincide con aspiranteId');
+        console.error('   aspiranteId:', aspiranteId, '(', typeof aspiranteId, ')');
+        console.error('   userId:', idUsuario, '(', typeof idUsuario, ')');
+      }
+      
+      setUserId(idUsuario);
+    })
+    .catch((error) => {
+      console.error('❌ Error en API buscar_aspirante:', error);
+    });
+}, [location.state]);
 
   useEffect(() => {
     const fetchNoLeidas = async () => {
@@ -112,7 +132,7 @@ const ModuloAspirante = () => {
       try {
         const res = await axios.get(`http://localhost:8090/api/notificaciones/aspirante/noleidas/${idAspirante}`);
         const nuevasCantidad = res.data.length;
-        
+
         if (nuevasCantidad > cantidadNoLeidas && cantidadNoLeidas > 0) {
           setCantidadNoLeidas(nuevasCantidad);
           const badge = document.querySelector(`.${styles.badgeNotificacionCustom}`);
@@ -144,10 +164,23 @@ const ModuloAspirante = () => {
     return () => document.removeEventListener('keydown', handleEscape);
   }, [showPanelNotificaciones]);
 
-  const handleAbrirPanelUsuarios = () => {
+  const handleAbrirPanelUsuarios = async () => {
     setShowPanelUsuarios(true);
     setSearchTerm('');
-    setUsuariosEncontrados([]);
+    
+    // 🔧 NUEVA LÓGICA: Cargar contratistas con los que puedes chatear
+    try {
+      console.log('🔍 [ASPIRANTE] Cargando contratistas para chat...');
+      const response = await axios.get(`http://localhost:8090/api/postulacion/aspirante/${idAspirante}/contratistas-para-chat`);
+      
+      console.log('✅ [ASPIRANTE] Contratistas disponibles para chat:', response.data.length);
+      console.log('📋 [ASPIRANTE] Lista:', response.data);
+      
+      setUsuariosEncontrados(response.data);
+    } catch (error) {
+      console.error('❌ [ASPIRANTE] Error al cargar contratistas para chat:', error);
+      setUsuariosEncontrados([]);
+    }
   };
 
   const handleCerrarPanelUsuarios = () => {
@@ -158,20 +191,42 @@ const ModuloAspirante = () => {
 
   const handleBuscarUsuarios = async (term) => {
     setSearchTerm(term);
+    
     if (term.trim() === '') {
-      setUsuariosEncontrados([]);
+      // Si no hay término de búsqueda, mostrar todos los disponibles
+      handleAbrirPanelUsuarios();
       return;
     }
 
     try {
-      const response = await axios.get(`http://localhost:8090/api/usuarios/buscar?query=${term}`);
-      setUsuariosEncontrados(response.data);
+      // 🔧 NUEVA LÓGICA: Buscar solo entre contratistas con los que puedes chatear
+      console.log('🔍 [ASPIRANTE] Buscando entre contratistas para chat...');
+      const response = await axios.get(`http://localhost:8090/api/postulacion/aspirante/${idAspirante}/contratistas-para-chat`);
+      
+      // Filtrar por término de búsqueda
+      const usuariosFiltrados = response.data.filter(usuario => {
+        const nombreCompleto = `${usuario.nombres} ${usuario.apellidos}`.toLowerCase();
+        const correo = usuario.correo.toLowerCase();
+        const termino = term.toLowerCase();
+        
+        return nombreCompleto.includes(termino) || correo.includes(termino);
+      });
+      
+      console.log('🔍 [ASPIRANTE] Contratistas encontrados:', response.data.length);
+      console.log('🔍 [ASPIRANTE] Contratistas filtrados:', usuariosFiltrados.length);
+      console.log('🔍 [ASPIRANTE] Término búsqueda:', term);
+      
+      setUsuariosEncontrados(usuariosFiltrados);
     } catch (error) {
-      console.error('Error al buscar usuarios:', error);
+      console.error('❌ [ASPIRANTE] Error al buscar contratistas:', error);
+      setUsuariosEncontrados([]);
     }
   };
 
   const handleSeleccionarUsuarioChat = (usuario) => {
+    console.log('🔍 [ASPIRANTE] Seleccionando contratista para chat:', usuario);
+    console.log('🔍 [ASPIRANTE] Trabajo relacionado:', usuario.trabajoTitulo);
+    
     setUsuarioChat(usuario);
   };
 
@@ -220,7 +275,7 @@ const ModuloAspirante = () => {
 
       {/* Overlay para cerrar el panel de notificaciones */}
       {showPanelNotificaciones && (
-        <div 
+        <div
           className={`${styles.overlayNotificacionesCustom} ${showPanelNotificaciones ? styles.active : ''}`}
           onClick={handleCerrarNotificaciones}
         />
@@ -243,7 +298,14 @@ const ModuloAspirante = () => {
 
         <ul className="lista-usuarios">
           {usuariosEncontrados.length === 0 && searchTerm !== '' && (
-            <li className="no-results">No se encontraron usuarios</li>
+            <li className="no-results">No se encontraron contratistas</li>
+          )}
+          
+          {usuariosEncontrados.length === 0 && searchTerm === '' && (
+            <li className="no-results">
+              No tienes contratistas disponibles para chatear. 
+              <br/>Espera a que acepten tus postulaciones.
+            </li>
           )}
 
           {usuariosEncontrados.map((usuario) => (
@@ -253,11 +315,22 @@ const ModuloAspirante = () => {
               onClick={() => handleSeleccionarUsuarioChat(usuario)}
             >
               <div className="user-avatar-placeholder">
-                {usuario.nombres ? usuario.nombres.charAt(0).toUpperCase() : 'U'}
+                {usuario.nombres ? usuario.nombres.charAt(0).toUpperCase() : 'C'}
               </div>
               <div>
                 <strong>{usuario.nombres} {usuario.apellidos}</strong>
                 <small>{usuario.correo}</small>
+                {/* 🆕 MOSTRAR INFORMACIÓN DEL TRABAJO */}
+                {usuario.trabajoTitulo && (
+                  <div style={{
+                    fontSize: '12px', 
+                    color: '#4caf50', 
+                    fontWeight: 'bold',
+                    marginTop: '2px'
+                  }}>
+                    ✅ {usuario.trabajoTitulo}
+                  </div>
+                )}
               </div>
             </li>
           ))}
@@ -311,10 +384,10 @@ const ModuloAspirante = () => {
                 const icon = getNotificationIcon(noti.descripcion);
                 const status = getStatusFromDescription(noti.descripcion);
                 const isRead = noti.leida !== false;
-                
+
                 return (
-                  <li 
-                    key={noti.id_notificaciones} 
+                  <li
+                    key={noti.id_notificaciones}
                     className={`${styles.itemNotificacionCustom} ${styles[type]} ${styles[status]} ${!isRead ? styles.noLeida : styles.leida}`}
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
@@ -344,4 +417,4 @@ const ModuloAspirante = () => {
   );
 };
 
-export default ModuloAspirante;
+export default ModuloAspirante; 

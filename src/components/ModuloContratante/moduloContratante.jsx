@@ -26,36 +26,36 @@ const ModuloContratante = () => {
   // Funciones auxiliares para notificaciones del contratante
   const getNotificationType = (descripcion) => {
     const desc = descripcion.toLowerCase();
-    
+
     if (desc.includes('postulación') || desc.includes('postulacion') || desc.includes('aplicación')) {
       return 'info';
     }
-    
+
     if (desc.includes('trabajo completado') || desc.includes('finalizado') || desc.includes('terminado')) {
       return 'success';
     }
-    
+
     if (desc.includes('calificación') || desc.includes('calificacion') || desc.includes('valoración')) {
       return 'warning';
     }
-    
+
     if (desc.includes('pago') || desc.includes('dinero') || desc.includes('cobro')) {
       return 'success';
     }
-    
+
     return 'info';
   };
 
   const getTimeAgo = (fecha) => {
     if (!fecha) return 'Fecha no disponible';
-    
+
     const now = new Date();
     const notificationDate = new Date(fecha);
     const diffMs = now - notificationDate;
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
-    
+
     if (diffMins < 1) return 'Ahora mismo';
     if (diffMins < 60) return `Hace ${diffMins} min`;
     if (diffHours < 24) return `Hace ${diffHours} hora${diffHours > 1 ? 's' : ''}`;
@@ -65,47 +65,54 @@ const ModuloContratante = () => {
 
   const getNotificationIcon = (descripcion) => {
     const desc = descripcion.toLowerCase();
-    
+
     if (desc.includes('postulación') || desc.includes('postulacion') || desc.includes('aplicación')) {
       return '👤';
     }
-    
+
     if (desc.includes('trabajo completado') || desc.includes('finalizado') || desc.includes('terminado')) {
       return '✅';
     }
-    
+
     if (desc.includes('calificación') || desc.includes('calificacion') || desc.includes('valoración')) {
       return '⭐';
     }
-    
+
     if (desc.includes('pago') || desc.includes('dinero') || desc.includes('cobro')) {
       return '💰';
     }
-    
+
     if (desc.includes('mensaje') || desc.includes('comentario')) {
       return '💬';
     }
-    
+
     return 'ℹ️';
   };
 
   const getStatusFromDescription = (descripcion) => {
     const desc = descripcion.toLowerCase();
-    
+
     if (desc.includes('postulación') || desc.includes('postulacion')) return 'postulacion';
     if (desc.includes('trabajo') || desc.includes('completado')) return 'trabajo';
     if (desc.includes('calificación') || desc.includes('calificacion')) return 'calificacion';
     if (desc.includes('pago') || desc.includes('dinero')) return 'pago';
-    
+
     return 'general';
   };
 
   useEffect(() => {
+    // 🔍 DEBUG - AÑADIR ESTOS LOGS
+    console.log('=== DEBUG MODULO CONTRATANTE ===');
+    console.log('📍 location.state completo:', location.state);
+    console.log('📍 localStorage userData:', JSON.parse(localStorage.getItem('userData')));
+
     if (location.state?.userId) {
+      console.log('✅ Usando userId de location.state:', location.state.userId);
       setUserId(location.state.userId);
     } else {
       const userData = JSON.parse(localStorage.getItem('userData'));
       if (userData?.contratanteId) {
+        console.log('✅ Usando contratistaId de localStorage:', userData.contratanteId);
         setUserId(userData.contratanteId);
       }
     }
@@ -114,11 +121,11 @@ const ModuloContratante = () => {
   useEffect(() => {
     const fetchNoLeidas = async () => {
       if (!contratanteId) return;
-      
+
       try {
         const res = await axios.get(`http://localhost:8090/api/notificaciones/contratante/noleidas/${contratanteId}`);
         const nuevasCantidad = res.data.length;
-        
+
         if (nuevasCantidad > cantidadNoLeidas && cantidadNoLeidas > 0) {
           setCantidadNoLeidas(nuevasCantidad);
           const badge = document.querySelector(`.${styles.badgeNotificacionContratante}`);
@@ -166,10 +173,23 @@ const ModuloContratante = () => {
     setPublicacionEditar(null);
   };
 
-  const handleAbrirPanelUsuarios = () => {
+ const handleAbrirPanelUsuarios = async () => {
     setShowPanelUsuarios(true);
     setSearchTerm('');
-    setUsuariosEncontrados([]);
+    
+    // 🔧 NUEVA LÓGICA: Cargar aspirantes con los que puedes chatear
+    try {
+      console.log('🔍 [CONTRATISTA] Cargando aspirantes para chat...');
+      const response = await axios.get(`http://localhost:8090/api/postulacion/contratista/${contratanteId}/aspirantes-para-chat`);
+      
+      console.log('✅ [CONTRATISTA] Aspirantes disponibles para chat:', response.data.length);
+      console.log('📋 [CONTRATISTA] Lista:', response.data);
+      
+      setUsuariosEncontrados(response.data);
+    } catch (error) {
+      console.error('❌ [CONTRATISTA] Error al cargar aspirantes para chat:', error);
+      setUsuariosEncontrados([]);
+    }
   };
 
   const handleCerrarPanelUsuarios = () => {
@@ -180,20 +200,42 @@ const ModuloContratante = () => {
 
   const handleBuscarUsuarios = async (term) => {
     setSearchTerm(term);
+    
     if (term.trim() === '') {
-      setUsuariosEncontrados([]);
+      // Si no hay término de búsqueda, mostrar todos los disponibles
+      handleAbrirPanelUsuarios();
       return;
     }
 
     try {
-      const response = await axios.get(`http://localhost:8090/api/usuarios/buscar?query=${term}`);
-      setUsuariosEncontrados(response.data);
+      // 🔧 NUEVA LÓGICA: Buscar solo entre aspirantes con los que puedes chatear
+      console.log('🔍 [CONTRATISTA] Buscando entre aspirantes para chat...');
+      const response = await axios.get(`http://localhost:8090/api/postulacion/contratista/${contratanteId}/aspirantes-para-chat`);
+      
+      // Filtrar por término de búsqueda
+      const usuariosFiltrados = response.data.filter(usuario => {
+        const nombreCompleto = `${usuario.nombres} ${usuario.apellidos}`.toLowerCase();
+        const correo = usuario.correo.toLowerCase();
+        const termino = term.toLowerCase();
+        
+        return nombreCompleto.includes(termino) || correo.includes(termino);
+      });
+      
+      console.log('🔍 [CONTRATISTA] Aspirantes encontrados:', response.data.length);
+      console.log('🔍 [CONTRATISTA] Aspirantes filtrados:', usuariosFiltrados.length);
+      console.log('🔍 [CONTRATISTA] Término búsqueda:', term);
+      
+      setUsuariosEncontrados(usuariosFiltrados);
     } catch (error) {
-      console.error('Error al buscar usuarios:', error);
+      console.error('❌ [CONTRATISTA] Error al buscar aspirantes:', error);
+      setUsuariosEncontrados([]);
     }
   };
 
   const handleSeleccionarUsuarioChat = (usuario) => {
+    console.log('🔍 [CONTRATISTA] Seleccionando aspirante para chat:', usuario);
+    console.log('🔍 [CONTRATISTA] Trabajo relacionado:', usuario.trabajoTitulo);
+    
     setUsuarioChat(usuario);
   };
 
@@ -203,7 +245,7 @@ const ModuloContratante = () => {
 
   const handleAbrirNotificaciones = async () => {
     if (!contratanteId) return;
-    
+
     try {
       await axios.put(`http://localhost:8090/api/notificaciones/contratante/marcar-leidas/${contratanteId}`);
       const response = await axios.get(`http://localhost:8090/api/notificaciones/contratante/${contratanteId}`);
@@ -258,7 +300,7 @@ const ModuloContratante = () => {
 
       {/* Overlay para cerrar el panel de notificaciones */}
       {showPanelNotificaciones && (
-        <div 
+        <div
           className={`${styles.overlayNotificacionesContratante} ${showPanelNotificaciones ? styles.active : ''}`}
           onClick={handleCerrarNotificaciones}
         />
@@ -280,7 +322,14 @@ const ModuloContratante = () => {
 
         <ul className="lista-usuarios">
           {usuariosEncontrados.length === 0 && searchTerm !== '' && (
-            <li className="no-results">No se encontraron usuarios</li>
+            <li className="no-results">No se encontraron aspirantes</li>
+          )}
+
+          {usuariosEncontrados.length === 0 && searchTerm === '' && (
+            <li className="no-results">
+              No tienes aspirantes aceptados para chatear.
+              <br/>Acepta postulaciones para poder comunicarte.
+            </li>
           )}
 
           {usuariosEncontrados.map((usuario) => (
@@ -290,11 +339,22 @@ const ModuloContratante = () => {
               onClick={() => handleSeleccionarUsuarioChat(usuario)}
             >
               <div className="user-avatar-placeholder">
-                {usuario.nombres ? usuario.nombres.charAt(0).toUpperCase() : 'U'}
+                {usuario.nombres ? usuario.nombres.charAt(0).toUpperCase() : 'A'}
               </div>
               <div>
                 <strong>{usuario.nombres} {usuario.apellidos}</strong>
                 <small>{usuario.correo}</small>
+                {/* 🆕 MOSTRAR INFORMACIÓN DEL TRABAJO */}
+                {usuario.trabajoTitulo && (
+                  <div style={{ 
+                    fontSize: '12px', 
+                    color: '#1976d2', 
+                    fontWeight: 'bold', 
+                    marginTop: '2px' 
+                  }}>
+                    💼 {usuario.trabajoTitulo}
+                  </div>
+                )}
               </div>
             </li>
           ))}
@@ -308,7 +368,7 @@ const ModuloContratante = () => {
             <button className="btn-cerrar-chat" onClick={handleCerrarChat}>✖</button>
           </div>
           <App
-            nombrePropio={contratanteId}
+            nombrePropio={JSON.parse(localStorage.getItem('userData'))?.usuarioId} // ← Usar usuarioId (2)
             destinatarioProp={usuarioChat.idUsuario}
             onCerrarChat={handleCerrarChat}
           />
@@ -347,10 +407,10 @@ const ModuloContratante = () => {
                 const icon = getNotificationIcon(noti.descripcion);
                 const status = getStatusFromDescription(noti.descripcion);
                 const isRead = noti.leida !== false;
-                
+
                 return (
-                  <li 
-                    key={noti.id_notificaciones} 
+                  <li
+                    key={noti.id_notificaciones}
                     className={`${styles.itemNotificacionContratante} ${styles[type]} ${styles[status]} ${!isRead ? styles.noLeida : styles.leida}`}
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
