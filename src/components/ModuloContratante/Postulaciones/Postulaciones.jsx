@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from './Postulaciones.module.css';
-
+import HeaderContratante from "../HeaderContratante/HeaderContratante";
 const Postulaciones = () => {
   const { userId } = useParams(); // userId es el id del CONTRATANTE
   const [realizaciones, setRealizaciones] = useState([]);
@@ -172,6 +172,7 @@ const Postulaciones = () => {
 
   return (
     <>
+    <HeaderContratante userId={userId} />
       <div className={styles.postulacionesMainWrapper}>
         <div className={styles.postulacionesHeaderSection}>
           <h2 className={styles.postulacionesMainTitle}>
