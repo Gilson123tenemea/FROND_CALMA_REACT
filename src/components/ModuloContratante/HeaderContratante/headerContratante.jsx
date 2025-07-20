@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from './HeaderContratante.module.css';
+import notificationStyles from '../NotificacionesContratante.module.css';
 
 const HeaderContratante = ({ 
   userId, 
@@ -176,14 +177,15 @@ const HeaderContratante = ({
             Ver Postulaciones
           </Link>
 
+          {/* Botón de Notificaciones Mejorado con CSS Modules */}
           <button
             onClick={handleNotificationsClick}
-            className={styles.notificationsButton}
+            className={notificationStyles.botonNotificacionesContratante}
           >
-            <span className={styles.notificationIcon}>🔔</span>
+            🔔
             {notificacionesNoLeidas > 0 && (
-              <span className={styles.notificationBadge}>
-                {notificacionesNoLeidas}
+              <span className={`${notificationStyles.badgeNotificacionContratante} ${notificacionesNoLeidas > 0 ? notificationStyles.new : ''}`}>
+                {notificacionesNoLeidas > 99 ? '99+' : notificacionesNoLeidas}
               </span>
             )}
           </button>

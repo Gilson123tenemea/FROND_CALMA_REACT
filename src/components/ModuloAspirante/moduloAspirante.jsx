@@ -5,6 +5,7 @@ import ListaTrabajos from './ListaTrabajos/listaTrabajos';
 import axios from 'axios';
 import App from '../../App';
 import './ModuloAspirante.css';
+import styles from './Notificaciones.module.css';
 
 const ModuloAspirante = () => {
   const location = useLocation();
@@ -17,6 +18,68 @@ const ModuloAspirante = () => {
   const [usuarioChat, setUsuarioChat] = useState(null);
   const [notificaciones, setNotificaciones] = useState([]);
   const [cantidadNoLeidas, setCantidadNoLeidas] = useState(0);
+
+  // Funciones auxiliares para notificaciones
+  const getNotificationType = (descripcion) => {
+    const desc = descripcion.toLowerCase();
+    
+    // Para aceptaciones
+    if (desc.includes('aceptada') || desc.includes('aceptado') || desc.includes('aprobado') || 
+        desc.includes('cumple con los requisitos') || desc.includes('felicitaciones')) {
+      return 'success';
+    }
+    
+    // Para rechazos
+    if (desc.includes('rechazada') || desc.includes('rechazado') || desc.includes('cancelado') || 
+        desc.includes('lamentamos') || desc.includes('no ha sido aceptada') || 
+        desc.includes('no cumple')) {
+      return 'warning';
+    }
+    
+    // Para información general
+    return 'info';
+  };
+
+  const getTimeAgo = (fecha) => {
+    if (!fecha) return 'Fecha no disponible';
+    
+    const now = new Date();
+    const notificationDate = new Date(fecha);
+    const diffMs = now - notificationDate;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    
+    if (diffMins < 1) return 'Ahora mismo';
+    if (diffMins < 60) return `Hace ${diffMins} min`;
+    if (diffHours < 24) return `Hace ${diffHours} hora${diffHours > 1 ? 's' : ''}`;
+    if (diffDays < 7) return `Hace ${diffDays} día${diffDays > 1 ? 's' : ''}`;
+    return notificationDate.toLocaleDateString('es-ES');
+  };
+
+  const getNotificationIcon = (descripcion) => {
+    const desc = descripcion.toLowerCase();
+    
+    // Si contiene "lamentamos" → es rechazo
+    if (desc.includes('lamentamos')) {
+      return '❌';
+    }
+    
+    // Si contiene "felicitaciones" → es aceptación  
+    if (desc.includes('felicitaciones')) {
+      return '✅';
+    }
+    
+    // Por defecto
+    return 'ℹ️';
+  };
+
+  const getStatusFromDescription = (descripcion) => {
+    const desc = descripcion.toLowerCase();
+    if (desc.includes('aceptada') || desc.includes('aceptado')) return 'aceptada';
+    if (desc.includes('rechazada') || desc.includes('rechazado')) return 'rechazada';
+    return 'pendiente';
+  };
 
   useEffect(() => {
     const aspiranteIdFromState = location.state?.aspiranteId;
@@ -48,14 +111,38 @@ const ModuloAspirante = () => {
       if (!idAspirante) return;
       try {
         const res = await axios.get(`http://localhost:8090/api/notificaciones/aspirante/noleidas/${idAspirante}`);
-        setCantidadNoLeidas(res.data.length);
+        const nuevasCantidad = res.data.length;
+        
+        if (nuevasCantidad > cantidadNoLeidas && cantidadNoLeidas > 0) {
+          setCantidadNoLeidas(nuevasCantidad);
+          const badge = document.querySelector(`.${styles.badgeNotificacionCustom}`);
+          if (badge) {
+            badge.classList.add(styles.new);
+            setTimeout(() => badge.classList.remove(styles.new), 500);
+          }
+        } else {
+          setCantidadNoLeidas(nuevasCantidad);
+        }
       } catch (error) {
         console.error("Error al cargar notificaciones no leídas:", error);
       }
     };
 
     fetchNoLeidas();
-  }, [idAspirante, showPanelNotificaciones]);
+    const interval = setInterval(fetchNoLeidas, 30000);
+    return () => clearInterval(interval);
+  }, [idAspirante, showPanelNotificaciones, cantidadNoLeidas]);
+
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && showPanelNotificaciones) {
+        handleCerrarNotificaciones();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [showPanelNotificaciones]);
 
   const handleAbrirPanelUsuarios = () => {
     setShowPanelUsuarios(true);
@@ -100,10 +187,11 @@ const ModuloAspirante = () => {
       await axios.put(`http://localhost:8090/api/notificaciones/aspirante/marcar-leidas/${idAspirante}`);
       const response = await axios.get(`http://localhost:8090/api/notificaciones/aspirante/${idAspirante}`);
       setNotificaciones(response.data);
+      setCantidadNoLeidas(0);
     } catch (error) {
       console.error("Error al obtener notificaciones:", error);
     } finally {
-      setShowPanelNotificaciones(true); // Esto garantiza que se abra
+      setShowPanelNotificaciones(true);
     }
   };
 
@@ -129,6 +217,14 @@ const ModuloAspirante = () => {
           <Route path="/trabajos" element={<ListaTrabajos idAspirante={idAspirante} />} />
         </Routes>
       </main>
+
+      {/* Overlay para cerrar el panel de notificaciones */}
+      {showPanelNotificaciones && (
+        <div 
+          className={`${styles.overlayNotificacionesCustom} ${showPanelNotificaciones ? styles.active : ''}`}
+          onClick={handleCerrarNotificaciones}
+        />
+      )}
 
       {/* Panel Usuarios */}
       <div className={`panel-usuarios ${showPanelUsuarios ? 'open' : ''}`}>
@@ -183,31 +279,64 @@ const ModuloAspirante = () => {
         </div>
       )}
 
-      {/* Panel Notificaciones */}
-      <div className={`panel-notificaciones ${showPanelNotificaciones ? 'open' : ''}`}>
-        <div className="panel-notificaciones-header">
-          <span>Notificaciones</span>
-          <button onClick={handleCerrarNotificaciones}>✖</button>
+      {/* Panel Notificaciones con CSS Modules */}
+      <div className={`${styles.panelNotificacionesCustom} ${showPanelNotificaciones ? styles.open : ''}`}>
+        <div className={styles.headerNotificacionesCustom}>
+          <div className={styles.headerContentCustom}>
+            <div className={styles.tituloNotificacionesCustom}>
+              Notificaciones
+            </div>
+            <button className={styles.botonCerrarCustom} onClick={handleCerrarNotificaciones}>
+              ✕
+            </button>
+          </div>
+          {cantidadNoLeidas > 0 && (
+            <div className={styles.estadisticasCustom}>
+              {cantidadNoLeidas} nueva{cantidadNoLeidas > 1 ? 's' : ''} notificación{cantidadNoLeidas > 1 ? 'es' : ''}
+            </div>
+          )}
         </div>
 
-        <ul className="lista-notificaciones">
+        <ul className={styles.listaNotificacionesCustom}>
           {notificaciones.length === 0 ? (
-            <li className="no-notificaciones">No tienes notificaciones aún.</li>
+            <li className={styles.sinNotificacionesCustom}>
+              No tienes notificaciones aún.
+            </li>
           ) : (
             [...notificaciones]
               .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
-              .map((noti) => (
-                <li key={noti.id_notificaciones} className="notificacion-item">
-                  <div className="notificacion-contenido">
-                    <small className="notificacion-texto">
-                      <strong>{noti.descripcion} </strong>
-                    </small>
-                    <small className="notificacion-fecha">
-                      <em>{noti.fecha ? new Date(noti.fecha).toLocaleString() : 'Fecha no disponible'}</em>
-                    </small>
-                  </div>
-                </li>
-              ))
+              .map((noti, index) => {
+                const type = getNotificationType(noti.descripcion);
+                const timeAgo = getTimeAgo(noti.fecha);
+                const icon = getNotificationIcon(noti.descripcion);
+                const status = getStatusFromDescription(noti.descripcion);
+                const isRead = noti.leida !== false;
+                
+                return (
+                  <li 
+                    key={noti.id_notificaciones} 
+                    className={`${styles.itemNotificacionCustom} ${styles[type]} ${styles[status]} ${!isRead ? styles.noLeida : styles.leida}`}
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                  >
+                    <div className={styles.contenidoNotificacionCustom}>
+                      <div className={`${styles.iconoNotificacionCustom} ${styles[type]}`}>
+                        {icon}
+                      </div>
+                      <div className={styles.textoNotificacionCustom}>
+                        <div className={styles.descripcionCustom}>
+                          <strong>{noti.descripcion}</strong>
+                          {!isRead && (
+                            <span className={styles.marcaNuevaCustom}>● Nueva</span>
+                          )}
+                        </div>
+                        <div className={styles.fechaNotificacionCustom}>
+                          <em>{timeAgo}</em>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                );
+              })
           )}
         </ul>
       </div>

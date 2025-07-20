@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import styles from '../Notificaciones.module.css';
 
-const HeaderAspirante = ({ 
-  userId, 
-  onOpenMensajes, 
-  onOpenNotificaciones, 
-  notificacionesNoLeidas = 0 
+const HeaderAspirante = ({
+  userId,
+  onOpenMensajes,
+  onOpenNotificaciones,
+  notificacionesNoLeidas = 0
 }) => {
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
@@ -30,12 +31,12 @@ const HeaderAspirante = ({
   const handleLogout = () => {
     console.log("Ejecutando logout...");
     // Clear all storage
-    if (typeof(Storage) !== "undefined") {
+    if (typeof (Storage) !== "undefined") {
       localStorage.clear();
       sessionStorage.clear();
     }
     console.log("Almacenamiento limpiado, redirigiendo...");
-    
+
     // Redirect to login
     window.location.href = '/login';
     setIsUserDropdownOpen(false);
@@ -45,7 +46,7 @@ const HeaderAspirante = ({
     window.location.href = path;
   };
 
-  const styles = {
+  const stylesInline = {
     aspiranteHeader: {
       display: 'flex',
       justifyContent: 'space-between',
@@ -117,39 +118,6 @@ const HeaderAspirante = ({
       cursor: 'pointer',
       transition: 'all 0.2s ease',
       whiteSpace: 'nowrap'
-    },
-    notificationsButton: {
-      display: 'flex',
-      alignItems: 'center',
-      background: 'none',
-      border: 'none',
-      color: '#374151',
-      fontWeight: '500',
-      fontSize: '0.95rem',
-      padding: '0.5rem',
-      borderRadius: '0.375rem',
-      cursor: 'pointer',
-      transition: 'all 0.2s ease',
-      position: 'relative'
-    },
-    notificationBadge: {
-      position: 'absolute',
-      top: '-2px',
-      right: '-2px',
-      backgroundColor: '#dc2626',
-      color: 'white',
-      borderRadius: '50%',
-      padding: '0.125rem 0.375rem',
-      fontSize: '0.75rem',
-      fontWeight: '600',
-      lineHeight: 1,
-      minWidth: '20px',
-      height: '20px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      boxShadow: '0 0 0 2px white',
-      animation: 'pulse 2s infinite'
     },
     rightSection: {
       display: 'flex',
@@ -255,15 +223,9 @@ const HeaderAspirante = ({
   };
 
   return (
-    <header style={styles.aspiranteHeader}>
+    <header style={stylesInline.aspiranteHeader}>
       <style>
         {`
-          @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-          }
-          
           @keyframes slideDown {
             from {
               opacity: 0;
@@ -301,155 +263,155 @@ const HeaderAspirante = ({
           }
         `}
       </style>
-      
-      <div style={styles.leftSection}>
-        <div style={styles.brandLogo} className="brand-logo">
-          <svg 
-            viewBox="0 0 48 48" 
-            fill="none" 
+
+      <div style={stylesInline.leftSection}>
+        <div style={stylesInline.brandLogo} className="brand-logo">
+          <svg
+            viewBox="0 0 48 48"
+            fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            style={styles.logoIcon}
+            style={stylesInline.logoIcon}
           >
-            <circle cx="24" cy="24" r="20" fill="#4F46E5" opacity="0.1"/>
-            <path d="M24 8C15.163 8 8 15.163 8 24s7.163 16 16 16 16-7.163 16-16S32.837 8 24 8zm0 28c-6.627 0-12-5.373-12-12S17.373 12 24 12s12 5.373 12 12-5.373 12-12 12z" fill="#4F46E5"/>
-            <path d="M28 20h-8v8h8v-8z" fill="#4F46E5"/>
+            <circle cx="24" cy="24" r="20" fill="#4F46E5" opacity="0.1" />
+            <path d="M24 8C15.163 8 8 15.163 8 24s7.163 16 16 16 16-7.163 16-16S32.837 8 24 8zm0 28c-6.627 0-12-5.373-12-12S17.373 12 24 12s12 5.373 12 12-5.373 12-12 12z" fill="#4F46E5" />
+            <path d="M28 20h-8v8h8v-8z" fill="#4F46E5" />
           </svg>
-          <h2 style={styles.brandName}>C A L M A</h2>
+          <h2 style={stylesInline.brandName}>C A L M A</h2>
         </div>
 
-        <nav style={styles.primaryNavigation}>
-          <button 
+        <nav style={stylesInline.primaryNavigation}>
+          <button
             onClick={() => handleNavigation(`/moduloAspirante/trabajos?userId=${userId}`)}
-            style={styles.navLink}
+            style={stylesInline.navLink}
             className="nav-item"
           >
             Trabajos
           </button>
-          
-          <button 
+
+          <button
             onClick={() => handleNavigation(`/moduloAspirante/red?userId=${userId}`)}
-            style={styles.navLink}
+            style={stylesInline.navLink}
             className="nav-item"
           >
             Mi Red
           </button>
-          
-          <button 
+
+          <button
             onClick={() => handleNavigation(`/moduloAspirante/postulaciones/${userId}`)}
-            style={styles.navLink}
+            style={stylesInline.navLink}
             className="nav-item"
           >
             Mis Postulaciones
           </button>
-          
-          <button 
+
+          <button
             onClick={() => handleNavigation(`/moduloAspirante/cv?userId=${userId}`)}
-            style={styles.navLink}
+            style={stylesInline.navLink}
             className="nav-item"
           >
             CV
           </button>
-          
-          <button 
+
+          <button
             onClick={() => handleNavigation(`/ver-cv/${userId}`)}
-            style={styles.navLink}
+            style={stylesInline.navLink}
             className="nav-item"
           >
             Ver CV
           </button>
 
-          <button 
+          <button
             onClick={() => handleNavigation(`/aspirante/${userId}/calificaciones`)}
-            style={styles.navLink}
+            style={stylesInline.navLink}
             className="nav-item"
           >
             Mis Calificaciones
           </button>
 
-          <button 
+          <button
             onClick={handleMensajesClick}
-            style={styles.messagesButton}
+            style={stylesInline.messagesButton}
             className="nav-item"
           >
             <span>💬</span>
             Mensajes
           </button>
 
+          {/* Botón de Notificaciones con CSS Modules */}
           <button
             onClick={handleNotificacionesClick}
-            style={styles.notificationsButton}
-            className="nav-item"
+            className={styles.botonNotificacionesCustom}
           >
-            <span>🔔</span>
+            🔔
             {notificacionesNoLeidas > 0 && (
-              <span style={styles.notificationBadge}>
-                {notificacionesNoLeidas}
+              <span className={`${styles.badgeNotificacionCustom} ${notificacionesNoLeidas > 0 ? styles.new : ''}`}>
+                {notificacionesNoLeidas > 99 ? '99+' : notificacionesNoLeidas}
               </span>
             )}
           </button>
         </nav>
       </div>
 
-      <div style={styles.rightSection}>
-        <div style={styles.userDropdownContainer}>
-          <button 
+      <div style={stylesInline.rightSection}>
+        <div style={stylesInline.userDropdownContainer}>
+          <button
             onClick={toggleUserDropdown}
-            style={styles.userAvatar}
+            style={stylesInline.userAvatar}
             className="user-avatar"
           >
-            <div style={styles.avatarFallback}>A</div>
+            <div style={stylesInline.avatarFallback}>A</div>
           </button>
 
           {isUserDropdownOpen && (
-            <div style={styles.userDropdownMenu}>
-              <div style={styles.userDropdownHeader}>
-                <div style={styles.userDropdownAvatar}>
-                  <div style={styles.avatarFallback}>A</div>
+            <div style={stylesInline.userDropdownMenu}>
+              <div style={stylesInline.userDropdownHeader}>
+                <div style={stylesInline.userDropdownAvatar}>
+                  <div style={stylesInline.avatarFallback}>A</div>
                 </div>
-                <div style={styles.userDropdownInfo}>
-                  <span style={styles.userName}>Aspirante</span>
-                  <span style={styles.userEmail}>aspirante@example.com</span>
+                <div style={stylesInline.userDropdownInfo}>
+                  <span style={stylesInline.userName}>Aspirante</span>
+                  <span style={stylesInline.userEmail}>aspirante@example.com</span>
                 </div>
               </div>
-              
-              <div style={styles.userDropdownDivider}></div>
-              
-              <button 
+
+              <div style={stylesInline.userDropdownDivider}></div>
+
+              <button
                 onClick={() => {
                   handleNavigation(`/moduloAspirante/perfilAspirante?userId=${userId}`);
                   setIsUserDropdownOpen(false);
                 }}
-                style={styles.userDropdownItem}
+                style={stylesInline.userDropdownItem}
                 className="dropdown-item"
               >
-                <svg 
-                  width="18" 
-                  height="18" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
                 Mi Perfil
               </button>
-              
-              <button 
+
+              <button
                 onClick={handleLogout}
-                style={{...styles.userDropdownItem, ...styles.logoutItem}}
+                style={{ ...stylesInline.userDropdownItem, ...stylesInline.logoutItem }}
                 className="logout-item"
               >
-                <svg 
-                  width="18" 
-                  height="18" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <polyline points="16,17 21,12 16,7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <line x1="21" y1="12" x2="9" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <polyline points="16,17 21,12 16,7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <line x1="21" y1="12" x2="9" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
                 Cerrar Sesión
               </button>
