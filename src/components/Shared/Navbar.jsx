@@ -33,9 +33,7 @@ const Navbar = () => {
       </nav>
 
       <div className="auth-buttons">
-        <button className="btn-signup" onClick={() => navigate('/fichas/nueva')}>
-          Inscribirse
-        </button>
+       
         <button className="btn-login" onClick={() => navigate('/login')}>
           Ingresar
         </button>

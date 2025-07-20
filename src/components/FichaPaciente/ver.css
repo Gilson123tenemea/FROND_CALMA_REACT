@@ -1,395 +1,536 @@
-/* Importar fuente elegante */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* Variables CSS para colores */
-:root {
-    --primary-blue: #2c3e50;
-    --soft-blue: #85a3cc;
-    --pastel-blue: #0a2f66;
-    --light-blue: #ffffff;
-    --white: #ffffff;
-    --text-primary: #2c3e50;
-    --text-secondary: #5a6c7d;
-    --border-color: #d1e7dd;
-    --shadow: 0 2px 10px rgba(44, 62, 80, 0.1);
-    --shadow-hover: 0 4px 20px rgba(44, 62, 80, 0.15);
-    --success-color: #164d9e;
-    --danger-color: #0d2f72;
-}
-
-/* Contenedor principal */
 .fpv-main-container {
-    max-width: 1200px;
+    max-width: 1500px;
     margin: 0 auto;
-    padding: 2rem;
-    font-family: 'Inter', sans-serif;
-    background-color: var(--light-blue);
+    padding: 20px;
+    background-color: #f8f9fa;
     min-height: 100vh;
 }
 
-/* Header */
+
 .fpv-header-wrapper {
     text-align: center;
-    margin-bottom: 3rem;
-    padding: 2rem;
-    background: linear-gradient(135deg, var(--primary-blue), var(--soft-blue));
-    border-radius: 20px;
-    box-shadow: var(--shadow);
+    margin-bottom: 30px;
+}
+.fpv-section-title {
+  color: #ffffff; /* o simplemente color: white; */
 }
 
 .fpv-main-title {
-    color: var(--white);
     font-size: 2.5rem;
-    font-weight: 700;
-    margin: 0;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-weight: 600;
 }
 
-.fpv-main-title::before {
-    content: "🏥";
-    margin-right: 1rem;
+.fpv-subtitle {
+    font-size: 1.2rem;
+    color: #7f8c8d;
+    margin-bottom: 20px;
 }
 
-/* Tarjeta de ficha */
+/* Contenedor de cada ficha */
 .fpv-ficha-card {
-    background: var(--white);
-    border-radius: 20px;
-    box-shadow: var(--shadow);
-    margin-bottom: 2rem;
-    border: 2px solid var(--pastel-blue);
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
     overflow: hidden;
-    transition: all 0.3s ease;
 }
 
-.fpv-ficha-card:hover {
-    box-shadow: var(--shadow-hover);
-    transform: translateY(-2px);
-}
-
-/* Header de la tarjeta */
+/* Header de la ficha */
 .fpv-card-header {
-    background: linear-gradient(135deg, var(--pastel-blue), var(--light-blue));
-    padding: 2rem;
-    border-bottom: 2px solid var(--soft-blue);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .fpv-card-title {
-    color: var(--primary-blue);
     font-size: 1.8rem;
-    font-weight: 600;
     margin: 0;
-}
-
-.fpv-card-title::before {
-    content: "📋";
-    margin-right: 0.5rem;
+    font-weight: 600;
 }
 
 .fpv-registration-date {
-    background: var(--pastel-blue);
-    color: var(--primary-blue);
-    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 8px 16px;
     border-radius: 25px;
-    font-weight: 500;
-    border: 1px solid var(--soft-blue);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 0.9rem;
+    backdrop-filter: blur(10px);
 }
 
-.fpv-registration-date::before {
-    content: "📅";
-    margin-right: 4rem;
-}
-
-/* Grid de contenido */
-.fpv-content-grid {
-    padding: 2rem;
-}
-
-/* Secciones */
-.fpv-info-section {
-    margin-bottom: 3rem;
-}
-
-.fpv-section-title {
-    color: var(--primary-blue);
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 3px solid var(--soft-blue);
-    position: relative;
-}
-
-/* Iconos para títulos de sección */
-.fpv-section-title:nth-of-type(1)::before { content: "⚕️"; margin-right: 0.5rem; }
-.fpv-section-title:nth-of-type(2)::before { content: "💬"; margin-right: 0.5rem; }
-.fpv-section-title:nth-of-type(3)::before { content: "🍽️"; margin-right: 0.5rem; }
-.fpv-section-title:nth-of-type(4)::before { content: "🌅"; margin-right: 0.5rem; }
-
-/* Items de información */
-.fpv-info-item {
+/* Navegación por steps */
+.fpv-steps-navigation {
     display: flex;
-    align-items: flex-start;
-    margin-bottom: 1.5rem;
-    padding: 1rem;
-    background: var(--light-blue);
-    border-radius: 12px;
-    border-left: 4px solid var(--soft-blue);
+    justify-content: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.fpv-steps-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.fpv-step-item {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
     transition: all 0.3s ease;
 }
 
+
+.fpv-step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: 2px solid #dee2e6;
+    background: white;
+    color: #6c757d;
+}
+
+.fpv-step-circle.active {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+    transform: scale(1.1);
+}
+
+.fpv-step-circle.completed {
+    background: #28a745;
+    color: white;
+    border-color: #28a745;
+}
+
+.fpv-step-label {
+    margin-left: 10px;
+    font-weight: 500;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.fpv-step-item.active .fpv-step-label {
+    color: #667eea;
+    font-weight: 600;
+}
+
+.fpv-step-connector {
+    width: 30px;
+    height: 2px;
+    background: #dee2e6;
+    margin: 0 10px;
+}
+
+.fpv-step-connector.completed {
+    background: #28a745;
+}
+
+/* Contenedor de cards */
+.fpv-cards-container {
+    padding: 30px;
+     background-color: #f8f9fa;
+
+}
+
+.fpv-card-content {
+    display: none;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.fpv-card-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Estilos para Card de Información Médica */
+.fpv-medical-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid #667eea;
+}
+
+.fpv-section-title {
+    color: #feffff;
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    font-weight: 600;
+    border-bottom: 2px solid #7d87b5;
+    padding-bottom: 10px;
+}
+
+.fpv-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.fpv-info-item {
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ffffff;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    word-wrap: break-word;
+}
+
 .fpv-info-item:hover {
-    background: var(--pastel-blue);
-    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
 }
 
 .fpv-label {
-    font-weight: 500;
-    color: var(--text-primary);
-    min-width: 200px;
-    margin-right: 1rem;
-    display: flex;
-    align-items: center;
-    position: relative;
+    display: block;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
 }
 
 .fpv-value {
-    color: var(--text-secondary);
-    font-weight: 400;
-    line-height: 1.6;
-    flex: 1;
+    display: block;
+    color: #212529;
+    font-size: 1rem;
+    line-height: 1.5;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    max-width: 100%;
 }
 
-/* Iconos para labels específicos */
-.fpv-label:has-text("Diagnóstico")::before { content: "🔬"; margin-right: 0.5rem; }
-.fpv-label:has-text("Condiciones")::before { content: "💪"; margin-right: 0.5rem; }
-.fpv-label:has-text("Estado de ánimo")::before { content: "😊"; margin-right: 0.5rem; }
-.fpv-label:has-text("Rutina Médica")::before { content: "📋"; margin-right: 0.5rem; }
-.fpv-label:has-text("Riesgo")::before { content: "⚠️"; margin-right: 0.5rem; }
-.fpv-label:has-text("Observaciones")::before { content: "👁️"; margin-right: 0.5rem; }
-.fpv-label:has-text("Comunicación")::before { content: "💬"; margin-right: 0.5rem; }
-.fpv-label:has-text("Otras Comunicaciones")::before { content: "📢"; margin-right: 0.5rem; }
-.fpv-label:has-text("Usa Pañal")::before { content: "🧷"; margin-right: 0.5rem; }
-.fpv-label:has-text("acompañamiento")::before { content: "👥"; margin-right: 0.5rem; }
-.fpv-label:has-text("Tipo de Dieta")::before { content: "🥗"; margin-right: 0.5rem; }
-.fpv-label:has-text("alimentación")::before { content: "🍴"; margin-right: 0.5rem; }
-.fpv-label:has-text("Levantarse")::before { content: "🌅"; margin-right: 0.5rem; }
-.fpv-label:has-text("Acostarse")::before { content: "🌙"; margin-right: 0.5rem; }
-.fpv-label:has-text("Siestas")::before { content: "😴"; margin-right: 0.5rem; }
-.fpv-label:has-text("Baño")::before { content: "🛁"; margin-right: 0.5rem; }
-
-/* Campos grandes */
 .fpv-large-field {
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.fpv-large-field .fpv-label {
-    margin-bottom: 0.5rem;
-    min-width: auto;
+    grid-column: span 2;
 }
 
 .fpv-large-text {
-    background: var(--white);
-    padding: 1rem;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    width: 100%;
-    min-height: 80px;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    min-height: 60px;
+    padding: 10px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    white-space: pre-wrap;
+    overflow-y: auto;
+    max-height: 120px;
 }
 
-/* Valores booleanos */
-.fpv-boolean {
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
+.fpv-boolean.fpv-yes {
+    color: #28a745;
     font-weight: 600;
-    text-align: center;
-    min-width: 60px;
 }
 
-.fpv-yes {
-    background: var(--success-color);
-    color: var(--white);
-}
-
-.fpv-no {
-    background: var(--danger-color);
-    color: var(--white);
-}
-
-/* Contenedor de listas */
-.fpv-lists-container {
-    padding: 2rem;
-    background: var(--pastel-blue);
-    border-top: 2px solid var(--soft-blue);
-}
-
-.fpv-list-section {
-    margin-bottom: 2.5rem;
-    background: var(--white);
-    border-radius: 15px;
-    padding: 1.5rem;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border-color);
-}
-
-.fpv-list-title {
-    color: var(--primary-blue);
-    font-size: 1.3rem;
+.fpv-boolean.fpv-no {
+    color: #dc3545;
     font-weight: 600;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--soft-blue);
 }
 
-/* Iconos para títulos de lista */
-.fpv-list-title:contains("Medicamentos")::before { content: "💊"; margin-right: 0.5rem; }
-.fpv-list-title:contains("Alergias Alimentarias")::before { content: "🚫"; margin-right: 0.5rem; }
-.fpv-list-title:contains("Alergias a Medicamentos")::before { content: "⚠️"; margin-right: 0.5rem; }
-.fpv-list-title:contains("Temas de Conversación")::before { content: "💭"; margin-right: 0.5rem; }
-.fpv-list-title:contains("Intereses Personales")::before { content: "❤️"; margin-right: 0.5rem; }
+/* Estilos para Card de Medicamentos */
+.fpv-medications-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 10px ;
+    border-left: 4px solid #28a745;
+}
 
-/* Listas */
-.fpv-medication-list,
-.fpv-allergy-list,
-.fpv-med-allergy-list,
-.fpv-conversation-list,
-.fpv-interests-list {
+.fpv-medication-list {
+    list-style: none;
+    padding: 0;
+    margin: ;
+}
+
+.fpv-medication-item {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 15px;
+    border: 1px solid #0a2254;
+    transition: all 0.3s ease;
+}
+
+.fpv-medication-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.fpv-medication-item p {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    min-height: 40px;
+}
+
+.fpv-field-label {
+    font-weight: 600;
+    color: #495057;
+    min-width: 180px;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    padding-top: 2px;
+}
+
+.fpv-field-value {
+    color: #212529;
+    flex: 1;
+    padding: 8px 12px;
+    background: white;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    min-width: 0;
+    white-space: pre-wrap;
+    line-height: 1.4;
+}
+
+/* Estilos para Card de Alergias */
+.fpv-allergies-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid #3546dc;
+}
+
+.fpv-allergies-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.fpv-allergy-section {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+}
+
+.fpv-allergy-title {
+    color: #0f0e56;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.fpv-allergy-title::before {
+    content: "⚠️";
+    font-size: 1.2rem;
+}
+
+.fpv-allergy-list, .fpv-med-allergy-list {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-/* Items de medicamentos */
-.fpv-medication-item {
-    background: var(--light-blue);
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    border-radius: 12px;
-    border-left: 4px solid var(--success-color);
+.fpv-allergy-item, .fpv-med-allergy-item {
+    background: white;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    border: 1px solid #000000;
+    color: #495057;
     transition: all 0.3s ease;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    line-height: 1.4;
 }
 
-.fpv-medication-item:hover {
-    background: var(--pastel-blue);
+.fpv-allergy-item:hover, .fpv-med-allergy-item:hover {
+     background: #ffffff;
+    border-color: #dc3545;
     transform: translateX(5px);
 }
 
-.fpv-medication-item p {
-    margin: 0.5rem 0;
+/* Estilos para Card de Intereses */
+.fpv-interests-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid #fd7e14;
+}
+
+.fpv-interests-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.fpv-interest-section {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+}
+
+.fpv-interest-title {
+    color: #0b1f54;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    font-weight: 600;
     display: flex;
     align-items: center;
+    gap: 10px;
 }
 
-.fpv-field-label {
-    font-weight: 500;
-    color: var(--text-primary);
-    min-width: 200px;
-    margin-right: 1rem;
+.fpv-interest-title::before {
+    content: "💡";
+    font-size: 1.2rem;
 }
 
-.fpv-field-value {
-    color: var(--text-secondary);
-    font-weight: 400;
+.fpv-conversation-list, .fpv-interests-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-/* Iconos para campos de medicamentos */
-.fpv-field-label:contains("Medicación activa")::before { content: "✅"; margin-right: 0.5rem; }
-.fpv-field-label:contains("Nombre del Medicamento")::before { content: "💊"; margin-right: 0.5rem; }
-.fpv-field-label:contains("Dosis")::before { content: "⚖️"; margin-right: 0.5rem; }
-.fpv-field-label:contains("Frecuencia")::before { content: "⏰"; margin-right: 0.5rem; }
-.fpv-field-label:contains("Vía de Administración")::before { content: "💉"; margin-right: 0.5rem; }
-.fpv-field-label:contains("Condición Tratada")::before { content: "🎯"; margin-right: 0.5rem; }
-.fpv-field-label:contains("Reacciones Esperadas")::before { content: "⚡"; margin-right: 0.5rem; }
-
-/* Items de otras listas */
-.fpv-allergy-item,
-.fpv-med-allergy-item,
-.fpv-conversation-item,
-.fpv-interests-item {
-    background: var(--light-blue);
-    padding: 1rem 1.5rem;
-    margin-bottom: 0.5rem;
-    border-radius: 25px;
-    border-left: 4px solid var(--soft-blue);
+.fpv-conversation-item, .fpv-interests-item {
+    background: white;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    border: 1px solid #22507f;
+    color: #000001;
     transition: all 0.3s ease;
-    position: relative;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    line-height: 1.4;
 }
 
-.fpv-allergy-item:hover,
-.fpv-med-allergy-item:hover,
-.fpv-conversation-item:hover,
-.fpv-interests-item:hover {
-    background: var(--pastel-blue);
+.fpv-conversation-item:hover, .fpv-interests-item:hover {
+    background: #fff8f0;
+    border-color: #fd7e14;
     transform: translateX(5px);
 }
 
-.fpv-allergy-item::before { content: "🚫"; margin-right: 0.5rem; }
-.fpv-med-allergy-item::before { content: "⚠️"; margin-right: 0.5rem; }
-.fpv-conversation-item::before { content: "💭"; margin-right: 0.5rem; }
-.fpv-interests-item::before { content: "❤️"; margin-right: 0.5rem; }
+/* Navegación entre cards */
+.fpv-navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    padding: 0 20px;
+}
+
+.fpv-nav-button {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fpv-nav-button:hover {
+    background: #5a67d8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.fpv-nav-button:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.fpv-step-indicator {
+    color: #6c757d;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {
     .fpv-main-container {
-        padding: 1rem;
+        padding: 10px;
     }
     
     .fpv-card-header {
         flex-direction: column;
         text-align: center;
-        gap: 1rem;
+        gap: 10px;
     }
     
-    .fpv-info-item {
+    .fpv-steps-container {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .fpv-step-connector {
+        display: none;
+    }
+    
+    .fpv-info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .fpv-large-field {
+        grid-column: span 1;
+    }
+    
+    .fpv-allergies-grid,
+    .fpv-interests-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .fpv-navigation-buttons {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .fpv-nav-button {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .fpv-field-label {
+        min-width: 120px;
+        font-size: 0.8rem;
+    }
+    
+    .fpv-medication-item p {
         flex-direction: column;
         align-items: flex-start;
+        gap: 5px;
     }
     
-    .fpv-label {
-        min-width: auto;
-        margin-bottom: 0.5rem;
+    .fpv-field-value {
+        width: 100%;
+        min-width: unset;
     }
-    
-    .fpv-main-title {
-        font-size: 2rem;
-    }
-}
-
-/* Animaciones */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.fpv-ficha-card {
-    animation: fadeIn 0.6s ease-out;
-}
-
-/* Scrollbar personalizada */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--light-blue);
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--soft-blue);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-blue);
 }
