@@ -1,7 +1,7 @@
 /* ===== CONTENEDOR PRINCIPAL ===== */
 .contenedor-trabajos {
   padding: 2rem;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
   min-height: 100vh;
   font-family: 'Inter', system-ui, sans-serif;
 }

@@ -70,7 +70,9 @@
   background: #fafafa;
   border: 1px solid #e0e0e0;
 }
-
+.main-content {
+  margin-top: 40px !important; /* ajusta el valor a lo que quieras */
+}
 .usuario-item {
   display: flex;
   align-items: center;

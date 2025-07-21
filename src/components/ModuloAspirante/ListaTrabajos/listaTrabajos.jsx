@@ -36,12 +36,16 @@ const ListaTrabajos = ({ idAspirante }) => {
             titulo: item.publicacionempleo?.titulo || 'Sin título',
             descripcion: item.publicacionempleo?.descripcion || 'Sin descripción',
             salario: item.publicacionempleo?.salario_estimado || 0,
-            fechaPublicacion: item.fechaPublicacion?.split('T')[0] || 'Sin fecha',
+            fechaLimite: item.publicacionempleo?.fecha_limite
+              ? item.publicacionempleo.fecha_limite.split('T')[0]
+              : null,   // <-- Aquí sacamos solo la fecha, sin hora
             contratante: item.contratante?.usuario?.nombres || 'Anónimo',
             empresa: item.contratante?.empresas?.[0]?.nombreEmpresa || null,
             requisitos: item.publicacionempleo?.requisitos || 'No especificado',
             jornada: item.publicacionempleo?.jornada || 'No especificada',
+            correo: item.contratante?.usuario?.correo || null,
             turno: item.publicacionempleo?.turno || 'No especificado',
+            disponibilidad: item.publicacionempleo?.disponibilidad_inmediata === true ? 'Inmediata' : 'No Inmediata',
             actividadesRealizar: item.publicacionempleo?.actividades_realizar || 'No especificadas',
             ubicacion: {
               parroquia: parroquia?.nombre || '',

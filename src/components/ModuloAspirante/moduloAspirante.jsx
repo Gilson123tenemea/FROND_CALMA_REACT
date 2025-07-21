@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Routes, Route } from 'react-router-dom';
-import HeaderAspirante from './HeaderAspirante/headerAspirante';
+import HeaderAspirante from './HeaderAspirante/HeaderAspirante';
 import ListaTrabajos from './ListaTrabajos/listaTrabajos';
 import axios from 'axios';
 import App from '../../App';
@@ -275,7 +275,7 @@ const ModuloAspirante = () => {
   if (!userId) return <div>Cargando datos del usuario para chat...</div>;
 
   return (
-    <div className="modulo-aspirante-container">
+    <div className="">
       <HeaderAspirante
         userId={userId}
         onOpenMensajes={handleAbrirPanelUsuarios}
