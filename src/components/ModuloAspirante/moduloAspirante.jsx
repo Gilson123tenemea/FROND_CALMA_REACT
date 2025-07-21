@@ -357,10 +357,7 @@ const ModuloAspirante = () => {
       {/* Chat flotante */}
       {usuarioChat && (
         <div className="chat-flotante">
-          <div className="header-chat">
-            <h3>Chat con {usuarioChat.nombres}</h3>
-            <button className="btn-cerrar-chat" onClick={handleCerrarChat}>✖</button>
-          </div>
+        
           <App
             nombrePropio={userId}
             destinatarioProp={usuarioChat.idUsuario}

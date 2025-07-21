@@ -12,7 +12,7 @@ import {
 } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import './toastOverrides.css';
 import { login } from '../../servicios/LoginService';
 import { getCVByAspiranteId } from '../../servicios/cvService';
 import LoadingScreen from '../Shared/LoadingScreen';

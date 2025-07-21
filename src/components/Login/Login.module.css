@@ -491,21 +491,7 @@
   transition: all 0.3s ease !important;
 }
 
-.Toastify__toast--success {
-  background: rgba(34, 197, 94, 0.9) !important;
-}
 
-.Toastify__toast--error {
-  background: rgba(239, 68, 68, 0.9) !important;
-}
-
-.Toastify__toast--info {
-  background: rgba(59, 130, 246, 0.9) !important;
-}
-
-.Toastify__toast--warning {
-  background: rgba(245, 158, 11, 0.9) !important;
-}
 
 .Toastify__toast:hover {
   transform: translateY(-2px);
@@ -577,4 +563,20 @@
 .loginCardLeft .subtitle {
   z-index: 2;
   color: white;
+}
+
+/* Fuerza fondo oscuro para todos los tipos de toast */
+.Toastify__toast--success,
+.Toastify__toast--error,
+.Toastify__toast--info,
+.Toastify__toast--warning {
+  background: rgba(0, 0, 0, 0.8) !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+
+.Toastify__progress-bar {
+  background: rgba(255, 255, 255, 0.4) !important;
 }
