@@ -27,20 +27,17 @@ const ModuloContratante = () => {
   const getNotificationType = (descripcion) => {
     const desc = descripcion.toLowerCase();
 
-    if (desc.includes('postulación') || desc.includes('postulacion') || desc.includes('aplicación')) {
+    // 🆕 TIPO PARA MENSAJES
+    if (desc.includes('💬') || desc.includes('nuevo mensaje')) {
       return 'info';
     }
 
-    if (desc.includes('trabajo completado') || desc.includes('finalizado') || desc.includes('terminado')) {
+    // Resto de tipos existentes...
+    if (desc.includes('aceptada') || desc.includes('felicitaciones')) {
       return 'success';
     }
-
-    if (desc.includes('calificación') || desc.includes('calificacion') || desc.includes('valoración')) {
+    if (desc.includes('rechazada') || desc.includes('lamentamos')) {
       return 'warning';
-    }
-
-    if (desc.includes('pago') || desc.includes('dinero') || desc.includes('cobro')) {
-      return 'success';
     }
 
     return 'info';
@@ -66,24 +63,25 @@ const ModuloContratante = () => {
   const getNotificationIcon = (descripcion) => {
     const desc = descripcion.toLowerCase();
 
-    if (desc.includes('postulación') || desc.includes('postulacion') || desc.includes('aplicación')) {
-      return '👤';
+    // 🆕 DETECCIÓN DE MENSAJES
+    if (desc.includes('💬') || desc.includes('nuevo mensaje')) {
+      return '💬';
     }
 
-    if (desc.includes('trabajo completado') || desc.includes('finalizado') || desc.includes('terminado')) {
+    // Para aspirantes
+    if (desc.includes('lamentamos')) {
+      return '❌';
+    }
+    if (desc.includes('felicitaciones')) {
       return '✅';
     }
 
-    if (desc.includes('calificación') || desc.includes('calificacion') || desc.includes('valoración')) {
-      return '⭐';
+    // Para contratantes  
+    if (desc.includes('postulación') || desc.includes('postulacion')) {
+      return '👤';
     }
-
-    if (desc.includes('pago') || desc.includes('dinero') || desc.includes('cobro')) {
-      return '💰';
-    }
-
-    if (desc.includes('mensaje') || desc.includes('comentario')) {
-      return '💬';
+    if (desc.includes('trabajo completado')) {
+      return '✅';
     }
 
     return 'ℹ️';
@@ -118,33 +116,39 @@ const ModuloContratante = () => {
     }
   }, [location.state]);
 
-  useEffect(() => {
-    const fetchNoLeidas = async () => {
-      if (!contratanteId) return;
+ useEffect(() => {
+  const fetchNoLeidas = async () => {
+    if (!contratanteId) return; // ✅ CORREGIDO: usar contratanteId
 
-      try {
-        const res = await axios.get(`http://localhost:8090/api/notificaciones/contratante/noleidas/${contratanteId}`);
-        const nuevasCantidad = res.data.length;
+    try {
+      const endpoint = `http://localhost:8090/api/notificaciones/contratante/noleidas/${contratanteId}`; // ✅ CORREGIDO
 
-        if (nuevasCantidad > cantidadNoLeidas && cantidadNoLeidas > 0) {
-          setCantidadNoLeidas(nuevasCantidad);
-          const badge = document.querySelector(`.${styles.badgeNotificacionContratante}`);
-          if (badge) {
-            badge.classList.add(styles.new);
-            setTimeout(() => badge.classList.remove(styles.new), 500);
-          }
-        } else {
-          setCantidadNoLeidas(nuevasCantidad);
+      const res = await axios.get(endpoint);
+      const nuevasCantidad = res.data.length;
+
+      if (nuevasCantidad > cantidadNoLeidas && cantidadNoLeidas > 0) {
+        setCantidadNoLeidas(nuevasCantidad);
+        const badge = document.querySelector(`.${styles.badgeNotificacionContratante}`); // ✅ CORREGIDO: badge de contratante
+        if (badge) {
+          badge.classList.add(styles.new);
+          setTimeout(() => badge.classList.remove(styles.new), 500);
         }
-      } catch (error) {
-        console.error("Error al cargar notificaciones no leídas:", error);
+      } else {
+        setCantidadNoLeidas(nuevasCantidad);
       }
-    };
+    } catch (error) {
+      console.error("Error al cargar notificaciones no leídas:", error);
+    }
+  };
 
-    fetchNoLeidas();
-    const interval = setInterval(fetchNoLeidas, 30000);
-    return () => clearInterval(interval);
-  }, [contratanteId, showPanelNotificaciones, cantidadNoLeidas]);
+  fetchNoLeidas();
+
+  // 🆕 INTERVALOS DINÁMICOS: Más frecuente si hay chat activo
+  const intervalo = usuarioChat ? 3000 : 30000; // 3s si hay chat, 30s si no
+  const interval = setInterval(fetchNoLeidas, intervalo);
+
+  return () => clearInterval(interval);
+}, [contratanteId, showPanelNotificaciones, cantidadNoLeidas, usuarioChat]); // ✅ CORREGIDO: dependencias correctas
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -173,18 +177,18 @@ const ModuloContratante = () => {
     setPublicacionEditar(null);
   };
 
- const handleAbrirPanelUsuarios = async () => {
+  const handleAbrirPanelUsuarios = async () => {
     setShowPanelUsuarios(true);
     setSearchTerm('');
-    
+
     // 🔧 NUEVA LÓGICA: Cargar aspirantes con los que puedes chatear
     try {
       console.log('🔍 [CONTRATISTA] Cargando aspirantes para chat...');
       const response = await axios.get(`http://localhost:8090/api/postulacion/contratista/${contratanteId}/aspirantes-para-chat`);
-      
+
       console.log('✅ [CONTRATISTA] Aspirantes disponibles para chat:', response.data.length);
       console.log('📋 [CONTRATISTA] Lista:', response.data);
-      
+
       setUsuariosEncontrados(response.data);
     } catch (error) {
       console.error('❌ [CONTRATISTA] Error al cargar aspirantes para chat:', error);
@@ -200,7 +204,7 @@ const ModuloContratante = () => {
 
   const handleBuscarUsuarios = async (term) => {
     setSearchTerm(term);
-    
+
     if (term.trim() === '') {
       // Si no hay término de búsqueda, mostrar todos los disponibles
       handleAbrirPanelUsuarios();
@@ -211,20 +215,20 @@ const ModuloContratante = () => {
       // 🔧 NUEVA LÓGICA: Buscar solo entre aspirantes con los que puedes chatear
       console.log('🔍 [CONTRATISTA] Buscando entre aspirantes para chat...');
       const response = await axios.get(`http://localhost:8090/api/postulacion/contratista/${contratanteId}/aspirantes-para-chat`);
-      
+
       // Filtrar por término de búsqueda
       const usuariosFiltrados = response.data.filter(usuario => {
         const nombreCompleto = `${usuario.nombres} ${usuario.apellidos}`.toLowerCase();
         const correo = usuario.correo.toLowerCase();
         const termino = term.toLowerCase();
-        
+
         return nombreCompleto.includes(termino) || correo.includes(termino);
       });
-      
+
       console.log('🔍 [CONTRATISTA] Aspirantes encontrados:', response.data.length);
       console.log('🔍 [CONTRATISTA] Aspirantes filtrados:', usuariosFiltrados.length);
       console.log('🔍 [CONTRATISTA] Término búsqueda:', term);
-      
+
       setUsuariosEncontrados(usuariosFiltrados);
     } catch (error) {
       console.error('❌ [CONTRATISTA] Error al buscar aspirantes:', error);
@@ -235,7 +239,7 @@ const ModuloContratante = () => {
   const handleSeleccionarUsuarioChat = (usuario) => {
     console.log('🔍 [CONTRATISTA] Seleccionando aspirante para chat:', usuario);
     console.log('🔍 [CONTRATISTA] Trabajo relacionado:', usuario.trabajoTitulo);
-    
+
     setUsuarioChat(usuario);
   };
 
@@ -328,7 +332,7 @@ const ModuloContratante = () => {
           {usuariosEncontrados.length === 0 && searchTerm === '' && (
             <li className="no-results">
               No tienes aspirantes aceptados para chatear.
-              <br/>Acepta postulaciones para poder comunicarte.
+              <br />Acepta postulaciones para poder comunicarte.
             </li>
           )}
 
@@ -346,11 +350,11 @@ const ModuloContratante = () => {
                 <small>{usuario.correo}</small>
                 {/* 🆕 MOSTRAR INFORMACIÓN DEL TRABAJO */}
                 {usuario.trabajoTitulo && (
-                  <div style={{ 
-                    fontSize: '12px', 
-                    color: '#1976d2', 
-                    fontWeight: 'bold', 
-                    marginTop: '2px' 
+                  <div style={{
+                    fontSize: '12px',
+                    color: '#1976d2',
+                    fontWeight: 'bold',
+                    marginTop: '2px'
                   }}>
                     💼 {usuario.trabajoTitulo}
                   </div>

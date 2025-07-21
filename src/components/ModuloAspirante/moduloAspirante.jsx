@@ -23,20 +23,19 @@ const ModuloAspirante = () => {
   const getNotificationType = (descripcion) => {
     const desc = descripcion.toLowerCase();
 
-    // Para aceptaciones
-    if (desc.includes('aceptada') || desc.includes('aceptado') || desc.includes('aprobado') ||
-      desc.includes('cumple con los requisitos') || desc.includes('felicitaciones')) {
-      return 'success';
+    // 🆕 TIPO PARA MENSAJES
+    if (desc.includes('💬') || desc.includes('nuevo mensaje')) {
+      return 'info';
     }
 
-    // Para rechazos
-    if (desc.includes('rechazada') || desc.includes('rechazado') || desc.includes('cancelado') ||
-      desc.includes('lamentamos') || desc.includes('no ha sido aceptada') ||
-      desc.includes('no cumple')) {
+    // Resto de tipos existentes...
+    if (desc.includes('aceptada') || desc.includes('felicitaciones')) {
+      return 'success';
+    }
+    if (desc.includes('rechazada') || desc.includes('lamentamos')) {
       return 'warning';
     }
 
-    // Para información general
     return 'info';
   };
 
@@ -60,19 +59,30 @@ const ModuloAspirante = () => {
   const getNotificationIcon = (descripcion) => {
     const desc = descripcion.toLowerCase();
 
-    // Si contiene "lamentamos" → es rechazo
+    // 🆕 DETECCIÓN DE MENSAJES
+    if (desc.includes('💬') || desc.includes('nuevo mensaje')) {
+      return '💬';
+    }
+
+    // Para aspirantes
     if (desc.includes('lamentamos')) {
       return '❌';
     }
-
-    // Si contiene "felicitaciones" → es aceptación  
     if (desc.includes('felicitaciones')) {
       return '✅';
     }
 
-    // Por defecto
+    // Para contratantes  
+    if (desc.includes('postulación') || desc.includes('postulacion')) {
+      return '👤';
+    }
+    if (desc.includes('trabajo completado')) {
+      return '✅';
+    }
+
     return 'ℹ️';
   };
+
 
   const getStatusFromDescription = (descripcion) => {
     const desc = descripcion.toLowerCase();
@@ -81,77 +91,84 @@ const ModuloAspirante = () => {
     return 'pendiente';
   };
 
-useEffect(() => {
-  const aspiranteIdFromState = location.state?.aspiranteId;
-  const aspiranteId = aspiranteIdFromState || JSON.parse(localStorage.getItem('userData'))?.aspiranteId;
+  useEffect(() => {
+    const aspiranteIdFromState = location.state?.aspiranteId;
+    const aspiranteId = aspiranteIdFromState || JSON.parse(localStorage.getItem('userData'))?.aspiranteId;
 
-  // 🔍 DEBUG - AÑADIR ESTOS LOGS
-  console.log('=== DEBUG MODULO ASPIRANTE ===');
-  console.log('📍 location.state completo:', location.state);
-  console.log('📍 localStorage userData:', JSON.parse(localStorage.getItem('userData')));
-  console.log('📍 aspiranteId calculado:', aspiranteId);
-  console.log('📍 Tipo de aspiranteId:', typeof aspiranteId);
+    // 🔍 DEBUG - AÑADIR ESTOS LOGS
+    console.log('=== DEBUG MODULO ASPIRANTE ===');
+    console.log('📍 location.state completo:', location.state);
+    console.log('📍 localStorage userData:', JSON.parse(localStorage.getItem('userData')));
+    console.log('📍 aspiranteId calculado:', aspiranteId);
+    console.log('📍 Tipo de aspiranteId:', typeof aspiranteId);
 
-  if (!aspiranteId) {
-    console.warn('❌ No se encontró idAspirante');
-    return;
-  }
+    if (!aspiranteId) {
+      console.warn('❌ No se encontró idAspirante');
+      return;
+    }
 
-  setIdAspirante(aspiranteId);
+    setIdAspirante(aspiranteId);
 
-  axios.get(`http://localhost:8090/api/usuarios/buscar_aspirante/${aspiranteId}`)
-    .then((response) => {
-      // 🔍 DEBUG - VERIFICAR RESPUESTA API
-      console.log('📥 Respuesta API completa:', response.data);
-      console.log('📥 Tipo de respuesta:', typeof response.data);
-      
-      const idUsuario = response.data?.id || response.data?.idUsuario || response.data;
-      
-      console.log('🎯 userId final calculado:', idUsuario);
-      console.log('🎯 Tipo de userId:', typeof idUsuario);
-      
-      // ❗ VERIFICACIÓN CRÍTICA
-      if (idUsuario == aspiranteId) {
-        console.log('✅ userId coincide con aspiranteId');
-      } else {
-        console.error('❌ PROBLEMA: userId no coincide con aspiranteId');
-        console.error('   aspiranteId:', aspiranteId, '(', typeof aspiranteId, ')');
-        console.error('   userId:', idUsuario, '(', typeof idUsuario, ')');
-      }
-      
-      setUserId(idUsuario);
-    })
-    .catch((error) => {
-      console.error('❌ Error en API buscar_aspirante:', error);
-    });
-}, [location.state]);
+    axios.get(`http://localhost:8090/api/usuarios/buscar_aspirante/${aspiranteId}`)
+      .then((response) => {
+        // 🔍 DEBUG - VERIFICAR RESPUESTA API
+        console.log('📥 Respuesta API completa:', response.data);
+        console.log('📥 Tipo de respuesta:', typeof response.data);
+
+        const idUsuario = response.data?.id || response.data?.idUsuario || response.data;
+
+        console.log('🎯 userId final calculado:', idUsuario);
+        console.log('🎯 Tipo de userId:', typeof idUsuario);
+
+        // ❗ VERIFICACIÓN CRÍTICA
+        if (idUsuario == aspiranteId) {
+          console.log('✅ userId coincide con aspiranteId');
+        } else {
+          console.error('❌ PROBLEMA: userId no coincide con aspiranteId');
+          console.error('   aspiranteId:', aspiranteId, '(', typeof aspiranteId, ')');
+          console.error('   userId:', idUsuario, '(', typeof idUsuario, ')');
+        }
+
+        setUserId(idUsuario);
+      })
+      .catch((error) => {
+        console.error('❌ Error en API buscar_aspirante:', error);
+      });
+  }, [location.state]);
 
   useEffect(() => {
-    const fetchNoLeidas = async () => {
-      if (!idAspirante) return;
-      try {
-        const res = await axios.get(`http://localhost:8090/api/notificaciones/aspirante/noleidas/${idAspirante}`);
-        const nuevasCantidad = res.data.length;
+  const fetchNoLeidas = async () => {
+    if (!idAspirante) return; // ✅ CORRECTO para aspirante
 
-        if (nuevasCantidad > cantidadNoLeidas && cantidadNoLeidas > 0) {
-          setCantidadNoLeidas(nuevasCantidad);
-          const badge = document.querySelector(`.${styles.badgeNotificacionCustom}`);
-          if (badge) {
-            badge.classList.add(styles.new);
-            setTimeout(() => badge.classList.remove(styles.new), 500);
-          }
-        } else {
-          setCantidadNoLeidas(nuevasCantidad);
+    try {
+      const endpoint = `http://localhost:8090/api/notificaciones/aspirante/noleidas/${idAspirante}`; // ✅ CORRECTO
+
+      const res = await axios.get(endpoint);
+      const nuevasCantidad = res.data.length;
+
+      if (nuevasCantidad > cantidadNoLeidas && cantidadNoLeidas > 0) {
+        setCantidadNoLeidas(nuevasCantidad);
+        const badge = document.querySelector(`.${styles.badgeNotificacionCustom}`); // ✅ CORRECTO: badge de aspirante
+        if (badge) {
+          badge.classList.add(styles.new);
+          setTimeout(() => badge.classList.remove(styles.new), 500);
         }
-      } catch (error) {
-        console.error("Error al cargar notificaciones no leídas:", error);
+      } else {
+        setCantidadNoLeidas(nuevasCantidad);
       }
-    };
+    } catch (error) {
+      console.error("Error al cargar notificaciones no leídas:", error);
+    }
+  };
 
-    fetchNoLeidas();
-    const interval = setInterval(fetchNoLeidas, 30000);
-    return () => clearInterval(interval);
-  }, [idAspirante, showPanelNotificaciones, cantidadNoLeidas]);
+  fetchNoLeidas();
+
+  // 🆕 INTERVALOS DINÁMICOS: Más frecuente si hay chat activo
+  const intervalo = usuarioChat ? 3000 : 30000; // 3s si hay chat, 30s si no
+  const interval = setInterval(fetchNoLeidas, intervalo);
+
+  return () => clearInterval(interval);
+}, [idAspirante, showPanelNotificaciones, cantidadNoLeidas, usuarioChat]); // ✅ CORRECTO: dependencias correctas
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -167,15 +184,15 @@ useEffect(() => {
   const handleAbrirPanelUsuarios = async () => {
     setShowPanelUsuarios(true);
     setSearchTerm('');
-    
+
     // 🔧 NUEVA LÓGICA: Cargar contratistas con los que puedes chatear
     try {
       console.log('🔍 [ASPIRANTE] Cargando contratistas para chat...');
       const response = await axios.get(`http://localhost:8090/api/postulacion/aspirante/${idAspirante}/contratistas-para-chat`);
-      
+
       console.log('✅ [ASPIRANTE] Contratistas disponibles para chat:', response.data.length);
       console.log('📋 [ASPIRANTE] Lista:', response.data);
-      
+
       setUsuariosEncontrados(response.data);
     } catch (error) {
       console.error('❌ [ASPIRANTE] Error al cargar contratistas para chat:', error);
@@ -191,7 +208,7 @@ useEffect(() => {
 
   const handleBuscarUsuarios = async (term) => {
     setSearchTerm(term);
-    
+
     if (term.trim() === '') {
       // Si no hay término de búsqueda, mostrar todos los disponibles
       handleAbrirPanelUsuarios();
@@ -202,20 +219,20 @@ useEffect(() => {
       // 🔧 NUEVA LÓGICA: Buscar solo entre contratistas con los que puedes chatear
       console.log('🔍 [ASPIRANTE] Buscando entre contratistas para chat...');
       const response = await axios.get(`http://localhost:8090/api/postulacion/aspirante/${idAspirante}/contratistas-para-chat`);
-      
+
       // Filtrar por término de búsqueda
       const usuariosFiltrados = response.data.filter(usuario => {
         const nombreCompleto = `${usuario.nombres} ${usuario.apellidos}`.toLowerCase();
         const correo = usuario.correo.toLowerCase();
         const termino = term.toLowerCase();
-        
+
         return nombreCompleto.includes(termino) || correo.includes(termino);
       });
-      
+
       console.log('🔍 [ASPIRANTE] Contratistas encontrados:', response.data.length);
       console.log('🔍 [ASPIRANTE] Contratistas filtrados:', usuariosFiltrados.length);
       console.log('🔍 [ASPIRANTE] Término búsqueda:', term);
-      
+
       setUsuariosEncontrados(usuariosFiltrados);
     } catch (error) {
       console.error('❌ [ASPIRANTE] Error al buscar contratistas:', error);
@@ -226,7 +243,7 @@ useEffect(() => {
   const handleSeleccionarUsuarioChat = (usuario) => {
     console.log('🔍 [ASPIRANTE] Seleccionando contratista para chat:', usuario);
     console.log('🔍 [ASPIRANTE] Trabajo relacionado:', usuario.trabajoTitulo);
-    
+
     setUsuarioChat(usuario);
   };
 
@@ -300,11 +317,11 @@ useEffect(() => {
           {usuariosEncontrados.length === 0 && searchTerm !== '' && (
             <li className="no-results">No se encontraron contratistas</li>
           )}
-          
+
           {usuariosEncontrados.length === 0 && searchTerm === '' && (
             <li className="no-results">
-              No tienes contratistas disponibles para chatear. 
-              <br/>Espera a que acepten tus postulaciones.
+              No tienes contratistas disponibles para chatear.
+              <br />Espera a que acepten tus postulaciones.
             </li>
           )}
 
@@ -323,8 +340,8 @@ useEffect(() => {
                 {/* 🆕 MOSTRAR INFORMACIÓN DEL TRABAJO */}
                 {usuario.trabajoTitulo && (
                   <div style={{
-                    fontSize: '12px', 
-                    color: '#4caf50', 
+                    fontSize: '12px',
+                    color: '#4caf50',
                     fontWeight: 'bold',
                     marginTop: '2px'
                   }}>

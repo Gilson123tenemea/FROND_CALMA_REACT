@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Client } from "@stomp/stompjs";
+import axios from 'axios';
 
 function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
   const [mensaje, setMensaje] = useState("");
@@ -38,6 +39,49 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
   );
 
   console.log(`🔍 INIT: Usuario=${usuarioActual}, Destinatario=${destinatario}, Canal=${canalConversacion}`);
+
+  // 🆕 FUNCIÓN PARA ENVIAR NOTIFICACIÓN DE MENSAJE
+  const enviarNotificacionMensaje = useCallback(async (remitenteId, destinatarioId, contenido) => {
+    try {
+      console.log('📤 [NOTIFICACIÓN] Enviando notificación de mensaje...');
+      console.log('📤 [NOTIFICACIÓN] Remitente:', remitenteId, 'Destinatario:', destinatarioId);
+      console.log('📤 [NOTIFICACIÓN] Contenido:', contenido.substring(0, 50) + '...');
+      
+      const response = await axios.post('http://localhost:8090/api/notificaciones/crear-notificacion-mensaje', {
+        remitenteId: parseInt(remitenteId),
+        destinatarioId: parseInt(destinatarioId),
+        contenido: contenido
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        timeout: 5000 // 5 segundos de timeout
+      });
+      
+      if (response.status === 200) {
+        console.log('✅ [NOTIFICACIÓN] Notificación de mensaje enviada exitosamente');
+        console.log('✅ [NOTIFICACIÓN] Respuesta del servidor:', response.data);
+      } else {
+        console.warn('⚠️ [NOTIFICACIÓN] Respuesta inesperada:', response.status, response.data);
+      }
+      
+    } catch (error) {
+      console.error('❌ [NOTIFICACIÓN] Error al enviar notificación de mensaje:', {
+        error: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+        remitenteId,
+        destinatarioId
+      });
+      
+      // Si hay error específico del servidor, mostrarlo
+      if (error.response?.data) {
+        console.error('❌ [NOTIFICACIÓN] Detalles del error:', error.response.data);
+      }
+      
+      // No fallar el envío del mensaje por un error de notificación
+    }
+  }, []);
 
   // Cargar historial - OPTIMIZADO
   useEffect(() => {
@@ -78,7 +122,7 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
     };
 
     cargarHistorial();
-  }, [usuarioActual, destinatario]); // Dependencias optimizadas
+  }, [usuarioActual, destinatario]);
 
   // Scroll automático - OPTIMIZADO
   useEffect(() => {
@@ -88,7 +132,7 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
       }, 100);
       return () => clearTimeout(timeoutId);
     }
-  }, [mensajes.length]); // Solo cuando cambia el número de mensajes
+  }, [mensajes.length]);
 
   // Conexión WebSocket - OPTIMIZADA
   useEffect(() => {
@@ -140,7 +184,7 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
       cliente.subscribe(`/tema/notificacion/${usuarioActual}`, (msg) => {
         try {
           const notificacion = JSON.parse(msg.body);
-          console.log("🔔 Notificación:", notificacion.tipo);
+          console.log("🔔 Notificación personal recibida:", notificacion.tipo);
         } catch (e) {
           console.error("❌ Error notificación:", e);
         }
@@ -169,14 +213,25 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
       }
       setConectado(false);
     };
-  }, [usuarioActual, destinatario, canalConversacion]); // Dependencias memoizadas
+  }, [usuarioActual, destinatario, canalConversacion]);
 
-  const enviarMensaje = useCallback(() => {
+  // 🆕 FUNCIÓN DE ENVÍO MODIFICADA CON NOTIFICACIONES COMPLETA
+  const enviarMensaje = useCallback(async () => {
     const contenido = mensaje.trim();
     if (!stompRef.current?.connected || !contenido) {
-      console.log("❌ No se puede enviar");
+      console.log("❌ No se puede enviar mensaje");
+      if (!stompRef.current?.connected) {
+        console.log("❌ WebSocket no conectado");
+      }
+      if (!contenido) {
+        console.log("❌ Mensaje vacío");
+      }
       return;
     }
+
+    console.log("📤 [MENSAJE] Preparando envío de mensaje...");
+    console.log("📤 [MENSAJE] Remitente:", usuarioActual, "Destinatario:", destinatario);
+    console.log("📤 [MENSAJE] Contenido:", contenido);
 
     const mensajeData = {
       nombre: String(usuarioActual),
@@ -188,28 +243,63 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
       fechaEnvio: new Date().toISOString()
     };
 
-    console.log("📤 Enviando:", contenido, "a canal:", canalConversacion);
+    console.log("📤 [MENSAJE] Datos del mensaje:", mensajeData);
+    console.log("📤 [MENSAJE] Enviando a canal:", canalConversacion);
 
     try {
+      // 1. Enviar el mensaje por WebSocket
+      console.log("📤 [MENSAJE] Enviando por WebSocket...");
       stompRef.current.publish({
         destination: "/app/envio",
         body: JSON.stringify(mensajeData),
       });
+      console.log("✅ [MENSAJE] Mensaje enviado por WebSocket");
+
+      // 2. 🆕 ENVIAR NOTIFICACIÓN AL DESTINATARIO
+      console.log("📤 [NOTIFICACIÓN] Iniciando envío de notificación...");
+      await enviarNotificacionMensaje(usuarioActual, destinatario, contenido);
+
+      // 3. Limpiar el campo de mensaje
       setMensaje("");
+      console.log("✅ [MENSAJE] Proceso completo exitoso");
+      
     } catch (e) {
-      console.error("❌ Error envio:", e);
+      console.error("❌ [MENSAJE] Error general en envío:", {
+        error: e.message,
+        stack: e.stack,
+        usuarioActual,
+        destinatario,
+        conectado
+      });
+      
+      // Intentar enviar solo el mensaje si la notificación falla
+      try {
+        stompRef.current.publish({
+          destination: "/app/envio",
+          body: JSON.stringify(mensajeData),
+        });
+        setMensaje("");
+        console.log("✅ [MENSAJE] Mensaje enviado sin notificación como fallback");
+      } catch (fallbackError) {
+        console.error("❌ [MENSAJE] Error en fallback:", fallbackError);
+      }
     }
-  }, [mensaje, usuarioActual, destinatario, canalConversacion]);
+  }, [mensaje, usuarioActual, destinatario, canalConversacion, enviarNotificacionMensaje]);
 
   const formatearFecha = useCallback((fecha) => {
     if (!fecha) return "";
-    return new Date(fecha).toLocaleString("es-EC", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    try {
+      return new Date(fecha).toLocaleString("es-EC", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch (e) {
+      console.error("Error formateando fecha:", e);
+      return "Fecha inválida";
+    }
   }, []);
 
   // Renderizado de mensajes optimizado
@@ -239,7 +329,7 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
             <div style={{ 
               fontWeight: "bold", fontSize: "12px", marginBottom: "5px", opacity: 0.8 
             }}>
-              Usuario {msg.remitenteId || msg.nombre} {esPropio ? "(Tú)" : ""} | ID: {msg.id?.slice(-4)}
+              Usuario {msg.remitenteId || msg.nombre} {esPropio ? "(Tú)" : ""} | ID: {msg.id?.toString().slice(-4) || 'N/A'}
             </div>
             <div style={{ wordBreak: "break-word" }}>
               {msg.contenido || "Sin contenido"}
@@ -253,12 +343,33 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
     });
   }, [mensajes, usuarioActual, formatearFecha, normalizarId]);
 
+  // 🆕 VALIDACIÓN MEJORADA DE PARÁMETROS
   if (!usuarioActual || !destinatario) {
     return (
-      <div style={{ padding: "20px", textAlign: "center" }}>
-        ❌ Error: Parámetros de usuario incorrectos
-        <br/>nombrePropio: {nombrePropio}
-        <br/>destinatarioProp: {destinatarioProp}
+      <div style={{ 
+        padding: "20px", 
+        textAlign: "center", 
+        backgroundColor: "#fff3cd", 
+        border: "1px solid #ffeaa7", 
+        borderRadius: "8px",
+        margin: "20px"
+      }}>
+        <h3>❌ Error: Parámetros de usuario incorrectos</h3>
+        <p><strong>nombrePropio:</strong> {String(nombrePropio)} (tipo: {typeof nombrePropio})</p>
+        <p><strong>destinatarioProp:</strong> {String(destinatarioProp)} (tipo: {typeof destinatarioProp})</p>
+        <p><strong>usuarioActual calculado:</strong> {String(usuarioActual)}</p>
+        <p><strong>destinatario calculado:</strong> {String(destinatario)}</p>
+        <button onClick={onCerrarChat} style={{
+          marginTop: "10px",
+          padding: "8px 16px",
+          backgroundColor: "#dc3545",
+          color: "white",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer"
+        }}>
+          Cerrar Chat
+        </button>
       </div>
     );
   }
@@ -282,7 +393,7 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
         }}>
           <div>
             <h3 style={{ margin: 0, fontSize: "16px" }}>
-              Chat: Usuario {usuarioActual} ↔ Usuario {destinatario}
+              💬 Chat: Usuario {usuarioActual} ↔ Usuario {destinatario}
             </h3>
             <small style={{ fontSize: "11px" }}>
               <span style={{
@@ -293,7 +404,9 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
             </small>
           </div>
           <button onClick={onCerrarChat} style={{
-            background: "none", border: "none", color: "white", fontSize: "20px", cursor: "pointer"
+            background: "none", border: "none", color: "white", fontSize: "20px", cursor: "pointer",
+            padding: "5px", borderRadius: "50%", width: "30px", height: "30px",
+            display: "flex", alignItems: "center", justifyContent: "center"
           }}>×</button>
         </div>
 
@@ -307,14 +420,16 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
             fontSize: "12px", padding: "8px 12px", backgroundColor: "#e3f2fd", 
             borderRadius: "8px", marginBottom: "10px", color: "#1565c0"
           }}>
-            📊 Debug: {mensajes.length} mensajes | Canal: {canalConversacion}
+            📊 Debug: {mensajes.length} mensajes | Canal: {canalConversacion} | 
+            Estado: {conectado ? "🟢 Conectado" : "🔴 Desconectado"}
           </div>
 
           {mensajes.length === 0 ? (
             <div style={{
-              textAlign: "center", color: "#666", fontStyle: "italic", marginTop: "50px"
+              textAlign: "center", color: "#666", fontStyle: "italic", marginTop: "50px",
+              padding: "20px", backgroundColor: "#fff", borderRadius: "8px", border: "1px solid #e0e0e0"
             }}>
-              {conectado ? "No hay mensajes. ¡Envía el primero!" : "Conectando..."}
+              {conectado ? "💭 No hay mensajes. ¡Envía el primero!" : "🔄 Conectando al chat..."}
             </div>
           ) : (
             mensajesRenderizados
@@ -344,7 +459,8 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
               flex: 1, padding: "12px 16px", 
               border: `2px solid ${conectado ? "#1976d2" : "#ccc"}`,
               borderRadius: "20px", outline: "none", fontSize: "14px", 
-              backgroundColor: conectado ? "white" : "#f5f5f5"
+              backgroundColor: conectado ? "white" : "#f5f5f5",
+              transition: "all 0.2s ease"
             }}
           />
           <button
@@ -355,10 +471,12 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
               backgroundColor: mensaje.trim() && conectado ? "#1976d2" : "#ccc",
               color: "white", border: "none", borderRadius: "20px", 
               cursor: mensaje.trim() && conectado ? "pointer" : "not-allowed",
-              minWidth: "80px"
+              minWidth: "80px", fontWeight: "500",
+              transition: "all 0.2s ease",
+              display: "flex", alignItems: "center", justifyContent: "center"
             }}
           >
-            {conectado ? "Enviar" : "●●●"}
+            {conectado ? "📤 Enviar" : "🔄 ●●●"}
           </button>
         </div>
       </div>
