@@ -84,7 +84,7 @@ const FichaPacienteForm = ({ editMode = false }) => {
     { value: 'baja', label: 'Baja' }
   ];
 
-  // ===== FUNCIONES DE VALIDACIÓN MEJORADAS =====
+ 
 
   const validarLongitudMinima = (texto, minLength = 3) => {
     return texto.trim().length >= minLength;
@@ -97,28 +97,30 @@ const FichaPacienteForm = ({ editMode = false }) => {
     return fechaIngresada <= fechaActual;
   };
 
-  // Validación para textos generales (permite letras, tildes, ñ, espacios y puntuación básica)
-  const validarTextoGeneral = (texto) => {
-  const regex = /^[\p{L}\p{M}\s]+$/u;
-  return regex.test(texto) || texto === '';
-};
+  
+
+const validarTextoGeneral = (texto) => {
+    
+    const regex = /^[\p{L}\p{M}\p{N}\s.,;:()\-_]+$/u;
+    return regex.test(texto) || texto === '';
+  };
 
 
-  // Validación para textos con números (para campos como frecuencia de siestas)
+ 
   const validarTextoConNumeros = (texto) => {
   const regex = /^[\p{L}\p{M}\p{N}\s]+$/u;
   return regex.test(texto) || texto === '';
 };
 
 
-  // Validación para textos médicos (más permisiva, incluye símbolos médicos)
+
   const validarTextoMedico = (texto) => {
   const regex = /^[\p{L}\p{M}\p{N}\s°%+]+$/u;
   return regex.test(texto) || texto === '';
 };
 
 
-  // Mejorar la función de limpieza de texto
+
   const limpiarTexto = (texto) => {
     return texto.replace(/\s+/g, ' ').trim();
   };
@@ -137,7 +139,7 @@ const FichaPacienteForm = ({ editMode = false }) => {
     return diferencia >= 1;
   };
 
-  // Función para validar en tiempo real durante handleChange
+  
   const validarCampoEnTiempoReal = (name, value) => {
     let esValido = true;
     
@@ -276,36 +278,36 @@ const FichaPacienteForm = ({ editMode = false }) => {
     return Object.keys(nuevosErrores).length === 0;
   };
 
-  // ===== EFECTOS Y MANEJADORES =====
 
  useEffect(() => {
   const loadFichaData = async () => {
-    // Caso 1: Creando nueva ficha para un paciente existente (tenemos idPaciente pero no id_ficha_paciente)
+   
     if (idPaciente && !id_ficha_paciente) {
       setFormulario(prev => ({
         ...prev,
         paciente: { id_paciente: idPaciente },
-        // Inicializar otros campos relevantes si es necesario
+       
         fecha_registro: new Date().toISOString().split('T')[0]
       }));
-      setIsEditing(false); // Estamos creando una nueva ficha
+      setIsEditing(false);
       return;
     }
 
-    // Caso 2: Editando ficha existente (tenemos id_ficha_paciente)
+   
+    
     if (id_ficha_paciente) {
       setIsLoading(true);
       try {
         const fichaData = await getFichaById(id_ficha_paciente);
         
-        // Verificar si la ficha existe
+       
         if (!fichaData) {
           toast.error("Ficha no encontrada");
           navigate('/fichas');
           return;
         }
 
-        // Si estamos editando pero se proporcionó un idPaciente diferente, mostrar advertencia
+      
         if (idPaciente && fichaData.paciente?.id_paciente !== idPaciente) {
           toast.warn("Estás editando una ficha existente para otro paciente");
         }
@@ -343,7 +345,7 @@ const FichaPacienteForm = ({ editMode = false }) => {
       }
     }
 
-    // Caso 3: Creando nueva ficha sin paciente específico (rara vez debería ocurrir)
+    
     if (!idPaciente && !id_ficha_paciente) {
       setFormulario(prev => ({
         ...prev,
@@ -362,22 +364,22 @@ const FichaPacienteForm = ({ editMode = false }) => {
     
     let newValue = value;
     
-    // Limpiar espacios extra en campos de texto
-    if (type === 'text' || type === 'textarea') {
-      newValue = limpiarTexto(value);
-      
-      // Validar en tiempo real para campos de texto
-      if (newValue && !validarCampoEnTiempoReal(name, newValue)) {
-        return; // No actualizar si contiene caracteres no permitidos
-      }
-    }
+    
+   if (type === 'text' || type === 'textarea') {
+  
+  if (value && !validarCampoEnTiempoReal(name, value)) {
+    return;
+  }
+
+  newValue = limpiarTexto(value); 
+}
     
     setFormulario(prev => ({
       ...prev,
       [name]: type === "checkbox" ? checked : newValue
     }));
 
-    // Limpiar error del campo si existe
+   
     if (errores[name]) {
       setErrores(prev => ({
         ...prev,
