@@ -52,7 +52,8 @@ import TemaForm from './components/FichaPacienteTema/temasc';
 import PostulacionesAspirante from './components/ModuloAspirante/PostulacionesAspirante/PostulacionesAspirante';
 import TodasLasCalificaciones from './components/ModuloAspirante/Calificaciones/TodasLasCalificaciones';
 import Calificacionescv from './components/ModuloAspirante/CV/CalificacionesCV/CalificacionesCV';
-
+//Ver ficha segun el estado en aspirantes
+import VerFichaAceptada from './components/ModuloAspirante/PostulacionesAspirante/verfcihaaceptada';
 
 
 createRoot(document.getElementById('root')).render(
@@ -90,6 +91,16 @@ createRoot(document.getElementById('root')).render(
           }
         />
 
+        {/* Nueva ruta para ver ficha del paciente */}
+        <Route
+          path="/moduloAspirante/ficha-paciente/:idPaciente"
+          element={
+            <RequireCV>
+              <VerFichaAceptada />
+            </RequireCV>
+          }
+        />
+
         <Route
           path="/moduloAspirante/perfilAspirante"
           element={
@@ -99,7 +110,7 @@ createRoot(document.getElementById('root')).render(
           }
         />
 
-<Route path="/aspirante/:aspiranteId/calificaciones" element={<TodasLasCalificaciones />} />
+        <Route path="/aspirante/:aspiranteId/calificaciones" element={<TodasLasCalificaciones />} />
 
 
         {/* Rutas de CV */}
@@ -213,7 +224,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/fichas/:id_ficha_paciente/intereses/:idInteresesPersonales" element={<InteresForm />} />
         <Route path="/fichas/:id_ficha_paciente/temas" element={<TemaForm />} />
         <Route path="/fichas/:id_ficha_paciente/temas/:idTemaConversacion" element={<TemaForm />} />
-        
+
         {/* Rutas de calificaciones - NUEVAS */}
         <Route path="/trabajos-aceptados" element={<TrabajosAceptados />} />
         <Route path="/Calificacion/calificacion" element={<Calificacion />} />

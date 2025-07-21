@@ -175,19 +175,45 @@
   font-size: 0.85rem;
   color: #7f8c8d;
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .deadline {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
-.footerIcon {
-  font-size: 0.9rem;
+/* Botones de acción */
+.actionButtons {
+  display: flex;
+  gap: 0.5rem;
 }
 
+.actionButton {
+  padding: 0.5rem 0.8rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background-color: #10547e;
+  color: white;
+}
+
+.actionButton:hover {
+  background-color: #000000;
+}
+
+.buttonIcon {
+  font-size: 0.8rem;
+}
 /* Estados de carga y error */
 .loadingContainer,
 .errorContainer,

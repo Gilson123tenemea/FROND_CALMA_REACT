@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
-import { FaCalendarAlt, FaBuilding, FaMapMarkerAlt, FaMoneyBillWave, FaClock, FaSun, FaClipboardList, FaCheckCircle, FaTimesCircle, FaHourglassHalf } from 'react-icons/fa';
+import { FaCalendarAlt, FaBuilding, FaMapMarkerAlt, FaMoneyBillWave, FaClock, FaSun, FaClipboardList, FaCheckCircle, FaTimesCircle, FaHourglassHalf, FaUserInjured, FaEnvelope } from 'react-icons/fa';
 import styles from './PostulacionesAspirante.module.css';
 import HeaderAspirante from '../HeaderAspirante/HeaderAspirante';
+import { useNavigate } from 'react-router-dom';
+
 
 const PostulacionesAspirante = () => {
-  // Cambiar de userId a aspiranteId para ser consistente con el CV
   const { aspiranteId } = useParams();
   const [postulaciones, setPostulaciones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const userData = JSON.parse(localStorage.getItem("userData"));
   const userAspiranteId = userData?.aspiranteId;
+  const [pacientesIds, setPacientesIds] = useState([]);
+  const navigate = useNavigate();
+  
 
-  // Usar el aspiranteId de los parámetros o el del localStorage
   const currentAspiranteId = aspiranteId || userAspiranteId;
 
   useEffect(() => {
@@ -23,11 +26,14 @@ const PostulacionesAspirante = () => {
         setLoading(true);
         setError(null);
 
-        // Ya no necesitas buscar el aspirante por userId, usa directamente el aspiranteId
         const postulacionesResponse = await axios.get(`http://localhost:8090/api/realizar/aspirante/${currentAspiranteId}`);
 
         if (postulacionesResponse.data && Array.isArray(postulacionesResponse.data)) {
           setPostulaciones(postulacionesResponse.data);
+          const ids = postulacionesResponse.data.map(postulacion =>
+            postulacion.postulacion.postulacion_empleo.id_paciente
+          );
+          setPacientesIds(ids);
         } else {
           setPostulaciones([]);
         }
@@ -56,6 +62,14 @@ const PostulacionesAspirante = () => {
     } catch {
       return 'Fecha inválida';
     }
+  };
+
+  const handleVerPaciente = (idPaciente) => {
+  navigate(`/moduloAspirante/ficha-paciente/${idPaciente}`);
+};
+  const handleContactar = (idPaciente) => {
+    console.log("Contactando al paciente con ID:", idPaciente);
+    // Aquí puedes implementar la lógica de contacto
   };
 
   if (loading) {
@@ -93,7 +107,6 @@ const PostulacionesAspirante = () => {
           <div className={styles.emptyIcon}>📭</div>
           <h2>No has realizado ninguna postulación aún</h2>
           <p>Explora las ofertas disponibles y aplica a las que coincidan con tu perfil</p>
-          {/* Actualizar el link para usar aspiranteId */}
           <Link to={`/moduloAspirante/trabajos/${currentAspiranteId}`} className={styles.searchButton}>
             Buscar trabajos disponibles
           </Link>
@@ -122,6 +135,7 @@ const PostulacionesAspirante = () => {
           {postulaciones.map((postulacion) => {
             const empleo = postulacion.postulacion.postulacion_empleo;
             const estado = postulacion.postulacion.estado;
+            const idPaciente = empleo.id_paciente;
 
             return (
               <div className={`${styles.card} ${estado === null ? styles.pending : estado ? styles.accepted : styles.rejected}`} key={postulacion.id_realizar}>
@@ -170,6 +184,26 @@ const PostulacionesAspirante = () => {
                     <FaCalendarAlt className={styles.footerIcon} />
                     <span>Fecha límite: {formatoFecha(empleo.fecha_limite)}</span>
                   </div>
+
+                  {/* Botones que solo aparecen cuando la postulación está aceptada */}
+                  {estado === true && (
+                    <div className={styles.actionButtons}>
+                      <button
+                        className={styles.actionButton}
+                        onClick={() => handleVerPaciente(idPaciente)}
+                      >
+                        <FaUserInjured className={styles.buttonIcon} />
+                        <span>Ver datos del paciente</span>
+                      </button>
+                      <button
+                        className={styles.actionButton}
+                        onClick={() => handleContactar(idPaciente)}
+                      >
+                        <FaEnvelope className={styles.buttonIcon} />
+                        <span>Contactarse</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             );
@@ -179,5 +213,6 @@ const PostulacionesAspirante = () => {
     </>
   );
 };
+
 
 export default PostulacionesAspirante;
