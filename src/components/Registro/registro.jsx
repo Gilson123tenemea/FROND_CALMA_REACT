@@ -302,9 +302,15 @@ const Registro = () => {
       if (!formData.aspiracionSalarial) {
         newErrors.aspiracionSalarial = 'La aspiración salarial es obligatoria';
         isValid = false;
-      } else if (isNaN(formData.aspiracionSalarial) || formData.aspiracionSalarial < 0) {
-        newErrors.aspiracionSalarial = 'Debe ser un número válido y positivo';
-        isValid = false;
+      } else {
+        const salario = Number(formData.aspiracionSalarial);
+        if (isNaN(salario)) {
+          newErrors.aspiracionSalarial = 'Debe ser un número válido';
+          isValid = false;
+        } else if (salario < 480) {
+          newErrors.aspiracionSalarial = 'La aspiración salarial no puede ser menor a $480';
+          isValid = false;
+        }
       }
 
       if (!formData.tipo_contrato) {
@@ -338,7 +344,7 @@ const Registro = () => {
           newErrors.rucEmpresa = 'El RUC de empresa no es válido';
           isValid = false;
         }
-        
+
         if (!formData.correoEmpresa) {
           newErrors.correoEmpresa = 'El correo de la empresa es obligatorio';
           isValid = false;
