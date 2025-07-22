@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-
 import { useLocation } from 'react-router-dom';
 import HeaderContratante from './HeaderContratante/headerContratante';
 import axios from 'axios';
@@ -20,6 +19,9 @@ const ModuloContratante = () => {
   const [showPanelNotificaciones, setShowPanelNotificaciones] = useState(false);
   const [notificaciones, setNotificaciones] = useState([]);
   const [cantidadNoLeidas, setCantidadNoLeidas] = useState(0);
+
+  // 🆕 ESTADO PARA INFORMACIÓN DEL USUARIO ACTUAL (CONTRATANTE)
+  const [datosUsuarioActual, setDatosUsuarioActual] = useState(null);
 
   // Funciones auxiliares para notificaciones del contratante
   const getNotificationType = (descripcion) => {
@@ -102,17 +104,50 @@ const ModuloContratante = () => {
     console.log('📍 location.state completo:', location.state);
     console.log('📍 localStorage userData:', JSON.parse(localStorage.getItem('userData')));
 
+    let contratistaId = null;
     if (location.state?.userId) {
       console.log('✅ Usando userId de location.state:', location.state.userId);
-      setUserId(location.state.userId);
+      contratistaId = location.state.userId;
     } else {
       const userData = JSON.parse(localStorage.getItem('userData'));
       if (userData?.contratanteId) {
         console.log('✅ Usando contratistaId de localStorage:', userData.contratanteId);
-        setUserId(userData.contratanteId);
+        contratistaId = userData.contratanteId;
       }
     }
+
+    setUserId(contratistaId);
+
+    // 🆕 CARGAR DATOS DEL USUARIO ACTUAL (CONTRATANTE)
+    if (contratistaId) {
+      cargarDatosUsuarioActual(contratistaId);
+    }
   }, [location.state]);
+
+  // 🆕 FUNCIÓN PARA CARGAR DATOS DEL CONTRATANTE ACTUAL
+  const cargarDatosUsuarioActual = async (contratistaId) => {
+    try {
+      console.log('🔍 [CONTRATANTE] Cargando datos del usuario actual...');
+      // Asumiendo que tienes un endpoint para obtener datos del contratante
+      const response = await axios.get(`http://localhost:8090/api/usuarios/buscar_contratante/${contratistaId}`);
+      
+      if (response.data) {
+        console.log('✅ [CONTRATANTE] Datos del usuario cargados:', response.data);
+        setDatosUsuarioActual(response.data);
+      }
+    } catch (error) {
+      console.error('❌ [CONTRATANTE] Error al cargar datos del usuario:', error);
+      // Si falla, usar datos del localStorage como fallback
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      if (userData) {
+        setDatosUsuarioActual({
+          nombres: userData.nombres || 'Usuario',
+          apellidos: userData.apellidos || 'Contratante',
+          correo: userData.correo || 'contratante@email.com'
+        });
+      }
+    }
+  };
 
   useEffect(() => {
     const fetchNoLeidas = async () => {
@@ -160,10 +195,6 @@ const ModuloContratante = () => {
   }, [showPanelNotificaciones]);
 
   if (!contratanteId) return <div>Cargando...</div>;
-
-
-
-
 
   const handleAbrirPanelUsuarios = async () => {
     setShowPanelUsuarios(true);
@@ -345,8 +376,6 @@ const ModuloContratante = () => {
             </div>
           </section>
 
-
-
           {/* Sección de Consejos útiles */}
           <section
             className="inicio-opciones-rapidas"
@@ -424,9 +453,6 @@ const ModuloContratante = () => {
               ))}
             </div>
           </section>
-
-
-
 
           {/* Derechos Laborales justo debajo de la imagen del banner */}
           <section
@@ -520,24 +546,16 @@ const ModuloContratante = () => {
               ))}
             </div>
           </section>
-
-
-         
-
         </div>
-
-
       </div>
 
       {/* Overlay para cerrar el panel de notificaciones */}
-      {
-        showPanelNotificaciones && (
-          <div
-            className={`${styles.overlayNotificacionesContratante} ${showPanelNotificaciones ? styles.active : ''}`}
-            onClick={handleCerrarNotificaciones}
-          />
-        )
-      }
+      {showPanelNotificaciones && (
+        <div
+          className={`${styles.overlayNotificacionesContratante} ${showPanelNotificaciones ? styles.active : ''}`}
+          onClick={handleCerrarNotificaciones}
+        />
+      )}
 
       <div className={`panel-usuarios ${showPanelUsuarios ? 'open' : ''}`}>
         <div className="panel-usuarios-header">
@@ -594,21 +612,20 @@ const ModuloContratante = () => {
         </ul>
       </div>
 
-      {
-        usuarioChat && (
-          <div className="chat-flotante">
-            <div className="header-chat">
-              <h3>Chat con {usuarioChat.nombres}</h3>
-              <button className="btn-cerrar-chat" onClick={handleCerrarChat}>✖</button>
-            </div>
-            <App
-              nombrePropio={JSON.parse(localStorage.getItem('userData'))?.usuarioId} // ← Usar usuarioId (2)
-              destinatarioProp={usuarioChat.idUsuario}
-              onCerrarChat={handleCerrarChat}
-            />
-          </div>
-        )
-      }
+      {/* 🆕 CHAT MEJORADO MANTENIENDO LA FUNCIONALIDAD ORIGINAL */}
+      {usuarioChat && (
+        <div className="chat-flotante">
+          <App
+            nombrePropio={JSON.parse(localStorage.getItem('userData'))?.usuarioId} // ✅ MANTENER ORIGINAL
+            destinatarioProp={usuarioChat.idUsuario}
+            onCerrarChat={handleCerrarChat}
+            // 🆕 SOLO AGREGAR LAS MEJORAS DE NOMBRES
+            datosDestinatario={usuarioChat}
+            nombreDestinatario={`${usuarioChat.nombres} ${usuarioChat.apellidos}`}
+            nombreUsuarioActual={datosUsuarioActual ? `${datosUsuarioActual.nombres} ${datosUsuarioActual.apellidos}` : 'Contratante'}
+          />
+        </div>
+      )}
 
       {/* Panel Notificaciones Mejorado con CSS Modules */}
       <div className={`${styles.panelNotificacionesContratante} ${showPanelNotificaciones ? styles.open : ''}`}>
@@ -671,7 +688,7 @@ const ModuloContratante = () => {
           )}
         </ul>
       </div>
-    </div >
+    </div>
   );
 };
 
