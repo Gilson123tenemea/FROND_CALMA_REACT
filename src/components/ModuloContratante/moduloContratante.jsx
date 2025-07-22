@@ -282,20 +282,7 @@ const ModuloContratante = () => {
           <div className="tab-content">
             <div className="paneles-container">
               <div className="panel-formulario">
-                <FormPublicacion
-                  contratanteId={contratanteId}
-                  publicacionEditar={publicacionEditar}
-                  onCancel={cancelarEdicion}
-                  onSuccess={onGuardadoExitoso}
-                />
-              </div>
-
-              <div className="panel-publicaciones">
-                <ListaPublicaciones
-                  contratanteId={contratanteId}
-                  refrescar={refrescarLista}
-                  onEditar={iniciarEdicion}
-                />
+               
               </div>
             </div>
           </div>

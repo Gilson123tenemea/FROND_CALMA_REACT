@@ -1,18 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useLocation } from 'react-router-dom';
 import './ListaPublicaciones.css';
 
-const ListaPublicaciones = ({ contratanteId, refrescar, onEditar }) => {
+const ListaPublicaciones = ({ refrescar, onEditar, userId: userIdProp }) => {
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const userId = userIdProp || query.get('userId'); // Manejo seguro desde props o URL
+  console.log("userId en ListaPublicaciones:", userId);
+
   const [publicaciones, setPublicaciones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filtroFecha, setFiltroFecha] = useState('');
   const [filtroTitulo, setFiltroTitulo] = useState('');
 
   useEffect(() => {
+    if (!userId) {
+      setPublicaciones([]);
+      setLoading(false);
+      return;
+    }
+
     const fetchPublicaciones = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`http://localhost:8090/api/generar/contratante/${contratanteId}`);
+        const res = await axios.get(`http://localhost:8090/api/generar/contratante/${userId}`);
         setPublicaciones(res.data);
       } catch (err) {
         console.error("Error al cargar publicaciones:", err);
@@ -22,7 +34,7 @@ const ListaPublicaciones = ({ contratanteId, refrescar, onEditar }) => {
     };
 
     fetchPublicaciones();
-  }, [contratanteId, refrescar]);
+  }, [userId, refrescar]);
 
   const handleEditar = (idGenerar) => {
     const publicacionSeleccionada = publicaciones.find(pub => pub.id_genera === idGenerar);
@@ -36,8 +48,6 @@ const ListaPublicaciones = ({ contratanteId, refrescar, onEditar }) => {
       axios.delete(`http://localhost:8090/api/publicacion_empleo/eliminar/${idPublicacion}`)
         .then(res => {
           alert(res.data);
-          // NO quitamos la publicación de la lista para que no se oculte
-          // setPublicaciones(prev => prev.filter(p => p.publicacionempleo.id_postulacion_empleo !== idPublicacion));
         })
         .catch(err => {
           console.error("Error al eliminar publicación:", err);
@@ -46,7 +56,6 @@ const ListaPublicaciones = ({ contratanteId, refrescar, onEditar }) => {
     }
   };
 
-  // Función para normalizar fecha a YYYY-MM-DD en zona local
   const formatoLocal = (fechaISO) => {
     const fecha = new Date(fechaISO);
     const year = fecha.getFullYear();

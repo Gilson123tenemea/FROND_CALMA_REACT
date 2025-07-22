@@ -1,18 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useLocation } from 'react-router-dom';
 import './FormularioPublicacion.css';
 
-const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess }) => {
+const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+
+  // Prioriza userId desde props; si no viene, usa el de la URL
+  const contratanteId = userId || queryParams.get('userId') || '';
+
   const [titulo, setTitulo] = useState('');
   const [descripcion, setDescripcion] = useState('');
-  const [fechaLimite, setFechaLimite] = useState(''); // formato "YYYY-MM-DDTHH:mm"
+  const [fechaLimite, setFechaLimite] = useState('');
   const [jornada, setJornada] = useState('');
   const [salarioEstimado, setSalarioEstimado] = useState('');
   const [requisitos, setRequisitos] = useState('');
   const [turno, setTurno] = useState('');
   const [estado, setEstado] = useState('');
   const [disponibilidadInmediata, setDisponibilidadInmediata] = useState(false);
-  const [actividadesRealizar, setActividadesRealizar] = useState(''); // <-- nuevo estado
+  const [actividadesRealizar, setActividadesRealizar] = useState('');
 
   const [idProvincia, setIdProvincia] = useState('');
   const [idCanton, setIdCanton] = useState('');
@@ -25,7 +32,6 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
   const [pacientes, setPacientes] = useState([]);
   const [idPaciente, setIdPaciente] = useState('');
 
-  // Para mostrar mensajes de error
   const [errores, setErrores] = useState({});
 
   useEffect(() => {
@@ -131,7 +137,6 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
     if (!idCanton) erroresTemp.idCanton = 'Debe seleccionar un cantón.';
     if (!idParroquia) erroresTemp.idParroquia = 'Debe seleccionar una parroquia.';
     if (!estado) erroresTemp.estado = 'Debe seleccionar el estado.';
-    // Otros campos opcionales no se validan estrictamente
     setErrores(erroresTemp);
     return Object.keys(erroresTemp).length === 0;
   };
@@ -179,6 +184,7 @@ const FormPublicacion = ({ contratanteId, publicacionEditar, onCancel, onSuccess
   };
 
   return (
+    
     <form onSubmit={handleSubmit} className="form-publicacion" noValidate>
       <h3>{publicacionEditar ? '✏️ Editar Publicación' : '📝 Nueva Publicación'}</h3>
 
