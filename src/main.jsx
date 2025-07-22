@@ -7,6 +7,8 @@ import './index.css';
 import RequireCV from './components/ModuloAspirante/CV/RequireCV';
 
 // Importación de componentes
+import FormularioPublicacion from './components/ModuloContratante/FormularioPublicacion/formularioPublicacion';
+import ListaPublicaciones from './components/ModuloContratante/ListaPublicaciones/ListaPublicaciones';
 import Inicio from './components/Inicio/Inicio';
 import Login from './components/Login/Login';
 import Registro from './components/Registro/Registro';
@@ -200,6 +202,9 @@ createRoot(document.getElementById('root')).render(
 
         {/* Rutas de paciente */}
         <Route path="/registropaciente" element={<RegistroPaciente />} />
+        <Route path="/moduloContratante/formularioPublicacion" element={<FormularioPublicacion />} />
+        <Route path="/moduloContratante/ListaPublicaciones" element={<ListaPublicaciones />} />
+
         <Route path="/moduloContratante/registropaciente" element={<RegistroPaciente />} />
         <Route path="/moduloContratante/visualizarpaciente" element={<Visualizarpaciente />} />
         <Route path="/moduloContratante/ficha/:idPaciente" element={<FichaPacienteVer />} />
