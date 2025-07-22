@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  FaUser, FaBriefcase, FaMapMarkerAlt, 
+import {
+  FaUser, FaBriefcase, FaMapMarkerAlt,
   FaLanguage, FaInfoCircle, FaIdCard,
   FaEnvelope, FaBirthdayCake, FaVenusMars,
   FaUserTie, FaBuilding, FaPhone, FaLink, FaCalendarAlt, FaDownload,
@@ -29,22 +29,25 @@ const CVCompletoView = () => {
         }
 
         const response = await fetch(`http://localhost:8090/api/cvs/por-aspirante/${aspiranteId}`);
-        
+
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.message || "Error al cargar el CV");
         }
 
         const data = await response.json();
-        
+        console.log("Datos del CV recibidos:", data);
+        console.log("Foto del aspirante:", data.aspirante?.foto);
+
+
         if (!data || !data.id_cv) {
           throw new Error("No se encontró un CV registrado");
         }
-        
+
         if (data.aspirante?.idAspirante?.toString() !== aspiranteId?.toString()) {
           throw new Error("Este CV no pertenece al usuario actual");
         }
-        
+
         setCvData(data);
       } catch (err) {
         console.error("Error cargando CV:", err);
@@ -62,19 +65,26 @@ const CVCompletoView = () => {
       const response = await fetch(`http://localhost:8090/api/${endpoint}/${id}/descargar`, {
         method: 'GET',
       });
-      
+
       if (!response.ok) {
         throw new Error('Error al descargar el archivo');
       }
-      
+
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', fileName);
+
+      // Mejorar el nombre del archivo
+      const finalFileName = fileName && fileName !== 'undefined'
+        ? fileName
+        : `documento-${endpoint}-${id}.pdf`;
+
+      link.setAttribute('download', finalFileName);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error al descargar:', error);
       alert('Error al descargar el archivo');
@@ -82,7 +92,7 @@ const CVCompletoView = () => {
   };
 
   const getSkillLevel = (levelText) => {
-    switch(levelText) {
+    switch (levelText) {
       case 'Básico': return 3;
       case 'Intermedio': return 4;
       case 'Avanzado': return 5;
@@ -128,7 +138,7 @@ const CVCompletoView = () => {
   return (
     <>
       <HeaderAspirante userId={aspiranteId} />
-      
+
       <div className={styles.cvMainContainer}>
         {/* Sección del Aspirante */}
         {cvData.aspirante && (
@@ -137,12 +147,12 @@ const CVCompletoView = () => {
               <FaUser className={styles.cvSectionIcon} />
               <h2>Información Personal</h2>
             </div>
-            
+
             <div className={styles.cvPersonalContent}>
               <div className={styles.cvPhotoContainer}>
                 {cvData.aspirante.foto ? (
-                  <img 
-                    src={cvData.aspirante.foto} 
+                  <img
+                    src={`http://localhost:8090/api/images/${cvData.aspirante.foto}`}
                     alt="Foto del aspirante"
                     className={styles.cvPhoto}
                   />
@@ -152,14 +162,14 @@ const CVCompletoView = () => {
                   </div>
                 )}
               </div>
-              
+
               <div className={styles.cvDetailsGrid}>
                 <div className={styles.cvDetailItem}>
                   <FaIdCard className={styles.cvDetailIcon} />
                   <span className={styles.cvDetailLabel}>Cédula:</span>
                   <span className={styles.cvDetailValue}>{cvData.aspirante.cedula || 'No especificado'}</span>
                 </div>
-                
+
                 <div className={styles.cvDetailItem}>
                   <FaUser className={styles.cvDetailIcon} />
                   <span className={styles.cvDetailLabel}>Nombre:</span>
@@ -167,23 +177,23 @@ const CVCompletoView = () => {
                     {cvData.aspirante.nombres} {cvData.aspirante.apellidos}
                   </span>
                 </div>
-                
+
                 <div className={styles.cvDetailItem}>
                   <FaEnvelope className={styles.cvDetailIcon} />
                   <span className={styles.cvDetailLabel}>Correo:</span>
                   <span className={styles.cvDetailValue}>{cvData.aspirante.correo || 'No especificado'}</span>
                 </div>
-                
+
                 <div className={styles.cvDetailItem}>
                   <FaBirthdayCake className={styles.cvDetailIcon} />
                   <span className={styles.cvDetailLabel}>Fecha Nacimiento:</span>
                   <span className={styles.cvDetailValue}>
-                    {cvData.aspirante.fechaNacimiento 
-                      ? new Date(cvData.aspirante.fechaNacimiento).toLocaleDateString() 
+                    {cvData.aspirante.fechaNacimiento
+                      ? new Date(cvData.aspirante.fechaNacimiento).toLocaleDateString()
                       : 'No especificado'}
                   </span>
                 </div>
-                
+
                 <div className={styles.cvDetailItem}>
                   <FaVenusMars className={styles.cvDetailIcon} />
                   <span className={styles.cvDetailLabel}>Género:</span>
@@ -202,33 +212,33 @@ const CVCompletoView = () => {
           </div>
           <CalificacionesCV aspiranteId={cvData.aspirante?.idAspirante} />
         </div>
-        
+
         {/* Sección del CV */}
         <div className={styles.cvSummarySection}>
           <div className={styles.cvSectionHeader}>
             <FaBriefcase className={styles.cvSectionIcon} />
             <h2>Currículum Vitae</h2>
           </div>
-          
+
           <div className={styles.cvDetailsGrid}>
             <div className={styles.cvDetailItem}>
               <FaBriefcase className={styles.cvDetailIcon} />
               <span className={styles.cvDetailLabel}>Experiencia:</span>
               <span className={styles.cvDetailValue}>{cvData.experiencia || 'No especificado'}</span>
             </div>
-            
+
             <div className={styles.cvDetailItem}>
               <FaMapMarkerAlt className={styles.cvDetailIcon} />
               <span className={styles.cvDetailLabel}>Zona de trabajo:</span>
               <span className={styles.cvDetailValue}>{cvData.zona_trabajo || 'No especificado'}</span>
             </div>
-            
+
             <div className={styles.cvDetailItem}>
               <FaLanguage className={styles.cvDetailIcon} />
               <span className={styles.cvDetailLabel}>Idiomas:</span>
               <span className={styles.cvDetailValue}>{cvData.idiomas || 'No especificado'}</span>
             </div>
-            
+
             {cvData.informacion_opcional && (
               <div className={styles.cvDetailItem}>
                 <FaInfoCircle className={styles.cvDetailIcon} />
@@ -246,7 +256,7 @@ const CVCompletoView = () => {
               <FaCalendarAlt className={styles.cvSectionIcon} />
               <h2>Disponibilidad ({cvData.disponibilidades.length})</h2>
             </div>
-            
+
             <div className={styles.cvAvailabilityList}>
               {cvData.disponibilidades.map((disp, index) => (
                 <div key={index} className={styles.cvAvailabilityCard}>
@@ -258,7 +268,7 @@ const CVCompletoView = () => {
                         <span className={styles.cvDetailValue}>{disp.dias_disponibles || 'No especificado'}</span>
                       </div>
                     </div>
-                    
+
                     <div className={styles.cvAvailabilityDetail}>
                       <FaClock className={styles.cvDetailIcon} />
                       <div>
@@ -266,7 +276,7 @@ const CVCompletoView = () => {
                         <span className={styles.cvDetailValue}>{disp.horario_preferido || 'No especificado'}</span>
                       </div>
                     </div>
-                    
+
                     <div className={styles.cvAvailabilityDetail}>
                       <FaBusinessTime className={styles.cvDetailIcon} />
                       <div>
@@ -274,7 +284,7 @@ const CVCompletoView = () => {
                         <span className={styles.cvDetailValue}>{disp.tipo_jornada || 'No especificado'}</span>
                       </div>
                     </div>
-                    
+
                     <div className={styles.cvAvailabilityDetail}>
                       <FaPlane className={styles.cvDetailIcon} />
                       <div>
@@ -298,7 +308,7 @@ const CVCompletoView = () => {
               <FaGraduationCap className={styles.cvSectionIcon} />
               <h2>Formación Académica ({cvData.formacionAcademica.length})</h2>
             </div>
-            
+
             <div className={styles.cvEducationList}>
               {cvData.formacionAcademica.map((formacion, index) => (
                 <div key={index} className={styles.cvEducationCard}>
@@ -306,31 +316,31 @@ const CVCompletoView = () => {
                     <h3>{formacion.titulo}</h3>
                     <span className={styles.cvEducationInstitution}>{formacion.institucion}</span>
                   </div>
-                  
+
                   <div className={styles.cvEducationDetails}>
                     <div className={styles.cvDetailItem}>
                       <FaCalendarAlt className={styles.cvDetailIcon} />
                       <span className={styles.cvDetailLabel}>Fecha de graduación:</span>
                       <span className={styles.cvDetailValue}>
-                        {formacion.fechaGraduacion 
-                          ? new Date(formacion.fechaGraduacion).toLocaleDateString() 
+                        {formacion.fechaGraduacion
+                          ? new Date(formacion.fechaGraduacion).toLocaleDateString()
                           : 'En curso'}
                       </span>
                     </div>
-                    
+
                     <div className={styles.cvDetailItem}>
                       <FaFileAlt className={styles.cvDetailIcon} />
                       <span className={styles.cvDetailLabel}>Nivel de estudio:</span>
                       <span className={styles.cvDetailValue}>{formacion.nivelEstudio || 'No especificado'}</span>
                     </div>
-                    
+
                     {formacion.tiene_archivo && (
                       <div className={styles.cvDownloadContainer}>
                         <button
                           className={styles.cvDownloadButton}
                           onClick={() => downloadFile('formacion', formacion.id_formacion, formacion.nombre_archivo)}
                         >
-                          <FaDownload className={styles.cvDownloadIcon} /> 
+                          <FaDownload className={styles.cvDownloadIcon} />
                           <span>Descargar documento</span>
                         </button>
                       </div>
@@ -349,7 +359,7 @@ const CVCompletoView = () => {
               <FaBriefcase className={styles.cvSectionIcon} />
               <h2>Experiencia Laboral ({cvData.experienciaLaboral.length})</h2>
             </div>
-            
+
             <div className={styles.cvExperienceList}>
               {cvData.experienciaLaboral.map((exp, index) => (
                 <div key={index} className={styles.cvExperienceCard}>
@@ -357,23 +367,23 @@ const CVCompletoView = () => {
                     <h3>{exp.puesto}</h3>
                     <span className={styles.cvExperienceCompany}>{exp.empresa}</span>
                   </div>
-                  
+
                   <div className={styles.cvExperienceDetails}>
                     <div className={styles.cvDetailItem}>
                       <FaCalendarAlt className={styles.cvDetailIcon} />
                       <span className={styles.cvDetailLabel}>Periodo:</span>
                       <span className={styles.cvDetailValue}>
-                        {new Date(exp.fechaInicio).toLocaleDateString()} - 
+                        {new Date(exp.fechaInicio).toLocaleDateString()} -
                         {exp.fechaFin ? ` ${new Date(exp.fechaFin).toLocaleDateString()}` : ' Actualidad'}
                       </span>
                     </div>
-                    
+
                     <div className={styles.cvDetailItem}>
                       <FaMapMarkerAlt className={styles.cvDetailIcon} />
                       <span className={styles.cvDetailLabel}>Ubicación:</span>
                       <span className={styles.cvDetailValue}>{exp.ubicacion || 'No especificado'}</span>
                     </div>
-                    
+
                     {exp.descripcion && (
                       <div className={styles.cvDetailItem}>
                         <FaInfoCircle className={styles.cvDetailIcon} />
@@ -381,14 +391,14 @@ const CVCompletoView = () => {
                         <span className={styles.cvDetailValue}>{exp.descripcion}</span>
                       </div>
                     )}
-                    
+
                     {exp.tiene_archivo && (
                       <div className={styles.cvDownloadContainer}>
                         <button
                           className={styles.cvDownloadButton}
                           onClick={() => downloadFile('experiencia', exp.id_experiencia, exp.nombre_archivo)}
                         >
-                          <FaDownload className={styles.cvDownloadIcon} /> 
+                          <FaDownload className={styles.cvDownloadIcon} />
                           <span>Descargar certificado laboral</span>
                         </button>
                       </div>
@@ -407,7 +417,7 @@ const CVCompletoView = () => {
               <FaUserTie className={styles.cvSectionIcon} />
               <h2>Recomendaciones ({cvData.recomendaciones.length})</h2>
             </div>
-            
+
             <div className={styles.cvRecommendationsList}>
               {cvData.recomendaciones.map((recomendacion, index) => (
                 <div key={index} className={styles.cvRecommendationCard}>
@@ -415,7 +425,7 @@ const CVCompletoView = () => {
                     <h3>{recomendacion.nombre_recomendador}</h3>
                     {recomendacion.cargo && <span className={styles.cvRecommendationPosition}>{recomendacion.cargo}</span>}
                   </div>
-                  
+
                   <div className={styles.cvRecommendationDetails}>
                     {recomendacion.empresa && (
                       <div className={styles.cvDetailItem}>
@@ -424,7 +434,7 @@ const CVCompletoView = () => {
                         <span className={styles.cvDetailValue}>{recomendacion.empresa}</span>
                       </div>
                     )}
-                    
+
                     {recomendacion.telefono && (
                       <div className={styles.cvDetailItem}>
                         <FaPhone className={styles.cvDetailIcon} />
@@ -432,7 +442,7 @@ const CVCompletoView = () => {
                         <span className={styles.cvDetailValue}>{recomendacion.telefono}</span>
                       </div>
                     )}
-                    
+
                     {recomendacion.email && (
                       <div className={styles.cvDetailItem}>
                         <FaEnvelope className={styles.cvDetailIcon} />
@@ -440,7 +450,7 @@ const CVCompletoView = () => {
                         <span className={styles.cvDetailValue}>{recomendacion.email}</span>
                       </div>
                     )}
-                    
+
                     {recomendacion.relacion && (
                       <div className={styles.cvDetailItem}>
                         <FaLink className={styles.cvDetailIcon} />
@@ -448,7 +458,7 @@ const CVCompletoView = () => {
                         <span className={styles.cvDetailValue}>{recomendacion.relacion}</span>
                       </div>
                     )}
-                    
+
                     {recomendacion.fecha && (
                       <div className={styles.cvDetailItem}>
                         <FaCalendarAlt className={styles.cvDetailIcon} />
@@ -458,14 +468,14 @@ const CVCompletoView = () => {
                         </span>
                       </div>
                     )}
-                    
+
                     {recomendacion.tiene_archivo && (
                       <div className={styles.cvDownloadContainer}>
                         <button
                           className={styles.cvDownloadButton}
                           onClick={() => downloadFile('recomendaciones', recomendacion.id_recomendacion, recomendacion.nombre_archivo)}
                         >
-                          <FaDownload className={styles.cvDownloadIcon} /> 
+                          <FaDownload className={styles.cvDownloadIcon} />
                           <span>Descargar recomendación</span>
                         </button>
                       </div>
@@ -484,7 +494,7 @@ const CVCompletoView = () => {
               <FaUserTie className={styles.cvSectionIcon} />
               <h2>Referencias Personales ({cvData.referenciasPersonales.length})</h2>
             </div>
-            
+
             <div className={styles.cvReferencesList}>
               {cvData.referenciasPersonales.map((ref, index) => (
                 <div key={index} className={styles.cvReferenceCard}>
@@ -492,7 +502,7 @@ const CVCompletoView = () => {
                     <h3>{ref.nombre}</h3>
                     {ref.parentesco && <span className={styles.cvReferenceRelationship}>{ref.parentesco}</span>}
                   </div>
-                  
+
                   <div className={styles.cvReferenceDetails}>
                     {ref.telefono && (
                       <div className={styles.cvDetailItem}>
@@ -501,7 +511,7 @@ const CVCompletoView = () => {
                         <span className={styles.cvDetailValue}>{ref.telefono}</span>
                       </div>
                     )}
-                    
+
                     {ref.email && (
                       <div className={styles.cvDetailItem}>
                         <FaEnvelope className={styles.cvDetailIcon} />
@@ -523,7 +533,7 @@ const CVCompletoView = () => {
               <FaCertificate className={styles.cvSectionIcon} />
               <h2>Certificados ({cvData.certificados.length})</h2>
             </div>
-            
+
             <div className={styles.cvCertificatesList}>
               {cvData.certificados.map((certificado, index) => (
                 <div key={index} className={styles.cvCertificateCard}>
@@ -531,7 +541,7 @@ const CVCompletoView = () => {
                     <h3>{certificado.nombre_certificado}</h3>
                     <span className={styles.cvCertificateInstitution}>{certificado.nombre_institucion}</span>
                   </div>
-                  
+
                   <div className={styles.cvCertificateDetails}>
                     <div className={styles.cvDetailItem}>
                       <FaCalendarAlt className={styles.cvDetailIcon} />
@@ -574,14 +584,14 @@ const CVCompletoView = () => {
                         <span className={styles.cvDetailValue}>{certificado.descripcion}</span>
                       </div>
                     )}
-                    
+
                     {certificado.tiene_archivo && (
                       <div className={styles.cvDownloadContainer}>
                         <button
                           className={styles.cvDownloadButton}
                           onClick={() => downloadFile('certificados', certificado.id_certificado, certificado.nombre_archivo)}
                         >
-                          <FaDownload className={styles.cvDownloadIcon} /> 
+                          <FaDownload className={styles.cvDownloadIcon} />
                           <span>{certificado.nombre_archivo || 'Descargar certificado'}</span>
                         </button>
                       </div>
@@ -600,7 +610,7 @@ const CVCompletoView = () => {
               <FaCertificate className={styles.cvSectionIcon} />
               <h2>Cursos Adicionales ({cvData.cursos.length})</h2>
             </div>
-            
+
             <div className={styles.cvCoursesList}>
               {cvData.cursos.map((curso, index) => (
                 <div key={index} className={styles.cvCourseCard}>
@@ -608,7 +618,7 @@ const CVCompletoView = () => {
                     <h3>{curso.nombreCurso}</h3>
                     <span className={styles.cvCourseInstitution}>{curso.institucion}</span>
                   </div>
-                  
+
                   <div className={styles.cvCourseDetails}>
                     <div className={styles.cvDetailItem}>
                       <FaCalendarAlt className={styles.cvDetailIcon} />
@@ -617,7 +627,7 @@ const CVCompletoView = () => {
                         {new Date(curso.fechaFinalizacion).toLocaleDateString()}
                       </span>
                     </div>
-                    
+
                     {curso.duracion && (
                       <div className={styles.cvDetailItem}>
                         <FaFileAlt className={styles.cvDetailIcon} />
@@ -625,14 +635,14 @@ const CVCompletoView = () => {
                         <span className={styles.cvDetailValue}>{curso.duracion}</span>
                       </div>
                     )}
-                    
+
                     {curso.tiene_archivo && (
                       <div className={styles.cvDownloadContainer}>
                         <button
                           className={styles.cvDownloadButton}
                           onClick={() => downloadFile('cursos', curso.id_curso, curso.nombre_archivo)}
                         >
-                          <FaDownload className={styles.cvDownloadIcon} /> 
+                          <FaDownload className={styles.cvDownloadIcon} />
                           <span>Descargar certificado</span>
                         </button>
                       </div>
@@ -651,7 +661,7 @@ const CVCompletoView = () => {
               <FaTools className={styles.cvSectionIcon} />
               <h2>Habilidades ({cvData.habilidades.length})</h2>
             </div>
-            
+
             <div className={styles.cvSkillsList}>
               {cvData.habilidades.map((habilidad, index) => (
                 <div key={index} className={styles.cvSkillCard}>
@@ -659,9 +669,9 @@ const CVCompletoView = () => {
                     <h3>{habilidad.descripcion}</h3>
                     <div className={styles.cvSkillLevel}>
                       {[...Array(5)].map((_, i) => (
-                        <FaStar 
-                          key={i} 
-                          className={i < getSkillLevel(habilidad.nivel) ? styles.cvSkillStarFilled : styles.cvSkillStarEmpty} 
+                        <FaStar
+                          key={i}
+                          className={i < getSkillLevel(habilidad.nivel) ? styles.cvSkillStarFilled : styles.cvSkillStarEmpty}
                         />
                       ))}
                       <span className={styles.cvSkillLevelText}>{habilidad.nivel}</span>
@@ -677,4 +687,4 @@ const CVCompletoView = () => {
   );
 };
 
-export default CVCompletoView;
+export default CVCompletoView;  

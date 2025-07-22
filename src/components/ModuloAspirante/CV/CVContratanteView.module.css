@@ -1,0 +1,811 @@
+/* Variables CSS para diseño profesional con colores bonitos */
+:root {
+  --cv-primary-color: #2563eb;
+  --cv-primary-light: #3b82f6;
+  --cv-primary-dark: #1d4ed8;
+  --cv-secondary-color: #475569;
+  --cv-accent-color: #06b6d4;
+  --cv-accent-light: #22d3ee;
+  --cv-success-color: #10b981;
+  --cv-success-light: #34d399;
+  --cv-error-color: #ef4444;
+  --cv-warning-color: #f59e0b;
+  --cv-warning-light: #fbbf24;
+  --cv-background-color: #ffffff;
+  --cv-surface-color: #f8fafc;
+  --cv-surface-secondary: #f1f5f9;
+  --cv-text-primary: #1e293b;
+  --cv-text-secondary: #475569;
+  --cv-text-muted: #64748b;
+  --cv-border-color: #e2e8f0;
+  --cv-border-light: #f1f5f9;
+  --cv-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --cv-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --cv-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --cv-shadow-colored: 0 4px 6px -1px rgba(37, 99, 235, 0.1), 0 2px 4px -1px rgba(37, 99, 235, 0.06);
+  --cv-radius-sm: 6px;
+  --cv-radius-md: 10px;
+  --cv-radius-lg: 16px;
+  --cv-radius-xl: 20px;
+}
+
+/* Contenedor principal */
+.cvMainContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--cv-text-primary);
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* Header */
+.cvHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: var(--cv-background-color);
+  border: 1px solid var(--cv-border-color);
+  border-radius: var(--cv-radius-xl);
+  box-shadow: var(--cv-shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.cvHeader::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--cv-primary-color) 0%, var(--cv-accent-color) 100%);
+}
+
+.cvHeader h1 {
+  color: var(--cv-primary-color);
+  font-size: 2rem;
+  margin: 1rem 0 0 0;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.cvBackBtn {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, var(--cv-primary-color) 0%, var(--cv-primary-light) 100%);
+  color: white;
+  border: none;
+  border-radius: var(--cv-radius-md);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: var(--cv-shadow-colored);
+}
+
+.cvBackBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -8px rgba(37, 99, 235, 0.4);
+}
+
+.cvBackBtn svg {
+  margin-right: 0.5rem;
+}
+
+/* Estados de loading */
+.cvLoadingContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.cvLoadingContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem;
+  background: var(--cv-background-color);
+  border-radius: var(--cv-radius-xl);
+  box-shadow: var(--cv-shadow-lg);
+}
+
+.cvLoadingSpinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--cv-border-light);
+  border-top: 4px solid var(--cv-primary-color);
+  border-radius: 50%;
+  animation: cvSpin 1s linear infinite;
+  margin-bottom: 1.5rem;
+}
+
+@keyframes cvSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.cvLoadingContent p {
+  color: var(--cv-text-secondary);
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Estados de error */
+.cvErrorContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.cvErrorContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem;
+  background: var(--cv-background-color);
+  border-radius: var(--cv-radius-xl);
+  box-shadow: var(--cv-shadow-lg);
+  text-align: center;
+}
+
+.cvErrorIcon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--cv-error-color) 0%, #f87171 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 25px -8px rgba(239, 68, 68, 0.4);
+}
+
+.cvErrorText {
+  color: var(--cv-error-color);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 1.5rem 0;
+}
+
+/* Estados vacíos */
+.cvEmptyContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.cvEmptyContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem;
+  background: var(--cv-background-color);
+  border-radius: var(--cv-radius-xl);
+  box-shadow: var(--cv-shadow-lg);
+  text-align: center;
+}
+
+.cvEmptyContent p {
+  color: var(--cv-text-muted);
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0 0 1.5rem 0;
+}
+
+/* Botones generales */
+.cvBtn {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, var(--cv-primary-color) 0%, var(--cv-primary-light) 100%);
+  color: white;
+  border: none;
+  border-radius: var(--cv-radius-md);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: var(--cv-shadow-colored);
+}
+
+.cvBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -8px rgba(37, 99, 235, 0.4);
+}
+
+.cvBtn svg {
+  margin-right: 0.5rem;
+}
+
+/* Encabezados de sección */
+.cvSectionHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 3px solid var(--cv-border-light);
+  position: relative;
+}
+
+.cvSectionHeader::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cv-primary-color) 0%, var(--cv-accent-color) 100%);
+  border-radius: 2px;
+}
+
+.cvSectionIcon {
+  margin-right: 1rem;
+  color: white;
+  font-size: 1.25rem;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--cv-primary-color) 0%, var(--cv-accent-color) 100%);
+  border-radius: var(--cv-radius-md);
+  box-shadow: 0 4px 12px -4px rgba(37, 99, 235, 0.4);
+}
+
+.cvSectionHeader h2 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--cv-text-primary);
+  letter-spacing: -0.025em;
+}
+
+/* Secciones generales */
+.cvPersonalSection,
+.cvRatingsSection,
+.cvSummarySection,
+.cvAvailabilitySection,
+.cvEducationSection,
+.cvExperienceSection,
+.cvRecommendationsSection,
+.cvReferencesSection,
+.cvCertificatesSection,
+.cvCoursesSection,
+.cvSkillsSection {
+  background: var(--cv-background-color);
+  border: 1px solid var(--cv-border-color);
+  border-radius: var(--cv-radius-xl);
+  padding: 2.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--cv-shadow-lg);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.cvPersonalSection::before,
+.cvRatingsSection::before,
+.cvSummarySection::before,
+.cvAvailabilitySection::before,
+.cvEducationSection::before,
+.cvExperienceSection::before,
+.cvRecommendationsSection::before,
+.cvReferencesSection::before,
+.cvCertificatesSection::before,
+.cvCoursesSection::before,
+.cvSkillsSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--cv-accent-color) 0%, var(--cv-primary-color) 100%);
+}
+
+/* Información personal */
+.cvPersonalContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .cvPersonalContent {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.cvPhotoContainer {
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.cvPhotoContainer::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  background: linear-gradient(135deg, var(--cv-primary-color) 0%, var(--cv-accent-color) 100%);
+  border-radius: var(--cv-radius-lg);
+  z-index: -1;
+}
+
+.cvPhoto {
+  width: 140px;
+  height: 140px;
+  border-radius: var(--cv-radius-lg);
+  object-fit: cover;
+  border: 4px solid var(--cv-background-color);
+  box-shadow: var(--cv-shadow-lg);
+}
+
+.cvDefaultPhoto {
+  width: 140px;
+  height: 140px;
+  border-radius: var(--cv-radius-lg);
+  background: linear-gradient(135deg, var(--cv-surface-color) 0%, var(--cv-surface-secondary) 100%);
+  border: 4px solid var(--cv-background-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cv-text-muted);
+  box-shadow: var(--cv-shadow-lg);
+}
+
+.cvDetailsGrid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .cvDetailsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.cvDetailItem {
+  display: flex;
+  align-items: flex-start;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, var(--cv-surface-color) 0%, var(--cv-background-color) 100%);
+  border: 1px solid var(--cv-border-light);
+  border-radius: var(--cv-radius-lg);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.cvDetailItem::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(135deg, var(--cv-accent-color) 0%, var(--cv-primary-color) 100%);
+}
+
+.cvDetailItem:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--cv-shadow-md);
+}
+
+.cvDetailIcon {
+  margin-right: 1rem;
+  color: var(--cv-primary-color);
+  margin-top: 0.1rem;
+  min-width: 20px;
+  font-size: 1.1rem;
+}
+
+.cvDetailLabel {
+  font-weight: 600;
+  color: var(--cv-primary-color);
+  margin-right: 0.75rem;
+  font-size: 0.95rem;
+  min-width: fit-content;
+}
+
+.cvDetailValue {
+  color: var(--cv-text-primary);
+  font-weight: 500;
+  flex: 1;
+  font-size: 0.95rem;
+}
+
+/* Listas */
+.cvAvailabilityList,
+.cvEducationList,
+.cvExperienceList,
+.cvRecommendationsList,
+.cvReferencesList,
+.cvCertificatesList,
+.cvCoursesList,
+.cvSkillsList {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .cvSkillsList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .cvSkillsList {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Cards */
+.cvAvailabilityCard,
+.cvEducationCard,
+.cvExperienceCard,
+.cvRecommendationCard,
+.cvReferenceCard,
+.cvCertificateCard,
+.cvCourseCard,
+.cvSkillCard {
+  padding: 2rem;
+  border: 1px solid var(--cv-border-light);
+  border-radius: var(--cv-radius-lg);
+  background: linear-gradient(135deg, var(--cv-background-color) 0%, var(--cv-surface-color) 100%);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.cvAvailabilityCard::before,
+.cvEducationCard::before,
+.cvExperienceCard::before,
+.cvRecommendationCard::before,
+.cvReferenceCard::before,
+.cvCertificateCard::before,
+.cvCourseCard::before,
+.cvSkillCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cv-success-color) 0%, var(--cv-accent-color) 100%);
+}
+
+.cvAvailabilityCard:hover,
+.cvEducationCard:hover,
+.cvExperienceCard:hover,
+.cvRecommendationCard:hover,
+.cvReferenceCard:hover,
+.cvCertificateCard:hover,
+.cvCourseCard:hover,
+.cvSkillCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px -12px rgba(37, 99, 235, 0.2);
+}
+
+/* Encabezados de cards */
+.cvEducationHeader,
+.cvExperienceHeader,
+.cvRecommendationHeader,
+.cvReferenceHeader,
+.cvCertificateHeader,
+.cvCourseHeader,
+.cvSkillHeader {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--cv-border-light);
+  position: relative;
+}
+
+.cvEducationHeader::after,
+.cvExperienceHeader::after,
+.cvRecommendationHeader::after,
+.cvReferenceHeader::after,
+.cvCertificateHeader::after,
+.cvCourseHeader::after,
+.cvSkillHeader::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--cv-accent-color) 0%, var(--cv-primary-color) 100%);
+}
+
+.cvEducationHeader h3,
+.cvExperienceHeader h3,
+.cvRecommendationHeader h3,
+.cvReferenceHeader h3,
+.cvCertificateHeader h3,
+.cvCourseHeader h3,
+.cvSkillHeader h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--cv-primary-color);
+  letter-spacing: -0.025em;
+}
+
+.cvEducationInstitution,
+.cvExperienceCompany,
+.cvRecommendationPosition,
+.cvReferenceRelationship,
+.cvCertificateInstitution,
+.cvCourseInstitution {
+  color: var(--cv-text-secondary);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* Grid de disponibilidad */
+.cvAvailabilityGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .cvAvailabilityGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.cvAvailabilityDetail {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: var(--cv-surface-color);
+  border: 1px solid var(--cv-border-light);
+  border-radius: var(--cv-radius-md);
+  transition: all 0.3s ease;
+}
+
+.cvAvailabilityDetail:hover {
+  background: var(--cv-background-color);
+  box-shadow: var(--cv-shadow-sm);
+}
+
+/* Detalles de cards */
+.cvEducationDetails,
+.cvExperienceDetails,
+.cvRecommendationDetails,
+.cvReferenceDetails,
+.cvCertificateDetails,
+.cvCourseDetails {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .cvEducationDetails,
+  .cvExperienceDetails,
+  .cvRecommendationDetails,
+  .cvCertificateDetails {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Botón de descarga */
+.cvDownloadContainer {
+  grid-column: 1 / -1;
+  margin-top: 1.5rem;
+}
+
+.cvDownloadButton {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.875rem 1.75rem;
+  background: linear-gradient(135deg, var(--cv-success-color) 0%, var(--cv-success-light) 100%);
+  color: white;
+  border: none;
+  border-radius: var(--cv-radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  box-shadow: 0 4px 12px -4px rgba(16, 185, 129, 0.4);
+}
+
+.cvDownloadButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -8px rgba(16, 185, 129, 0.5);
+}
+
+.cvDownloadIcon {
+  margin-right: 0.75rem;
+  font-size: 1rem;
+}
+
+/* Enlace de certificado */
+.cvCertificateLink {
+  color: var(--cv-accent-color);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: color 0.3s ease;
+}
+
+.cvCertificateLink:hover {
+  color: var(--cv-accent-light);
+  text-decoration: underline;
+}
+
+/* Habilidades */
+.cvSkillLevel {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+  gap: 0.5rem;
+}
+
+.cvSkillStarFilled {
+  color: var(--cv-warning-color);
+  font-size: 1.1rem;
+  filter: drop-shadow(0 2px 4px rgba(245, 158, 11, 0.3));
+}
+
+.cvSkillStarEmpty {
+  color: var(--cv-border-color);
+  font-size: 1.1rem;
+}
+
+.cvSkillLevelText {
+  font-size: 0.85rem;
+  color: var(--cv-text-muted);
+  font-weight: 600;
+  margin-left: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  background: linear-gradient(135deg, var(--cv-surface-color) 0%, var(--cv-border-light) 100%);
+  border-radius: var(--cv-radius-sm);
+  border: 1px solid var(--cv-border-light);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cvMainContainer {
+    padding: 1rem;
+  }
+  
+  .cvHeader {
+    padding: 1.5rem;
+  }
+  
+  .cvPersonalSection,
+  .cvRatingsSection,
+  .cvSummarySection,
+  .cvAvailabilitySection,
+  .cvEducationSection,
+  .cvExperienceSection,
+  .cvRecommendationsSection,
+  .cvReferencesSection,
+  .cvCertificatesSection,
+  .cvCoursesSection,
+  .cvSkillsSection {
+    padding: 1.5rem;
+  }
+  
+  .cvSectionHeader h2 {
+    font-size: 1.5rem;
+  }
+  
+  .cvPhoto,
+  .cvDefaultPhoto {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .cvDetailsGrid,
+  .cvAvailabilityGrid,
+  .cvEducationDetails,
+  .cvExperienceDetails,
+  .cvRecommendationDetails,
+  .cvCertificateDetails,
+  .cvSkillsList {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Efectos de focus para accesibilidad */
+.cvDownloadButton:focus,
+.cvCertificateLink:focus,
+.cvBackBtn:focus,
+.cvBtn:focus {
+  outline: 3px solid var(--cv-accent-light);
+  outline-offset: 2px;
+}
+
+/* Mejoras de tipografía */
+.cvMainContainer {
+  font-feature-settings: "kern" 1, "liga" 1;
+  text-rendering: optimizeLegibility;
+}
+
+/* Espaciado mejorado para lectura */
+.cvDetailValue {
+  line-height: 1.6;
+}
+
+/* Animaciones sutiles */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cvPersonalSection,
+.cvRatingsSection,
+.cvSummarySection,
+.cvAvailabilitySection,
+.cvEducationSection,
+.cvExperienceSection,
+.cvRecommendationsSection,
+.cvReferencesSection,
+.cvCertificatesSection,
+.cvCoursesSection,
+.cvSkillsSection {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Efectos especiales para elementos interactivos */
+.cvDownloadButton,
+.cvBackBtn,
+.cvBtn {
+  position: relative;
+  overflow: hidden;
+}
+
+.cvDownloadButton::before,
+.cvBackBtn::before,
+.cvBtn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.cvDownloadButton:hover::before,
+.cvBackBtn:hover::before,
+.cvBtn:hover::before {
+  left: 100%;
+}
