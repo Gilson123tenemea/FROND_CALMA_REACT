@@ -247,12 +247,12 @@ console.log('Estado actividadesRealizar:', actividadesRealizar);
     <>
       <HeaderContratante userId={contratanteId} />
       <form onSubmit={handleSubmit} className="form-publicacion" noValidate>
-        <h3>{publicacionEditar ? '✏️ Editar Publicación' : '📝 Nueva Publicación'}</h3>
+        <h3>{publicacionEditar ? '✏️ Editar Publicación' : 'Nueva Publicación'}</h3>
 
         <div className="fila-horizontal">
           {/* Paciente */}
           <label>
-            Paciente:
+            Paciente
             <select
               value={idPaciente}
               onChange={e => setIdPaciente(e.target.value)}
@@ -270,7 +270,7 @@ console.log('Estado actividadesRealizar:', actividadesRealizar);
 
           {/* Título */}
           <label>
-            Título:
+            Título
             <input
               type="text"
               value={titulo}
@@ -288,7 +288,7 @@ console.log('Estado actividadesRealizar:', actividadesRealizar);
 
           {/* Fecha límite */}
           <label>
-            Fecha Límite:
+            Fecha Límite
             <input
               type="datetime-local"
               value={fechaLimite}
@@ -301,7 +301,7 @@ console.log('Estado actividadesRealizar:', actividadesRealizar);
         <div className="fila-horizontal">
           {/* Jornada */}
           <label>
-            Jornada:
+            Jornada
             <select
               value={jornada}
               onChange={e => setJornada(e.target.value)}
@@ -316,7 +316,7 @@ console.log('Estado actividadesRealizar:', actividadesRealizar);
 
           {/* Turno */}
           <label>
-            Turno:
+            Turno
             <select
               value={turno}
               onChange={e => setTurno(e.target.value)}
@@ -331,7 +331,7 @@ console.log('Estado actividadesRealizar:', actividadesRealizar);
 
           {/* Estado */}
           <label>
-            Estado:
+            Estado
             <select
               value={estado}
               onChange={e => setEstado(e.target.value)}
@@ -350,7 +350,7 @@ console.log('Estado actividadesRealizar:', actividadesRealizar);
         <div className="fila-horizontal">
           {/* Provincia */}
           <label>
-            Provincia:
+            Provincia
             <select
               value={idProvincia}
               onChange={e => setIdProvincia(e.target.value)}
@@ -368,7 +368,7 @@ console.log('Estado actividadesRealizar:', actividadesRealizar);
 
           {/* Cantón */}
           <label>
-            Cantón:
+            Cantón
             <select
               value={idCanton}
               onChange={e => setIdCanton(e.target.value)}
@@ -387,7 +387,7 @@ console.log('Estado actividadesRealizar:', actividadesRealizar);
 
           {/* Parroquia */}
           <label>
-            Parroquia:
+            Parroquia
             <select
               value={idParroquia}
               onChange={e => setIdParroquia(e.target.value)}
@@ -409,7 +409,7 @@ console.log('Estado actividadesRealizar:', actividadesRealizar);
         <div className="fila-horizontal-salario-disponibilidad">
           {/* Salario debajo de Jornada */}
           <label className="salario-label">
-            Salario estimado:
+            Salario estimado
             <input
               type="number"
               min="0"
@@ -426,7 +426,7 @@ console.log('Estado actividadesRealizar:', actividadesRealizar);
 
           {/* Disponibilidad a la derecha de Salario */}
           <label className="disponibilidad-label">
-            Disponibilidad inmediata:
+            Disponibilidad inmediata
             <input
               type="checkbox"
               checked={disponibilidadInmediata}
@@ -438,7 +438,7 @@ console.log('Estado actividadesRealizar:', actividadesRealizar);
 
         {/* Descripción */}
         <label>
-          Descripción*:
+          Descripción
           <textarea
             value={descripcion}
             onChange={e => setDescripcion(e.target.value)}
@@ -450,7 +450,7 @@ console.log('Estado actividadesRealizar:', actividadesRealizar);
 
         {/* Actividades a realizar */}
         <label>
-          Actividades a realizar:
+          Actividades a realizar
           <textarea
             value={actividadesRealizar}
             onChange={e => setActividadesRealizar(e.target.value)}
@@ -461,7 +461,7 @@ console.log('Estado actividadesRealizar:', actividadesRealizar);
 
         {/* Requisitos */}
         <label>
-          Requisitos:
+          Requisitos
           <textarea
             value={requisitos}
             onChange={e => setRequisitos(e.target.value)}

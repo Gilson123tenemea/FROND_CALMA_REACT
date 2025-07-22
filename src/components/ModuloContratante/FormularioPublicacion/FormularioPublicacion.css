@@ -388,12 +388,6 @@
   }
 }
 
-/* Estados de validación adicionales */
-.form-publicacion input:valid:not(:placeholder-shown),
-.form-publicacion select:valid,
-.form-publicacion textarea:valid:not(:placeholder-shown) {
-  border-color: #3B82F6;
-}
 
 .form-publicacion input:valid:not(:placeholder-shown):focus,
 .form-publicacion select:valid:focus,
@@ -446,4 +440,7 @@
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+.form-publicacion button[type="submit"] {
+  min-width: 1290px; /* Puedes ajustar el valor */
 }
