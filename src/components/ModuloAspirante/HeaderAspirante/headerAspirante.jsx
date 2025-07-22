@@ -4,14 +4,18 @@ import styles from '../Notificaciones.module.css';
 import App from '../../../App'; // Ajusta la ruta según tu estructura
 
 const HeaderAspirante = ({
-  userId,
+  userId: userIdProp,
   onOpenMensajes,
   onOpenNotificaciones,
   notificacionesNoLeidas = 0
 }) => {
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
-  // 🆕 ESTADOS GLOBALES PARA CHAT Y NOTIFICACIONES
+  // 🆕 ESTADOS PARA EXTRAER Y MANEJAR userId/aspiranteId
+  const [userId, setUserId] = useState(null);
+  const [aspiranteId, setAspiranteId] = useState(null);
+
+  // 🆕 ESTADOS GLOBALES PARA CHAT Y NOTIFICACIONES (IGUAL QUE CONTRATANTE)
   const [showPanelUsuarios, setShowPanelUsuarios] = useState(false);
   const [showPanelNotificaciones, setShowPanelNotificaciones] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -20,39 +24,83 @@ const HeaderAspirante = ({
   const [notificaciones, setNotificaciones] = useState([]);
   const [cantidadNoLeidas, setCantidadNoLeidas] = useState(0);
 
-  // 🆕 ESTADO PARA DATOS DEL USUARIO ACTUAL
+  // 🆕 ESTADO PARA DATOS DEL USUARIO ACTUAL (IGUAL QUE CONTRATANTE)
   const [datosUsuario, setDatosUsuario] = useState({
     nombres: 'Aspirante',
     apellidos: 'Usuario',
     correo: 'aspirante@example.com'
   });
 
-  // 🆕 CARGAR DATOS DEL USUARIO AL MONTAR
-  useEffect(() => {
-    if (userId) {
-      cargarDatosUsuario();
-      cargarNotificacionesNoLeidas();
+  // 🆕 FUNCIÓN PARA EXTRAER IDS DE DIFERENTES FUENTES
+  const extraerIdsUsuario = () => {
+    console.log('🔍 [HEADER ASPIRANTE] Extrayendo IDs de usuario...');
+    
+    // 1. Desde props
+    if (userIdProp) {
+      console.log('✅ [HEADER ASPIRANTE] ID desde props:', userIdProp);
+      return { userId: userIdProp, aspiranteId: userIdProp };
     }
-  }, [userId]);
 
-  // 🆕 FUNCIÓN PARA CARGAR DATOS DEL USUARIO
-  const cargarDatosUsuario = async () => {
+    // 2. Desde URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const userIdFromUrl = urlParams.get('userId');
+    if (userIdFromUrl) {
+      console.log('✅ [HEADER ASPIRANTE] ID desde URL:', userIdFromUrl);
+      return { userId: userIdFromUrl, aspiranteId: userIdFromUrl };
+    }
+
+    // 3. Desde URL path (ejemplo: /ver-cv/3)
+    const pathMatch = window.location.pathname.match(/\/\w+\/(\d+)/);
+    if (pathMatch && pathMatch[1]) {
+      console.log('✅ [HEADER ASPIRANTE] ID desde path:', pathMatch[1]);
+      return { userId: pathMatch[1], aspiranteId: pathMatch[1] };
+    }
+
+    // 4. Desde localStorage
+    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    if (userData.aspiranteId || userData.usuarioId) {
+      const id = userData.aspiranteId || userData.usuarioId;
+      console.log('✅ [HEADER ASPIRANTE] ID desde localStorage:', id);
+      return { userId: id, aspiranteId: id };
+    }
+
+    console.warn('❌ [HEADER ASPIRANTE] No se pudo extraer ID de usuario');
+    return { userId: null, aspiranteId: null };
+  };
+
+  // 🆕 INICIALIZACIÓN MEJORADA (IGUAL QUE CONTRATANTE)
+  useEffect(() => {
+    const { userId: extractedUserId, aspiranteId: extractedAspiranteId } = extraerIdsUsuario();
+    
+    if (extractedUserId) {
+      setUserId(extractedUserId);
+      setAspiranteId(extractedAspiranteId);
+      cargarDatosUsuario(extractedUserId);
+      cargarNotificacionesNoLeidas(extractedAspiranteId);
+    }
+  }, [userIdProp, window.location.pathname, window.location.search]);
+
+  // 🆕 FUNCIÓN MEJORADA PARA CARGAR DATOS DEL USUARIO (IGUAL PATRÓN QUE CONTRATANTE)
+  const cargarDatosUsuario = async (idUsuario) => {
+    if (!idUsuario) return;
+    
     try {
-      console.log('🔍 [HEADER ASPIRANTE] Cargando datos del usuario...');
+      console.log('🔍 [HEADER ASPIRANTE] Cargando datos del usuario:', idUsuario);
       
       // Primero intentar desde localStorage
-      const userData = JSON.parse(localStorage.getItem('userData'));
-      if (userData) {
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      if (userData.nombres || userData.correo) {
         setDatosUsuario({
           nombres: userData.nombres || 'Aspirante',
           apellidos: userData.apellidos || 'Usuario',
           correo: userData.correo || 'aspirante@example.com'
         });
+        console.log('✅ [HEADER ASPIRANTE] Datos iniciales desde localStorage');
       }
 
       // 🆕 INTENTAR CARGAR DESDE EL ENDPOINT DE PERFIL DEL ASPIRANTE
       try {
-        const response = await axios.get(`http://localhost:8090/api/registro/aspirante/detalle/${userId}`);
+        const response = await axios.get(`http://localhost:8090/api/registro/aspirante/detalle/${idUsuario}`);
         
         if (response.data && response.data.success && response.data.aspirante) {
           const aspirante = response.data.aspirante;
@@ -68,7 +116,7 @@ const HeaderAspirante = ({
         
         // Fallback a endpoint alternativo si existe
         try {
-          const response2 = await axios.get(`http://localhost:8090/api/usuarios/buscar_aspirante/${userId}`);
+          const response2 = await axios.get(`http://localhost:8090/api/usuarios/buscar_aspirante/${idUsuario}`);
           if (response2.data) {
             setDatosUsuario({
               nombres: response2.data.nombres || userData?.nombres || 'Aspirante',
@@ -85,17 +133,30 @@ const HeaderAspirante = ({
     }
   };
 
-  // 🆕 CARGAR NOTIFICACIONES NO LEÍDAS
-  const cargarNotificacionesNoLeidas = async () => {
+  // 🆕 CARGAR NOTIFICACIONES NO LEÍDAS (IGUAL QUE CONTRATANTE)
+  const cargarNotificacionesNoLeidas = async (idAspirante) => {
+    if (!idAspirante) return;
+    
     try {
-      const response = await axios.get(`http://localhost:8090/api/notificaciones/aspirante/noleidas/${userId}`);
+      const response = await axios.get(`http://localhost:8090/api/notificaciones/aspirante/noleidas/${idAspirante}`);
       setCantidadNoLeidas(response.data.length);
     } catch (error) {
-      console.error('❌ Error al cargar notificaciones:', error);
+      console.error('❌ [HEADER ASPIRANTE] Error al cargar notificaciones:', error);
     }
   };
 
-  // 🆕 FUNCIONES DE CHAT Y NOTIFICACIONES GLOBALES
+  // 🆕 POLLING PARA NOTIFICACIONES (FUNCIONA EN CUALQUIER PÁGINA)
+  useEffect(() => {
+    if (!aspiranteId) return;
+
+    const interval = setInterval(() => {
+      cargarNotificacionesNoLeidas(aspiranteId);
+    }, usuarioChat ? 5000 : 30000); // 5s si hay chat activo, 30s si no
+
+    return () => clearInterval(interval);
+  }, [aspiranteId, usuarioChat]);
+
+  // 🆕 FUNCIONES DE CHAT Y NOTIFICACIONES MEJORADAS (IGUAL QUE CONTRATANTE)
   const handleMensajesClick = async (e) => {
     e.preventDefault();
     console.log("🔍 [HEADER ASPIRANTE] Abriendo panel de mensajes...");
@@ -120,17 +181,45 @@ const HeaderAspirante = ({
     }
   };
 
-  // 🆕 LÓGICA LOCAL DE MENSAJES
+  // 🆕 LÓGICA LOCAL DE MENSAJES (IGUAL QUE CONTRATANTE)
   const handleAbrirPanelUsuarios = async () => {
+    if (!aspiranteId) {
+      console.warn('❌ [HEADER ASPIRANTE] No se puede abrir mensajes sin aspiranteId');
+      return;
+    }
+
     setShowPanelUsuarios(true);
     setSearchTerm('');
 
     try {
-      // Endpoint para obtener contratantes con los que el aspirante puede chatear
-      const response = await axios.get(`http://localhost:8090/api/postulacion/aspirante/${userId}/contratantes-para-chat`);
-      setUsuariosEncontrados(response.data);
+      console.log('🔍 [HEADER ASPIRANTE] Cargando contratantes para chat...');
+      
+      // 🆕 MÚLTIPLES ENDPOINTS PARA OBTENER CONTRATANTES
+      const endpoints = [
+        `http://localhost:8090/api/postulacion/aspirante/${aspiranteId}/contratantes-para-chat`,
+        `http://localhost:8090/api/postulacion/aspirante/${aspiranteId}/contratistas-para-chat`,
+        `http://localhost:8090/api/chat/aspirante/${aspiranteId}/contactos`
+      ];
+
+      let contratantes = [];
+      
+      for (const endpoint of endpoints) {
+        try {
+          const response = await axios.get(endpoint);
+          if (response.data && Array.isArray(response.data)) {
+            contratantes = response.data;
+            console.log(`✅ [HEADER ASPIRANTE] Contratantes cargados desde: ${endpoint}`);
+            break;
+          }
+        } catch (error) {
+          console.log(`ℹ️ [HEADER ASPIRANTE] Endpoint no disponible: ${endpoint}`);
+          continue;
+        }
+      }
+
+      setUsuariosEncontrados(contratantes);
     } catch (error) {
-      console.error('❌ Error al cargar contratantes para chat:', error);
+      console.error('❌ [HEADER ASPIRANTE] Error al cargar contratantes para chat:', error);
       setUsuariosEncontrados([]);
     }
   };
@@ -142,6 +231,7 @@ const HeaderAspirante = ({
   };
 
   const handleSeleccionarUsuarioChat = (usuario) => {
+    console.log('🔍 [HEADER ASPIRANTE] Seleccionando usuario para chat:', usuario);
     setUsuarioChat(usuario);
     setShowPanelUsuarios(false);
   };
@@ -150,16 +240,24 @@ const HeaderAspirante = ({
     setUsuarioChat(null);
   };
 
-  // 🆕 LÓGICA LOCAL DE NOTIFICACIONES
+  // 🆕 LÓGICA LOCAL DE NOTIFICACIONES (IGUAL QUE CONTRATANTE)
   const handleAbrirNotificaciones = async () => {
+    if (!aspiranteId) {
+      console.warn('❌ [HEADER ASPIRANTE] No se puede abrir notificaciones sin aspiranteId');
+      return;
+    }
+
     try {
-      await axios.put(`http://localhost:8090/api/notificaciones/aspirante/marcar-leidas/${userId}`);
-      const response = await axios.get(`http://localhost:8090/api/notificaciones/aspirante/${userId}`);
+      // Marcar como leídas
+      await axios.put(`http://localhost:8090/api/notificaciones/aspirante/marcar-leidas/${aspiranteId}`);
+      
+      // Obtener todas las notificaciones
+      const response = await axios.get(`http://localhost:8090/api/notificaciones/aspirante/${aspiranteId}`);
       setNotificaciones(response.data);
       setCantidadNoLeidas(0);
       setShowPanelNotificaciones(true);
     } catch (error) {
-      console.error("Error al obtener notificaciones:", error);
+      console.error("❌ [HEADER ASPIRANTE] Error al obtener notificaciones:", error);
     }
   };
 
@@ -184,7 +282,7 @@ const HeaderAspirante = ({
     window.location.href = path;
   };
 
-  // 🆕 FUNCIONES AUXILIARES PARA NOTIFICACIONES
+  // 🆕 FUNCIONES AUXILIARES PARA NOTIFICACIONES (IGUAL QUE CONTRATANTE)
   const getNotificationType = (descripcion) => {
     const desc = descripcion.toLowerCase();
     if (desc.includes('💬') || desc.includes('nuevo mensaje')) return 'info';
@@ -219,6 +317,18 @@ const HeaderAspirante = ({
     return 'ℹ️';
   };
 
+  // 🆕 FILTRAR USUARIOS EN TIEMPO REAL
+  const usuariosFiltrados = usuariosEncontrados.filter(usuario => {
+    if (!searchTerm.trim()) return true;
+    
+    const nombreCompleto = `${usuario.nombres || ''} ${usuario.apellidos || ''}`.toLowerCase();
+    const correo = (usuario.correo || '').toLowerCase();
+    const termino = searchTerm.toLowerCase();
+
+    return nombreCompleto.includes(termino) || correo.includes(termino);
+  });
+
+  // Estilos inline (mantienes los mismos que ya tienes)
   const stylesInline = {
     aspiranteHeader: {
       display: 'flex',
@@ -395,6 +505,25 @@ const HeaderAspirante = ({
     }
   };
 
+  // 🆕 VERIFICACIÓN DE CARGA - SI NO HAY IDs, INTENTA EXTRAERLOS DE NUEVO
+  if (!userId || !aspiranteId) {
+    // Intento de emergencia
+    const { userId: emergencyUserId, aspiranteId: emergencyAspiranteId } = extraerIdsUsuario();
+    if (emergencyUserId) {
+      setUserId(emergencyUserId);
+      setAspiranteId(emergencyAspiranteId);
+    } else {
+      return (
+        <div style={{ padding: '1rem', textAlign: 'center', color: '#666' }}>
+          Cargando header... 
+          <small style={{ display: 'block', marginTop: '0.5rem' }}>
+            URL actual: {window.location.pathname}
+          </small>
+        </div>
+      );
+    }
+  }
+
   return (
     <>
       <header style={stylesInline.aspiranteHeader}>
@@ -511,7 +640,7 @@ const HeaderAspirante = ({
               Mensajes
             </button>
 
-            {/* Botón de Notificaciones con CSS Modules */}
+            {/* Botón de Notificaciones */}
             <button
               onClick={handleNotificacionesClick}
               className={styles.botonNotificacionesCustom}
@@ -603,11 +732,11 @@ const HeaderAspirante = ({
         </div>
       </header>
 
-      {/* 🆕 PANELES GLOBALES DE MENSAJES Y NOTIFICACIONES */}
+      {/* 🆕 PANELES GLOBALES (IGUAL QUE CONTRATANTE) */}
 
       {/* Panel de usuarios para chat */}
       {showPanelUsuarios && (
-        <div className="panel-usuarios open" style={{
+        <div style={{
           position: 'fixed',
           top: '80px',
           right: '20px',
@@ -640,13 +769,14 @@ const HeaderAspirante = ({
           />
 
           <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-            {usuariosEncontrados.length === 0 ? (
+            {usuariosFiltrados.length === 0 ? (
               <div style={{ textAlign: 'center', color: '#666', padding: '20px' }}>
-                No tienes contratantes disponibles para chatear.
-                <br />Postúlate a trabajos para poder comunicarte.
+                {searchTerm ? 'No se encontraron contratantes' : 'No tienes contratantes disponibles para chatear.'}
+                <br />
+                {!searchTerm && 'Postúlate a trabajos para poder comunicarte.'}
               </div>
             ) : (
-              usuariosEncontrados.map((usuario) => (
+              usuariosFiltrados.map((usuario) => (
                 <div
                   key={usuario.idUsuario}
                   onClick={() => handleSeleccionarUsuarioChat(usuario)}
@@ -660,8 +790,8 @@ const HeaderAspirante = ({
                     marginBottom: '5px',
                     transition: 'background-color 0.2s'
                   }}
-                  onMouseEnter={(e) => e.target.style.backgroundColor = '#f5f5f5'}
-                  onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f5f5f5'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                 >
                   <div style={{
                     width: '40px',
@@ -695,7 +825,7 @@ const HeaderAspirante = ({
       {/* Chat flotante */}
       {usuarioChat && (
         <App
-          nombrePropio={JSON.parse(localStorage.getItem('userData'))?.usuarioId}
+          nombrePropio={userId}
           destinatarioProp={usuarioChat.idUsuario}
           onCerrarChat={handleCerrarChat}
           datosDestinatario={usuarioChat}
