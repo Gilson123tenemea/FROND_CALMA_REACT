@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 import './FormularioPublicacion.css';
-
+import HeaderContratante from '../HeaderContratante/HeaderContratante';
 const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -184,200 +184,202 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
   };
 
   return (
-    
-    <form onSubmit={handleSubmit} className="form-publicacion" noValidate>
-      <h3>{publicacionEditar ? '✏️ Editar Publicación' : '📝 Nueva Publicación'}</h3>
+    <>
+    <HeaderContratante userId={contratanteId} />
+      <form onSubmit={handleSubmit} className="form-publicacion" noValidate>
+        <h3>{publicacionEditar ? '✏️ Editar Publicación' : '📝 Nueva Publicación'}</h3>
 
-      <label>
-        Paciente*:
-        <select
-          value={idPaciente}
-          onChange={e => setIdPaciente(e.target.value)}
-          required
-        >
-          <option value="">-- Selecciona paciente --</option>
-          {pacientes.map(p => (
-            <option key={p.id_paciente} value={p.id_paciente}>
-              {p.nombres} {p.apellidos}
-            </option>
-          ))}
-        </select>
-      </label>
-      {errores.idPaciente && <p className="error">{errores.idPaciente}</p>}
+        <label>
+          Paciente*:
+          <select
+            value={idPaciente}
+            onChange={e => setIdPaciente(e.target.value)}
+            required
+          >
+            <option value="">-- Selecciona paciente --</option>
+            {pacientes.map(p => (
+              <option key={p.id_paciente} value={p.id_paciente}>
+                {p.nombres} {p.apellidos}
+              </option>
+            ))}
+          </select>
+        </label>
+        {errores.idPaciente && <p className="error">{errores.idPaciente}</p>}
 
-      <label>
-        Título*:
-        <input
-          type="text"
-          value={titulo}
-          onChange={e => setTitulo(e.target.value)}
-          placeholder="Ejemplo: Cuidador para adulto mayor con experiencia"
-          required
-        />
-      </label>
-      {errores.titulo && <p className="error">{errores.titulo}</p>}
+        <label>
+          Título*:
+          <input
+            type="text"
+            value={titulo}
+            onChange={e => setTitulo(e.target.value)}
+            placeholder="Ejemplo: Cuidador para adulto mayor con experiencia"
+            required
+          />
+        </label>
+        {errores.titulo && <p className="error">{errores.titulo}</p>}
 
-      <label>
-        Descripción*:
-        <textarea
-          value={descripcion}
-          onChange={e => setDescripcion(e.target.value)}
-          placeholder="Describa las tareas y responsabilidades"
-          required
-        />
-      </label>
-      {errores.descripcion && <p className="error">{errores.descripcion}</p>}
+        <label>
+          Descripción*:
+          <textarea
+            value={descripcion}
+            onChange={e => setDescripcion(e.target.value)}
+            placeholder="Describa las tareas y responsabilidades"
+            required
+          />
+        </label>
+        {errores.descripcion && <p className="error">{errores.descripcion}</p>}
 
-      <label>
-        Actividades a realizar:
-        <textarea
-          value={actividadesRealizar}
-          onChange={e => setActividadesRealizar(e.target.value)}
-          placeholder="Ejemplo: Acompañamiento, administración de medicamentos, higiene personal..."
-        />
-      </label>
+        <label>
+          Actividades a realizar:
+          <textarea
+            value={actividadesRealizar}
+            onChange={e => setActividadesRealizar(e.target.value)}
+            placeholder="Ejemplo: Acompañamiento, administración de medicamentos, higiene personal..."
+          />
+        </label>
 
-      <label>
-        Fecha Límite:
-        <input
-          type="datetime-local"
-          value={fechaLimite}
-          onChange={e => setFechaLimite(e.target.value)}
-          placeholder="YYYY-MM-DDTHH:mm"
-        />
-      </label>
+        <label>
+          Fecha Límite:
+          <input
+            type="datetime-local"
+            value={fechaLimite}
+            onChange={e => setFechaLimite(e.target.value)}
+            placeholder="YYYY-MM-DDTHH:mm"
+          />
+        </label>
 
-      <label>
-        Jornada:
-        <select
-          value={jornada}
-          onChange={e => setJornada(e.target.value)}
-        >
-          <option value="">--Selecciona--</option>
-          <option value="Tiempo completo">Tiempo completo</option>
-          <option value="Medio tiempo">Medio tiempo</option>
-          <option value="Por horas">Por horas</option>
-        </select>
-      </label>
+        <label>
+          Jornada:
+          <select
+            value={jornada}
+            onChange={e => setJornada(e.target.value)}
+          >
+            <option value="">--Selecciona--</option>
+            <option value="Tiempo completo">Tiempo completo</option>
+            <option value="Medio tiempo">Medio tiempo</option>
+            <option value="Por horas">Por horas</option>
+          </select>
+        </label>
 
-      <label>
-        Salario estimado:
-        <input
-          type="number"
-          min="0"
-          value={salarioEstimado}
-          onChange={e => setSalarioEstimado(e.target.value)}
-          placeholder="Ejemplo: 400"
-        />
-      </label>
+        <label>
+          Salario estimado:
+          <input
+            type="number"
+            min="0"
+            value={salarioEstimado}
+            onChange={e => setSalarioEstimado(e.target.value)}
+            placeholder="Ejemplo: 400"
+          />
+        </label>
 
-      <label>
-        Requisitos:
-        <textarea
-          value={requisitos}
-          onChange={e => setRequisitos(e.target.value)}
-          placeholder="Ejemplo: Experiencia mínima 1 año, referencias comprobables"
-        />
-      </label>
+        <label>
+          Requisitos:
+          <textarea
+            value={requisitos}
+            onChange={e => setRequisitos(e.target.value)}
+            placeholder="Ejemplo: Experiencia mínima 1 año, referencias comprobables"
+          />
+        </label>
 
-      <label>
-        Turno:
-        <select
-          value={turno}
-          onChange={e => setTurno(e.target.value)}
-        >
-          <option value="">--Selecciona--</option>
-          <option value="Mañana">Mañana</option>
-          <option value="Tarde">Tarde</option>
-          <option value="Noche">Noche</option>
-        </select>
-      </label>
+        <label>
+          Turno:
+          <select
+            value={turno}
+            onChange={e => setTurno(e.target.value)}
+          >
+            <option value="">--Selecciona--</option>
+            <option value="Mañana">Mañana</option>
+            <option value="Tarde">Tarde</option>
+            <option value="Noche">Noche</option>
+          </select>
+        </label>
 
-      <label>
-        Estado*:
-        <select
-          value={estado}
-          onChange={e => setEstado(e.target.value)}
-          required
-        >
-          <option value="">--Selecciona--</option>
-          <option value="Activo">Activo</option>
-          <option value="Inactivo">Inactivo</option>
-        </select>
-      </label>
-      {errores.estado && <p className="error">{errores.estado}</p>}
+        <label>
+          Estado*:
+          <select
+            value={estado}
+            onChange={e => setEstado(e.target.value)}
+            required
+          >
+            <option value="">--Selecciona--</option>
+            <option value="Activo">Activo</option>
+            <option value="Inactivo">Inactivo</option>
+          </select>
+        </label>
+        {errores.estado && <p className="error">{errores.estado}</p>}
 
-      <label>
-        Disponibilidad inmediata:
-        <input
-          type="checkbox"
-          checked={disponibilidadInmediata}
-          onChange={e => setDisponibilidadInmediata(e.target.checked)}
-        />
-      </label>
+        <label>
+          Disponibilidad inmediata:
+          <input
+            type="checkbox"
+            checked={disponibilidadInmediata}
+            onChange={e => setDisponibilidadInmediata(e.target.checked)}
+          />
+        </label>
 
-      <label>
-        Provincia*:
-        <select
-          value={idProvincia}
-          onChange={e => setIdProvincia(e.target.value)}
-          required
-        >
-          <option value="">--Selecciona provincia--</option>
-          {provincias.map(p => (
-            <option key={p.id_provincia} value={p.id_provincia}>
-              {p.nombre}
-            </option>
-          ))}
-        </select>
-      </label>
-      {errores.idProvincia && <p className="error">{errores.idProvincia}</p>}
+        <label>
+          Provincia*:
+          <select
+            value={idProvincia}
+            onChange={e => setIdProvincia(e.target.value)}
+            required
+          >
+            <option value="">--Selecciona provincia--</option>
+            {provincias.map(p => (
+              <option key={p.id_provincia} value={p.id_provincia}>
+                {p.nombre}
+              </option>
+            ))}
+          </select>
+        </label>
+        {errores.idProvincia && <p className="error">{errores.idProvincia}</p>}
 
-      <label>
-        Cantón*:
-        <select
-          value={idCanton}
-          onChange={e => setIdCanton(e.target.value)}
-          required
-          disabled={!idProvincia}
-        >
-          <option value="">--Selecciona cantón--</option>
-          {cantones.map(c => (
-            <option key={c.id_canton} value={c.id_canton}>
-              {c.nombre}
-            </option>
-          ))}
-        </select>
-      </label>
-      {errores.idCanton && <p className="error">{errores.idCanton}</p>}
+        <label>
+          Cantón*:
+          <select
+            value={idCanton}
+            onChange={e => setIdCanton(e.target.value)}
+            required
+            disabled={!idProvincia}
+          >
+            <option value="">--Selecciona cantón--</option>
+            {cantones.map(c => (
+              <option key={c.id_canton} value={c.id_canton}>
+                {c.nombre}
+              </option>
+            ))}
+          </select>
+        </label>
+        {errores.idCanton && <p className="error">{errores.idCanton}</p>}
 
-      <label>
-        Parroquia*:
-        <select
-          value={idParroquia}
-          onChange={e => setIdParroquia(e.target.value)}
-          required
-          disabled={!idCanton}
-        >
-          <option value="">--Selecciona parroquia--</option>
-          {parroquias.map(p => (
-            <option key={p.id_parroquia} value={p.id_parroquia}>
-              {p.nombre}
-            </option>
-          ))}
-        </select>
-      </label>
-      {errores.idParroquia && <p className="error">{errores.idParroquia}</p>}
+        <label>
+          Parroquia*:
+          <select
+            value={idParroquia}
+            onChange={e => setIdParroquia(e.target.value)}
+            required
+            disabled={!idCanton}
+          >
+            <option value="">--Selecciona parroquia--</option>
+            {parroquias.map(p => (
+              <option key={p.id_parroquia} value={p.id_parroquia}>
+                {p.nombre}
+              </option>
+            ))}
+          </select>
+        </label>
+        {errores.idParroquia && <p className="error">{errores.idParroquia}</p>}
 
-      <div style={{ marginTop: '1rem' }}>
-        <button type="submit">{publicacionEditar ? 'Actualizar' : 'Crear'}</button>
-        {publicacionEditar && (
-          <button type="button" onClick={onCancel} style={{ marginLeft: '1rem' }}>
-            Cancelar
-          </button>
-        )}
-      </div>
-    </form>
+        <div style={{ marginTop: '1rem' }}>
+          <button type="submit">{publicacionEditar ? 'Actualizar' : 'Crear'}</button>
+          {publicacionEditar && (
+            <button type="button" onClick={onCancel} style={{ marginLeft: '1rem' }}>
+              Cancelar
+            </button>
+          )}
+        </div>
+      </form>
+    </>
   );
 };
 
