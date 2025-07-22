@@ -137,7 +137,7 @@
   top: 0;
   bottom: 0;
   width: 4px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #3B82F6, #3B82F6);
   border-radius: 2px;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -156,7 +156,7 @@
 .closeButton {
   margin-top: 20px;
   padding: 8px 20px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #3B82F6, #3B82F6);
   border: none;
   color: white;
   font-weight: 600;
@@ -184,7 +184,7 @@
 }
 
 .closeButton:hover {
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  background: linear-gradient(135deg, #3B82F6, #3B82F6);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
 }
@@ -231,6 +231,8 @@
 .saveButton {
   composes: closeButton;
 }
+
+
 @media (max-width: 480px) {
   .modalContent {
     margin: 10px;

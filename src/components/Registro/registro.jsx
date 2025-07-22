@@ -13,7 +13,7 @@ import { registrarAspirante, registrarContratante } from '../../servicios/regist
 import Navbar from '../Shared/Navbar';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Registro = () => {
   // Estados para el formulario
@@ -54,10 +54,11 @@ const Registro = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [errors, setErrors] = useState({});
-
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   // Datos para selects
-  const generos = ['Masculino', 'Femenino', 'Otro'];
-  const tiposContrato = ['Tiempo completo', 'Medio tiempo', 'Por horas', 'Por proyecto'];
+  const generos = ['Masculino', 'Femenino'];
+  const tiposContrato = ['Tiempo completo', 'Medio tiempo', 'Por horas', 'Por meses'];
   const ocupaciones = ['Ingeniero', 'Médico', 'Abogado', 'Arquitecto', 'Comerciante', 'Educador', 'Otro'];
 
   const [terminosAceptados, setTerminosAceptados] = useState(false);
@@ -65,6 +66,29 @@ const Registro = () => {
   const abrirModal = () => setModalAbierto(true);
   const cerrarModal = () => setModalAbierto(false);
 
+  const validarCedulaEcuatoriana = (cedula) => {
+    if (!/^\d{10}$/.test(cedula)) return false;
+
+    const provincia = parseInt(cedula.substring(0, 2), 10);
+    if (provincia < 1 || provincia > 24) return false;
+
+    const digitos = cedula.split('').map(Number);
+    const verificador = digitos.pop();
+
+    let suma = 0;
+    for (let i = 0; i < digitos.length; i++) {
+      let valor = digitos[i];
+      if (i % 2 === 0) {
+        valor *= 2;
+        if (valor > 9) valor -= 9;
+      }
+      suma += valor;
+    }
+
+    const decena = Math.ceil(suma / 10) * 10;
+    const resultado = decena - suma;
+    return resultado === verificador || (resultado === 10 && verificador === 0);
+  };
 
   // Cargar provincias al inicio
   useEffect(() => {
@@ -130,7 +154,48 @@ const Registro = () => {
     setTerminosAceptados(aceptado);
     setModalAbierto(false);
   };
+  const validarRUCempresa = (ruc) => {
+    if (!/^\d{13}$/.test(ruc)) return false;
 
+    // Validar cédula (primeros 10 dígitos)
+    const cedula = ruc.substring(0, 10);
+
+    const validarCedula = (ced) => {
+      if (!/^\d{10}$/.test(ced)) return false;
+
+      const provincia = parseInt(ced.substring(0, 2), 10);
+      if (provincia < 1 || provincia > 24) return false;
+
+      const digitos = ced.split('').map(Number);
+      const verificador = digitos.pop();
+
+      let suma = 0;
+      for (let i = 0; i < digitos.length; i++) {
+        let valor = digitos[i];
+        if (i % 2 === 0) {
+          valor *= 2;
+          if (valor > 9) valor -= 9;
+        }
+        suma += valor;
+      }
+
+      const decena = Math.ceil(suma / 10) * 10;
+      const resultado = decena - suma;
+      return resultado === verificador || (resultado === 10 && verificador === 0);
+    };
+
+    if (!validarCedula(cedula)) return false;
+
+    // Validar establecimiento
+    const establecimiento = parseInt(ruc.substring(10, 13), 10);
+    if (establecimiento < 1) return false;
+
+    // Validar tercer dígito (6 o 9 para empresa)
+    const tercerDigito = parseInt(ruc.charAt(2), 10);
+    if (tercerDigito !== 6 && tercerDigito !== 9) return false;
+
+    return true;
+  };
 
   const handleUserTypeSelection = (type) => {
     setFormData(prev => ({
@@ -146,6 +211,11 @@ const Registro = () => {
     const newErrors = {};
     let isValid = true;
 
+    if (!terminosAceptados) {
+      toast.error("Debe aceptar los términos y condiciones antes de continuar.");
+      return;
+    }
+
     // Validaciones comunes para ambos tipos de usuario
     if (!formData.nombres.trim()) {
       newErrors.nombres = 'Los nombres son obligatorios';
@@ -160,10 +230,11 @@ const Registro = () => {
     if (!formData.cedula) {
       newErrors.cedula = 'La cédula es obligatoria';
       isValid = false;
-    } else if (!/^\d{10}$/.test(formData.cedula)) {
-      newErrors.cedula = 'La cédula debe tener 10 dígitos numéricos';
+    } else if (!validarCedulaEcuatoriana(formData.cedula)) {
+      newErrors.cedula = 'La cédula no existe';
       isValid = false;
     }
+
 
     if (!formData.correo) {
       newErrors.correo = 'El correo es obligatorio';
@@ -263,18 +334,32 @@ const Registro = () => {
         if (!formData.rucEmpresa) {
           newErrors.rucEmpresa = 'El RUC es obligatorio';
           isValid = false;
-        } else if (!/^\d{13}$/.test(formData.rucEmpresa)) {
-          newErrors.rucEmpresa = 'El RUC debe tener 13 dígitos';
+        } else if (!validarRUCempresa(formData.rucEmpresa)) {
+          newErrors.rucEmpresa = 'El RUC de empresa no es válido';
           isValid = false;
         }
-
+        
         if (!formData.correoEmpresa) {
           newErrors.correoEmpresa = 'El correo de la empresa es obligatorio';
           isValid = false;
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoEmpresa)) {
           newErrors.correoEmpresa = 'El formato del correo no es válido';
           isValid = false;
+        } else {
+          // Validar que no sea correo gratuito
+          const dominio = formData.correoEmpresa.split('@')[1].toLowerCase();
+          const dominiosGratis = [
+            'gmail.com', 'hotmail.com', 'yahoo.com', 'outlook.com', 'live.com',
+            'icloud.com', 'aol.com', 'mail.com', 'gmx.com', 'protonmail.com'
+            // puedes agregar más si quieres
+          ];
+
+          if (dominiosGratis.includes(dominio)) {
+            newErrors.correoEmpresa = 'Por favor, ingrese un correo corporativo o de empresa, no un correo gratuito';
+            isValid = false;
+          }
         }
+
 
         if (!formData.representanteLegal) {
           newErrors.representanteLegal = 'El representante legal es obligatorio';
@@ -756,24 +841,26 @@ const Registro = () => {
 
                     <div className={styles['input-group']}>
                       <label htmlFor="ocupacion"><FaBriefcase className={styles['input-icon']} /> Ocupación</label>
-                      <div className={styles['select-wrapper']}>
-                        <select
-                          id="ocupacion"
-                          name="ocupacion"
-                          value={formData.ocupacion}
-                          onChange={handleChange}
-                          className={errors.ocupacion ? styles['input-error-registrio'] : ''}
-                        >
-                          <option value="">Seleccione...</option>
-                          {ocupaciones.map((ocupacion, index) => (
-                            <option key={index} value={ocupacion}>{ocupacion}</option>
-                          ))}
-                        </select>
-                        <FaChevronDown className={styles['select-arrow']} />
-                      </div>
+
+                      <input
+                        list="ocupaciones-list"
+                        id="ocupacion"
+                        name="ocupacion"
+                        value={formData.ocupacion}
+                        onChange={handleChange}
+                        className={errors.ocupacion ? styles['input-error-registrio'] : ''}
+                        placeholder="Escribe tu ocupación"
+                        autoComplete="off"
+                      />
+
+                      <datalist id="ocupaciones-list">
+                        {ocupaciones.map((ocupacion, index) => (
+                          <option key={index} value={ocupacion} />
+                        ))}
+                      </datalist>
+
                       {errors.ocupacion && <span className={styles['error-text-registrio']}>{errors.ocupacion}</span>}
                     </div>
-
                     {/* Campos de empresa solo si es representante */}
                     {formData.esRepresentante === true && (
                       <>
@@ -851,35 +938,61 @@ const Registro = () => {
                     <label htmlFor="contrasena">
                       <FaLock className={styles['input-icon']} /> Contraseña
                     </label>
-                    <input
-                      type="password"
-                      id="contrasena"
-                      name="contrasena"
-                      value={formData.contrasena}
-                      onChange={handleChange}
-                      className={errors.contrasena ? styles['input-error-registrio'] : ''}
-                    />
+
+                    <div className={styles['input-password-wrapper']}>
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        id="contrasena"
+                        name="contrasena"
+                        value={formData.contrasena}
+                        onChange={handleChange}
+                        className={errors.contrasena ? styles['input-error-registrio'] : ''}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className={styles['toggle-password-btn']}
+                        aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                      >
+                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                      </button>
+                    </div>
+
                     {errors.contrasena && (
                       <span className={styles['error-text-registrio']}>{errors.contrasena}</span>
                     )}
                   </div>
 
+
                   <div className={styles['input-group']}>
                     <label htmlFor="confirmarContrasena">
                       <FaLock className={styles['input-icon']} /> Confirmar Contraseña
                     </label>
-                    <input
-                      type="password"
-                      id="confirmarContrasena"
-                      name="confirmarContrasena"
-                      value={formData.confirmarContrasena}
-                      onChange={handleChange}
-                      className={errors.confirmarContrasena ? styles['input-error-registrio'] : ''}
-                    />
+
+                    <div className={styles['input-password-wrapper']}>
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        id="confirmarContrasena"
+                        name="confirmarContrasena"
+                        value={formData.confirmarContrasena}
+                        onChange={handleChange}
+                        className={errors.confirmarContrasena ? styles['input-error-registrio'] : ''}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className={styles['toggle-password-btn']}
+                        aria-label={showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                      >
+                        {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                      </button>
+                    </div>
+
                     {errors.confirmarContrasena && (
                       <span className={styles['error-text-registrio']}>{errors.confirmarContrasena}</span>
                     )}
                   </div>
+
                 </div>
                 {/* Aquí cambia tu checkbox para que el texto "términos y condiciones" sea un botón que abra el modal */}
                 <div className={styles['terms-container']}>
@@ -889,7 +1002,6 @@ const Registro = () => {
                       id="terminos"
                       required
                       checked={terminosAceptados}
-                      readOnly
                     />
                     <span className={styles.checkmark}></span>
                     <span className={styles['terms-text']} onClick={handleAbrirModal}>
