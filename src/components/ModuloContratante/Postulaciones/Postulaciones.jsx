@@ -5,6 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from './Postulaciones.module.css';
 import HeaderContratante from "../HeaderContratante/HeaderContratante";
+
 const Postulaciones = () => {
   const { userId } = useParams(); // userId es el id del CONTRATANTE
   const [realizaciones, setRealizaciones] = useState([]);
@@ -12,6 +13,7 @@ const Postulaciones = () => {
   const [error, setError] = useState(null);
   const [filtroTitulo, setFiltroTitulo] = useState('');
   const [filtroFecha, setFiltroFecha] = useState('');
+  const [procesandoEstados, setProcesandoEstados] = useState({}); // Para deshabilitar botones temporalmente
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,8 +42,235 @@ const Postulaciones = () => {
     }
   }, [userId]);
 
-  const actualizarEstado = async (idPostulacion, idPostulacionEmpleo, nuevoEstado, idAspirante) => {
+  // 🔥 NUEVA FUNCIÓN: Verificar si existe una calificación
+  const verificarCalificacion = async (idPostulacion, idContratante) => {
     try {
+      const response = await axios.get(
+        `http://localhost:8090/api/calificaciones/existe/${idPostulacion}/${idContratante}`
+      );
+      return response.data; // Devuelve true/false
+    } catch (error) {
+      console.error('Error al verificar calificación:', error);
+      return false;
+    }
+  };
+
+  // 🔥 NUEVA FUNCIÓN: Modal de confirmación elegante
+  const mostrarModalConfirmacion = (aspiranteName, jobTitle) => {
+    return new Promise((resolve) => {
+      const modal = document.createElement('div');
+      modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        backdrop-filter: blur(4px);
+        animation: fadeIn 0.3s ease-out;
+      `;
+      
+      modal.innerHTML = `
+        <div style="
+          background: white;
+          padding: 2rem;
+          border-radius: 16px;
+          max-width: 480px;
+          margin: 1rem;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+          position: relative;
+          animation: slideUp 0.3s ease-out;
+        ">
+          <div style="
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #FEF3E8, #F59E0B);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 28px;
+          ">⚠️</div>
+          
+          <h3 style="
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1F2937;
+            margin-bottom: 1rem;
+            text-align: center;
+          ">¡Atención!</h3>
+          
+          <div style="
+            background: #FEF3E8;
+            border: 1px solid #F59E0B;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+          ">
+            <p style="
+              margin: 0 0 1rem 0;
+              line-height: 1.6;
+              color: #92400E;
+              font-weight: 600;
+            ">
+              La postulación de <strong>${aspiranteName}</strong> para el trabajo <strong>"${jobTitle}"</strong> 
+              ya tiene una calificación asociada.
+            </p>
+            <p style="
+              margin: 0;
+              line-height: 1.6;
+              color: #92400E;
+              font-size: 0.9rem;
+            ">
+              Si la rechazas, la calificación permanecerá en el sistema, lo que podría generar inconsistencias.
+            </p>
+          </div>
+          
+          <div style="
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+          ">
+            <button id="cancelar" style="
+              background: #F3F4F6;
+              color: #374151;
+              border: 2px solid #D1D5DB;
+              padding: 0.75rem 1.5rem;
+              border-radius: 8px;
+              cursor: pointer;
+              font-weight: 600;
+              transition: all 0.2s;
+              min-width: 120px;
+            ">
+              Cancelar
+            </button>
+            <button id="continuar" style="
+              background: #DC2626;
+              color: white;
+              border: 2px solid #DC2626;
+              padding: 0.75rem 1.5rem;
+              border-radius: 8px;
+              cursor: pointer;
+              font-weight: 600;
+              transition: all 0.2s;
+              min-width: 120px;
+            ">
+              Rechazar Anyway
+            </button>
+          </div>
+        </div>
+        
+        <style>
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          @keyframes slideUp {
+            from { 
+              opacity: 0;
+              transform: translateY(20px) scale(0.95);
+            }
+            to { 
+              opacity: 1;
+              transform: translateY(0) scale(1);
+            }
+          }
+        </style>
+      `;
+      
+      document.body.appendChild(modal);
+      
+      // Agregar efectos hover
+      const cancelarBtn = modal.querySelector('#cancelar');
+      const continuarBtn = modal.querySelector('#continuar');
+      
+      cancelarBtn.onmouseenter = () => {
+        cancelarBtn.style.background = '#E5E7EB';
+        cancelarBtn.style.borderColor = '#9CA3AF';
+      };
+      cancelarBtn.onmouseleave = () => {
+        cancelarBtn.style.background = '#F3F4F6';
+        cancelarBtn.style.borderColor = '#D1D5DB';
+      };
+      
+      continuarBtn.onmouseenter = () => {
+        continuarBtn.style.background = '#B91C1C';
+      };
+      continuarBtn.onmouseleave = () => {
+        continuarBtn.style.background = '#DC2626';
+      };
+      
+      cancelarBtn.onclick = () => {
+        modal.style.animation = 'fadeOut 0.2s ease-in forwards';
+        setTimeout(() => {
+          document.body.removeChild(modal);
+          resolve(false);
+        }, 200);
+      };
+      
+      continuarBtn.onclick = () => {
+        modal.style.animation = 'fadeOut 0.2s ease-in forwards';
+        setTimeout(() => {
+          document.body.removeChild(modal);
+          resolve(true);
+        }, 200);
+      };
+      
+      // Cerrar con ESC
+      const handleEsc = (e) => {
+        if (e.key === 'Escape') {
+          cancelarBtn.click();
+          document.removeEventListener('keydown', handleEsc);
+        }
+      };
+      document.addEventListener('keydown', handleEsc);
+      
+      // Añadir animación de salida
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes fadeOut {
+          from { opacity: 1; }
+          to { opacity: 0; }
+        }
+      `;
+      document.head.appendChild(style);
+    });
+  };
+
+  const actualizarEstado = async (idPostulacion, idPostulacionEmpleo, nuevoEstado, idAspirante, aspiranteName, jobTitle) => {
+    // Marcar como procesando para deshabilitar botones
+    setProcesandoEstados(prev => ({ ...prev, [idPostulacion]: true }));
+    
+    try {
+        // 🔥 VALIDACIÓN: Si se va a rechazar, verificar si tiene calificación
+        if (nuevoEstado === false) {
+          const tieneCalificacion = await verificarCalificacion(idPostulacion, userId);
+          
+          if (tieneCalificacion) {
+            const confirmar = await mostrarModalConfirmacion(aspiranteName, jobTitle);
+            
+            if (!confirmar) {
+              // Usuario canceló la operación
+              setProcesandoEstados(prev => ({ ...prev, [idPostulacion]: false }));
+              toast.info('💭 Operación cancelada. La postulación mantiene su estado actual.', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+              });
+              return;
+            }
+          }
+        }
+
+        // Proceder con la actualización del estado
         await axios.put(
             `http://localhost:8090/api/postulacion/actualizar/${idPostulacion}/${userId}/${idAspirante}`,
             {
@@ -53,10 +282,10 @@ const Postulaciones = () => {
         );
 
         const mensaje = nuevoEstado === null 
-          ? 'Postulación marcada como pendiente' 
+          ? '🟡 Postulación marcada como pendiente' 
           : nuevoEstado 
-            ? 'Postulación aceptada correctamente' 
-            : 'Postulación rechazada correctamente';
+            ? '✅ Postulación aceptada correctamente' 
+            : '❌ Postulación rechazada correctamente';
 
         const tipoToast = nuevoEstado === null 
           ? 'info' 
@@ -64,15 +293,40 @@ const Postulaciones = () => {
             ? 'success' 
             : 'error';
 
-        toast[tipoToast](mensaje, {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
+        // Toast especial si se rechazó con calificación
+        if (nuevoEstado === false) {
+          const tieneCalificacion = await verificarCalificacion(idPostulacion, userId);
+          if (tieneCalificacion) {
+            toast.warning('⚠️ Postulación rechazada. La calificación existente se mantiene en el sistema.', {
+              position: "top-right",
+              autoClose: 6000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+            });
+          } else {
+            toast[tipoToast](mensaje, {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+            });
+          }
+        } else {
+          toast[tipoToast](mensaje, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+        }
 
+        // Actualizar el estado en el frontend
         setRealizaciones(prev =>
             prev.map(r => {
                 if (r.postulacion?.id_postulacion === idPostulacion) {
@@ -87,9 +341,15 @@ const Postulaciones = () => {
                 return r;
             })
         );
+
+        // Actualizar status de calificaciones si se aceptó
+        if (nuevoEstado === true) {
+          setCalificacionesStatus(prev => ({ ...prev, [idPostulacion]: false }));
+        }
+
     } catch (error) {
         console.error('Error al actualizar el estado:', error);
-        toast.error('Error al actualizar la postulación', {
+        toast.error('❌ Error al actualizar la postulación', {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -97,8 +357,11 @@ const Postulaciones = () => {
           pauseOnHover: true,
           draggable: true,
         });
+    } finally {
+        // Quitar el estado de procesando
+        setProcesandoEstados(prev => ({ ...prev, [idPostulacion]: false }));
     }
-};
+  };
 
   const verCV = (idAspirante) => {
     navigate(`/cv-aspirante/${idAspirante}`);
@@ -148,6 +411,29 @@ const Postulaciones = () => {
     if (estado) return '✅ Aceptada';
     return '❌ Rechazada';
   };
+
+  // 🔥 NUEVA FUNCIÓN: Verificar si una postulación tiene calificación para mostrar indicador visual
+  const [calificacionesStatus, setCalificacionesStatus] = useState({});
+
+  useEffect(() => {
+    const verificarCalificacionesExistentes = async () => {
+      if (realizaciones.length > 0) {
+        const status = {};
+        for (const realizacion of realizaciones) {
+          if (realizacion.postulacion?.id_postulacion) {
+            const tieneCalificacion = await verificarCalificacion(
+              realizacion.postulacion.id_postulacion, 
+              userId
+            );
+            status[realizacion.postulacion.id_postulacion] = tieneCalificacion;
+          }
+        }
+        setCalificacionesStatus(status);
+      }
+    };
+
+    verificarCalificacionesExistentes();
+  }, [realizaciones, userId]);
 
   if (loading) return (
     <div className={styles.postulacionesLoadingContainer}>
@@ -235,6 +521,10 @@ const Postulaciones = () => {
             const { id_realizar, fecha, aspirante, postulacion } = r;
             const usuario = aspirante?.usuario;
             const publicacion = postulacion?.postulacion_empleo;
+            const tieneCalificacion = calificacionesStatus[postulacion?.id_postulacion] || false;
+            const estaProcesando = procesandoEstados[postulacion?.id_postulacion] || false;
+            const estaAceptada = postulacion?.estado === true;
+            const estaRechazada = postulacion?.estado === false;
 
             return (
               <div className={styles.postulacionesApplicationCard} key={id_realizar}>
@@ -246,6 +536,20 @@ const Postulaciones = () => {
                     <div className={styles.postulacionesApplicantDetails}>
                       <h3 className={styles.postulacionesApplicantName}>
                         {usuario ? `${usuario.nombres} ${usuario.apellidos}` : 'No disponible'}
+                        {/* 🔥 INDICADOR VISUAL: Mostrar si tiene calificación */}
+                        {tieneCalificacion && (
+                          <span style={{
+                            marginLeft: '10px',
+                            backgroundColor: '#28a745',
+                            color: 'white',
+                            padding: '2px 8px',
+                            borderRadius: '12px',
+                            fontSize: '12px',
+                            fontWeight: 'bold'
+                          }}>
+                            ⭐ Calificado
+                          </span>
+                        )}
                       </h3>
                       <p className={styles.postulacionesApplicantEmail}>
                         <i className={`${styles.postulacionesInfoIcon} fas fa-envelope`}></i>
@@ -325,6 +629,7 @@ const Postulaciones = () => {
                 </div>
 
                 <div className={styles.postulacionesCardActions}>
+                  {/* 🔥 BOTÓN ACEPTAR - Se bloquea si ya está aceptada */}
                   <button
                     className={`${styles.postulacionesActionBtn} ${styles.postulacionesBtnAccept}`}
                     onClick={() =>
@@ -332,14 +637,23 @@ const Postulaciones = () => {
                         postulacion?.id_postulacion,
                         publicacion?.id_postulacion_empleo,
                         true,
-                        aspirante?.idAspirante
+                        aspirante?.idAspirante,
+                        usuario ? `${usuario.nombres} ${usuario.apellidos}` : 'Aspirante',
+                        publicacion?.titulo || 'trabajo'
                       )
                     }
+                    disabled={estaAceptada || estaProcesando}
+                    style={{
+                      opacity: estaAceptada || estaProcesando ? 0.5 : 1,
+                      cursor: estaAceptada || estaProcesando ? 'not-allowed' : 'pointer',
+                      background: estaAceptada ? '#90EE90' : '#7BB3A0'
+                    }}
                   >
-                    <i className={`${styles.postulacionesBtnIcon} fas fa-check`}></i>
-                    Aceptar
+                    <i className={`${styles.postulacionesBtnIcon} ${estaProcesando ? 'fas fa-spinner fa-spin' : 'fas fa-check'}`}></i>
+                    {estaProcesando ? 'Procesando...' : estaAceptada ? 'Ya Aceptada ✓' : 'Aceptar'}
                   </button>
                   
+                  {/* 🔥 BOTÓN RECHAZAR - Se bloquea si ya está aceptada */}
                   <button
                     className={`${styles.postulacionesActionBtn} ${styles.postulacionesBtnReject}`}
                     onClick={() =>
@@ -347,12 +661,23 @@ const Postulaciones = () => {
                         postulacion?.id_postulacion,
                         publicacion?.id_postulacion_empleo,
                         false,
-                        aspirante?.idAspirante
+                        aspirante?.idAspirante,
+                        usuario ? `${usuario.nombres} ${usuario.apellidos}` : 'Aspirante',
+                        publicacion?.titulo || 'trabajo'
                       )
                     }
+                    disabled={estaAceptada || estaProcesando}
+                    style={{
+                      opacity: estaAceptada || estaProcesando ? 0.5 : 1,
+                      cursor: estaAceptada || estaProcesando ? 'not-allowed' : 'pointer',
+                      backgroundColor: tieneCalificacion && !estaAceptada ? '#dc3545' : '',
+                      border: tieneCalificacion && !estaAceptada ? '2px solid #ff6b6b' : ''
+                    }}
                   >
-                    <i className={`${styles.postulacionesBtnIcon} fas fa-times`}></i>
-                    Rechazar
+                    <i className={`${styles.postulacionesBtnIcon} ${estaProcesando ? 'fas fa-spinner fa-spin' : 'fas fa-times'}`}></i>
+                    {estaProcesando ? 'Procesando...' : 
+                     estaAceptada ? 'Bloqueado' : 
+                     tieneCalificacion ? 'Rechazar ⚠️' : 'Rechazar'}
                   </button>
                   
                   <button

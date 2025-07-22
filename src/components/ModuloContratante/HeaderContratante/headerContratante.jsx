@@ -167,7 +167,7 @@ const HeaderContratante = ({
             Ver Postulaciones
           </Link>
 
-          {/* Calificaciones */}
+          {/* Calificaciones - SIN "Nueva Calificación" */}
           <div className={styles.dropdownContainer}>
             <button
               className={styles.dropdownTrigger}
@@ -196,14 +196,7 @@ const HeaderContratante = ({
                   <span className={styles.menuItemIcon}>📋</span>
                   Trabajos Aceptados
                 </Link>
-                <Link
-                  to={`/Calificacion/calificacion?userId=${userId}`}
-                  className={styles.dropdownMenuItem}
-                  onClick={() => setIsCalificacionDropdownOpen(false)}
-                >
-                  <span className={styles.menuItemIcon}>⭐</span>
-                  Nueva Calificación
-                </Link>
+                {/* ELIMINADO: "Nueva Calificación" */}
               </div>
             )}
           </div>
@@ -215,10 +208,6 @@ const HeaderContratante = ({
             <span className={styles.messageIcon}>💬</span>
             Mensajes
           </button>
-
-
-
-
 
           <button
             onClick={handleNotificationsClick}

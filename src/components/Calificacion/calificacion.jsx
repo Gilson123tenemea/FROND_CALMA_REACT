@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './Calificacion.css';
-import Navbar from '../Shared/Navbar';
+import styles from './Calificacion.module.css';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -194,23 +193,22 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
   };
 
   return (
-    <div className="calificacion-form-container">
-      <Navbar />
+    <div className={styles.calificacionFormContainer}>
       <ToastContainer />
       
-      <div className="calificacion-content">
+      <div className={styles.calificacionContent}>
         {/* Header con información del aspirante y botón volver */}
-        <div className="calificacion-header">
-          <button onClick={manejarVolver} className="btn-volver">
+        <div className={styles.calificacionHeader}>
+          <button onClick={manejarVolver} className={styles.btnVolver}>
             ← Volver a Trabajos Aceptados
           </button>
           
           {aspiranteNombre && (
-            <div className="info-aspirante">
+            <div className={styles.infoAspirante}>
               <h2>
                 {isViewMode ? 'Calificación de' : 'Calificar a'}: {aspiranteNombre}
               </h2>
-              <p className="id-postulacion">
+              <p className={styles.idPostulacion}>
                 Postulación ID: {idPostulacionParam}
               </p>
             </div>
@@ -219,15 +217,15 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
 
         {/* Formulario de calificación (solo si no es modo vista) */}
         {!isViewMode && (
-          <div className="calificacion-form animate-fade-in">
+          <div className={`${styles.calificacionForm} ${styles.animateFadeIn}`}>
             <form onSubmit={manejarEnvio}>
               <h3>Califique el Servicio</h3>
 
-              <div className="estrellas-input">
+              <div className={styles.estrellasInput}>
                 {[1, 2, 3, 4, 5].map((valor) => (
                   <span
                     key={valor}
-                    className={valor <= puntaje ? 'estrella activa' : 'estrella'}
+                    className={valor <= puntaje ? `${styles.estrella} ${styles.activa}` : styles.estrella}
                     onClick={() => setPuntaje(valor)}
                   >
                     ★
@@ -241,9 +239,10 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
                 onChange={(e) => setComentario(e.target.value)}
                 required
                 rows="4"
-              ></textarea>
+                className={styles.textareaForm}
+              />
 
-              <button type="submit" className="btn-enviar">
+              <button type="submit" className={styles.btnEnviar}>
                 Enviar Calificación
               </button>
             </form>
@@ -251,35 +250,35 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
         )}
 
         {/* Cuadrito de comentarios */}
-        <div className="comentarios-cuadrito">
+        <div className={styles.comentariosCuadrito}>
           <h3>
             {isViewMode ? 'Calificaciones para esta postulación' : 'Comentarios Recientes'}
           </h3>
-          <div className="comentarios-lista">
+          <div className={styles.comentariosLista}>
             {calificaciones.length === 0 ? (
-              <div className="no-comentarios">
+              <div className={styles.noComentarios}>
                 <p>
                   {isViewMode 
                     ? 'No hay calificaciones para esta postulación' 
                     : 'No hay comentarios aún'
                   }
                 </p>
-                <span className="icono-comentarios">💬</span>
+                <span className={styles.iconoComentarios}>💬</span>
               </div>
             ) : (
               calificaciones.map((calificacion, index) => (
                 <div 
                   key={calificacion.id_calificacion} 
-                  className={`comentario-item ${index === 0 && !isViewMode ? 'comentario-reciente' : ''}`}
+                  className={`${styles.comentarioItem} ${index === 0 && !isViewMode ? styles.comentarioReciente : ''}`}
                 >
-                  <div className="comentario-header">
-                    <div className="estrellas-comentario">
+                  <div className={styles.comentarioHeader}>
+                    <div className={styles.estrellasComentario}>
                       {editandoId === calificacion.id_calificacion ? (
-                        <div className="estrellas-editar">
+                        <div className={styles.estrellasEditar}>
                           {[1, 2, 3, 4, 5].map((valor) => (
                             <span
                               key={valor}
-                              className={valor <= puntajeEditando ? 'estrella activa' : 'estrella'}
+                              className={valor <= puntajeEditando ? `${styles.estrella} ${styles.activa}` : styles.estrella}
                               onClick={() => setPuntajeEditando(valor)}
                             >
                               ★
@@ -290,29 +289,29 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
                         [...Array(5)].map((_, i) => (
                           <span
                             key={i}
-                            className={i < calificacion.puntaje ? 'estrella activa' : 'estrella'}
+                            className={i < calificacion.puntaje ? `${styles.estrella} ${styles.activa}` : styles.estrella}
                           >
                             ★
                           </span>
                         ))
                       )}
                     </div>
-                    <div className="fecha-container">
-                      <span className="fecha-comentario">
+                    <div className={styles.fechaContainer}>
+                      <span className={styles.fechaComentario}>
                         {formatearFecha(calificacion.fecha)}
                       </span>
                       {index === 0 && !isViewMode && (
-                        <span className="badge-nuevo">Nuevo</span>
+                        <span className={styles.badgeNuevo}>Nuevo</span>
                       )}
                     </div>
                   </div>
 
-                  <div className="comentario-texto">
+                  <div className={styles.comentarioTexto}>
                     {editandoId === calificacion.id_calificacion ? (
                       <textarea
                         value={comentarioEditando}
                         onChange={(e) => setComentarioEditando(e.target.value)}
-                        className="textarea-editar"
+                        className={styles.textareaEditar}
                         rows="3"
                       />
                     ) : (
@@ -320,24 +319,24 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
                     )}
                   </div>
 
-                  <div className="comentario-acciones">
-                    <div className="reacciones">
+                  <div className={styles.comentarioAcciones}>
+                    <div className={styles.reacciones}>
                       <button
-                        className="btn-reaccion"
+                        className={styles.btnReaccion}
                         onClick={() => reaccionar(calificacion.id_calificacion, '👍')}
                         title="Me gusta"
                       >
                         👍
                       </button>
                       <button
-                        className="btn-reaccion"
+                        className={styles.btnReaccion}
                         onClick={() => reaccionar(calificacion.id_calificacion, '❤️')}
                         title="Me encanta"
                       >
                         ❤️
                       </button>
                       <button
-                        className="btn-reaccion"
+                        className={styles.btnReaccion}
                         onClick={() => reaccionar(calificacion.id_calificacion, '😊')}
                         title="Me divierte"
                       >
@@ -346,17 +345,17 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
                     </div>
 
                     {puedeEditar(calificacion.fecha) && !isViewMode && (
-                      <div className="acciones-editar">
+                      <div className={styles.accionesEditar}>
                         {editandoId === calificacion.id_calificacion ? (
                           <>
                             <button
-                              className="btn-guardar"
+                              className={styles.btnGuardar}
                               onClick={() => guardarEdicion(calificacion.id_calificacion)}
                             >
                               Guardar
                             </button>
                             <button
-                              className="btn-cancelar"
+                              className={styles.btnCancelar}
                               onClick={cancelarEdicion}
                             >
                               Cancelar
@@ -365,13 +364,13 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
                         ) : (
                           <>
                             <button
-                              className="btn-editar"
+                              className={styles.btnEditar}
                               onClick={() => iniciarEdicion(calificacion)}
                             >
                               Editar
                             </button>
                             <button
-                              className="btn-eliminar"
+                              className={styles.btnEliminar}
                               onClick={() => eliminarCalificacion(calificacion.id_calificacion)}
                             >
                               Eliminar
@@ -382,8 +381,8 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
                     )}
                     
                     {!puedeEditar(calificacion.fecha) && (
-                      <span className="comentario-permanente">
-                        <span className="icono-permanente">🔒</span>
+                      <span className={styles.comentarioPermanente}>
+                        <span className={styles.iconoPermanente}>🔒</span>
                         Permanente
                       </span>
                     )}

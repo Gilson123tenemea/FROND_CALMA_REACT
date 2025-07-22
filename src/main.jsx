@@ -27,6 +27,8 @@ import CVForm from './components/ModuloAspirante/CV/cv';
 import PerfilContratante from './components/ModuloContratante/PerfilContratante/perfilContratante';
 import CVCompletoView from './components/ModuloAspirante/CV/CVCompletoView';
 import Postulaciones from './components/ModuloContratante/Postulaciones/Postulaciones';
+import DetallesTrabajo from './components/ModuloContratante/DetallesTrabajo/DetallesTrabajo';
+
 import CVContratanteView from './components/ModuloAspirante/CV/CVContratanteView';
 
 // Componentes de CV relacionados
@@ -56,6 +58,7 @@ import TodasLasCalificaciones from './components/ModuloAspirante/Calificaciones/
 import Calificacionescv from './components/ModuloAspirante/CV/CalificacionesCV/CalificacionesCV';
 //Ver ficha segun el estado en aspirantes
 import VerFichaAceptada from './components/ModuloAspirante/PostulacionesAspirante/verfcihaaceptada';
+
 
 
 createRoot(document.getElementById('root')).render(
@@ -199,6 +202,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/moduloContratante/*" element={<ModuloContratante />} />
         <Route path="/moduloContratante/perfilContratante" element={<PerfilContratante />} />
         <Route path="/postulaciones/:userId" element={<Postulaciones />} />
+        <Route path="/detalles-trabajo/:idRealizar" element={<DetallesTrabajo />} />
 
         {/* Rutas de paciente */}
         <Route path="/registropaciente" element={<RegistroPaciente />} />

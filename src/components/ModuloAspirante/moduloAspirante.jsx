@@ -137,38 +137,38 @@ const ModuloAspirante = () => {
   }, [location.state]);
 
   useEffect(() => {
-  const fetchNoLeidas = async () => {
-    if (!idAspirante) return; // ✅ CORRECTO para aspirante
+    const fetchNoLeidas = async () => {
+      if (!idAspirante) return; // ✅ CORRECTO para aspirante
 
-    try {
-      const endpoint = `http://localhost:8090/api/notificaciones/aspirante/noleidas/${idAspirante}`; // ✅ CORRECTO
+      try {
+        const endpoint = `http://localhost:8090/api/notificaciones/aspirante/noleidas/${idAspirante}`; // ✅ CORRECTO
 
-      const res = await axios.get(endpoint);
-      const nuevasCantidad = res.data.length;
+        const res = await axios.get(endpoint);
+        const nuevasCantidad = res.data.length;
 
-      if (nuevasCantidad > cantidadNoLeidas && cantidadNoLeidas > 0) {
-        setCantidadNoLeidas(nuevasCantidad);
-        const badge = document.querySelector(`.${styles.badgeNotificacionCustom}`); // ✅ CORRECTO: badge de aspirante
-        if (badge) {
-          badge.classList.add(styles.new);
-          setTimeout(() => badge.classList.remove(styles.new), 500);
+        if (nuevasCantidad > cantidadNoLeidas && cantidadNoLeidas > 0) {
+          setCantidadNoLeidas(nuevasCantidad);
+          const badge = document.querySelector(`.${styles.badgeNotificacionCustom}`); // ✅ CORRECTO: badge de aspirante
+          if (badge) {
+            badge.classList.add(styles.new);
+            setTimeout(() => badge.classList.remove(styles.new), 500);
+          }
+        } else {
+          setCantidadNoLeidas(nuevasCantidad);
         }
-      } else {
-        setCantidadNoLeidas(nuevasCantidad);
+      } catch (error) {
+        console.error("Error al cargar notificaciones no leídas:", error);
       }
-    } catch (error) {
-      console.error("Error al cargar notificaciones no leídas:", error);
-    }
-  };
+    };
 
-  fetchNoLeidas();
+    fetchNoLeidas();
 
-  // 🆕 INTERVALOS DINÁMICOS: Más frecuente si hay chat activo
-  const intervalo = usuarioChat ? 3000 : 30000; // 3s si hay chat, 30s si no
-  const interval = setInterval(fetchNoLeidas, intervalo);
+    // 🆕 INTERVALOS DINÁMICOS: Más frecuente si hay chat activo
+    const intervalo = usuarioChat ? 3000 : 30000; // 3s si hay chat, 30s si no
+    const interval = setInterval(fetchNoLeidas, intervalo);
 
-  return () => clearInterval(interval);
-}, [idAspirante, showPanelNotificaciones, cantidadNoLeidas, usuarioChat]); // ✅ CORRECTO: dependencias correctas
+    return () => clearInterval(interval);
+  }, [idAspirante, showPanelNotificaciones, cantidadNoLeidas, usuarioChat]); // ✅ CORRECTO: dependencias correctas
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -357,11 +357,14 @@ const ModuloAspirante = () => {
       {/* Chat flotante */}
       {usuarioChat && (
         <div className="chat-flotante">
-        
           <App
             nombrePropio={userId}
             destinatarioProp={usuarioChat.idUsuario}
             onCerrarChat={handleCerrarChat}
+            // 🆕 PASANDO INFORMACIÓN DEL DESTINATARIO
+            datosDestinatario={usuarioChat}
+            // Si quieres pasar nombres específicos (opcional)
+            nombreDestinatario={`${usuarioChat.nombres} ${usuarioChat.apellidos}`}
           />
         </div>
       )}

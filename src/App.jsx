@@ -2,7 +2,15 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from "react"
 import { Client } from "@stomp/stompjs";
 import axios from 'axios';
 
-function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
+function App({ 
+  nombrePropio = "1", 
+  destinatarioProp = "2", 
+  onCerrarChat,
+  // 🆕 NUEVAS PROPS PARA MOSTRAR NOMBRES REALES
+  nombreUsuarioActual = null,
+  nombreDestinatario = null,
+  datosDestinatario = null // Objeto completo con información del destinatario
+}) {
   const [mensaje, setMensaje] = useState("");
   const [mensajes, setMensajes] = useState([]);
   const [conectado, setConectado] = useState(false);
@@ -24,6 +32,26 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
   const usuarioActual = useMemo(() => normalizarId(nombrePropio), [nombrePropio, normalizarId]);
   const destinatario = useMemo(() => normalizarId(destinatarioProp), [destinatarioProp, normalizarId]);
 
+  // 🆕 MEMOIZAR NOMBRES PARA MOSTRAR
+  const nombreMostrarUsuario = useMemo(() => {
+    return nombreUsuarioActual || `Usuario ${usuarioActual}`;
+  }, [nombreUsuarioActual, usuarioActual]);
+
+  const nombreMostrarDestinatario = useMemo(() => {
+    if (datosDestinatario) {
+      return `${datosDestinatario.nombres} ${datosDestinatario.apellidos}`;
+    }
+    return nombreDestinatario || `Usuario ${destinatario}`;
+  }, [datosDestinatario, nombreDestinatario, destinatario]);
+
+  // 🆕 INFORMACIÓN ADICIONAL DEL TRABAJO (si existe)
+  const infoTrabajo = useMemo(() => {
+    if (datosDestinatario?.trabajoTitulo) {
+      return `📋 ${datosDestinatario.trabajoTitulo}`;
+    }
+    return '';
+  }, [datosDestinatario]);
+
   // OPTIMIZACIÓN: Memoizar canal de conversación
   const canalConversacion = useMemo(() => {
     if (!usuarioActual || !destinatario) return null;
@@ -34,11 +62,11 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
 
   // OPTIMIZACIÓN: Memoizar debug info
   const debugInfo = useMemo(() => 
-    `Usuarios: ${usuarioActual} ↔ ${destinatario} | Mensajes: ${mensajes.length} | Conectado: ${conectado}`,
-    [usuarioActual, destinatario, mensajes.length, conectado]
+    `Chat: ${nombreMostrarUsuario} ↔ ${nombreMostrarDestinatario} | Mensajes: ${mensajes.length} | Conectado: ${conectado}`,
+    [nombreMostrarUsuario, nombreMostrarDestinatario, mensajes.length, conectado]
   );
 
-  console.log(`🔍 INIT: Usuario=${usuarioActual}, Destinatario=${destinatario}, Canal=${canalConversacion}`);
+  console.log(`🔍 INIT: Usuario=${usuarioActual} (${nombreMostrarUsuario}), Destinatario=${destinatario} (${nombreMostrarDestinatario}), Canal=${canalConversacion}`);
 
   // 🆕 FUNCIÓN PARA ENVIAR NOTIFICACIÓN DE MENSAJE
   const enviarNotificacionMensaje = useCallback(async (remitenteId, destinatarioId, contenido) => {
@@ -302,10 +330,23 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
     }
   }, []);
 
+  // 🆕 FUNCIÓN PARA OBTENER NOMBRE DEL REMITENTE
+  const obtenerNombreRemitente = useCallback((msg) => {
+    const remitenteId = normalizarId(msg.remitenteId || msg.nombre);
+    const esPropio = remitenteId === usuarioActual;
+    
+    if (esPropio) {
+      return nombreMostrarUsuario;
+    } else {
+      return nombreMostrarDestinatario;
+    }
+  }, [usuarioActual, nombreMostrarUsuario, nombreMostrarDestinatario, normalizarId]);
+
   // Renderizado de mensajes optimizado
   const mensajesRenderizados = useMemo(() => {
     return mensajes.map((msg, index) => {
       const esPropio = normalizarId(msg.remitenteId || msg.nombre) === usuarioActual;
+      const nombreRemitente = obtenerNombreRemitente(msg);
       
       return (
         <div 
@@ -329,7 +370,7 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
             <div style={{ 
               fontWeight: "bold", fontSize: "12px", marginBottom: "5px", opacity: 0.8 
             }}>
-              Usuario {msg.remitenteId || msg.nombre} {esPropio ? "(Tú)" : ""} | ID: {msg.id?.toString().slice(-4) || 'N/A'}
+              {esPropio ? "Tú" : nombreRemitente}
             </div>
             <div style={{ wordBreak: "break-word" }}>
               {msg.contenido || "Sin contenido"}
@@ -341,7 +382,7 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
         </div>
       );
     });
-  }, [mensajes, usuarioActual, formatearFecha, normalizarId]);
+  }, [mensajes, usuarioActual, formatearFecha, normalizarId, obtenerNombreRemitente]);
 
   // 🆕 VALIDACIÓN MEJORADA DE PARÁMETROS
   if (!usuarioActual || !destinatario) {
@@ -386,21 +427,27 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
         overflow: "hidden"
       }}>
 
-        {/* Header */}
+        {/* Header mejorado */}
         <div style={{
           padding: "15px 20px", backgroundColor: "#1976d2", color: "white", display: "flex",
           justifyContent: "space-between", alignItems: "center"
         }}>
           <div>
             <h3 style={{ margin: 0, fontSize: "16px" }}>
-              💬 Chat: Usuario {usuarioActual} ↔ Usuario {destinatario}
+              💬 Chat con {nombreMostrarDestinatario}
             </h3>
             <small style={{ fontSize: "11px" }}>
               <span style={{
                 display: "inline-block", width: "8px", height: "8px", borderRadius: "50%",
                 backgroundColor: conectado ? "#4caf50" : "#f44336", marginRight: "5px"
               }}></span>
-              {debugInfo}
+              {conectado ? "En línea" : "Conectando..."} • {mensajes.length} mensajes
+              {/* 🆕 MOSTRAR INFO DEL TRABAJO SI EXISTE */}
+              {infoTrabajo && (
+                <div style={{ fontSize: "10px", marginTop: "2px", opacity: 0.9 }}>
+                  {infoTrabajo}
+                </div>
+              )}
             </small>
           </div>
           <button onClick={onCerrarChat} style={{
@@ -415,13 +462,12 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
           flex: 1, padding: "15px", overflowY: "auto", backgroundColor: "#f5f5f5", 
           display: "flex", flexDirection: "column", gap: "10px", minHeight: "400px"
         }}>
-          {/* Debug info */}
+          {/* Debug info simplificado */}
           <div style={{
             fontSize: "12px", padding: "8px 12px", backgroundColor: "#e3f2fd", 
             borderRadius: "8px", marginBottom: "10px", color: "#1565c0"
           }}>
-            📊 Debug: {mensajes.length} mensajes | Canal: {canalConversacion} | 
-            Estado: {conectado ? "🟢 Conectado" : "🔴 Desconectado"}
+            📊 {mensajes.length} mensajes | {conectado ? "🟢 Conectado" : "🔴 Desconectado"}
           </div>
 
           {mensajes.length === 0 ? (
@@ -429,7 +475,7 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
               textAlign: "center", color: "#666", fontStyle: "italic", marginTop: "50px",
               padding: "20px", backgroundColor: "#fff", borderRadius: "8px", border: "1px solid #e0e0e0"
             }}>
-              {conectado ? "💭 No hay mensajes. ¡Envía el primero!" : "🔄 Conectando al chat..."}
+              {conectado ? `💭 Inicia la conversación con ${nombreMostrarDestinatario}` : "🔄 Conectando al chat..."}
             </div>
           ) : (
             mensajesRenderizados
@@ -446,7 +492,7 @@ function App({ nombrePropio = "1", destinatarioProp = "2", onCerrarChat }) {
             type="text"
             value={mensaje}
             onChange={(e) => setMensaje(e.target.value)}
-            placeholder={conectado ? "Escribe un mensaje..." : "Conectando..."}
+            placeholder={conectado ? `Escribe a ${nombreMostrarDestinatario}...` : "Conectando..."}
             disabled={!conectado}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
