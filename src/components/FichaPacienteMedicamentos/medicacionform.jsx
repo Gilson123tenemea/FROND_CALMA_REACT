@@ -521,7 +521,7 @@ const MedicamentoForm = () => {
                         disabled={enviando}
                         title="Editar medicamento"
                       >
-                        ✏️ Editar
+                        Editar
                       </button>
                       <button 
                         className="boton-eliminar" 
@@ -529,7 +529,7 @@ const MedicamentoForm = () => {
                         disabled={enviando}
                         title="Eliminar medicamento"
                       >
-                        🗑️ Eliminar
+                         Eliminar
                       </button>
                     </td>
                   </tr>

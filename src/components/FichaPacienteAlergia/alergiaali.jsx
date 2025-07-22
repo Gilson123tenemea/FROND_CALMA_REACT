@@ -334,7 +334,7 @@ const AlergiaAlimentariaForm = () => {
               </>
             ) : (
               <>
-                <span>{isEditing ? "💾" : "✅"}</span> {isEditing ? "Actualizar" : "Guardar"}
+                 {isEditing ? "Actualizar" : "Guardar"}
               </>
             )}
           </button>
@@ -346,7 +346,7 @@ const AlergiaAlimentariaForm = () => {
               disabled={isSubmitting}
               title="Eliminar esta alergia permanentemente"
             >
-              <span>🗑️</span> Eliminar
+               Eliminar
             </button>
           )}
           <button
@@ -355,7 +355,7 @@ const AlergiaAlimentariaForm = () => {
             onClick={handleCancel}
             disabled={isSubmitting}
           >
-            <span>❌</span> Cancelar
+           Cancelar
           </button>
         </div>
       </form>
@@ -386,14 +386,14 @@ const AlergiaAlimentariaForm = () => {
                       className="alergia-alimentaria-btn-edit"
                       title={`Editar alergia a ${item.alergiaAlimentaria}`}
                     >
-                      <span>✏️</span> Editar
+                      Editar
                     </button>
                     <button 
                       onClick={() => handleDelete(item.id_alergias_alimentarias)} 
                       className="alergia-alimentaria-btn-danger"
                       title={`Eliminar alergia a ${item.alergiaAlimentaria}`}
                     >
-                      <span>🗑️</span> Eliminar
+                      Eliminar
                     </button>
                   </td>
                 </tr>

@@ -34,9 +34,11 @@ export const updateFicha = async (id, ficha) => {
     const response = await axios.put(`${API_URL}/${id}`, ficha);
     return response.data;
   } catch (error) {
-    throw new Error('Error al actualizar ficha: ' + error.message);
+    console.error('Error detallado:', error.response?.data || error.message);
+    throw new Error('Error al actualizar ficha: ' + (error.response?.data?.message || error.message));
   }
 };
+
 
 export const deleteFicha = async (id) => {
   try {

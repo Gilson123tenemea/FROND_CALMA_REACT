@@ -80,8 +80,8 @@
 
 /* Estilo para campos deshabilitados */
 .ficha-paciente-input:disabled {
-  background-color: #f8f9fa;
-  opacity: 0.6;
+  background-color: #94c4f4;
+  opacity: 0.3;
   cursor: not-allowed;
 }
 
@@ -263,11 +263,11 @@
 
 /* Variables de colores */
 :root {
-  --primary-blue: #ffffff;
-  --success-green: #82b882;
+  --primary-blue: #0a69bc;
+  --success-green: #0e4b92;
   --danger-red: #d52626;
   --danger-gradient: #d43737;
-  --header-blue: #ffffff;
+  --header-blue: #02426f;
   --background-light: #ffffff;
   --background-white: #fffefe;
   --background-gray: #ffffff;

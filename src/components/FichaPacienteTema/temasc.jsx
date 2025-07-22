@@ -213,7 +213,7 @@ const TemasConversacion = () => {
               className="temas-btn-primary" 
               disabled={isSubmitting}
             >
-              <span>{isEditing ? "💾" : "✅"}</span>  {isSubmitting ? "Guardando..." : "Guardar"}
+               {isSubmitting ? "Guardando..." : "Guardar"}
             </button>
             {isEditing && (
               <button
@@ -236,7 +236,7 @@ const TemasConversacion = () => {
               }}
               disabled={isSubmitting}
             >
-              <span>❌</span> Cancelar
+              Cancelar
             </button>
           </div>
         </form>

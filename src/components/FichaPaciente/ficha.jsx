@@ -36,7 +36,10 @@ const FichaPacienteForm = ({ editMode = false }) => {
     acompañado: false,
     observaciones: '',
     fecha_registro: new Date().toISOString().split('T')[0],
-    paciente: { idPaciente: Number(idPaciente) }
+    paciente: { id_paciente: Number(idPaciente) },
+   
+
+    
   });
 
   const [errores, setErrores] = useState({});
@@ -58,13 +61,7 @@ const FichaPacienteForm = ({ editMode = false }) => {
     { value: 'normal', label: 'Normal' }
   ];
 
-  const opcionesAutonomia = [
-    { value: '', label: 'Seleccione nivel de autonomía' },
-    { value: 'independiente', label: 'Independiente' },
-    { value: 'semi_dependiente', label: 'Semi-dependiente' },
-    { value: 'dependiente', label: 'Dependiente' },
-    { value: 'totalmente_dependiente', label: 'Totalmente Dependiente' }
-  ];
+  
 
   const opcionesTipoDieta = [
     { value: '', label: 'Seleccione tipo de dieta' },
@@ -367,11 +364,11 @@ const validarTextoGeneral = (texto) => {
     
    if (type === 'text' || type === 'textarea') {
   
-  if (value && !validarCampoEnTiempoReal(name, value)) {
-    return;
-  }
+if (value && !validarCampoEnTiempoReal(name, value)) {
+  return;
+}
 
-  newValue = limpiarTexto(value); 
+newValue = value;
 }
     
     setFormulario(prev => ({
@@ -413,9 +410,11 @@ const validarTextoGeneral = (texto) => {
 
     setIsSubmitting(true);
 
+  
     const dataToSend = { ...formulario };
     if (!dataToSend.paciente.id_paciente) {
       dataToSend.paciente = null;
+      dataToSend.fecha_registro = new Date().toISOString().split('T')[0];
     }
 
     try {
@@ -757,23 +756,6 @@ const validarTextoGeneral = (texto) => {
                 />
                 {errores.observaciones && (
                   <span className="error-message">{errores.observaciones}</span>
-                )}
-              </div>
-            </div>
-
-            <div className="ficha-paciente-form-row">
-              <div className="ficha-paciente-form-group">
-                <label htmlFor="fecha_registro">Fecha de Registro </label>
-                <input
-                  type="date"
-                  id="fecha_registro"
-                  name="fecha_registro"
-                  value={formulario.fecha_registro}
-                  onChange={handleChange}
-                  className={`ficha-paciente-input ${errores.fecha_registro ? 'error' : ''}`}
-                />
-                {errores.fecha_registro && (
-                  <span className="error-message">{errores.fecha_registro}</span>
                 )}
               </div>
             </div>

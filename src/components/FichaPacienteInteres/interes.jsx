@@ -245,7 +245,7 @@ const InteresForm = () => {
               className="intereses-btn-primary"
               disabled={isSubmitting || validationError}
             >
-              <span>{isEditing ? "💾" : "✅"}</span> {isSubmitting ? "Guardando..." : (isEditing ? "Actualizar" : "Guardar")}
+               {isSubmitting ? "Guardando..." : (isEditing ? "Actualizar" : "Guardar")}
             </button>
             {isEditing && (
               <button
@@ -263,7 +263,7 @@ const InteresForm = () => {
               onClick={handleCancel}
               disabled={isSubmitting}
             >
-              <span>❌</span> Cancelar
+               Cancelar
             </button>
           </div>
         </form>

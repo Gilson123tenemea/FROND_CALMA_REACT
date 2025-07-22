@@ -2,7 +2,7 @@
 
 /* Variables CSS para consistencia */
 :root {
-  --color-primary: hsl(160, 45%, 40%);
+  --color-primary:  #0052d7;
   --color-primary-hover: #035e4b;
   --color-secondary: #64748b;
   --color-success: hsl(160, 45%, 40%);
@@ -11,8 +11,8 @@
   --color-danger-hover: #8e0b0b;
   --color-warning: #d97706;
   --color-gray-50: #f8fafc;
-  --color-gray-100: #f1f5f9;
-  --color-gray-200: #2a4e7e;
+  --color-gray-100: #09437d;
+  --color-gray-200: #8c9fb7;
   --color-gray-300: #cbd5e1;
   --color-gray-400: #9cb1cf;
   --color-gray-500: #ffffff;
@@ -21,9 +21,7 @@
   --color-gray-800: #000000;
   --color-gray-900: #0f172a;
   --color-white: #ffffff;
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(80, 4, 4, 0.1), 0 4px 6px -2px rgba(131, 40, 40, 0.05);
+ 
   --border-radius: 8px;
   --border-radius-lg: 12px;
   --transition: all 0.2s ease-in-out;
@@ -40,9 +38,16 @@
 }
 
 /* Cards */
-.formulario-card,
+.formulario-card{
+  background: var(--color-gray-500);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  margin-bottom: 2rem;
+  border: 1px solid var(--color-gray-200);
+  overflow: hidden;
+}
 .listado-card {
-  background: var(--color-white);
+  background: var(--color-gray-500);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-md);
   margin-bottom: 2rem;
@@ -624,4 +629,250 @@ textarea:focus-visible {
 .tabla-datos th,
 .tabla-datos td {
   color: rgb(0, 0, 0) !important;
+
+}
+.tabla-datos th {
+  background-color: #ffffff; /* azul grisáceo oscuro */
+  font-weight: 600;
+}
+/* Estilos para la tabla de medicamentos */
+.tabla-responsive {
+  overflow-x: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: white;
+  margin-top: 20px;
+}
+
+.tabla-datos {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: white;
+}
+
+/* Header de la tabla - Solo azul */
+.tabla-datos thead {
+  background: linear-gradient(135deg, #436db2, #08379c);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.tabla-datos thead th {
+  background: transparent;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: left;
+  padding: 16px 20px;
+  border: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.tabla-datos thead th:first-child {
+  border-top-left-radius: 12px;
+}
+
+.tabla-datos thead th:last-child {
+  border-top-right-radius: 12px;
+}
+
+/* Cuerpo de la tabla - Fondo blanco */
+.tabla-datos tbody {
+  background-color: white;
+}
+
+.tabla-datos tbody tr {
+  background-color: white;
+  border-bottom: 1px solid #f1f5f9;
+  transition: all 0.2s ease;
+}
+
+.tabla-datos tbody tr:hover {
+  background-color: #f8fafc;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.tabla-datos tbody tr:last-child {
+  border-bottom: none;
+}
+
+.tabla-datos tbody td {
+  padding: 16px 20px;
+  vertical-align: middle;
+  border: none;
+  color: #334155;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Estilos para las celdas de contenido */
+.medicamento-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.medicamento-nombre {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+.dosis-info, .frecuencia-info, .via-info, .condicion-info {
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Estilos para los botones de acción */
+.acciones-tabla {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.boton-editar, .boton-eliminar {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: 0 4px;
+  min-width: 70px;
+}
+
+.boton-editar {
+  background: linear-gradient(135deg, #f7b365, #e59e2c);
+  color: white;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.boton-editar:hover:not(:disabled) {
+  background: linear-gradient(135deg, #df9036, #f47b2b);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.boton-eliminar {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+.boton-eliminar:hover:not(:disabled) {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.boton-editar:disabled, .boton-eliminar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Estados sin datos */
+.sin-datos {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.sin-datos p {
+  color: #64748b;
+  font-size: 16px;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Estado de carga */
+.cargando {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f4f6;
+  border-top: 4px solid #0f4db0;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.cargando p {
+  color: #64748b;
+  font-size: 16px;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .tabla-responsive {
+    border-radius: 8px;
+  }
+  
+  .tabla-datos thead th {
+    padding: 12px 16px;
+    font-size: 12px;
+  }
+  
+  .tabla-datos tbody td {
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+  
+  .medicamento-nombre {
+    font-size: 14px;
+  }
+  
+  .boton-editar, .boton-eliminar {
+    padding: 6px 12px;
+    font-size: 11px;
+    min-width: 60px;
+    margin: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabla-datos thead th,
+  .tabla-datos tbody td {
+    padding: 10px 12px;
+  }
+  
+  .acciones-tabla {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .boton-editar, .boton-eliminar {
+    width: 100%;
+    margin: 2px 0;
+  }
 }

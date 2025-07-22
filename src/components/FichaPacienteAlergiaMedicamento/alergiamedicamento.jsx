@@ -351,7 +351,7 @@ const AlergiaMedicamento = () => {
                 </>
               ) : (
                 <>
-                  <span>{isEditing ? "💾" : "✅"}</span> {isEditing ? "Actualizar" : "Guardar"}
+                  {isEditing ? "Actualizar" : "Guardar"}
                 </>
               )}
             </button>
@@ -363,7 +363,7 @@ const AlergiaMedicamento = () => {
                 disabled={isSubmitting}
                 title="Eliminar esta alergia permanentemente"
               >
-                <span>🗑️</span> Eliminar
+                 Eliminar
               </button>
             )}
             <button
@@ -372,7 +372,7 @@ const AlergiaMedicamento = () => {
               onClick={handleCancel}
               disabled={isSubmitting}
             >
-              <span>❌</span> Cancelar
+              Cancelar
             </button>
           </div>
         </form>
@@ -405,14 +405,14 @@ const AlergiaMedicamento = () => {
                         className="alergias-medicamentos-edit-btn"
                         title={`Editar alergia a ${item.nombremedicamento}`}
                       >
-                        <span>✏️</span> Editar
+                        Editar
                       </button>
                       <button 
                         onClick={() => handleDelete(item.id_alergiamed)} 
                         className="alergias-medicamentos-remove-btn"
                         title={`Eliminar alergia a ${item.nombremedicamento}`}
                       >
-                        <span>🗑️</span> Eliminar
+                       Eliminar
                       </button>
                     </td>
                   </tr>
