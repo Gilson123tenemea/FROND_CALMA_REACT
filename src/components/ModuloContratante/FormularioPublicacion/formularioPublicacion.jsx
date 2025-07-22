@@ -3,11 +3,11 @@ import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 import './FormularioPublicacion.css';
 import HeaderContratante from '../HeaderContratante/HeaderContratante';
+import { ToastContainer, toast } from 'react-toastify';
+
 const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-
-  // Prioriza userId desde props; si no viene, usa el de la URL
   const contratanteId = userId || queryParams.get('userId') || '';
 
   const [titulo, setTitulo] = useState('');
@@ -130,14 +130,48 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
 
   const validarCampos = () => {
     const erroresTemp = {};
+    const soloLetras = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
+    const letrasNumeros = /^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ.,:;()\-_\s]+$/;
+    const soloNumeros = /^\d+$/;
+
     if (!idPaciente) erroresTemp.idPaciente = 'Debe seleccionar un paciente.';
-    if (!titulo.trim()) erroresTemp.titulo = 'El título es obligatorio.';
-    if (!descripcion.trim()) erroresTemp.descripcion = 'La descripción es obligatoria.';
+
+    if (!titulo.trim()) {
+      erroresTemp.titulo = 'El título es obligatorio.';
+    } else if (!soloLetras.test(titulo.trim())) {
+      erroresTemp.titulo = 'El título solo debe contener letras.';
+    }
+
+    if (!descripcion.trim()) {
+      erroresTemp.descripcion = 'La descripción es obligatoria.';
+    } else if (!letrasNumeros.test(descripcion.trim())) {
+      erroresTemp.descripcion = 'La descripción solo debe contener letras y números.';
+    }
+
+    if (requisitos && !letrasNumeros.test(requisitos.trim())) {
+      erroresTemp.requisitos = 'Los requisitos solo deben contener letras y números.';
+    }
+
+    if (actividadesRealizar && !letrasNumeros.test(actividadesRealizar.trim())) {
+      erroresTemp.actividadesRealizar = 'Las actividades solo deben contener letras y números.';
+    }
+
+    if (salarioEstimado && !soloNumeros.test(salarioEstimado)) {
+      erroresTemp.salarioEstimado = 'El salario debe contener solo números.';
+    }
+
     if (!idProvincia) erroresTemp.idProvincia = 'Debe seleccionar una provincia.';
     if (!idCanton) erroresTemp.idCanton = 'Debe seleccionar un cantón.';
     if (!idParroquia) erroresTemp.idParroquia = 'Debe seleccionar una parroquia.';
     if (!estado) erroresTemp.estado = 'Debe seleccionar el estado.';
+
     setErrores(erroresTemp);
+
+    if (Object.keys(erroresTemp).length > 0) {
+      const form = document.querySelector('.form-publicacion');
+      if (form) form.scrollIntoView({ behavior: 'smooth' });
+    }
+
     return Object.keys(erroresTemp).length === 0;
   };
 
@@ -145,7 +179,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
     e.preventDefault();
 
     if (!validarCampos()) {
-      alert('Por favor corrige los errores en el formulario.');
+      toast.error('Por favor corrige los errores en el formulario.');
       return;
     }
 
@@ -170,25 +204,26 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
       if (publicacionEditar) {
         const url = `http://localhost:8090/api/publicacion_empleo/actualizar/${publicacionEditar.id_postulacion_empleo}`;
         await axios.put(url, data);
-        alert('Publicación actualizada correctamente');
+        toast.success('Publicación actualizada correctamente');
       } else {
         const url = `http://localhost:8090/api/publicacion_empleo/guardar?idParroquia=${idParroquia}&idContratante=${contratanteId}`;
         await axios.post(url, data);
-        alert('Publicación creada correctamente');
+        toast.success('Publicación creada correctamente');
       }
-      onSuccess();
+      if (onSuccess) onSuccess();
     } catch (error) {
       console.error(error);
-      alert('Error al guardar la publicación');
+      toast.error('Error al guardar la publicación');
     }
   };
 
   return (
     <>
-    <HeaderContratante userId={contratanteId} />
+      <HeaderContratante userId={contratanteId} />
       <form onSubmit={handleSubmit} className="form-publicacion" noValidate>
         <h3>{publicacionEditar ? '✏️ Editar Publicación' : '📝 Nueva Publicación'}</h3>
 
+        {/* Paciente */}
         <label>
           Paciente*:
           <select
@@ -206,18 +241,25 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
         </label>
         {errores.idPaciente && <p className="error">{errores.idPaciente}</p>}
 
+        {/* Título */}
         <label>
           Título*:
           <input
             type="text"
             value={titulo}
-            onChange={e => setTitulo(e.target.value)}
+            onChange={e => {
+              const regex = /^[\p{L}0-9\s.,()¡!¿?'"-]*$/u;
+              if (regex.test(e.target.value) || e.target.value === "") {
+                setTitulo(e.target.value);
+              }
+            }}
             placeholder="Ejemplo: Cuidador para adulto mayor con experiencia"
             required
           />
         </label>
         {errores.titulo && <p className="error">{errores.titulo}</p>}
 
+        {/* Descripción */}
         <label>
           Descripción*:
           <textarea
@@ -229,6 +271,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
         </label>
         {errores.descripcion && <p className="error">{errores.descripcion}</p>}
 
+        {/* Actividades a realizar */}
         <label>
           Actividades a realizar:
           <textarea
@@ -238,16 +281,17 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
           />
         </label>
 
+        {/* Fecha límite */}
         <label>
           Fecha Límite:
           <input
             type="datetime-local"
             value={fechaLimite}
             onChange={e => setFechaLimite(e.target.value)}
-            placeholder="YYYY-MM-DDTHH:mm"
           />
         </label>
 
+        {/* Jornada */}
         <label>
           Jornada:
           <select
@@ -261,17 +305,23 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
           </select>
         </label>
 
+        {/* Salario */}
         <label>
           Salario estimado:
           <input
             type="number"
             min="0"
             value={salarioEstimado}
-            onChange={e => setSalarioEstimado(e.target.value)}
+            onChange={e => {
+              if (e.target.value === '' || /^\d+$/.test(e.target.value)) {
+                setSalarioEstimado(e.target.value);
+              }
+            }}
             placeholder="Ejemplo: 400"
           />
         </label>
 
+        {/* Requisitos */}
         <label>
           Requisitos:
           <textarea
@@ -281,6 +331,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
           />
         </label>
 
+        {/* Turno */}
         <label>
           Turno:
           <select
@@ -294,6 +345,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
           </select>
         </label>
 
+        {/* Estado */}
         <label>
           Estado*:
           <select
@@ -308,6 +360,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
         </label>
         {errores.estado && <p className="error">{errores.estado}</p>}
 
+        {/* Disponibilidad */}
         <label>
           Disponibilidad inmediata:
           <input
@@ -317,6 +370,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
           />
         </label>
 
+        {/* Provincia */}
         <label>
           Provincia*:
           <select
@@ -334,6 +388,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
         </label>
         {errores.idProvincia && <p className="error">{errores.idProvincia}</p>}
 
+        {/* Cantón */}
         <label>
           Cantón*:
           <select
@@ -352,6 +407,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
         </label>
         {errores.idCanton && <p className="error">{errores.idCanton}</p>}
 
+        {/* Parroquia */}
         <label>
           Parroquia*:
           <select
@@ -370,6 +426,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
         </label>
         {errores.idParroquia && <p className="error">{errores.idParroquia}</p>}
 
+        {/* Botones */}
         <div style={{ marginTop: '1rem' }}>
           <button type="submit">{publicacionEditar ? 'Actualizar' : 'Crear'}</button>
           {publicacionEditar && (
@@ -379,6 +436,18 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
           )}
         </div>
       </form>
+
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </>
   );
 };

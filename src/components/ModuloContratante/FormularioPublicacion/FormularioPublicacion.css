@@ -1,123 +1,142 @@
+/* Estilo general */
 .form-publicacion {
-  width: 100%;
-  max-width: 900px;
-  margin: 2.5rem auto;
-  padding: 2.5rem 3rem;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 3rem;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #222222;
+  color: #1e293b;
   box-sizing: border-box;
 }
 
+/* Título */
 .form-publicacion h3 {
-  margin-bottom: 2rem;
-  font-weight: 700;
-  font-size: 1.9rem;
-  color: #0a66c2; /* Azul LinkedIn */
   text-align: center;
+  margin-bottom: 2.5rem;
+  color: #0f172a;
+  font-size: 2rem;
+  font-weight: 700;
 }
 
+/* Grid para campos */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem 2rem;
+}
+
+/* Etiquetas */
 .form-publicacion label {
   display: block;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   font-weight: 600;
-  font-size: 1rem;
-  color: #333333;
+  color: #475569;
 }
 
+/* Inputs y selects */
 .form-publicacion input[type="text"],
-.form-publicacion input[type="date"],
 .form-publicacion input[type="number"],
+.form-publicacion input[type="datetime-local"],
 .form-publicacion select,
 .form-publicacion textarea {
   width: 100%;
-  padding: 0.6rem 1rem;
-  border: 1px solid #cbd5e0;
-  border-radius: 6px;
+  padding: 0.8rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
   font-size: 1rem;
-  font-family: inherit;
-  transition: border-color 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
-  resize: vertical;
-  box-sizing: border-box;
-  background-color: #f9fafb;
-  color: #111827;
+  background-color: #f8fafc;
+  transition: all 0.3s ease;
 }
 
-.form-publicacion input[type="text"]:focus,
-.form-publicacion input[type="date"]:focus,
-.form-publicacion input[type="number"]:focus,
+/* Efecto al enfocar */
+.form-publicacion input:focus,
 .form-publicacion select:focus,
 .form-publicacion textarea:focus {
-  border-color: #0a66c2;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
   outline: none;
-  box-shadow: 0 0 5px 1px rgba(10, 102, 194, 0.4);
-  background-color: #ffffff;
+  background-color: #fff;
 }
 
+/* Campo inválido */
+.invalid {
+  border-color: #dc2626 !important;
+  background-color: #fef2f2 !important;
+}
+
+/* Área de texto grande */
 .form-publicacion textarea {
-  min-height: 100px;
+  min-height: 120px;
+  resize: vertical;
 }
 
-.form-publicacion input[type="checkbox"] {
-  transform: scale(1.3);
-  margin-left: 0.5rem;
-  cursor: pointer;
-  vertical-align: middle;
+/* Checkbox */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
 }
 
-.form-publicacion label > input[type="checkbox"] {
-  margin-left: 0.75rem;
-  vertical-align: middle;
+.checkbox-container label {
+  margin: 0;
+  font-weight: 500;
 }
 
-.form-publicacion div {
-  margin-top: 2rem;
-  text-align: center;
+/* Botones */
+.form-publicacion .btn-group {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2.5rem;
 }
 
 .form-publicacion button {
-  background-color: #0a66c2;
-  color: white;
+  background-color: #3b82f6;
+  color: #ffffff;
+  padding: 0.75rem 2rem;
   border: none;
-  padding: 0.75rem 2.2rem;
-  font-size: 1.1rem;
-  border-radius: 6px;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  font-weight: 700;
-  transition: background-color 0.3s ease;
-  box-shadow: 0 4px 8px rgb(10 102 194 / 0.3);
+  transition: background-color 0.25s ease;
 }
 
 .form-publicacion button:hover {
-  background-color: #004182;
-  box-shadow: 0 6px 12px rgb(0 65 130 / 0.5);
+  background-color: #2563eb;
 }
 
-.form-publicacion button + button {
-  margin-left: 1rem;
-  background-color: #e1e9f4;
-  color: #0a66c2;
-  box-shadow: none;
+/* Cancelar */
+.form-publicacion button[type="button"] {
+  background-color: #f1f5f9;
+  color: #1e293b;
 }
 
-.form-publicacion button + button:hover {
-  background-color: #c3d1e8;
+.form-publicacion button[type="button"]:hover {
+  background-color: #e2e8f0;
 }
 
+/* Mensaje de error */
+.error {
+  color: #dc2626;
+  font-size: 0.9rem;
+  margin-top: 0.3rem;
+}
+
+/* Responsive */
 @media (max-width: 600px) {
   .form-publicacion {
-    padding: 1.5rem 2rem;
+    padding: 2rem 1rem;
   }
 
-  .form-publicacion button,
-  .form-publicacion button + button {
-    width: 100%;
-    margin: 0.4rem 0 0 0;
+  .form-publicacion h3 {
+    font-size: 1.5rem;
   }
 
-  .form-publicacion button + button {
-    margin-left: 0;
+  .form-grid {
+    grid-template-columns: 1fr;
   }
 }
