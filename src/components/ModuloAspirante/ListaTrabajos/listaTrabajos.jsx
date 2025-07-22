@@ -41,6 +41,7 @@ const ListaTrabajos = ({ idAspirante }) => {
               : null,   // <-- Aquí sacamos solo la fecha, sin hora
             contratante: item.contratante?.usuario?.nombres || 'Anónimo',
             empresa: item.contratante?.empresas?.[0]?.nombreEmpresa || null,
+            fechaPublicacion: item.fechaPublicacion?.split('T')[0] || 'Sin fecha',
             requisitos: item.publicacionempleo?.requisitos || 'No especificado',
             jornada: item.publicacionempleo?.jornada || 'No especificada',
             correo: item.contratante?.usuario?.correo || null,
