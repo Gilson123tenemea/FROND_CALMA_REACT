@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import './FormularioPublicacion.css';
 import HeaderContratante from '../HeaderContratante/HeaderContratante';
 import { ToastContainer, toast } from 'react-toastify';
-
+import { FaUser, FaRegCalendarAlt, FaRegFileAlt } from 'react-icons/fa';
 const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -31,9 +31,9 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
 
   const [pacientes, setPacientes] = useState([]);
   const [idPaciente, setIdPaciente] = useState('');
+  
 
   const [errores, setErrores] = useState({});
-
   useEffect(() => {
     axios.get('http://localhost:8090/api/provincias')
       .then(res => setProvincias(res.data))
@@ -73,7 +73,9 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
   }, [contratanteId]);
 
   useEffect(() => {
+    console.log('useEffect publicacionEditar:', publicacionEditar);
     if (publicacionEditar) {
+      console.log('actividades_realizar:', publicacionEditar.actividades_realizar);
       setTitulo(publicacionEditar.titulo || '');
       setDescripcion(publicacionEditar.descripcion || '');
 
@@ -96,7 +98,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
       setEstado(publicacionEditar.estado || '');
       setDisponibilidadInmediata(!!publicacionEditar.disponibilidad_inmediata);
       setActividadesRealizar(publicacionEditar.actividades_realizar || '');
-
+      
       const parroquia = publicacionEditar.parroquia;
       if (parroquia) {
         setIdProvincia(parroquia.canton.provincia.id_provincia);
@@ -143,7 +145,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
     }
 
     if (!descripcion.trim()) {
-      erroresTemp.descripcion = 'La descripción es obligatoria.';
+      erroresTemp.descripcion = 'Campo obligatorio';
     } else if (!letrasNumeros.test(descripcion.trim())) {
       erroresTemp.descripcion = 'La descripción solo debe contener letras y números.';
     }
@@ -152,20 +154,44 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
       erroresTemp.requisitos = 'Los requisitos solo deben contener letras y números.';
     }
 
-    if (actividadesRealizar && !letrasNumeros.test(actividadesRealizar.trim())) {
-      erroresTemp.actividadesRealizar = 'Las actividades solo deben contener letras y números.';
-    }
-
-    if (salarioEstimado && !soloNumeros.test(salarioEstimado)) {
-      erroresTemp.salarioEstimado = 'El salario debe contener solo números.';
-    }
-
     if (!idProvincia) erroresTemp.idProvincia = 'Debe seleccionar una provincia.';
     if (!idCanton) erroresTemp.idCanton = 'Debe seleccionar un cantón.';
     if (!idParroquia) erroresTemp.idParroquia = 'Debe seleccionar una parroquia.';
     if (!estado) erroresTemp.estado = 'Debe seleccionar el estado.';
+    if (!fechaLimite) {
+      erroresTemp.fechaLimite = 'Debe ingresar la fecha límite.';
+    }
+
+    if (!jornada) {
+      erroresTemp.jornada = 'Debe seleccionar la jornada.';
+    }
+
+    if (!turno) {
+      erroresTemp.turno = 'Debe seleccionar el turno.';
+    }
+
+    if (!requisitos.trim()) {
+      erroresTemp.requisitos = 'Campo obligatorio';
+    } else if (!letrasNumeros.test(requisitos.trim())) {
+      erroresTemp.requisitos = 'Los requisitos solo deben contener letras y números.';
+    }
+
+    if (!actividadesRealizar.trim()) {
+      erroresTemp.actividadesRealizar = 'Campo obligatorio';
+    } else if (!letrasNumeros.test(actividadesRealizar.trim())) {
+      erroresTemp.actividadesRealizar = 'Las actividades solo deben contener letras y números.';
+    }
+
+    if (!salarioEstimado) {
+      erroresTemp.salarioEstimado = 'Campo obligatorio.';
+    } else if (!soloNumeros.test(salarioEstimado)) {
+      erroresTemp.salarioEstimado = 'El salario debe contener solo números.';
+    } else if (parseInt(salarioEstimado, 10) < 480) {
+      erroresTemp.salarioEstimado = 'El salario no puede ser menor a $480.';
+    }
 
     setErrores(erroresTemp);
+
 
     if (Object.keys(erroresTemp).length > 0) {
       const form = document.querySelector('.form-publicacion');
@@ -216,48 +242,199 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
       toast.error('Error al guardar la publicación');
     }
   };
-
+console.log('Estado actividadesRealizar:', actividadesRealizar);
   return (
     <>
       <HeaderContratante userId={contratanteId} />
       <form onSubmit={handleSubmit} className="form-publicacion" noValidate>
         <h3>{publicacionEditar ? '✏️ Editar Publicación' : '📝 Nueva Publicación'}</h3>
 
-        {/* Paciente */}
-        <label>
-          Paciente*:
-          <select
-            value={idPaciente}
-            onChange={e => setIdPaciente(e.target.value)}
-            required
-          >
-            <option value="">-- Selecciona paciente --</option>
-            {pacientes.map(p => (
-              <option key={p.id_paciente} value={p.id_paciente}>
-                {p.nombres} {p.apellidos}
-              </option>
-            ))}
-          </select>
-        </label>
-        {errores.idPaciente && <p className="error">{errores.idPaciente}</p>}
+        <div className="fila-horizontal">
+          {/* Paciente */}
+          <label>
+            Paciente:
+            <select
+              value={idPaciente}
+              onChange={e => setIdPaciente(e.target.value)}
+              required
+            >
+              <option value="">-- Selecciona paciente --</option>
+              {pacientes.map(p => (
+                <option key={p.id_paciente} value={p.id_paciente}>
+                  {p.nombres} {p.apellidos}
+                </option>
+              ))}
+            </select>
+            {errores.idPaciente && <p className="error-text-paci">{errores.idPaciente}</p>}
+          </label>
 
-        {/* Título */}
-        <label>
-          Título*:
-          <input
-            type="text"
-            value={titulo}
-            onChange={e => {
-              const regex = /^[\p{L}0-9\s.,()¡!¿?'"-]*$/u;
-              if (regex.test(e.target.value) || e.target.value === "") {
-                setTitulo(e.target.value);
-              }
-            }}
-            placeholder="Ejemplo: Cuidador para adulto mayor con experiencia"
-            required
-          />
-        </label>
-        {errores.titulo && <p className="error">{errores.titulo}</p>}
+          {/* Título */}
+          <label>
+            Título:
+            <input
+              type="text"
+              value={titulo}
+              onChange={e => {
+                const regex = /^[\p{L}0-9\s.,()¡!¿?'"-]*$/u;
+                if (regex.test(e.target.value) || e.target.value === "") {
+                  setTitulo(e.target.value);
+                }
+              }}
+              placeholder="Cuidador para adulto mayor con experiencia"
+              required
+            />
+            {errores.titulo && <p className="error-text-paci">{errores.titulo}</p>}
+          </label>
+
+          {/* Fecha límite */}
+          <label>
+            Fecha Límite:
+            <input
+              type="datetime-local"
+              value={fechaLimite}
+              onChange={e => setFechaLimite(e.target.value)}
+            />
+            {errores.fechaLimite && <p className="error-text-paci">{errores.fechaLimite}</p>}
+          </label>
+        </div>
+
+        <div className="fila-horizontal">
+          {/* Jornada */}
+          <label>
+            Jornada:
+            <select
+              value={jornada}
+              onChange={e => setJornada(e.target.value)}
+            >
+              <option value="">--Selecciona--</option>
+              <option value="Tiempo completo">Tiempo completo</option>
+              <option value="Medio tiempo">Medio tiempo</option>
+              <option value="Por horas">Por horas</option>
+            </select>
+            {errores.jornada && <p className="error-text-paci">{errores.jornada}</p>}
+          </label>
+
+          {/* Turno */}
+          <label>
+            Turno:
+            <select
+              value={turno}
+              onChange={e => setTurno(e.target.value)}
+            >
+              <option value="">--Selecciona--</option>
+              <option value="Mañana">Mañana</option>
+              <option value="Tarde">Tarde</option>
+              <option value="Noche">Noche</option>
+            </select>
+            {errores.turno && <p className="error-text-paci">{errores.turno}</p>}
+          </label>
+
+          {/* Estado */}
+          <label>
+            Estado:
+            <select
+              value={estado}
+              onChange={e => setEstado(e.target.value)}
+              required
+            >
+              <option value="">--Selecciona--</option>
+              <option value="Activo">Activo</option>
+              <option value="Inactivo">Inactivo</option>
+            </select>
+            {errores.estado && <p className="error-text-paci">{errores.estado}</p>}
+          </label>
+        </div>
+
+
+
+        <div className="fila-horizontal">
+          {/* Provincia */}
+          <label>
+            Provincia:
+            <select
+              value={idProvincia}
+              onChange={e => setIdProvincia(e.target.value)}
+              required
+            >
+              <option value="">--Selecciona provincia--</option>
+              {provincias.map(p => (
+                <option key={p.id_provincia} value={p.id_provincia}>
+                  {p.nombre}
+                </option>
+              ))}
+            </select>
+            {errores.idProvincia && <p className="error-text-paci">{errores.idProvincia}</p>}
+          </label>
+
+          {/* Cantón */}
+          <label>
+            Cantón:
+            <select
+              value={idCanton}
+              onChange={e => setIdCanton(e.target.value)}
+              required
+              disabled={!idProvincia}
+            >
+              <option value="">--Selecciona cantón--</option>
+              {cantones.map(c => (
+                <option key={c.id_canton} value={c.id_canton}>
+                  {c.nombre}
+                </option>
+              ))}
+            </select>
+            {errores.idCanton && <p className="error-text-paci">{errores.idCanton}</p>}
+          </label>
+
+          {/* Parroquia */}
+          <label>
+            Parroquia:
+            <select
+              value={idParroquia}
+              onChange={e => setIdParroquia(e.target.value)}
+              required
+              disabled={!idCanton}
+            >
+              <option value="">--Selecciona parroquia--</option>
+              {parroquias.map(p => (
+                <option key={p.id_parroquia} value={p.id_parroquia}>
+                  {p.nombre}
+                </option>
+              ))}
+            </select>
+            {errores.idParroquia && <p className="error-text-paci">{errores.idParroquia}</p>}
+          </label>
+        </div>
+
+
+        <div className="fila-horizontal-salario-disponibilidad">
+          {/* Salario debajo de Jornada */}
+          <label className="salario-label">
+            Salario estimado:
+            <input
+              type="number"
+              min="0"
+              value={salarioEstimado}
+              onChange={e => {
+                if (e.target.value === '' || /^\d+$/.test(e.target.value)) {
+                  setSalarioEstimado(e.target.value);
+                }
+              }}
+              placeholder="Ejemplo: 400"
+            />
+            {errores.salarioEstimado && <p className="error-text-paci">{errores.salarioEstimado}</p>}
+          </label>
+
+          {/* Disponibilidad a la derecha de Salario */}
+          <label className="disponibilidad-label">
+            Disponibilidad inmediata:
+            <input
+              type="checkbox"
+              checked={disponibilidadInmediata}
+              onChange={e => setDisponibilidadInmediata(e.target.checked)}
+            />
+          </label>
+        </div>
+
 
         {/* Descripción */}
         <label>
@@ -269,7 +446,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
             required
           />
         </label>
-        {errores.descripcion && <p className="error">{errores.descripcion}</p>}
+        {errores.descripcion && <p className="error-text-paci">{errores.descripcion}</p>}
 
         {/* Actividades a realizar */}
         <label>
@@ -279,46 +456,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
             onChange={e => setActividadesRealizar(e.target.value)}
             placeholder="Ejemplo: Acompañamiento, administración de medicamentos, higiene personal..."
           />
-        </label>
-
-        {/* Fecha límite */}
-        <label>
-          Fecha Límite:
-          <input
-            type="datetime-local"
-            value={fechaLimite}
-            onChange={e => setFechaLimite(e.target.value)}
-          />
-        </label>
-
-        {/* Jornada */}
-        <label>
-          Jornada:
-          <select
-            value={jornada}
-            onChange={e => setJornada(e.target.value)}
-          >
-            <option value="">--Selecciona--</option>
-            <option value="Tiempo completo">Tiempo completo</option>
-            <option value="Medio tiempo">Medio tiempo</option>
-            <option value="Por horas">Por horas</option>
-          </select>
-        </label>
-
-        {/* Salario */}
-        <label>
-          Salario estimado:
-          <input
-            type="number"
-            min="0"
-            value={salarioEstimado}
-            onChange={e => {
-              if (e.target.value === '' || /^\d+$/.test(e.target.value)) {
-                setSalarioEstimado(e.target.value);
-              }
-            }}
-            placeholder="Ejemplo: 400"
-          />
+          {errores.actividadesRealizar && <p className="error-text-paci">{errores.actividadesRealizar}</p>}
         </label>
 
         {/* Requisitos */}
@@ -329,102 +467,9 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
             onChange={e => setRequisitos(e.target.value)}
             placeholder="Ejemplo: Experiencia mínima 1 año, referencias comprobables"
           />
+          {errores.requisitos && <p className="error-text-paci">{errores.requisitos}</p>}
         </label>
 
-        {/* Turno */}
-        <label>
-          Turno:
-          <select
-            value={turno}
-            onChange={e => setTurno(e.target.value)}
-          >
-            <option value="">--Selecciona--</option>
-            <option value="Mañana">Mañana</option>
-            <option value="Tarde">Tarde</option>
-            <option value="Noche">Noche</option>
-          </select>
-        </label>
-
-        {/* Estado */}
-        <label>
-          Estado*:
-          <select
-            value={estado}
-            onChange={e => setEstado(e.target.value)}
-            required
-          >
-            <option value="">--Selecciona--</option>
-            <option value="Activo">Activo</option>
-            <option value="Inactivo">Inactivo</option>
-          </select>
-        </label>
-        {errores.estado && <p className="error">{errores.estado}</p>}
-
-        {/* Disponibilidad */}
-        <label>
-          Disponibilidad inmediata:
-          <input
-            type="checkbox"
-            checked={disponibilidadInmediata}
-            onChange={e => setDisponibilidadInmediata(e.target.checked)}
-          />
-        </label>
-
-        {/* Provincia */}
-        <label>
-          Provincia*:
-          <select
-            value={idProvincia}
-            onChange={e => setIdProvincia(e.target.value)}
-            required
-          >
-            <option value="">--Selecciona provincia--</option>
-            {provincias.map(p => (
-              <option key={p.id_provincia} value={p.id_provincia}>
-                {p.nombre}
-              </option>
-            ))}
-          </select>
-        </label>
-        {errores.idProvincia && <p className="error">{errores.idProvincia}</p>}
-
-        {/* Cantón */}
-        <label>
-          Cantón*:
-          <select
-            value={idCanton}
-            onChange={e => setIdCanton(e.target.value)}
-            required
-            disabled={!idProvincia}
-          >
-            <option value="">--Selecciona cantón--</option>
-            {cantones.map(c => (
-              <option key={c.id_canton} value={c.id_canton}>
-                {c.nombre}
-              </option>
-            ))}
-          </select>
-        </label>
-        {errores.idCanton && <p className="error">{errores.idCanton}</p>}
-
-        {/* Parroquia */}
-        <label>
-          Parroquia*:
-          <select
-            value={idParroquia}
-            onChange={e => setIdParroquia(e.target.value)}
-            required
-            disabled={!idCanton}
-          >
-            <option value="">--Selecciona parroquia--</option>
-            {parroquias.map(p => (
-              <option key={p.id_parroquia} value={p.id_parroquia}>
-                {p.nombre}
-              </option>
-            ))}
-          </select>
-        </label>
-        {errores.idParroquia && <p className="error">{errores.idParroquia}</p>}
 
         {/* Botones */}
         <div style={{ marginTop: '1rem' }}>
