@@ -441,6 +441,3 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
-.form-publicacion button[type="submit"] {
-  min-width: 1290px; /* Puedes ajustar el valor */
-}
