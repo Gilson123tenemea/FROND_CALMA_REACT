@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
+
 import { useLocation } from 'react-router-dom';
 import HeaderContratante from './HeaderContratante/headerContratante';
-import FormPublicacion from './FormularioPublicacion/formularioPublicacion';
-import ListaPublicaciones from './ListaPublicaciones/ListaPublicaciones';
 import axios from 'axios';
 import App from '../../App';
 import './moduloContratante.css';
@@ -11,7 +10,6 @@ import styles from './NotificacionesContratante.module.css';
 const ModuloContratante = () => {
   const location = useLocation();
   const [contratanteId, setUserId] = useState(null);
-  const [refrescarLista, setRefrescarLista] = useState(false);
   const [publicacionEditar, setPublicacionEditar] = useState(null);
 
   const [showPanelUsuarios, setShowPanelUsuarios] = useState(false);
@@ -116,39 +114,39 @@ const ModuloContratante = () => {
     }
   }, [location.state]);
 
- useEffect(() => {
-  const fetchNoLeidas = async () => {
-    if (!contratanteId) return; // ✅ CORREGIDO: usar contratanteId
+  useEffect(() => {
+    const fetchNoLeidas = async () => {
+      if (!contratanteId) return; // ✅ CORREGIDO: usar contratanteId
 
-    try {
-      const endpoint = `http://localhost:8090/api/notificaciones/contratante/noleidas/${contratanteId}`; // ✅ CORREGIDO
+      try {
+        const endpoint = `http://localhost:8090/api/notificaciones/contratante/noleidas/${contratanteId}`; // ✅ CORREGIDO
 
-      const res = await axios.get(endpoint);
-      const nuevasCantidad = res.data.length;
+        const res = await axios.get(endpoint);
+        const nuevasCantidad = res.data.length;
 
-      if (nuevasCantidad > cantidadNoLeidas && cantidadNoLeidas > 0) {
-        setCantidadNoLeidas(nuevasCantidad);
-        const badge = document.querySelector(`.${styles.badgeNotificacionContratante}`); // ✅ CORREGIDO: badge de contratante
-        if (badge) {
-          badge.classList.add(styles.new);
-          setTimeout(() => badge.classList.remove(styles.new), 500);
+        if (nuevasCantidad > cantidadNoLeidas && cantidadNoLeidas > 0) {
+          setCantidadNoLeidas(nuevasCantidad);
+          const badge = document.querySelector(`.${styles.badgeNotificacionContratante}`); // ✅ CORREGIDO: badge de contratante
+          if (badge) {
+            badge.classList.add(styles.new);
+            setTimeout(() => badge.classList.remove(styles.new), 500);
+          }
+        } else {
+          setCantidadNoLeidas(nuevasCantidad);
         }
-      } else {
-        setCantidadNoLeidas(nuevasCantidad);
+      } catch (error) {
+        console.error("Error al cargar notificaciones no leídas:", error);
       }
-    } catch (error) {
-      console.error("Error al cargar notificaciones no leídas:", error);
-    }
-  };
+    };
 
-  fetchNoLeidas();
+    fetchNoLeidas();
 
-  // 🆕 INTERVALOS DINÁMICOS: Más frecuente si hay chat activo
-  const intervalo = usuarioChat ? 3000 : 30000; // 3s si hay chat, 30s si no
-  const interval = setInterval(fetchNoLeidas, intervalo);
+    // 🆕 INTERVALOS DINÁMICOS: Más frecuente si hay chat activo
+    const intervalo = usuarioChat ? 3000 : 30000; // 3s si hay chat, 30s si no
+    const interval = setInterval(fetchNoLeidas, intervalo);
 
-  return () => clearInterval(interval);
-}, [contratanteId, showPanelNotificaciones, cantidadNoLeidas, usuarioChat]); // ✅ CORREGIDO: dependencias correctas
+    return () => clearInterval(interval);
+  }, [contratanteId, showPanelNotificaciones, cantidadNoLeidas, usuarioChat]); // ✅ CORREGIDO: dependencias correctas
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -163,19 +161,9 @@ const ModuloContratante = () => {
 
   if (!contratanteId) return <div>Cargando...</div>;
 
-  const cancelarEdicion = () => {
-    setPublicacionEditar(null);
-  };
 
-  const iniciarEdicion = (publicacion) => {
-    setPublicacionEditar(publicacion);
-  };
 
-  const onGuardadoExitoso = () => {
-    alert(publicacionEditar ? "Publicación actualizada!" : "Publicación creada!");
-    setRefrescarLista(prev => !prev);
-    setPublicacionEditar(null);
-  };
+
 
   const handleAbrirPanelUsuarios = async () => {
     setShowPanelUsuarios(true);
@@ -277,25 +265,279 @@ const ModuloContratante = () => {
 
       <div className="main-content">
         <div className="tabs-container">
-          <div className="tabs"></div>
 
-          <div className="tab-content">
-            <div className="paneles-container">
-              <div className="panel-formulario">
-               
-              </div>
+          <section
+            className="inicio-banner"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '30px',
+              flexWrap: 'wrap',
+              padding: '40px 20px',
+              backgroundColor: '#f9fafb', // color muy suave para fondo
+              borderRadius: '12px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+              fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+              color: '#333',
+            }}
+          >
+            <div
+              className="banner-imagen"
+              style={{
+                flex: '1 1 400px',
+                maxWidth: '450px',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
+              }}
+            >
+              <img
+                src="/Imagenes/aspirante.jpeg"
+                alt="Persona profesional caminando hacia oportunidades"
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  display: 'block',
+                  objectFit: 'cover',
+                  borderRadius: '12px',
+                  transition: 'transform 0.3s ease',
+                }}
+                onMouseOver={e => (e.currentTarget.style.transform = 'scale(1.05)')}
+                onMouseOut={e => (e.currentTarget.style.transform = 'scale(1)')}
+              />
             </div>
-          </div>
+
+            <div
+              className="banner-texto"
+              style={{
+                flex: '1 1 280px',
+                minWidth: '280px',
+                maxWidth: '600px',
+              }}
+            >
+              <h1
+                style={{
+                  fontSize: '2.5rem',
+                  marginBottom: '16px',
+                  color: '#005f73',
+                  fontWeight: '700',
+                  lineHeight: '1.1',
+                }}
+              >
+                Bienvenido a CALMA
+              </h1>
+              <p style={{ fontSize: '1.125rem', marginBottom: '12px', lineHeight: '1.6' }}>
+                En CALMA creemos en el poder transformador de tu vocación y dedicación. Aquí,
+                cada oportunidad laboral es el inicio de un nuevo capítulo en tu crecimiento profesional.
+              </p>
+              <p style={{ fontSize: '1.125rem', marginBottom: '12px', lineHeight: '1.6' }}>
+                Conecta con empleadores que valoran tu experiencia, postúlate fácilmente y accede
+                a ofertas hechas a la medida de tus habilidades y disponibilidad.
+              </p>
+              <p style={{ fontSize: '1.125rem', marginBottom: '12px', lineHeight: '1.6' }}>
+                Más que una plataforma, CALMA es tu aliado confiable para potenciar tu carrera,
+                acercarte a trabajos significativos y hacer la diferencia en la vida de quienes más
+                necesitan tu cuidado y compromiso.
+              </p>
+              <p style={{ fontSize: '1.125rem', fontWeight: '600', color: '#0a9396' }}>
+                Tu futuro profesional comienza hoy. Estamos aquí para apoyarte en cada paso del camino.
+              </p>
+            </div>
+          </section>
+
+
+
+          {/* Sección de Consejos útiles */}
+          <section
+            className="inicio-opciones-rapidas"
+            style={{
+              padding: '40px 20px',
+              backgroundColor: '#f9fafb', // mismo fondo claro para consistencia
+              borderRadius: '12px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+              fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+              color: '#0d47a1',
+              maxWidth: '1000px',
+              margin: '40px auto',
+            }}
+          >
+            <h2
+              style={{
+                textAlign: 'center',
+                marginBottom: '30px',
+                fontSize: '2rem',
+                fontWeight: '700',
+                color: '#0a5394',
+                letterSpacing: '0.02em',
+              }}
+            >
+              💼 Consejos útiles para mejorar tu búsqueda de empleo
+            </h2>
+
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                gap: '24px',
+              }}
+            >
+              {[
+                "Personaliza tu CV para cada oferta laboral.",
+                "Practica respuestas para entrevistas comunes.",
+                "Amplía tu red de contactos profesionales.",
+                "Actualiza tu perfil regularmente.",
+                "Prepárate para demostrar tus habilidades con ejemplos concretos.",
+                "Sé puntual y profesional en todas las comunicaciones.",
+                "Investiga la empresa antes de postular.",
+                "Aprovecha las plataformas digitales para capacitarte.",
+                "Muestra actitud positiva en entrevistas.",
+                "Utiliza palabras clave del anuncio en tu aplicación.",
+                "Sé claro y honesto sobre tu disponibilidad.",
+              ].map((consejo, index) => (
+                <div
+                  key={index}
+                  className="tarjeta-opcion"
+                  style={{
+                    backgroundColor: '#e3f2fd',
+                    border: '1.5px solid #1976d2',
+                    borderRadius: '12px',
+                    padding: '18px 22px',
+                    width: '280px',
+                    boxShadow: '0 6px 12px rgba(25, 118, 210, 0.15)',
+                    color: '#0d47a1',
+                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                    cursor: 'default',
+                    userSelect: 'none',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.transform = 'translateY(-6px)';
+                    e.currentTarget.style.boxShadow = '0 12px 24px rgba(25, 118, 210, 0.3)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 6px 12px rgba(25, 118, 210, 0.15)';
+                  }}
+                >
+                  <p style={{ fontStyle: 'italic', fontSize: '1rem', margin: 0 }}>💡 {consejo}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+
+
+
+          {/* Derechos Laborales justo debajo de la imagen del banner */}
+          <section
+            className="inicio-derechos-laborales"
+            style={{
+              padding: '40px 20px',
+              backgroundColor: '#e8f5e9',
+              borderTop: '1px solid #c8e6c9',
+              maxWidth: '1100px',
+              margin: '0 auto 60px',
+              borderRadius: '12px',
+              boxShadow: '0 6px 14px rgba(46, 125, 50, 0.1)',
+              fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+              color: '#2e7d32',
+            }}
+          >
+            <h2
+              style={{
+                textAlign: 'center',
+                color: '#2e7d32',
+                marginBottom: '30px',
+                fontWeight: '700',
+                fontSize: '2rem',
+                letterSpacing: '0.02em',
+              }}
+            >
+              🛡️ Tus Derechos Laborales
+            </h2>
+
+            <div
+              style={{
+                maxWidth: '900px',
+                margin: '0 auto',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: '24px',
+              }}
+            >
+              {[
+                {
+                  icon: '📝',
+                  title: 'Contrato Justo',
+                  desc: 'Tienes derecho a conocer y firmar un contrato que detalle tus funciones, horarios y remuneración.',
+                },
+                {
+                  icon: '💰',
+                  title: 'Pago Puntual',
+                  desc: 'Debes recibir tu salario completo y a tiempo, según lo estipulado en el contrato o acuerdo verbal.',
+                },
+                {
+                  icon: '⏱️',
+                  title: 'Horario Respetado',
+                  desc: 'Tu jornada laboral no debe exceder lo legalmente permitido, y cualquier hora extra debe ser compensada.',
+                },
+                {
+                  icon: '🩺',
+                  title: 'Seguridad Social',
+                  desc: 'Tienes derecho a estar afiliado al seguro de salud y a recibir atención médica adecuada en caso de accidente o enfermedad laboral.',
+                },
+                {
+                  icon: '📢',
+                  title: 'Derecho a Denunciar',
+                  desc: 'Si sufres maltrato, acoso o discriminación, puedes denunciarlo ante las autoridades laborales competentes.',
+                },
+              ].map(({ icon, title, desc }, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    background: '#fff',
+                    padding: '20px',
+                    borderRadius: '12px',
+                    boxShadow: '0 4px 10px rgba(0,0,0,0.05)',
+                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                    cursor: 'default',
+                    userSelect: 'none',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.transform = 'translateY(-5px)';
+                    e.currentTarget.style.boxShadow = '0 10px 20px rgba(46, 125, 50, 0.2)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 10px rgba(0,0,0,0.05)';
+                  }}
+                >
+                  <h4 style={{ marginBottom: '10px', fontSize: '1.25rem', color: '#2e7d32' }}>
+                    {icon} {title}
+                  </h4>
+                  <p style={{ fontSize: '1rem', lineHeight: '1.5', color: '#356a35' }}>{desc}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+
+         
+
         </div>
+
+
       </div>
 
       {/* Overlay para cerrar el panel de notificaciones */}
-      {showPanelNotificaciones && (
-        <div
-          className={`${styles.overlayNotificacionesContratante} ${showPanelNotificaciones ? styles.active : ''}`}
-          onClick={handleCerrarNotificaciones}
-        />
-      )}
+      {
+        showPanelNotificaciones && (
+          <div
+            className={`${styles.overlayNotificacionesContratante} ${showPanelNotificaciones ? styles.active : ''}`}
+            onClick={handleCerrarNotificaciones}
+          />
+        )
+      }
 
       <div className={`panel-usuarios ${showPanelUsuarios ? 'open' : ''}`}>
         <div className="panel-usuarios-header">
@@ -352,19 +594,21 @@ const ModuloContratante = () => {
         </ul>
       </div>
 
-      {usuarioChat && (
-        <div className="chat-flotante">
-          <div className="header-chat">
-            <h3>Chat con {usuarioChat.nombres}</h3>
-            <button className="btn-cerrar-chat" onClick={handleCerrarChat}>✖</button>
+      {
+        usuarioChat && (
+          <div className="chat-flotante">
+            <div className="header-chat">
+              <h3>Chat con {usuarioChat.nombres}</h3>
+              <button className="btn-cerrar-chat" onClick={handleCerrarChat}>✖</button>
+            </div>
+            <App
+              nombrePropio={JSON.parse(localStorage.getItem('userData'))?.usuarioId} // ← Usar usuarioId (2)
+              destinatarioProp={usuarioChat.idUsuario}
+              onCerrarChat={handleCerrarChat}
+            />
           </div>
-          <App
-            nombrePropio={JSON.parse(localStorage.getItem('userData'))?.usuarioId} // ← Usar usuarioId (2)
-            destinatarioProp={usuarioChat.idUsuario}
-            onCerrarChat={handleCerrarChat}
-          />
-        </div>
-      )}
+        )
+      }
 
       {/* Panel Notificaciones Mejorado con CSS Modules */}
       <div className={`${styles.panelNotificacionesContratante} ${showPanelNotificaciones ? styles.open : ''}`}>
@@ -427,7 +671,7 @@ const ModuloContratante = () => {
           )}
         </ul>
       </div>
-    </div>
+    </div >
   );
 };
 
