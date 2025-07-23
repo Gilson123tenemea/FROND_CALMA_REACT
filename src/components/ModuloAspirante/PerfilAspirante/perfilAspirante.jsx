@@ -564,8 +564,7 @@ const PerfilAspirante = () => {
                     <option value="Tiempo completo">Tiempo completo</option>
                     <option value="Medio tiempo">Medio tiempo</option>
                     <option value="Por horas">Por horas</option>
-                    <option value="Freelance">Freelance</option>
-                    <option value="Contrato temporal">Contrato temporal</option>
+                    <option value="Por meses">Contrato temporal</option>
                   </select>
                   {errores.tipo_contrato && <p className={styles["error-text-aspirante"]}>{errores.tipo_contrato}</p>}
                 </div>
