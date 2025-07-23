@@ -154,48 +154,6 @@ const Registro = () => {
     setTerminosAceptados(aceptado);
     setModalAbierto(false);
   };
-  const validarRUCempresa = (ruc) => {
-    if (!/^\d{13}$/.test(ruc)) return false;
-
-    // Validar cédula (primeros 10 dígitos)
-    const cedula = ruc.substring(0, 10);
-
-    const validarCedula = (ced) => {
-      if (!/^\d{10}$/.test(ced)) return false;
-
-      const provincia = parseInt(ced.substring(0, 2), 10);
-      if (provincia < 1 || provincia > 24) return false;
-
-      const digitos = ced.split('').map(Number);
-      const verificador = digitos.pop();
-
-      let suma = 0;
-      for (let i = 0; i < digitos.length; i++) {
-        let valor = digitos[i];
-        if (i % 2 === 0) {
-          valor *= 2;
-          if (valor > 9) valor -= 9;
-        }
-        suma += valor;
-      }
-
-      const decena = Math.ceil(suma / 10) * 10;
-      const resultado = decena - suma;
-      return resultado === verificador || (resultado === 10 && verificador === 0);
-    };
-
-    if (!validarCedula(cedula)) return false;
-
-    // Validar establecimiento
-    const establecimiento = parseInt(ruc.substring(10, 13), 10);
-    if (establecimiento < 1) return false;
-
-    // Validar tercer dígito (6 o 9 para empresa)
-    const tercerDigito = parseInt(ruc.charAt(2), 10);
-    if (tercerDigito !== 6 && tercerDigito !== 9) return false;
-
-    return true;
-  };
 
   const handleUserTypeSelection = (type) => {
     setFormData(prev => ({
@@ -206,6 +164,32 @@ const Registro = () => {
     setShowForm(true);
     setErrors({}); // Limpiar errores al cambiar tipo de usuario
   };
+
+  const validarRucEcuatoriano = (ruc) => {
+    if (!/^\d{13}$/.test(ruc)) return false;
+
+    const provincia = parseInt(ruc.substring(0, 2), 10);
+    const tercerDigito = parseInt(ruc[2], 10);
+    const consecutivos = ruc.substring(3, 10);
+    const sufijo = ruc.substring(10);
+
+    if (provincia < 1 || provincia > 24) return false;
+    if (sufijo !== '001') return false;
+
+    if (tercerDigito >= 0 && tercerDigito <= 5) {
+      // Personas naturales (la cédula es válida)
+      const cedula = ruc.substring(0, 10);
+      return validarCedulaEcuatoriana(cedula);
+    }
+
+    if (tercerDigito === 6 || tercerDigito === 9) {
+      // Sociedades públicas (6) o privadas/extranjeras (9)
+      return /^\d{7}$/.test(consecutivos);
+    }
+
+    return false;
+  };
+
 
   const validateForm = () => {
     const newErrors = {};
@@ -338,10 +322,10 @@ const Registro = () => {
         }
 
         if (!formData.rucEmpresa) {
-          newErrors.rucEmpresa = 'El RUC es obligatorio';
+          newErrors.rucEmpresa = 'El RUC de la empresa es obligatorio';
           isValid = false;
-        } else if (!validarRUCempresa(formData.rucEmpresa)) {
-          newErrors.rucEmpresa = 'El RUC de empresa no es válido';
+        } else if (!validarRucEcuatoriano(formData.rucEmpresa)) {
+          newErrors.rucEmpresa = 'El RUC ingresado no es válido';
           isValid = false;
         }
 
