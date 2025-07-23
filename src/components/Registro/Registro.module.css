@@ -979,3 +979,11 @@ form {
   justify-content: center;
   font-size: 1.2rem;
 }
+/* Ocultar el icono de mostrar contraseña del navegador */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear,
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-password-toggle-button,
+input[type="password"]::-webkit-contacts-auto-fill-button {
+  display: none !important;
+}

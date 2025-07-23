@@ -27,7 +27,7 @@ const TerminosModal = ({ isOpen, onClose, onSave }) => {
           </ol>
         </div>
         <div className={styles.buttonGroup}>
-          <button className={styles.saveButton} onClick={handleGuardar}>Guardar</button>
+          <button className={styles.saveButton} onClick={handleGuardar}>Aceptar</button>
           <button className={styles.closeButton} onClick={handleCancelar}>Cancelar</button>
         </div>
       </div>
