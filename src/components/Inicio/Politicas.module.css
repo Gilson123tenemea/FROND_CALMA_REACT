@@ -1,0 +1,113 @@
+/* Estilos base */
+.privacidadpoliContainer {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #1e3a8a;
+  line-height: 1.6;
+}
+
+/* Header */
+.privacidadpoliHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.privacidadpoliLogo {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  margin-bottom: 1rem;
+}
+
+.privacidadpoliTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #1e3a8a;
+}
+
+.privacidadpoliSubtitle {
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+/* Contenido principal */
+.privacidadpoliContent {
+  margin-bottom: 3rem;
+}
+
+.privacidadpoliSection {
+  margin-bottom: 2.5rem;
+}
+
+.privacidadpoliSectionTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #1e3a8a;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.privacidadpoliText {
+  margin-bottom: 1rem;
+  color: #4b5563;
+}
+
+.privacidadpoliList {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.privacidadpoliListItem {
+  margin-bottom: 0.5rem;
+  color: #4b5563;
+}
+
+.privacidadpoliListItem::before {
+  content: "•";
+  color: #3b82f6;
+  font-weight: bold;
+  display: inline-block;
+  width: 1em;
+  margin-left: -1em;
+}
+
+.privacidadpoliContact {
+  background-color: #f8fafc;
+  padding: 1rem;
+  border-left: 4px solid #3b82f6;
+  margin-top: 1rem;
+  color: #4b5563;
+}
+
+/* Footer */
+.privacidadpoliFooter {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.privacidadpoliFooterText {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .privacidadpoliContainer {
+    padding: 1rem;
+  }
+  
+  .privacidadpoliTitle {
+    font-size: 1.75rem;
+  }
+  
+  .privacidadpoliSectionTitle {
+    font-size: 1.25rem;
+  }
+}

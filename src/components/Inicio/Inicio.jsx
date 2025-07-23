@@ -2,13 +2,26 @@ import styles from "./Inicio.module.css"
 import ChatBubble from "../chatbot/ChatBubble"
 import imagenInicio from "./imagenes/imageninicio-removebg-preview.png"
 import Navbar from '../Shared/Navbar';
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { FaFacebook, FaInstagram, FaTiktok } from 'react-icons/fa';
+import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
+
+
 
 const Inicio = () => {
+  const [chatVisible, setChatVisible] = useState(false);
+  const navigate = useNavigate();
+
+  const toggleChat = () => {
+    setChatVisible(!chatVisible);
+  };
   return (
-    
+
     <div className={styles.iniciowebContainer}>
       {/* Hero Section - Más ancho */}
-       <Navbar />
+      <Navbar />
       <section className={styles.iniciowebHeroSection}>
         <div className={styles.iniciowebHeroContainer}>
           <div className={styles.iniciowebHeroCard}>
@@ -19,7 +32,7 @@ const Inicio = () => {
                   La primera plataforma especializada que une cuidadores profesionales con familias que necesitan
                   atención geriátrica de calidad en pocos clics.
                 </p>
-                <button className={styles.iniciowebHeroCta}>Conoce los planes de cuidado</button>
+                <button className={styles.iniciowebHeroCta}>Unete a Nosotros</button>
               </div>
               <div className={styles.iniciowebHeroImageContainer}>
                 <div className={styles.iniciowebHeroImageWrapper}>
@@ -151,17 +164,7 @@ const Inicio = () => {
                     <p>En pocos toques cierras tu primer contrato de cuidado sin complicaciones.</p>
                   </div>
                 </div>
-                <div className={styles.iniciowebBenefitItem}>
-                  <div className={styles.iniciowebBenefitIcon}>
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z" />
-                    </svg>
-                  </div>
-                  <div className={styles.iniciowebBenefitContent}>
-                    <h3>Organización financiera y gestión</h3>
-                    <p>Herramientas para organizar tu agenda y gestión de pagos de manera eficiente.</p>
-                  </div>
-                </div>
+
                 <div className={styles.iniciowebBenefitItem}>
                   <div className={styles.iniciowebBenefitIcon}>
                     <svg viewBox="0 0 24 24" fill="currentColor">
@@ -169,7 +172,7 @@ const Inicio = () => {
                     </svg>
                   </div>
                   <div className={styles.iniciowebBenefitContent}>
-                    <h3>Filtro por especialidades y región</h3>
+                    <h3>Filtro por especialidades y fechas</h3>
                     <p>Encuentra oportunidades por especialidad, ubicación y horarios que se adapten a ti.</p>
                   </div>
                 </div>
@@ -186,7 +189,7 @@ const Inicio = () => {
             <div className={styles.iniciowebBottomImageText}>
               <h2>Tecnología al Servicio del Cuidado</h2>
               <p>
-                Nuestra plataforma utiliza inteligencia artificial para hacer el mejor match entre cuidadores y
+                Nuestra plataforma utiliza inteligencia artificial para dar a conocer los empleos, información entre cuidadores y
                 familias. Consideramos ubicación, especialidades, horarios disponibles y compatibilidad personal para
                 garantizar conexiones exitosas y duraderas.
               </p>
@@ -245,7 +248,7 @@ const Inicio = () => {
             <div className={styles.iniciowebInfoCard}>
               <div className={styles.iniciowebInfoImageContainer}>
                 <img
-                  src="https://i.pinimg.com/1200x/d4/9a/4a/d49a4a0818ee6ba87413d08cb30f2814.jpg"
+                  src="https://i.pinimg.com/736x/00/49/5e/00495edaea1bb3a821a4828a2f77cf5e.jpg"
                   alt="Familias satisfechas"
                   className={styles.iniciowebInfoImage}
                 />
@@ -286,31 +289,46 @@ const Inicio = () => {
                 atención especializada.
               </p>
               <div className={styles.iniciowebFooterSocial}>
-                <a href="#" className={styles.iniciowebSocialLink}>
-                  📘 Facebook
+                <a href="https://www.facebook.com/profile.php?id=61578678330707&rdid=j2bc3wL5ac6qoeHb&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1CD1vmdtZM%2F"
+                  className={styles.iniciowebSocialLink}
+                  target="_blank"
+                  rel="noopener noreferrer">
+                  <FaFacebook style={{ marginRight: "8px" }} /> Facebook
                 </a>
-                <a href="#" className={styles.iniciowebSocialLink}>
-                  📷 Instagram
+                <a href="https://www.instagram.com/calma.ccg?utm_source=qr&igsh=cjBqOGlyZndoaTFn"
+                  className={styles.iniciowebSocialLink}
+                  target="_blank"
+                  rel="noopener noreferrer">
+                  <FaInstagram style={{ marginRight: "8px" }} /> Instagram
                 </a>
-                <a href="#" className={styles.iniciowebSocialLink}>
-                  🐦 Twitter
+                <a href="https://www.tiktok.com/@calma.es.futuro?_t=ZM-8yFyjFSboDW&_r=1"
+                  className={styles.iniciowebSocialLink}
+                  target="_blank"
+                  rel="noopener noreferrer">
+                  <FaTiktok style={{ marginRight: "8px" }} /> TikTok
                 </a>
               </div>
+
             </div>
             <div className={styles.iniciowebFooterSection}>
               <h4>Para Cuidadores</h4>
               <ul className={styles.iniciowebFooterList}>
                 <li>
-                  <a href="#">Registrarse como cuidador</a>
+                  <Link to="/registro" className="btn-register">
+                    Registrarse como cuidador
+                  </Link>
                 </li>
                 <li>
-                  <a href="#">Buscar empleos</a>
-                </li>
-                <li>
-                  <a href="#">Certificaciones</a>
-                </li>
-                <li>
-                  <a href="#">Centro de ayuda</a>
+                  <a
+                    href="#"
+                    className="btn-logins"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate('/login');
+                    }}
+                  >
+                    Buscar empleo
+                  </a>
                 </li>
               </ul>
             </div>
@@ -318,45 +336,70 @@ const Inicio = () => {
               <h4>Para Familias</h4>
               <ul className={styles.iniciowebFooterList}>
                 <li>
-                  <a href="#">Buscar cuidadores</a>
+                  <a
+                    href="#"
+                    className="btn-logins"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate('/login');
+                    }}
+                  >
+                    Buscar cuidadores
+                  </a>
                 </li>
                 <li>
-                  <a href="#">Publicar empleo</a>
-                </li>
-                <li>
-                  <a href="#">Precios</a>
-                </li>
-                <li>
-                  <a href="#">Testimonios</a>
+                  <a
+                    href="#"
+                    className="btn-logins"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate('/login');
+                    }}
+                  >
+                    Publicar empleo
+                  </a>
                 </li>
               </ul>
             </div>
             <div className={styles.iniciowebFooterSection}>
               <h4>Contacto</h4>
               <div className={styles.iniciowebContactInfo}>
-                <p>📞 +1 (555) 123-4567</p>
-                <p>✉️ info@calma.com</p>
-                <p>📍 Ciudad de México, México</p>
-                <p>🕒 Lun - Vie: 9:00 AM - 6:00 PM</p>
+                <p>
+                  <FaPhoneAlt style={{ marginRight: "8px" }} />
+                  +593 989784180
+                </p>
+                <p>
+                  <FaEnvelope style={{ marginRight: "8px" }} />
+                  calmasoporte2025@gmail
+                  .com
+                </p>
+                <p>
+                  <FaMapMarkerAlt style={{ marginRight: "8px" }} />
+                  Ciudad de Cuenca, Cuenca
+                </p>
               </div>
             </div>
+
           </div>
           <div className={styles.iniciowebFooterBottom}>
             <div className={styles.iniciowebFooterBottomContent}>
-              <p>©2024 CALMA. Todos los derechos reservados.</p>
+              <p>©2025 CALMA. Todos los derechos reservados.</p>
               <div className={styles.iniciowebFooterLinks}>
-                <a href="#">Términos de servicio</a>
-                <a href="#">Política de privacidad</a>
-                <a href="#">Cookies</a>
+                <Link
+                  to="/politicas-de-privacidad"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Política de privacidad
+                </Link>
               </div>
             </div>
           </div>
         </div>
       </footer>
-
-      <ChatBubble />
+      {/* Chatbot */}
+      {chatVisible && <ChatBubble />}  {/* Muestra el chatbot si chatVisible es true */}
     </div>
   )
 }
-
 export default Inicio
