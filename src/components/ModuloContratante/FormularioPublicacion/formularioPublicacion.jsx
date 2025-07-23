@@ -5,6 +5,7 @@ import './FormularioPublicacion.css';
 import HeaderContratante from '../HeaderContratante/HeaderContratante';
 import { ToastContainer, toast } from 'react-toastify';
 import { FaUser, FaRegCalendarAlt, FaRegFileAlt } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -31,7 +32,8 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
 
   const [pacientes, setPacientes] = useState([]);
   const [idPaciente, setIdPaciente] = useState('');
-  
+
+  const navigate = useNavigate();
 
   const [errores, setErrores] = useState({});
   useEffect(() => {
@@ -39,6 +41,25 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
       .then(res => setProvincias(res.data))
       .catch(() => setProvincias([]));
   }, []);
+
+  const limpiarFormulario = () => {
+    setTitulo('');
+    setDescripcion('');
+    setFechaLimite('');
+    setJornada('');
+    setSalarioEstimado('');
+    setRequisitos('');
+    setTurno('');
+    setEstado('');
+    setDisponibilidadInmediata(false);
+    setActividadesRealizar('');
+    setIdProvincia('');
+    setIdCanton('');
+    setIdParroquia('');
+    setIdPaciente('');
+    setErrores({});
+  };
+
 
   useEffect(() => {
     if (idProvincia) {
@@ -98,7 +119,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
       setEstado(publicacionEditar.estado || '');
       setDisponibilidadInmediata(!!publicacionEditar.disponibilidad_inmediata);
       setActividadesRealizar(publicacionEditar.actividades_realizar || '');
-      
+
       const parroquia = publicacionEditar.parroquia;
       if (parroquia) {
         setIdProvincia(parroquia.canton.provincia.id_provincia);
@@ -235,14 +256,16 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
         const url = `http://localhost:8090/api/publicacion_empleo/guardar?idParroquia=${idParroquia}&idContratante=${contratanteId}`;
         await axios.post(url, data);
         toast.success('Publicación creada correctamente');
+        limpiarFormulario();
       }
       if (onSuccess) onSuccess();
+      navigate(`/moduloContratante/ListaPublicaciones?userId=${contratanteId}`);
     } catch (error) {
       console.error(error);
       toast.error('Error al guardar la publicación');
     }
   };
-console.log('Estado actividadesRealizar:', actividadesRealizar);
+  console.log('Estado actividadesRealizar:', actividadesRealizar);
   return (
     <>
       <HeaderContratante userId={contratanteId} />
