@@ -1,21 +1,22 @@
+// 🔧 HeaderAspirante.jsx - Versión Arreglada
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from '../Notificaciones.module.css';
-import App from '../../../App'; // Ajusta la ruta según tu estructura
+import App from '../../../App';
 
 const HeaderAspirante = ({
   userId: userIdProp,
+  aspiranteId: aspiranteIdProp, // 🆕 NUEVA PROP
   onOpenMensajes,
   onOpenNotificaciones,
   notificacionesNoLeidas = 0
 }) => {
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
-  // 🆕 ESTADOS PARA EXTRAER Y MANEJAR userId/aspiranteId
+  // 🆕 ESTADOS CENTRALIZADOS
   const [userId, setUserId] = useState(null);
   const [aspiranteId, setAspiranteId] = useState(null);
-
-  // 🆕 ESTADOS GLOBALES PARA CHAT Y NOTIFICACIONES (IGUAL QUE CONTRATANTE)
   const [showPanelUsuarios, setShowPanelUsuarios] = useState(false);
   const [showPanelNotificaciones, setShowPanelNotificaciones] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -24,70 +25,114 @@ const HeaderAspirante = ({
   const [notificaciones, setNotificaciones] = useState([]);
   const [cantidadNoLeidas, setCantidadNoLeidas] = useState(0);
 
-  // 🆕 ESTADO PARA DATOS DEL USUARIO ACTUAL (IGUAL QUE CONTRATANTE)
   const [datosUsuario, setDatosUsuario] = useState({
     nombres: 'Aspirante',
     apellidos: 'Usuario',
     correo: 'aspirante@example.com'
   });
 
-  // 🆕 FUNCIÓN PARA EXTRAER IDS DE DIFERENTES FUENTES
+  // 🆕 FUNCIÓN PARA EXTRAER IDS (MEJORADA)
   const extraerIdsUsuario = () => {
-    console.log('🔍 [HEADER ASPIRANTE] Extrayendo IDs de usuario...');
-    
-    // 1. Desde props
-    if (userIdProp) {
-      console.log('✅ [HEADER ASPIRANTE] ID desde props:', userIdProp);
-      return { userId: userIdProp, aspiranteId: userIdProp };
+    // 1. Desde props (más confiable)
+    if (userIdProp && aspiranteIdProp) {
+      console.log('✅ [HeaderAspirante] IDs desde props:', { userId: userIdProp, aspiranteId: aspiranteIdProp });
+      return { userId: userIdProp, aspiranteId: aspiranteIdProp };
     }
 
-    // 2. Desde URL params
+    // 2. Solo userId desde props
+    if (userIdProp) {
+      console.log('✅ [HeaderAspirante] Solo userId desde props:', userIdProp);
+      return { userId: userIdProp, aspiranteId: null };
+    }
+
+    // 3. Desde URL params
     const urlParams = new URLSearchParams(window.location.search);
     const userIdFromUrl = urlParams.get('userId');
     if (userIdFromUrl) {
-      console.log('✅ [HEADER ASPIRANTE] ID desde URL:', userIdFromUrl);
-      return { userId: userIdFromUrl, aspiranteId: userIdFromUrl };
-    }
-
-    // 3. Desde URL path (ejemplo: /ver-cv/3)
-    const pathMatch = window.location.pathname.match(/\/\w+\/(\d+)/);
-    if (pathMatch && pathMatch[1]) {
-      console.log('✅ [HEADER ASPIRANTE] ID desde path:', pathMatch[1]);
-      return { userId: pathMatch[1], aspiranteId: pathMatch[1] };
+      return { userId: userIdFromUrl, aspiranteId: null };
     }
 
     // 4. Desde localStorage
     const userData = JSON.parse(localStorage.getItem('userData') || '{}');
     if (userData.aspiranteId || userData.usuarioId) {
-      const id = userData.aspiranteId || userData.usuarioId;
-      console.log('✅ [HEADER ASPIRANTE] ID desde localStorage:', id);
-      return { userId: id, aspiranteId: id };
+      return { 
+        userId: userData.usuarioId || userData.aspiranteId, 
+        aspiranteId: userData.aspiranteId 
+      };
     }
 
-    console.warn('❌ [HEADER ASPIRANTE] No se pudo extraer ID de usuario');
     return { userId: null, aspiranteId: null };
   };
 
-  // 🆕 INICIALIZACIÓN MEJORADA (IGUAL QUE CONTRATANTE)
+  // 🆕 INICIALIZACIÓN ROBUSTA
   useEffect(() => {
     const { userId: extractedUserId, aspiranteId: extractedAspiranteId } = extraerIdsUsuario();
     
     if (extractedUserId) {
+      console.log(`✅ HeaderAspirante inicializado - userId: ${extractedUserId}, aspiranteId: ${extractedAspiranteId}`);
       setUserId(extractedUserId);
-      setAspiranteId(extractedAspiranteId);
-      cargarDatosUsuario(extractedUserId);
-      cargarNotificacionesNoLeidas(extractedAspiranteId);
+      
+      if (extractedAspiranteId) {
+        // Tenemos ambos IDs
+        setAspiranteId(extractedAspiranteId);
+        cargarDatosUsuario(extractedUserId);
+        cargarNotificacionesNoLeidas(extractedAspiranteId);
+      } else {
+        // Solo tenemos userId, necesitamos obtener aspiranteId
+        obtenerAspiranteIdDesdeUserId(extractedUserId);
+        cargarDatosUsuario(extractedUserId);
+      }
     }
-  }, [userIdProp, window.location.pathname, window.location.search]);
+  }, [userIdProp, aspiranteIdProp, window.location.pathname, window.location.search]);
 
-  // 🆕 FUNCIÓN MEJORADA PARA CARGAR DATOS DEL USUARIO (IGUAL PATRÓN QUE CONTRATANTE)
+  // 🆕 FUNCIÓN PARA OBTENER aspiranteId DESDE userId
+  const obtenerAspiranteIdDesdeUserId = async (idUsuario) => {
+    try {
+      // Primero intentar desde localStorage
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      if (userData.aspiranteId) {
+        console.log('✅ [HeaderAspirante] AspiranteId encontrado en localStorage:', userData.aspiranteId);
+        setAspiranteId(userData.aspiranteId);
+        cargarNotificacionesNoLeidas(userData.aspiranteId);
+        return;
+      }
+
+      // Si no está en localStorage, buscar en la API
+      console.log('🔍 [HeaderAspirante] Buscando aspiranteId para usuario:', idUsuario);
+      
+      // Buscar todas las relaciones y encontrar el aspirante del usuario
+      const response = await axios.get('http://localhost:8090/api/calificaciones/debug/relaciones');
+      
+      if (response.data && response.data.relacionesCalificaciones) {
+        // Buscar en las relaciones existentes
+        const relaciones = response.data.relacionesCalificaciones;
+        const relacionUsuario = relaciones.find(rel => rel.contratanteId === idUsuario);
+        
+        if (relacionUsuario && relacionUsuario.aspiranteId) {
+          console.log('✅ [HeaderAspirante] AspiranteId encontrado via relaciones:', relacionUsuario.aspiranteId);
+          setAspiranteId(relacionUsuario.aspiranteId);
+          cargarNotificacionesNoLeidas(relacionUsuario.aspiranteId);
+          return;
+        }
+      }
+      
+      // Fallback: usar el userId como aspiranteId
+      console.log('⚠️ [HeaderAspirante] No se encontró aspiranteId, usando userId como fallback');
+      setAspiranteId(idUsuario);
+      cargarNotificacionesNoLeidas(idUsuario);
+      
+    } catch (error) {
+      console.error('❌ Error al obtener aspiranteId:', error);
+      setAspiranteId(idUsuario); // Fallback
+    }
+  };
+
+  // 🆕 CARGAR DATOS DEL USUARIO (SIMPLIFICADO)
   const cargarDatosUsuario = async (idUsuario) => {
     if (!idUsuario) return;
     
     try {
-      console.log('🔍 [HEADER ASPIRANTE] Cargando datos del usuario:', idUsuario);
-      
-      // Primero intentar desde localStorage
+      // Datos iniciales desde localStorage
       const userData = JSON.parse(localStorage.getItem('userData') || '{}');
       if (userData.nombres || userData.correo) {
         setDatosUsuario({
@@ -95,73 +140,67 @@ const HeaderAspirante = ({
           apellidos: userData.apellidos || 'Usuario',
           correo: userData.correo || 'aspirante@example.com'
         });
-        console.log('✅ [HEADER ASPIRANTE] Datos iniciales desde localStorage');
       }
 
-      // 🆕 INTENTAR CARGAR DESDE EL ENDPOINT DE PERFIL DEL ASPIRANTE
+      // Intentar cargar desde API
       try {
-        const response = await axios.get(`http://localhost:8090/api/registro/aspirante/detalle/${idUsuario}`);
-        
-        if (response.data && response.data.success && response.data.aspirante) {
-          const aspirante = response.data.aspirante;
+        const response = await axios.get(`http://localhost:8090/api/usuarios/${idUsuario}`);
+        if (response.data) {
           setDatosUsuario({
-            nombres: aspirante.nombre || userData?.nombres || 'Aspirante',
-            apellidos: aspirante.apellido || userData?.apellidos || 'Usuario',
-            correo: aspirante.correo || userData?.correo || 'aspirante@example.com'
+            nombres: response.data.nombres || userData?.nombres || 'Aspirante',
+            apellidos: response.data.apellidos || userData?.apellidos || 'Usuario',
+            correo: response.data.correo || userData?.correo || 'aspirante@example.com'
           });
-          console.log('✅ [HEADER ASPIRANTE] Datos cargados desde API de perfil:', aspirante);
         }
-      } catch (apiError) {
-        console.log('ℹ️ [HEADER ASPIRANTE] API de perfil no disponible, usando datos de localStorage');
-        
-        // Fallback a endpoint alternativo si existe
-        try {
-          const response2 = await axios.get(`http://localhost:8090/api/usuarios/buscar_aspirante/${idUsuario}`);
-          if (response2.data) {
-            setDatosUsuario({
-              nombres: response2.data.nombres || userData?.nombres || 'Aspirante',
-              apellidos: response2.data.apellidos || userData?.apellidos || 'Usuario',
-              correo: response2.data.correo || userData?.correo || 'aspirante@example.com'
-            });
-          }
-        } catch (apiError2) {
-          console.log('ℹ️ [HEADER ASPIRANTE] Usando solo datos de localStorage');
-        }
+      } catch (error) {
+        console.log('⚠️ Usando datos de localStorage para usuario');
       }
     } catch (error) {
-      console.error('❌ [HEADER ASPIRANTE] Error al cargar datos del usuario:', error);
+      console.error('❌ Error al cargar datos del usuario:', error);
     }
   };
 
-  // 🆕 CARGAR NOTIFICACIONES NO LEÍDAS (IGUAL QUE CONTRATANTE)
+  // 🆕 CARGAR NOTIFICACIONES (SIEMPRE ACTIVO)
   const cargarNotificacionesNoLeidas = async (idAspirante) => {
-    if (!idAspirante) return;
+    if (!idAspirante) {
+      console.warn('⚠️ [HeaderAspirante] No se puede cargar notificaciones sin aspiranteId');
+      return;
+    }
     
     try {
+      console.log(`🔍 [HeaderAspirante] Cargando notificaciones para aspirante: ${idAspirante}`);
       const response = await axios.get(`http://localhost:8090/api/notificaciones/aspirante/noleidas/${idAspirante}`);
-      setCantidadNoLeidas(response.data.length);
+      const nuevasCantidad = response.data.length;
+      
+      console.log(`✅ [HeaderAspirante] ${nuevasCantidad} notificaciones no leídas encontradas`);
+      
+      // Usar el valor externo si existe, si no el propio
+      const cantidadFinal = notificacionesNoLeidas > 0 ? notificacionesNoLeidas : nuevasCantidad;
+      setCantidadNoLeidas(cantidadFinal);
     } catch (error) {
-      console.error('❌ [HEADER ASPIRANTE] Error al cargar notificaciones:', error);
+      console.error('❌ Error al cargar notificaciones:', error);
     }
   };
 
-  // 🆕 POLLING PARA NOTIFICACIONES (FUNCIONA EN CUALQUIER PÁGINA)
+  // 🆕 POLLING AUTOMÁTICO DE NOTIFICACIONES
   useEffect(() => {
     if (!aspiranteId) return;
 
+    // Cargar inmediatamente
+    cargarNotificacionesNoLeidas(aspiranteId);
+
+    // Polling cada 30 segundos
     const interval = setInterval(() => {
       cargarNotificacionesNoLeidas(aspiranteId);
-    }, usuarioChat ? 5000 : 30000); // 5s si hay chat activo, 30s si no
+    }, usuarioChat ? 5000 : 30000);
 
     return () => clearInterval(interval);
   }, [aspiranteId, usuarioChat]);
 
-  // 🆕 FUNCIONES DE CHAT Y NOTIFICACIONES MEJORADAS (IGUAL QUE CONTRATANTE)
+  // 🆕 MANEJADORES DE EVENTOS (CENTRALIZADOS)
   const handleMensajesClick = async (e) => {
     e.preventDefault();
-    console.log("🔍 [HEADER ASPIRANTE] Abriendo panel de mensajes...");
     
-    // Si hay función externa, usarla; si no, manejar localmente
     if (onOpenMensajes) {
       onOpenMensajes(userId);
     } else {
@@ -171,9 +210,7 @@ const HeaderAspirante = ({
 
   const handleNotificacionesClick = async (e) => {
     e.preventDefault();
-    console.log("🔍 [HEADER ASPIRANTE] Abriendo panel de notificaciones...");
     
-    // Si hay función externa, usarla; si no, manejar localmente
     if (onOpenNotificaciones) {
       onOpenNotificaciones();
     } else {
@@ -181,47 +218,42 @@ const HeaderAspirante = ({
     }
   };
 
-  // 🆕 LÓGICA LOCAL DE MENSAJES (IGUAL QUE CONTRATANTE)
+  // 🆕 LÓGICA DE MENSAJES (ROBUSTA)
   const handleAbrirPanelUsuarios = async () => {
     if (!aspiranteId) {
-      console.warn('❌ [HEADER ASPIRANTE] No se puede abrir mensajes sin aspiranteId');
+      console.warn('❌ No se puede abrir mensajes sin aspiranteId:', aspiranteId);
       return;
     }
 
+    console.log(`🔍 [HeaderAspirante] Abriendo panel de usuarios para aspirante: ${aspiranteId}`);
     setShowPanelUsuarios(true);
     setSearchTerm('');
 
-    try {
-      console.log('🔍 [HEADER ASPIRANTE] Cargando contratantes para chat...');
-      
-      // 🆕 MÚLTIPLES ENDPOINTS PARA OBTENER CONTRATANTES
-      const endpoints = [
-        `http://localhost:8090/api/postulacion/aspirante/${aspiranteId}/contratantes-para-chat`,
-        `http://localhost:8090/api/postulacion/aspirante/${aspiranteId}/contratistas-para-chat`,
-        `http://localhost:8090/api/chat/aspirante/${aspiranteId}/contactos`
-      ];
+    // Intentar múltiples endpoints
+    const endpoints = [
+      `http://localhost:8090/api/postulacion/aspirante/${aspiranteId}/contratantes-para-chat`,
+      `http://localhost:8090/api/postulacion/aspirante/${aspiranteId}/contratistas-para-chat`,
+      `http://localhost:8090/api/chat/aspirante/${aspiranteId}/contactos`
+    ];
 
-      let contratantes = [];
-      
-      for (const endpoint of endpoints) {
-        try {
-          const response = await axios.get(endpoint);
-          if (response.data && Array.isArray(response.data)) {
-            contratantes = response.data;
-            console.log(`✅ [HEADER ASPIRANTE] Contratantes cargados desde: ${endpoint}`);
-            break;
-          }
-        } catch (error) {
-          console.log(`ℹ️ [HEADER ASPIRANTE] Endpoint no disponible: ${endpoint}`);
-          continue;
+    let contratantes = [];
+    
+    for (const endpoint of endpoints) {
+      try {
+        console.log(`🔍 [HeaderAspirante] Probando endpoint: ${endpoint}`);
+        const response = await axios.get(endpoint);
+        if (response.data && Array.isArray(response.data)) {
+          contratantes = response.data;
+          console.log(`✅ [HeaderAspirante] ${contratantes.length} contratantes encontrados`);
+          break;
         }
+      } catch (error) {
+        console.log(`❌ [HeaderAspirante] Endpoint falló: ${endpoint}`);
+        continue;
       }
-
-      setUsuariosEncontrados(contratantes);
-    } catch (error) {
-      console.error('❌ [HEADER ASPIRANTE] Error al cargar contratantes para chat:', error);
-      setUsuariosEncontrados([]);
     }
+
+    setUsuariosEncontrados(contratantes);
   };
 
   const handleCerrarPanelUsuarios = () => {
@@ -231,7 +263,6 @@ const HeaderAspirante = ({
   };
 
   const handleSeleccionarUsuarioChat = (usuario) => {
-    console.log('🔍 [HEADER ASPIRANTE] Seleccionando usuario para chat:', usuario);
     setUsuarioChat(usuario);
     setShowPanelUsuarios(false);
   };
@@ -240,24 +271,32 @@ const HeaderAspirante = ({
     setUsuarioChat(null);
   };
 
-  // 🆕 LÓGICA LOCAL DE NOTIFICACIONES (IGUAL QUE CONTRATANTE)
+  // 🆕 LÓGICA DE NOTIFICACIONES (ROBUSTA)
   const handleAbrirNotificaciones = async () => {
     if (!aspiranteId) {
-      console.warn('❌ [HEADER ASPIRANTE] No se puede abrir notificaciones sin aspiranteId');
+      console.warn('❌ No se puede abrir notificaciones sin aspiranteId:', aspiranteId);
       return;
     }
 
     try {
-      // Marcar como leídas
+      console.log(`🔍 [HeaderAspirante] Abriendo notificaciones para aspirante: ${aspiranteId}`);
       await axios.put(`http://localhost:8090/api/notificaciones/aspirante/marcar-leidas/${aspiranteId}`);
-      
-      // Obtener todas las notificaciones
       const response = await axios.get(`http://localhost:8090/api/notificaciones/aspirante/${aspiranteId}`);
-      setNotificaciones(response.data);
+      
+      // 🆕 ORDENAR NOTIFICACIONES: más recientes primero
+      const notificacionesOrdenadas = response.data.sort((a, b) => {
+        // Ordenar por fecha: más reciente primero
+        const fechaA = new Date(a.fecha);
+        const fechaB = new Date(b.fecha);
+        return fechaB - fechaA; // Orden descendente (más reciente primero)
+      });
+      
+      setNotificaciones(notificacionesOrdenadas);
       setCantidadNoLeidas(0);
       setShowPanelNotificaciones(true);
+      console.log(`✅ [HeaderAspirante] ${notificacionesOrdenadas.length} notificaciones cargadas y ordenadas`);
     } catch (error) {
-      console.error("❌ [HEADER ASPIRANTE] Error al obtener notificaciones:", error);
+      console.error("❌ Error al obtener notificaciones:", error);
     }
   };
 
@@ -265,24 +304,7 @@ const HeaderAspirante = ({
     setShowPanelNotificaciones(false);
   };
 
-  const toggleUserDropdown = () => {
-    setIsUserDropdownOpen(!isUserDropdownOpen);
-  };
-
-  const handleLogout = () => {
-    console.log("Ejecutando logout...");
-    localStorage.clear();
-    sessionStorage.clear();
-    console.log("Almacenamiento limpiado, redirigiendo...");
-    window.location.href = '/login';
-    setIsUserDropdownOpen(false);
-  };
-
-  const handleNavigation = (path) => {
-    window.location.href = path;
-  };
-
-  // 🆕 FUNCIONES AUXILIARES PARA NOTIFICACIONES (IGUAL QUE CONTRATANTE)
+  // Funciones auxiliares (sin cambios)
   const getNotificationType = (descripcion) => {
     const desc = descripcion.toLowerCase();
     if (desc.includes('💬') || desc.includes('nuevo mensaje')) return 'info';
@@ -317,7 +339,21 @@ const HeaderAspirante = ({
     return 'ℹ️';
   };
 
-  // 🆕 FILTRAR USUARIOS EN TIEMPO REAL
+  const toggleUserDropdown = () => {
+    setIsUserDropdownOpen(!isUserDropdownOpen);
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.href = '/login';
+    setIsUserDropdownOpen(false);
+  };
+
+  const handleNavigation = (path) => {
+    window.location.href = path;
+  };
+
   const usuariosFiltrados = usuariosEncontrados.filter(usuario => {
     if (!searchTerm.trim()) return true;
     
@@ -328,7 +364,16 @@ const HeaderAspirante = ({
     return nombreCompleto.includes(termino) || correo.includes(termino);
   });
 
-  // Estilos inline (mantienes los mismos que ya tienes)
+  // Si no hay IDs, mostrar loading
+  if (!userId) {
+    return (
+      <div style={{ padding: '1rem', textAlign: 'center', color: '#666' }}>
+        Cargando header...
+      </div>
+    );
+  }
+
+  // ESTILOS (sin cambios)
   const stylesInline = {
     aspiranteHeader: {
       display: 'flex',
@@ -505,76 +550,26 @@ const HeaderAspirante = ({
     }
   };
 
-  // 🆕 VERIFICACIÓN DE CARGA - SI NO HAY IDs, INTENTA EXTRAERLOS DE NUEVO
-  if (!userId || !aspiranteId) {
-    // Intento de emergencia
-    const { userId: emergencyUserId, aspiranteId: emergencyAspiranteId } = extraerIdsUsuario();
-    if (emergencyUserId) {
-      setUserId(emergencyUserId);
-      setAspiranteId(emergencyAspiranteId);
-    } else {
-      return (
-        <div style={{ padding: '1rem', textAlign: 'center', color: '#666' }}>
-          Cargando header... 
-          <small style={{ display: 'block', marginTop: '0.5rem' }}>
-            URL actual: {window.location.pathname}
-          </small>
-        </div>
-      );
-    }
-  }
-
   return (
     <>
       <header style={stylesInline.aspiranteHeader}>
         <style>
           {`
             @keyframes slideDown {
-              from {
-                opacity: 0;
-                transform: translateY(-10px);
-              }
-              to {
-                opacity: 1;
-                transform: translateY(0);
-              }
+              from { opacity: 0; transform: translateY(-10px); }
+              to { opacity: 1; transform: translateY(0); }
             }
-            
-            .nav-item:hover {
-              color: #4F46E5 !important;
-              background-color: #f8fafc !important;
-            }
-            
-            .dropdown-item:hover {
-              background-color: #f8fafc !important;
-              color: #4F46E5 !important;
-            }
-            
-            .logout-item:hover {
-              background-color: #fef2f2 !important;
-              color: #b91c1c !important;
-            }
-            
-            .user-avatar:hover {
-              border-color: #4F46E5 !important;
-              transform: scale(1.05) !important;
-              box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
-            }
-            
-            .brand-logo:hover {
-              transform: scale(1.02) !important;
-            }
+            .nav-item:hover { color: #4F46E5 !important; background-color: #f8fafc !important; }
+            .dropdown-item:hover { background-color: #f8fafc !important; color: #4F46E5 !important; }
+            .logout-item:hover { background-color: #fef2f2 !important; color: #b91c1c !important; }
+            .user-avatar:hover { border-color: #4F46E5 !important; transform: scale(1.05) !important; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important; }
+            .brand-logo:hover { transform: scale(1.02) !important; }
           `}
         </style>
 
         <div style={stylesInline.leftSection}>
           <div style={stylesInline.brandLogo} className="brand-logo">
-            <svg
-              viewBox="0 0 48 48"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              style={stylesInline.logoIcon}
-            >
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style={stylesInline.logoIcon}>
               <circle cx="24" cy="24" r="20" fill="#4F46E5" opacity="0.1" />
               <path d="M24 8C15.163 8 8 15.163 8 24s7.163 16 16 16 16-7.163 16-16S32.837 8 24 8zm0 28c-6.627 0-12-5.373-12-12S17.373 12 24 12s12 5.373 12 12-5.373 12-12 12z" fill="#4F46E5" />
               <path d="M28 20h-8v8h8v-8z" fill="#4F46E5" />
@@ -583,72 +578,40 @@ const HeaderAspirante = ({
           </div>
 
           <nav style={stylesInline.primaryNavigation}>
-            <button
-              onClick={() => handleNavigation(`/moduloAspirante/trabajos?userId=${userId}`)}
-              style={stylesInline.navLink}
-              className="nav-item"
-            >
+            <button onClick={() => handleNavigation(`/moduloAspirante/trabajos?userId=${userId}`)} style={stylesInline.navLink} className="nav-item">
               Trabajos
             </button>
 
-            <button
-              onClick={() => handleNavigation(`/moduloAspirante/red?userId=${userId}`)}
-              style={stylesInline.navLink}
-              className="nav-item"
-            >
+            <button onClick={() => handleNavigation(`/moduloAspirante/red?userId=${userId}`)} style={stylesInline.navLink} className="nav-item">
               Mi Red
             </button>
 
-            <button
-              onClick={() => handleNavigation(`/moduloAspirante/postulaciones/${userId}`)}
-              style={stylesInline.navLink}
-              className="nav-item"
-            >
+            <button onClick={() => handleNavigation(`/moduloAspirante/postulaciones/${userId}`)} style={stylesInline.navLink} className="nav-item">
               Mis Postulaciones
             </button>
 
-            <button
-              onClick={() => handleNavigation(`/moduloAspirante/cv?userId=${userId}`)}
-              style={stylesInline.navLink}
-              className="nav-item"
-            >
+            <button onClick={() => handleNavigation(`/moduloAspirante/cv?userId=${userId}`)} style={stylesInline.navLink} className="nav-item">
               CV
             </button>
 
-            <button
-              onClick={() => handleNavigation(`/ver-cv/${userId}`)}
-              style={stylesInline.navLink}
-              className="nav-item"
-            >
+            <button onClick={() => handleNavigation(`/ver-cv/${userId}`)} style={stylesInline.navLink} className="nav-item">
               Ver CV
             </button>
 
-            <button
-              onClick={() => handleNavigation(`/aspirante/${userId}/calificaciones`)}
-              style={stylesInline.navLink}
-              className="nav-item"
-            >
+            <button onClick={() => handleNavigation(`/aspirante/${aspiranteId}/calificaciones`)} style={stylesInline.navLink} className="nav-item">
               Mis Calificaciones
             </button>
 
-            <button
-              onClick={handleMensajesClick}
-              style={stylesInline.messagesButton}
-              className="nav-item"
-            >
+            <button onClick={handleMensajesClick} style={stylesInline.messagesButton} className="nav-item">
               <span>💬</span>
               Mensajes
             </button>
 
-            {/* Botón de Notificaciones */}
-            <button
-              onClick={handleNotificacionesClick}
-              className={styles.botonNotificacionesCustom}
-            >
+            <button onClick={handleNotificacionesClick} className={styles.botonNotificacionesCustom}>
               🔔
-              {(notificacionesNoLeidas || cantidadNoLeidas) > 0 && (
-                <span className={`${styles.badgeNotificacionCustom} ${(notificacionesNoLeidas || cantidadNoLeidas) > 0 ? styles.new : ''}`}>
-                  {(notificacionesNoLeidas || cantidadNoLeidas) > 99 ? '99+' : (notificacionesNoLeidas || cantidadNoLeidas)}
+              {cantidadNoLeidas > 0 && (
+                <span className={`${styles.badgeNotificacionCustom} ${cantidadNoLeidas > 0 ? styles.new : ''}`}>
+                  {cantidadNoLeidas > 99 ? '99+' : cantidadNoLeidas}
                 </span>
               )}
             </button>
@@ -657,11 +620,7 @@ const HeaderAspirante = ({
 
         <div style={stylesInline.rightSection}>
           <div style={stylesInline.userDropdownContainer}>
-            <button
-              onClick={toggleUserDropdown}
-              style={stylesInline.userAvatar}
-              className="user-avatar"
-            >
+            <button onClick={toggleUserDropdown} style={stylesInline.userAvatar} className="user-avatar">
               <div style={stylesInline.avatarFallback}>
                 {datosUsuario.nombres.charAt(0).toUpperCase()}
               </div>
@@ -695,13 +654,7 @@ const HeaderAspirante = ({
                   style={stylesInline.userDropdownItem}
                   className="dropdown-item"
                 >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
@@ -713,13 +666,7 @@ const HeaderAspirante = ({
                   style={{ ...stylesInline.userDropdownItem, ...stylesInline.logoutItem }}
                   className="logout-item"
                 >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     <polyline points="16,17 21,12 16,7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     <line x1="21" y1="12" x2="9" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -732,8 +679,8 @@ const HeaderAspirante = ({
         </div>
       </header>
 
-      {/* 🆕 PANELES GLOBALES (IGUAL QUE CONTRATANTE) */}
-
+      {/* 🆕 PANELES SIEMPRE DISPONIBLES */}
+      
       {/* Panel de usuarios para chat */}
       {showPanelUsuarios && (
         <div style={{

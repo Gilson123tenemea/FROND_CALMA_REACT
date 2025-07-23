@@ -125,30 +125,38 @@ const ModuloContratante = () => {
   }, [location.state]);
 
   // 🆕 FUNCIÓN PARA CARGAR DATOS DEL CONTRATANTE ACTUAL
-  const cargarDatosUsuarioActual = async (contratistaId) => {
-    try {
-      console.log('🔍 [CONTRATANTE] Cargando datos del usuario actual...');
-      // Asumiendo que tienes un endpoint para obtener datos del contratante
-      const response = await axios.get(`http://localhost:8090/api/usuarios/buscar_contratante/${contratistaId}`);
-      
-      if (response.data) {
-        console.log('✅ [CONTRATANTE] Datos del usuario cargados:', response.data);
-        setDatosUsuarioActual(response.data);
-      }
-    } catch (error) {
-      console.error('❌ [CONTRATANTE] Error al cargar datos del usuario:', error);
-      // Si falla, usar datos del localStorage como fallback
-      const userData = JSON.parse(localStorage.getItem('userData'));
-      if (userData) {
-        setDatosUsuarioActual({
-          nombres: userData.nombres || 'Usuario',
-          apellidos: userData.apellidos || 'Contratante',
-          correo: userData.correo || 'contratante@email.com'
-        });
-      }
+const cargarDatosUsuarioActual = async (contratistaId) => {
+  try {
+    console.log('🔍 [CONTRATANTE] Cargando datos del usuario actual...');
+    
+    // ✅ USAR EL ENDPOINT QUE SÍ EXISTE: /api/usuarios/{id}
+    const response = await axios.get(`http://localhost:8090/api/usuarios/${contratistaId}`);
+    
+    if (response.data) {
+      console.log('✅ [CONTRATANTE] Datos del usuario cargados:', response.data);
+      setDatosUsuarioActual({
+        nombres: response.data.nombres || response.data.nombre || 'Usuario',
+        apellidos: response.data.apellidos || response.data.apellido || 'Contratante',
+        correo: response.data.correo || 'contratante@email.com',
+        cedula: response.data.cedula,
+        telefono: response.data.telefono
+      });
     }
-  };
-
+  } catch (error) {
+    console.error('❌ [CONTRATANTE] Error al cargar datos del usuario:', error);
+    
+    // ✅ FALLBACK CON LOCALSTORAGE
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    if (userData) {
+      setDatosUsuarioActual({
+        nombres: userData.nombres || userData.nombre || 'Usuario',
+        apellidos: userData.apellidos || userData.apellido || 'Contratante',
+        correo: userData.correo || 'contratante@email.com'
+      });
+      console.log('🔄 [CONTRATANTE] Usando datos del localStorage como fallback');
+    }
+  }
+};
   useEffect(() => {
     const fetchNoLeidas = async () => {
       if (!contratanteId) return; // ✅ CORREGIDO: usar contratanteId
@@ -266,14 +274,25 @@ const ModuloContratante = () => {
     setUsuarioChat(null);
   };
 
-  const handleAbrirNotificaciones = async () => {
+ const handleAbrirNotificaciones = async () => {
     if (!contratanteId) return;
 
     try {
+      console.log(`🔍 [ModuloContratante] Abriendo notificaciones para contratante: ${contratanteId}`);
       await axios.put(`http://localhost:8090/api/notificaciones/contratante/marcar-leidas/${contratanteId}`);
       const response = await axios.get(`http://localhost:8090/api/notificaciones/contratante/${contratanteId}`);
-      setNotificaciones(response.data);
+      
+      // 🆕 ORDENAR NOTIFICACIONES: más recientes primero
+      const notificacionesOrdenadas = response.data.sort((a, b) => {
+        // Ordenar por fecha: más reciente primero
+        const fechaA = new Date(a.fecha);
+        const fechaB = new Date(b.fecha);
+        return fechaB - fechaA; // Orden descendente (más reciente primero)
+      });
+      
+      setNotificaciones(notificacionesOrdenadas);
       setCantidadNoLeidas(0);
+      console.log(`✅ [ModuloContratante] ${notificacionesOrdenadas.length} notificaciones cargadas y ordenadas`);
     } catch (error) {
       console.error("Error al obtener notificaciones:", error);
     } finally {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaStar, FaArrowLeft, FaUser, FaBriefcase, FaCalendarAlt, FaFilter } from 'react-icons/fa';
+import { FaStar, FaArrowLeft, FaUser, FaBriefcase, FaFilter } from 'react-icons/fa';
 import HeaderAspirante from '../HeaderAspirante/HeaderAspirante';
 import './TodasLasCalificaciones.css';
 
@@ -12,42 +12,128 @@ const TodasLasCalificaciones = () => {
   const [loading, setLoading] = useState(true);
   const [filtroEstrella, setFiltroEstrella] = useState(0);
   const [resumen, setResumen] = useState(null);
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
     if (aspiranteId) {
+      // Verificar si este es el aspirante correcto
+      verificarAspiranteCorrect();
+    }
+  }, [aspiranteId]);
+
+  useEffect(() => {
+    if (userId !== null) {
       cargarCalificaciones();
       cargarResumen();
     }
-  }, [aspiranteId]);
+  }, [userId]);
 
   useEffect(() => {
     filtrarCalificaciones();
   }, [calificaciones, filtroEstrella]);
 
+  // Verificar y redirigir al aspirante correcto si es necesario
+  const verificarAspiranteCorrect = async () => {
+    try {
+      // Verificar localStorage primero
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      
+      if (userData.aspiranteId && userData.aspiranteId !== parseInt(aspiranteId)) {
+        // Redirección silenciosa al aspirante correcto
+        navigate(`/aspirante/${userData.aspiranteId}/calificaciones`, { replace: true });
+        return;
+      }
+
+      // Si es el aspirante correcto, obtener userId
+      await obtenerUserId();
+      
+    } catch (error) {
+      console.error('Error verificando aspirante:', error);
+      setLoading(false);
+    }
+  };
+
+  const obtenerUserId = async () => {
+    try {
+      const response = await fetch(`http://localhost:8090/api/usuarios/buscar_aspirante/${aspiranteId}`);
+      
+      if (response.ok) {
+        const responseText = await response.text();
+        
+        if (responseText && responseText.trim() !== '') {
+          const idUsuario = JSON.parse(responseText);
+          setUserId(idUsuario);
+        } else {
+          console.error('No se encontró usuario para el aspirante:', aspiranteId);
+          setUserId(aspiranteId);
+        }
+      } else {
+        setUserId(aspiranteId);
+      }
+    } catch (error) {
+      console.error('Error obteniendo userId:', error);
+      setUserId(aspiranteId);
+    }
+  };
+
   const cargarCalificaciones = async () => {
     try {
-      // Aquí necesitarías crear un endpoint que devuelva todas las calificaciones detalladas
-      const respuesta = await fetch(`http://localhost:8090/api/cvs/aspirante/${aspiranteId}/calificaciones/completas`);
+      const endpoint = `http://localhost:8090/api/calificaciones/aspirante/${aspiranteId}`;
+      const respuesta = await fetch(endpoint);
       
       if (respuesta.ok) {
         const datos = await respuesta.json();
-        setCalificaciones(datos.calificaciones || []);
+        
+        if (Array.isArray(datos)) {
+          setCalificaciones(datos);
+          return;
+        }
       }
+      
+      setCalificaciones([]);
+      
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error cargando calificaciones:', error);
+      setCalificaciones([]);
     }
   };
 
   const cargarResumen = async () => {
     try {
-      const respuesta = await fetch(`http://localhost:8090/api/cvs/aspirante/${aspiranteId}/calificaciones/resumen`);
+      const endpoint = `http://localhost:8090/api/calificaciones/aspirante/${aspiranteId}/resumen`;
+      const respuesta = await fetch(endpoint);
       
       if (respuesta.ok) {
         const datos = await respuesta.json();
         setResumen(datos);
+        return;
+      }
+      
+      // Fallback: calcular resumen desde calificaciones
+      if (calificaciones.length > 0) {
+        const resumenCalculado = {
+          totalCalificaciones: calificaciones.length,
+          promedioCalificacion: (calificaciones.reduce((sum, cal) => sum + cal.puntaje, 0) / calificaciones.length).toFixed(1),
+          estrellas: Math.round(calificaciones.reduce((sum, cal) => sum + cal.puntaje, 0) / calificaciones.length),
+          distribucionEstrellas: {
+            5: calificaciones.filter(c => c.puntaje === 5).length,
+            4: calificaciones.filter(c => c.puntaje === 4).length,
+            3: calificaciones.filter(c => c.puntaje === 3).length,
+            2: calificaciones.filter(c => c.puntaje === 2).length,
+            1: calificaciones.filter(c => c.puntaje === 1).length,
+          }
+        };
+        setResumen(resumenCalculado);
+      } else {
+        setResumen({
+          totalCalificaciones: 0,
+          promedioCalificacion: "0.0",
+          estrellas: 0,
+          distribucionEstrellas: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+        });
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error cargando resumen:', error);
     } finally {
       setLoading(false);
     }
@@ -73,6 +159,7 @@ const TodasLasCalificaciones = () => {
   };
 
   const formatearFecha = (fecha) => {
+    if (!fecha) return 'Fecha no disponible';
     return new Date(fecha).toLocaleDateString('es-ES', {
       year: 'numeric',
       month: 'long',
@@ -89,7 +176,7 @@ const TodasLasCalificaciones = () => {
   if (loading) {
     return (
       <div className="calificaciones-page">
-        <HeaderAspirante userId={aspiranteId} />
+        <HeaderAspirante />
         <div className="loading-container">
           <div className="loading-spinner"></div>
           <p>Cargando calificaciones...</p>
@@ -100,7 +187,7 @@ const TodasLasCalificaciones = () => {
 
   return (
     <div className="calificaciones-page">
-      <HeaderAspirante userId={aspiranteId} />
+      <HeaderAspirante />
       
       <div className="calificaciones-content">
         {/* Header */}
@@ -125,7 +212,7 @@ const TodasLasCalificaciones = () => {
               
               <div className="distribucion-detallada">
                 {[5, 4, 3, 2, 1].map(estrella => {
-                  const cantidad = resumen.distribucionEstrellas[estrella] || 0;
+                  const cantidad = resumen.distribucionEstrellas?.[estrella] || 0;
                   const porcentaje = resumen.totalCalificaciones > 0 
                     ? (cantidad / resumen.totalCalificaciones) * 100 
                     : 0;
@@ -155,39 +242,48 @@ const TodasLasCalificaciones = () => {
         )}
 
         {/* Filtros */}
-        <div className="filtros-calificaciones">
-          <div className="filtros-header">
-            <FaFilter className="icono-filtro" />
-            <span>Filtrar por calificación:</span>
-          </div>
-          <div className="botones-filtro">
-            <button 
-              className={`btn-filtro ${filtroEstrella === 0 ? 'activo' : ''}`}
-              onClick={() => setFiltroEstrella(0)}
-            >
-              Todas
-            </button>
-            {[5, 4, 3, 2, 1].map(estrella => (
+        {calificaciones.length > 0 && (
+          <div className="filtros-calificaciones">
+            <div className="filtros-header">
+              <FaFilter className="icono-filtro" />
+              <span>Filtrar por calificación:</span>
+            </div>
+            <div className="botones-filtro">
               <button 
-                key={estrella}
-                className={`btn-filtro ${filtroEstrella === estrella ? 'activo' : ''}`}
-                onClick={() => setFiltroEstrella(estrella)}
+                className={`btn-filtro ${filtroEstrella === 0 ? 'activo' : ''}`}
+                onClick={() => setFiltroEstrella(0)}
               >
-                {estrella} <FaStar className="estrella-filtro" />
+                Todas
               </button>
-            ))}
+              {[5, 4, 3, 2, 1].map(estrella => (
+                <button 
+                  key={estrella}
+                  className={`btn-filtro ${filtroEstrella === estrella ? 'activo' : ''}`}
+                  onClick={() => setFiltroEstrella(estrella)}
+                >
+                  {estrella} <FaStar className="estrella-filtro" />
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Lista de calificaciones */}
         <div className="lista-calificaciones-completa">
           {calificacionesFiltradas.length === 0 ? (
             <div className="sin-calificaciones-filtro">
-              <p>No hay calificaciones para este filtro</p>
+              <p>
+                {filtroEstrella > 0 
+                  ? `No hay calificaciones de ${filtroEstrella} estrella${filtroEstrella > 1 ? 's' : ''}`
+                  : calificaciones.length === 0 
+                    ? '⭐ Aún no tienes calificaciones. ¡Completa algunos trabajos para empezar a recibir valoraciones!'
+                    : 'No hay calificaciones para este filtro'
+                }
+              </p>
             </div>
           ) : (
-            calificacionesFiltradas.map((calificacion) => (
-              <div key={calificacion.id_calificacion} className="calificacion-completa">
+            calificacionesFiltradas.map((calificacion, index) => (
+              <div key={calificacion.id_calificacion || index} className="calificacion-completa">
                 <div className="calificacion-header-completa">
                   <div className="info-izquierda">
                     <div className="estrellas-calificacion">
@@ -204,7 +300,7 @@ const TodasLasCalificaciones = () => {
                         <FaUser className="icono-contratante" />
                         <div className="datos-contratante">
                           <span className="nombre-contratante">
-                            {calificacion.contratante.nombre}
+                            {calificacion.contratante.nombre || 'Contratante anónimo'}
                           </span>
                           {calificacion.contratante.empresa && (
                             <span className="empresa-contratante">
@@ -221,7 +317,7 @@ const TodasLasCalificaciones = () => {
                   <div className="info-trabajo">
                     <FaBriefcase className="icono-trabajo" />
                     <div className="detalles-trabajo">
-                      <h4>{calificacion.trabajo.tituloTrabajo}</h4>
+                      <h4>{calificacion.trabajo.tituloTrabajo || 'Trabajo sin título'}</h4>
                       {calificacion.trabajo.descripcionTrabajo && (
                         <p className="descripcion-trabajo">
                           {calificacion.trabajo.descripcionTrabajo}
@@ -232,7 +328,7 @@ const TodasLasCalificaciones = () => {
                 )}
 
                 <div className="comentario-completo">
-                  <p>{calificacion.comentario}</p>
+                  <p>{calificacion.comentario || 'Sin comentarios adicionales'}</p>
                 </div>
               </div>
             ))
@@ -256,7 +352,10 @@ const TodasLasCalificaciones = () => {
               </div>
               <div className="stat-item">
                 <span className="stat-numero">
-                  {new Date(Math.max(...calificaciones.map(c => new Date(c.fecha)))).toLocaleDateString('es-ES', {month: 'short', year: 'numeric'})}
+                  {calificaciones.length > 0 && calificaciones.some(c => c.fecha) 
+                    ? new Date(Math.max(...calificaciones.filter(c => c.fecha).map(c => new Date(c.fecha)))).toLocaleDateString('es-ES', {month: 'short', year: 'numeric'})
+                    : 'N/A'
+                  }
                 </span>
                 <span className="stat-label">Última calificación</span>
               </div>

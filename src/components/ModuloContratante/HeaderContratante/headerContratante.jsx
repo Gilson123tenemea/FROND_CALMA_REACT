@@ -157,13 +157,24 @@ const HeaderContratante = ({
   };
 
   // 🆕 LÓGICA LOCAL DE NOTIFICACIONES
-  const handleAbrirNotificaciones = async () => {
+ const handleAbrirNotificaciones = async () => {
     try {
+      console.log(`🔍 [HeaderContratante] Abriendo notificaciones para contratante: ${userId}`);
       await axios.put(`http://localhost:8090/api/notificaciones/contratante/marcar-leidas/${userId}`);
       const response = await axios.get(`http://localhost:8090/api/notificaciones/contratante/${userId}`);
-      setNotificaciones(response.data);
+      
+      // 🆕 ORDENAR NOTIFICACIONES: más recientes primero
+      const notificacionesOrdenadas = response.data.sort((a, b) => {
+        // Ordenar por fecha: más reciente primero
+        const fechaA = new Date(a.fecha);
+        const fechaB = new Date(b.fecha);
+        return fechaB - fechaA; // Orden descendente (más reciente primero)
+      });
+      
+      setNotificaciones(notificacionesOrdenadas);
       setCantidadNoLeidas(0);
       setShowPanelNotificaciones(true);
+      console.log(`✅ [HeaderContratante] ${notificacionesOrdenadas.length} notificaciones cargadas y ordenadas`);
     } catch (error) {
       console.error("Error al obtener notificaciones:", error);
     }
