@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate  } from 'react-router-dom';
 import { getFichasByPaciente } from '../../servicios/ficha';
 import './ver.css';
 
@@ -43,6 +43,8 @@ const FichaPacienteVer = () => {
             setCurrentStep(currentStep - 1);
         }
     };
+    const navigate = useNavigate();
+
 
     const renderStepNavigation = () => (
         <div className="fpv-steps-navigation">
@@ -87,7 +89,7 @@ const FichaPacienteVer = () => {
                     </div>
                     <div className="fpv-info-item">
                         <span className="fpv-label">Estado de ánimo:</span>
-                        <span className="fpv-value">{ficha.estado_animo}</span>
+                        <span className="fpv-value fpv-large-text">{ficha.estado_animo}</span>
                     </div>
                     <div className="fpv-info-item">
                         <span className="fpv-label">Rutina Médica:</span>
@@ -96,11 +98,11 @@ const FichaPacienteVer = () => {
                     </div>
                     <div className="fpv-info-item">
                         <span className="fpv-label">Riesgo de caídas:</span>
-                        <span className="fpv-value">{ficha.caidas}</span>
+                        <span className="fpv-value fpv-large-text" >{ficha.caidas}</span>
                     </div>
                     <div className="fpv-info-item">
                         <span className="fpv-label">Observaciones:</span>
-                        <span className="fpv-value">{ficha.observaciones}</span>
+                        <span className="fpv-value fpv-large-text ">{ficha.observaciones}</span>
                     </div>
                 </div>
 
@@ -108,23 +110,23 @@ const FichaPacienteVer = () => {
                 <div className="fpv-info-grid">
                     <div className="fpv-info-item">
                         <span className="fpv-label">Comunicación:</span>
-                        <span className={`fpv-value fpv-boolean ${ficha.comunicacion ? 'fpv-yes' : 'fpv-no'}`}>
+                        <span className={`fpv-value fpv-large-text fpv-boolean ${ficha.comunicacion ? 'fpv-yes' : 'fpv-no'}`}>
                             {ficha.comunicacion ? 'Sí' : 'No'}
                         </span>
                     </div>
                     <div className="fpv-info-item">
                         <span className="fpv-label">Otras Comunicaciones:</span>
-                        <span className="fpv-value">{ficha.otras_comunicaciones}</span>
+                        <span className="fpv-value fpv-large-text">{ficha.otras_comunicaciones}</span>
                     </div>
                     <div className="fpv-info-item">
                         <span className="fpv-label">Usa Pañal:</span>
-                        <span className={`fpv-value fpv-boolean ${ficha.usapanal ? 'fpv-yes' : 'fpv-no'}`}>
+                        <span className={`fpv-value fpv-large-text fpv-boolean ${ficha.usapanal ? 'fpv-yes' : 'fpv-no'}`}>
                             {ficha.usapanal ? 'Sí' : 'No'}
                         </span>
                     </div>
                     <div className="fpv-info-item">
                         <span className="fpv-label">Requiere acompañamiento:</span>
-                        <span className={`fpv-value fpv-boolean ${ficha.acompañado ? 'fpv-yes' : 'fpv-no'}`}>
+                        <span className={`fpv-value  fpv-large-text fpv-boolean ${ficha.acompañado ? 'fpv-yes' : 'fpv-no'}`}>
                             {ficha.acompañado ? 'Sí' : 'No'}
                         </span>
                     </div>
@@ -134,27 +136,27 @@ const FichaPacienteVer = () => {
                 <div className="fpv-info-grid">
                     <div className="fpv-info-item">
                         <span className="fpv-label">Tipo de Dieta:</span>
-                        <span className="fpv-value">{ficha.tipo_dieta}</span>
+                        <span className="fpv-value fpv-large-text ">{ficha.tipo_dieta}</span>
                     </div>
                     <div className="fpv-info-item">
                         <span className="fpv-label">Alimentación asistida:</span>
-                        <span className="fpv-value">{ficha.alimentacion_asistida}</span>
+                        <span className="fpv-value fpv-large-text">{ficha.alimentacion_asistida}</span>
                     </div>
                     <div className="fpv-info-item">
                         <span className="fpv-label">Hora de Levantarse:</span>
-                        <span className="fpv-value">{ficha.hora_levantarse}</span>
+                        <span className="fpv-value fpv-large-text ">{ficha.hora_levantarse}</span>
                     </div>
                     <div className="fpv-info-item">
                         <span className="fpv-label">Hora de Acostarse:</span>
-                        <span className="fpv-value">{ficha.hora_acostarse}</span>
+                        <span className="fpv-value fpv-large-text ">{ficha.hora_acostarse}</span>
                     </div>
                     <div className="fpv-info-item">
                         <span className="fpv-label">Frecuencia de Siestas:</span>
-                        <span className="fpv-value">{ficha.frecuencia_siestas}</span>
+                        <span className="fpv-value fpv-large-text">{ficha.frecuencia_siestas}</span>
                     </div>
                     <div className="fpv-info-item">
                         <span className="fpv-label">Frecuencia de Baño:</span>
-                        <span className="fpv-value">{ficha.frecuencia_baño}</span>
+                        <span className="fpv-value fpv-large-text ">{ficha.frecuencia_baño}</span>
                     </div>
                 </div>
             </div>
@@ -335,13 +337,21 @@ const FichaPacienteVer = () => {
                             {currentStep + 1} de {steps.length}
                         </div>
                         
-                        <button 
-                            className="fpv-nav-button" 
-                            onClick={nextStep}
-                            disabled={currentStep === steps.length - 1}
-                        >
-                            Siguiente →
-                        </button>
+{currentStep === steps.length - 1 ? (
+    <button
+        className="fpv-nav-button"
+        onClick={() => navigate('/moduloContratante')}
+    >
+        Finalizar
+    </button>
+) : (
+    <button 
+        className="fpv-nav-button" 
+        onClick={nextStep}
+    >
+        Siguiente →
+    </button>
+)}
                     </div>
                 </div>
             ))}
