@@ -32,8 +32,10 @@ const Navbar = () => {
         <a href="/contact">Contacto</a>
       </nav>
 
-      <div className="auth-buttons">
-       
+       <div className="auth-buttons">
+        <button className="btn-signup" onClick={() => navigate('/registro')}>
+          Registrar
+        </button>
         <button className="btn-login" onClick={() => navigate('/login')}>
           Ingresar
         </button>

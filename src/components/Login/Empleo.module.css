@@ -1,395 +1,864 @@
-/* Variables de color */
-:root {
-  --electric-blue: #0066ff;
-  --electric-blue-light: #4d94ff;
-  --electric-blue-dark: #0052cc;
-  --white: #ffffff;
-  --light-gray: #f5f7fa;
-  --medium-gray: #e1e5eb;
-  --dark-gray: #6c757d;
-  --black: #212529;
-  --success: #28a745;
-  --error: #dc3545;
-  --primary-accent: #3a86ff;
-  --secondary-accent: #8338ec;
-}
-
-/* Estilos generales */
-.page {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: var(--black);
-  background-color: var(--light-gray);
+/* Container principal */
+.empleoContainer {
+  background: #ffffff;
   min-height: 100vh;
-  line-height: 1.6;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* Hero Section */
-.hero {
-  background: linear-gradient(135deg, var(--electric-blue), var(--electric-blue-dark));
-  color: var(--white);
-  padding: 60px 0;
+/* Hero Section - Estilo Soluciones */
+.empleoHeroSection {
+   background: linear-gradient(135deg, #0b5d83 0%, #0b5d83 25%, #015c8a 50%, #015c8a 75%, #034c74 100%);
+  padding: 0px 20px 100px;
+  margin-top: -10px;
   position: relative;
   overflow: hidden;
 }
 
-.heroContent {
+.empleoHeroSection::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M20 20c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10zm10 0c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10z'/%3E%3C/g%3E%3C/svg%3E")
+    repeat;
+}
+
+.empleoHeroContainer {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 30px;
-}
-
-.heroText {
-  flex: 1;
-  text-align: center;
-  z-index: 2;
-}
-
-.heroImageContainer {
-  flex: 1;
-  max-width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
   z-index: 1;
 }
 
-.heroImage {
-  width: 100%;
-  height: auto;
-  max-height: 400px;
-  object-fit: cover;
-  border-radius: 12px;
-  transition: transform 0.5s ease;
+.empleoHeroContent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  padding-top: 50px;
 }
 
-.heroImage:hover {
-  transform: scale(1.02);
+.empleoHeroLeft {
+  color: white;
+  animation: slideInLeft 1s ease-out;
 }
 
-.title {
-  font-size: clamp(2rem, 5vw, 3rem);
-  font-weight: 700;
-  margin-bottom: 20px;
-  line-height: 1.2;
-  background: linear-gradient(to right, #fff, #c9d6ff);
+.empleoHeroBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  padding: 8px 16px;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.empleoHeroTitle {
+  font-size: 3.2rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 100%);
   -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   background-clip: text;
-  color: transparent;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.subtitle {
-  font-size: clamp(1rem, 2vw, 1.25rem);
-  max-width: 600px;
-  margin: 0 auto 30px;
+.empleoHeroDescription {
+  font-size: 1.2rem;
+  line-height: 1.7;
+  margin-bottom: 40px;
   opacity: 0.9;
+  font-weight: 400;
 }
 
-.heroButton {
-  background-color: var(--white);
-  color: var(--electric-blue);
+.empleoHeroButtons {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.empleoHeroPrimaryBtn {
+  background: white;
+  color: #1e3a8a;
+  padding: 16px 32px;
   border: none;
-  padding: 12px 30px;
-  border-radius: 30px;
-  font-weight: 600;
+  border-radius: 12px;
   font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
 }
 
-.heroButton:hover {
-  background-color: rgba(255, 255, 255, 0.9);
+.empleoHeroPrimaryBtn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+.empleoHeroSecondaryBtn {
+  background: transparent;
+  color: white;
+  padding: 16px 32px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  backdrop-filter: blur(10px);
+}
+
+.empleoHeroSecondaryBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.empleoHeroRight {
+  animation: slideInRight 1s ease-out;
+}
+
+.empleoHeroImageGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  height: 400px;
+}
+
+.empleoHeroMainImage {
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.empleoHeroImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.empleoHeroMainImage:hover .empleoHeroImg {
+  transform: scale(1.05);
+}
+
+.empleoHeroSecondaryImages {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.empleoHeroImgSmall {
+  width: 100%;
+  height: calc(50% - 10px);
+  object-fit: cover;
+  border-radius: 15px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  transition: transform 0.4s ease;
+}
+
+.empleoHeroImgSmall:hover {
+  transform: scale(1.05);
+}
+
+/* Stats Section */
+.empleoStatsSection {
+  padding: 80px 20px;
+  background: #f8fafc;
+  margin-top: -50px;
+  position: relative;
+  z-index: 2;
+}
+
+.empleoStatsContainer {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 40px;
+}
+
+.empleoStatCard {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: all 0.4s ease;
+  animation: fadeInUp 1s ease-out both;
+  border: 1px solid #e2e8f0;
+}
+
+.empleoStatCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 50px rgba(30, 58, 138, 0.15);
+}
+
+.empleoStatIcon {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #1e3a8a, #0038d3);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.empleoStatContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.empleoStatNumber {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1e3a8a;
+  line-height: 1;
+}
+
+.empleoStatLabel {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Section Header */
+.empleoSectionHeader {
+  text-align: center;
+  margin-bottom: 60px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.empleoSectionTitle {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #1e3a8a;
+  margin-bottom: 20px;
+  animation: fadeInUp 1s ease-out;
+}
+
+.empleoSectionSubtitle {
+  font-size: 1.3rem;
+  color: #64748b;
+  line-height: 1.6;
+  animation: fadeInUp 1s ease-out 0.2s both;
 }
 
 /* Ofertas Section */
-.jobOffers {
-  padding: 80px 20px;
+.empleoOfertasSection {
+  padding: 100px 20px;
+  background: white;
+}
+
+.empleoOfertasContainer {
   max-width: 1200px;
   margin: 0 auto;
 }
 
-.sectionHeader {
-  text-align: center;
-  margin-bottom: 50px;
-}
-
-.sectionHeader h2 {
-  font-size: clamp(1.75rem, 3vw, 2.2rem);
-  color: var(--electric-blue-dark);
-  margin-bottom: 15px;
-}
-
-.sectionHeader p {
-  color: var(--dark-gray);
-  font-size: 1.1rem;
-}
-
-.offersGrid {
+.empleoOfertasGrid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 40px;
 }
 
-.offerCard {
-  background: var(--white);
-  border-radius: 12px;
+.empleoOfertaCard {
+  background: white;
+  border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-}
-
-.offerCard:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-}
-
-.cardImage {
-  height: 200px;
-  background-size: cover;
-  background-position: center;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  transition: all 0.5s ease;
+  animation: fadeInUp 1s ease-out both;
+  border: 1px solid #e2e8f0;
   position: relative;
 }
 
-.cardBadge {
+.empleoOfertaCard:hover {
+  transform: translateY(-15px);
+  box-shadow: 0 30px 80px rgba(30, 58, 138, 0.2);
+}
+
+.empleoOfertaImageContainer {
+  position: relative;
+  height: 240px;
+  overflow: hidden;
+}
+
+.empleoOfertaImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.empleoOfertaCard:hover .empleoOfertaImage {
+  transform: scale(1.1);
+}
+
+.empleoOfertaOverlay {
   position: absolute;
-  top: 15px;
-  right: 15px;
-  background-color: var(--success);
-  color: var(--white);
-  padding: 5px 10px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-.cardContent {
-  padding: 25px;
-}
-
-.cardContent h3 {
-  font-size: 1.4rem;
-  color: var(--electric-blue-dark);
-  margin-bottom: 10px;
-}
-
-.location {
-  color: var(--dark-gray);
-  margin-bottom: 15px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(30, 58, 138, 0.1), rgba(29, 78, 216, 0.1));
+  opacity: 0;
+  transition: opacity 0.4s ease;
   display: flex;
   align-items: center;
-  gap: 5px;
+  justify-content: center;
 }
 
-.requirements {
+.empleoOfertaCard:hover .empleoOfertaOverlay {
+  opacity: 1;
+}
+
+.empleoOfertaIcon {
+  width: 70px;
+  height: 70px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1e3a8a;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  transform: scale(0.8);
+  transition: transform 0.4s ease;
+}
+
+.empleoOfertaCard:hover .empleoOfertaIcon {
+  transform: scale(1);
+}
+
+.empleoOfertaContent {
+  padding: 35px;
+}
+
+.empleoOfertaHeader {
   margin-bottom: 20px;
 }
 
-.requirements h4 {
-  font-size: 1.1rem;
-  margin: 20px 0 10px;
-  color: var(--electric-blue);
-}
-
-.requirements ul {
-  padding-left: 20px;
-  margin-bottom: 25px;
-}
-
-.requirements li {
+.empleoOfertaTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e3a8a;
   margin-bottom: 8px;
-  color: var(--black);
 }
 
-.cardButton {
-  background-color: var(--electric-blue);
-  color: var(--white);
-  border: none;
-  padding: 12px 25px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
+.empleoOfertaLocation {
+  color: #64748b;
+  font-size: 1rem;
   display: flex;
   align-items: center;
   gap: 8px;
-  width: 100%;
-  justify-content: center;
 }
 
-.cardButton:hover {
-  background-color: var(--electric-blue-dark);
+.empleoOfertaRequirements {
+  margin-top: 20px;
 }
 
-.arrow {
-  transition: transform 0.3s ease;
+.empleoOfertaRequirements h4 {
+  font-size: 1.2rem;
+  color: #fafafa;
+  margin-bottom: 15px;
+  font-weight: 700;
 }
 
-.cardButton:hover .arrow {
-  transform: translateX(3px);
+.empleoRequirementsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-/* CTA Section */
-.ctaSection {
-  background: linear-gradient(135deg, var(--electric-blue-light), var(--electric-blue));
-  color: var(--white);
-  padding: 80px 20px;
-  text-align: center;
+.empleoRequirementsList li {
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #475569;
+  line-height: 1.6;
 }
 
-.ctaContent {
-  max-width: 800px;
+.empleoRequirementsList li svg {
+  color: #1e3a8a;
+  flex-shrink: 0;
+}
+
+/* Seguridad Section */
+.empleoSeguridadSection {
+  padding: 100px 20px;
+  background: #f8fafc;
+}
+
+.empleoSeguridadContainer {
+  max-width: 1200px;
   margin: 0 auto;
 }
 
-.ctaSection h2 {
-  font-size: clamp(1.5rem, 3vw, 2rem);
+.empleoSeguridadGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 40px;
+}
+
+.empleoSeguridadCard {
+  background: white;
+  padding: 40px;
+  border-radius: 25px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  transition: all 0.4s ease;
+  animation: fadeInUp 1s ease-out both;
+  border: 1px solid #e2e8f0;
+}
+
+.empleoSeguridadCard:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 25px 70px rgba(30, 58, 138, 0.15);
+}
+
+.empleoSeguridadIcon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #1e3a8a, #1d4ed8);
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin: 0 auto 25px;
+  box-shadow: 0 10px 30px rgba(30, 58, 138, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.empleoSeguridadCard:hover .empleoSeguridadIcon {
+  transform: scale(1.1);
+}
+
+.empleoSeguridadTitle {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  margin-bottom: 16px;
+}
+
+.empleoSeguridadDescription {
+  color: #64748b;
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+/* Info Section */
+.empleoInfoSection {
+  padding: 100px 20px;
+  background: white;
+}
+
+.empleoInfoContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.empleoInfoContent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.empleoInfoText h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1e3a8a;
+  margin-bottom: 25px;
+  animation: fadeInUp 1s ease-out;
+}
+
+.empleoInfoText p {
+  font-size: 1.15rem;
+  color: #64748b;
+  line-height: 1.7;
+  margin-bottom: 30px;
+  animation: fadeInUp 1s ease-out 0.2s both;
+}
+
+.empleoInfoFeatures {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  animation: fadeInUp 1s ease-out 0.4s both;
+}
+
+.empleoInfoFeature {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #475569;
+  font-weight: 500;
+}
+
+.empleoInfoFeature svg {
+  color: #1e3a8a;
+  flex-shrink: 0;
+}
+
+.empleoInfoImageContainer {
+  animation: slideInRight 1s ease-out;
+}
+
+.empleoInfoImage {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  border-radius: 25px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+  transition: transform 0.4s ease;
+}
+
+.empleoInfoImageContainer:hover .empleoInfoImage {
+  transform: scale(1.02);
+}
+
+/* CTA Section */
+.empleoCtaSection {
+  padding: 120px 20px;
+  background: linear-gradient(135deg, #172e6e 0%, hsl(226, 70%, 35%) 25%, #1941af 50%, #1d4fbb 75%, #3470d1 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.empleoCtaSection::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M30 30c0-8.3-6.7-15-15-15s-15 6.7-15 15 6.7 15 15 15 15-6.7 15-15zm30 0c0-8.3-6.7-15-15-15s-15 6.7-15 15 6.7 15 15 15 15-6.7 15-15z'/%3E%3C/g%3E%3C/svg%3E")
+    repeat;
+}
+
+.empleoCtaContainer {
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.empleoCtaContent {
+  text-align: center;
+  color: white;
+}
+
+.empleoCtaTitle {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.empleoCtaSubtitle {
+  font-size: 1.3rem;
+  margin-bottom: 40px;
+  opacity: 0.9;
+  line-height: 1.7;
+}
+
+.empleoCtaButtons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+.empleoCtaPrimaryButton {
+  background: white;
+  color: #1e3a8a;
+  border: none;
+  padding: 18px 36px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.1rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.empleoCtaPrimaryButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+.empleoCtaSecondaryButton {
+  background: transparent;
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 18px 36px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  font-size: 1.1rem;
+  backdrop-filter: blur(10px);
+}
+
+.empleoCtaSecondaryButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Footer - Igual al de Sobre Nosotros */
+.empleoFooter {
+  background: #0f172a;
+  color: white;
+  padding: 60px 20px 0;
+}
+
+.empleoFooterContent {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.empleoFooterMain {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 50px;
+  margin-bottom: 40px;
+}
+
+.empleoFooterSection h3,
+.empleoFooterSection h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.empleoFooterSection p {
+  color: #94a3b8;
+  line-height: 1.6;
   margin-bottom: 20px;
 }
 
-.ctaSection p {
-  margin-bottom: 30px;
-  opacity: 0.9;
-  font-size: 1.1rem;
-}
-
-.ctaButtons {
+.empleoFooterSocial {
   display: flex;
-  flex-wrap: wrap;
   gap: 15px;
-  justify-content: center;
 }
 
-.primaryButton {
-  background-color: var(--white);
-  color: var(--electric-blue);
-  border: none;
-  padding: 12px 30px;
-  border-radius: 30px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+.empleoSocialLink {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
 }
 
-.primaryButton:hover {
-  background-color: rgba(255, 255, 255, 0.9);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+.empleoSocialLink:hover {
+  color: #3b82f6;
 }
 
-.secondaryButton {
-  background-color: transparent;
-  color: var(--white);
-  border: 2px solid var(--white);
-  padding: 12px 30px;
-  border-radius: 30px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+.empleoFooterList {
+  list-style: none;
+  padding: 0;
 }
 
-.secondaryButton:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+.empleoFooterList li {
+  margin-bottom: 10px;
 }
 
-/* Media Queries para pantallas más grandes */
-@media (min-width: 768px) {
-  .hero {
-    padding: 80px 0;
+.empleoFooterList a {
+  color: #94a3b8;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.empleoFooterList a:hover {
+  color: #3b82f6;
+}
+
+.empleoContactInfo p {
+  margin-bottom: 8px;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+}
+
+.empleoFooterBottom {
+  border-top: 1px solid #334155;
+  padding: 20px 0;
+}
+
+.empleoFooterBottomContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.empleoFooterLinks {
+  display: flex;
+  gap: 30px;
+}
+
+.empleoFooterLinks a {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.empleoFooterLinks a:hover {
+  color: #3b82f6;
+}
+
+/* Animaciones */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
   }
-  
-  .heroContent {
-    flex-direction: row;
-    padding: 0 40px;
-    align-items: center;
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .empleoHeroContent {
+    grid-template-columns: 1fr;
+    gap: 50px;
+    padding-top: 60px;
+  }
+
+  .empleoHeroTitle {
+    font-size: 2.4rem;
+  }
+
+  .empleoSectionTitle {
+    font-size: 2.2rem;
+  }
+
+  .empleoCtaTitle {
+    font-size: 2.2rem;
+  }
+
+  .empleoHeroButtons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .empleoCtaButtons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .empleoOfertasGrid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .empleoStatsContainer {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .empleoSeguridadGrid {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .empleoInfoContent {
+    grid-template-columns: 1fr;
     gap: 50px;
   }
-  
-  .heroText {
-    text-align: left;
+
+  .empleoFooterMain {
+    grid-template-columns: 1fr;
+    gap: 30px;
   }
-  
-  .heroImageContainer {
-    max-width: 50%;
+
+  .empleoFooterBottomContent {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
   }
-  
-  .heroImage {
-    max-height: 500px;
-    width: 100%;
+
+  .empleoHeroImageGrid {
+    grid-template-columns: 1fr;
+    height: auto;
+    gap: 15px;
   }
-  
-  .offersGrid {
-    grid-template-columns: repeat(2, 1fr);
+
+  .empleoHeroSecondaryImages {
+    flex-direction: row;
+    height: 150px;
   }
 }
 
-@media (min-width: 1024px) {
-  .hero {
-    padding: 100px 0;
+@media (max-width: 480px) {
+  .empleoHeroTitle {
+    font-size: 2rem;
   }
-  
-  .heroContent {
-    gap: 80px;
-  }
-  
-  .heroImage {
-    max-height: 500px;
-  }
-  
-  .offersGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
 
-/* Mejoras para modo oscuro */
-@media (prefers-color-scheme: dark) {
-  .page {
-    background-color: #121212;
-    color: #f0f0f0;
+  .empleoSectionTitle {
+    font-size: 1.8rem;
   }
-  
-  .offerCard {
-    background-color: #1e1e1e;
-    color: #f0f0f0;
+
+  .empleoCtaTitle {
+    font-size: 1.8rem;
   }
-  
-  .cardContent h3 {
-    color: var(--electric-blue-light);
+
+  .empleoStatsContainer {
+    grid-template-columns: 1fr;
   }
-  
-  .requirements li {
-    color: #e0e0e0;
-  }
-  
-  .location {
-    color: #b0b0b0;
-  }
-  
-  .sectionHeader h2, 
-  .sectionHeader p,
-  .ctaSection h2 {
-    color: #f0f0f0;
-  }
-  
-  .formGroup input,
-  .formGroup textarea,
-  .formSelect {
-    background-color: #2d2d2d;
-    color: var(--white);
-    border-color: #444;
+
+  .empleoFooterLinks {
+    flex-direction: column;
+    gap: 10px;
   }
 }

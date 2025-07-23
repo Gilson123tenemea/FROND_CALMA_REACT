@@ -11,7 +11,7 @@ import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
 
 
 const Inicio = () => {
-  const [chatVisible, setChatVisible] = useState(false);
+  const [chatVisible, setChatVisible] = useState(true);
   const navigate = useNavigate();
 
   const toggleChat = () => {
@@ -32,7 +32,13 @@ const Inicio = () => {
                   La primera plataforma especializada que une cuidadores profesionales con familias que necesitan
                   atención geriátrica de calidad en pocos clics.
                 </p>
-                <button className={styles.iniciowebHeroCta}>Unete a Nosotros</button>
+                <button
+                  className={styles.iniciowebHeroCta}
+                  onClick={() => navigate('/registro')}
+                >
+                  Unete a Nosotros
+                </button>
+
               </div>
               <div className={styles.iniciowebHeroImageContainer}>
                 <div className={styles.iniciowebHeroImageWrapper}>
@@ -397,8 +403,7 @@ const Inicio = () => {
           </div>
         </div>
       </footer>
-      {/* Chatbot */}
-      {chatVisible && <ChatBubble />}  {/* Muestra el chatbot si chatVisible es true */}
+      <ChatBubble />
     </div>
   )
 }

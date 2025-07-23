@@ -58,6 +58,8 @@ import TodasLasCalificaciones from './components/ModuloAspirante/Calificaciones/
 import Calificacionescv from './components/ModuloAspirante/CV/CalificacionesCV/CalificacionesCV';
 //Ver ficha segun el estado en aspirantes
 import VerFichaAceptada from './components/ModuloAspirante/PostulacionesAspirante/verfcihaaceptada';
+//Politicas de privacidad
+import PoliticasDePrivacidad from './components/Inicio/PoliticasDePrivacidad';
 
 
 
@@ -116,6 +118,8 @@ createRoot(document.getElementById('root')).render(
         />
 
         <Route path="/aspirante/:aspiranteId/calificaciones" element={<TodasLasCalificaciones />} />
+        <Route path="/politicas-de-privacidad" element={<PoliticasDePrivacidad />} />
+
 
 
         {/* Rutas de CV */}
