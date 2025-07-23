@@ -1,298 +1,362 @@
-import React, { useEffect } from 'react';
-import './Inicio.css';
+import styles from "./Inicio.module.css"
+import ChatBubble from "../chatbot/ChatBubble"
+import imagenInicio from "./imagenes/imageninicio-removebg-preview.png"
 import Navbar from '../Shared/Navbar';
-import ChatBubble from '../chatbot/ChatBubble'; // Importa el chatbot
 
 const Inicio = () => {
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js';
-    script.onload = () => {
-      window.particlesJS('particles-js', {
-        particles: {
-          number: { value: 80, density: { enable: true, value_area: 800 } },
-          color: { value: "#3b82f6" },
-          shape: { type: "circle" },
-          opacity: { value: 0.5, random: true },
-          size: { value: 3, random: true },
-          line_linked: { enable: true, distance: 150, color: "#3b82f6", opacity: 0.4, width: 1 },
-          move: { enable: true, speed: 3, direction: "none", random: true, straight: false, out_mode: "out" }
-        },
-        interactivity: {
-          detect_on: "canvas",
-          events: {
-            onhover: { enable: true, mode: "repulse" },
-            onclick: { enable: true, mode: "push" }
-          }
-        }
-      });
-    };
-    document.body.appendChild(script);
-  }, []);
-
   return (
-    <div className="inicio-container">
-      {/* Fondo de partículas futurista */}
-      <div id="particles-js" className="particles-background"></div>
+    
+    <div className={styles.iniciowebContainer}>
+      {/* Hero Section - Más ancho */}
+       <Navbar />
+      <section className={styles.iniciowebHeroSection}>
+        <div className={styles.iniciowebHeroContainer}>
+          <div className={styles.iniciowebHeroCard}>
+            <div className={styles.iniciowebHeroContent}>
+              <div className={styles.iniciowebHeroText}>
+                <h1 className={styles.iniciowebHeroTitle}>Cuidado geriátrico profesional, nunca más.</h1>
+                <p className={styles.iniciowebHeroSubtitle}>
+                  La primera plataforma especializada que une cuidadores profesionales con familias que necesitan
+                  atención geriátrica de calidad en pocos clics.
+                </p>
+                <button className={styles.iniciowebHeroCta}>Conoce los planes de cuidado</button>
+              </div>
+              <div className={styles.iniciowebHeroImageContainer}>
+                <div className={styles.iniciowebHeroImageWrapper}>
+                  <img
+                    src={imagenInicio || "/placeholder.svg"}
+                    alt="Cuidador profesional"
+                    className={styles.iniciowebHeroImg}
+                  />
+                </div>
+                <div className={styles.iniciowebFloatingElements}>
+                  <div className={styles.iniciowebFloatingCard1}>
+                    <div className={styles.iniciowebCardDot}></div>
+                    <span>Cuidadores certificados</span>
+                  </div>
+                  <div className={styles.iniciowebFloatingCard2}>
+                    <div className={styles.iniciowebCardDot}></div>
+                    <span>Atención 24/7</span>
+                  </div>
+                  <div className={styles.iniciowebFloatingCard3}>
+                    <div className={styles.iniciowebCardDot}></div>
+                    <span>Conexión inmediata</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      <Navbar />
-      
-      {/* ELIMINÉ LA SECCIÓN DUPLICADA - Solo mantengo una */}
-      <section className="image-content-section">
-        <div className="container1">
-          {/* Hero Banner único */}
-          <div className="hero-banner">
-            <div className="hero-content">
-              <h1>Transforma vidas a través del cuidado geriátrico</h1>
+      {/* Nueva sección superior con imagen */}
+      <section className={styles.iniciowebTopImageSection}>
+        <div className={styles.iniciowebTopImageContainer}>
+          <div className={styles.iniciowebTopImageContent}>
+            <div className={styles.iniciowebTopImageWrapper}>
+              <img
+                src="https://i.pinimg.com/736x/25/67/1d/25671d8e1e97f69655f0205c16354966.jpg"
+                alt="Equipo de cuidadores profesionales"
+                className={styles.iniciowebTopImage}
+              />
+            </div>
+            <div className={styles.iniciowebTopImageText}>
+              <h2>Nuestro Compromiso con la Excelencia</h2>
               <p>
-                En <strong>C A L M A</strong>, no solo ofrecemos empleo, creamos historias de conexión humana entre profesionales apasionados y adultos mayores que necesitan tu compasión y experiencia.
+                En CALMA, cada cuidador pasa por un riguroso proceso de selección y capacitación continua. Garantizamos
+                que nuestros profesionales no solo tengan las habilidades técnicas necesarias, sino también la empatía y
+                dedicación que merecen nuestros adultos mayores.
               </p>
-              
-              <div className="section-stats">
-                <div className="stat-item">
-                  <div className="stat-number">500+</div>
-                  <div className="stat-label">conexiones exitosas</div>
+              <div className={styles.iniciowebTopImageStats}>
+                <div className={styles.iniciowebStatItem}>
+                  <span className={styles.iniciowebStatNumber}>95%</span>
+                  <span className={styles.iniciowebStatLabel}>Satisfacción</span>
                 </div>
-                <div className="stat-item">
-                  <div className="stat-text">Desde 2018 transformando vidas</div>
+                <div className={styles.iniciowebStatItem}>
+                  <span className={styles.iniciowebStatNumber}>500+</span>
+                  <span className={styles.iniciowebStatLabel}>Cuidadores</span>
                 </div>
-              </div>
-
-              <div className="hero-buttons">
-                <button className="btn-primary btn-hover-effect">
-                  <span>Encuentra tu vocación</span>
-                  <svg className="btn-icon" viewBox="0 0 24 24">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </button>
-                <button className="btn-secondary btn-hover-effect">
-                  <span>Conoce nuestras historias</span>
-                </button>
+                <div className={styles.iniciowebStatItem}>
+                  <span className={styles.iniciowebStatNumber}>24/7</span>
+                  <span className={styles.iniciowebStatLabel}>Disponibilidad</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Sección de Impacto con testimonios */}
-      <section className="impact-section">
-        <div className="section-header">
-          <h2 className="section-title">
-            <span className="title-decoration"></span>
-            Más que un trabajo, <span className="highlight-text">un propósito de vida</span>
-          </h2>
-          <p className="section-subtitle">
-            Cada día, profesionales como tú están encontrando en el cuidado geriátrico una carrera llena de significado y crecimiento personal.
-          </p>
-        </div>
-
-        <div className="impact-grid">
-          <div className="impact-card slide-in-left">
-            <div className="card-image">
-              <img src="https://images.unsplash.com/photo-1583394293214-28ded15ee548?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Cuidador y adulto mayor" />
-              <div className="image-overlay"></div>
+      {/* Benefits Section */}
+      <section className={styles.iniciowebBenefitsSection}>
+        <div className={styles.iniciowebBenefitsContainer}>
+          <div className={styles.iniciowebBenefitsContent}>
+            <div className={styles.iniciowebBenefitsImageSection}>
+              <div className={styles.iniciowebBenefitsImageWrapper}>
+                <img
+                  src="https://i.pinimg.com/736x/fb/34/b5/fb34b584cffeda8eb22f7034a3b65446.jpg"
+                  alt="Cuidadora profesional"
+                  className={styles.iniciowebBenefitsImg}
+                />
+                <div className={styles.iniciowebBenefitsShape}></div>
+              </div>
+              <div className={styles.iniciowebPhoneMockupContainer}>
+                <div className={styles.iniciowebPhoneMockup}>
+                  <div className={styles.iniciowebPhoneScreen}>
+                    <div className={styles.iniciowebAppInterface}>
+                      <div className={styles.iniciowebAppHeader}>
+                        <div className={styles.iniciowebAppSearch}>
+                          <span>🔍 Buscar trabajo...</span>
+                        </div>
+                      </div>
+                      <div className={styles.iniciowebAppContent}>
+                        <div className={styles.iniciowebAppMenuItem}>📋 Perfil</div>
+                        <div className={styles.iniciowebAppMenuItem}>💼 Empleos</div>
+                        <div className={styles.iniciowebAppMenuItem}>📜 Certificaciones</div>
+                        <div className={styles.iniciowebAppMenuItem}>💬 Mensajes</div>
+                        <div className={styles.iniciowebAppHighlight}>
+                          <span>¡Nuevo!</span>
+                          <div>Empleo disponible</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="card-content">
-              <h3>María G. <span className="profession">Cuidadora profesional</span></h3>
-              <p className="testimonial">
-                "Después de 15 años en enfermería, encontré en C A L M A la oportunidad de conectar verdaderamente con mis pacientes. Ahora no solo cuido su salud, soy parte de su familia."
+            <div className={styles.iniciowebBenefitsTextSection}>
+              <h2 className={styles.iniciowebBenefitsTitle}>Cuidador, deja el estrés de buscar empleo con nosotros!</h2>
+              <p className={styles.iniciowebBenefitsSubtitle}>
+                Si te preocupas apenas por cuidar, deja que nosotros nos preocupemos por conectarte...
               </p>
-              <div className="stats">
-                <div className="stat-item">
-                  <svg viewBox="0 0 24 24">
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                  </svg>
-                  <span>4 años en CALMA</span>
+              <div className={styles.iniciowebBenefitsList}>
+                <div className={styles.iniciowebBenefitItem}>
+                  <div className={styles.iniciowebBenefitIcon}>
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                    </svg>
+                  </div>
+                  <div className={styles.iniciowebBenefitContent}>
+                    <h3>Demanda garantizada para cuidadores</h3>
+                    <p>Oportunidades surgen conforme nuevas familias se registran en nuestra plataforma.</p>
+                  </div>
                 </div>
-                <div className="stat-item">
-                  <svg viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
-                  </svg>
-                  <span>12 conexiones</span>
+                <div className={styles.iniciowebBenefitItem}>
+                  <div className={styles.iniciowebBenefitIcon}>
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-1 16H9V7h9v14z" />
+                    </svg>
+                  </div>
+                  <div className={styles.iniciowebBenefitContent}>
+                    <h3>Fácil conexión entre contratante y contratado</h3>
+                    <p>En pocos toques cierras tu primer contrato de cuidado sin complicaciones.</p>
+                  </div>
+                </div>
+                <div className={styles.iniciowebBenefitItem}>
+                  <div className={styles.iniciowebBenefitIcon}>
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z" />
+                    </svg>
+                  </div>
+                  <div className={styles.iniciowebBenefitContent}>
+                    <h3>Organización financiera y gestión</h3>
+                    <p>Herramientas para organizar tu agenda y gestión de pagos de manera eficiente.</p>
+                  </div>
+                </div>
+                <div className={styles.iniciowebBenefitItem}>
+                  <div className={styles.iniciowebBenefitIcon}>
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                    </svg>
+                  </div>
+                  <div className={styles.iniciowebBenefitContent}>
+                    <h3>Filtro por especialidades y región</h3>
+                    <p>Encuentra oportunidades por especialidad, ubicación y horarios que se adapten a ti.</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+      </section>
 
-          <div className="impact-card slide-in-right">
-            <div className="card-image">
-              <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Cuidadora sonriente" />
-              <div className="image-overlay"></div>
-            </div>
-            <div className="card-content">
-              <h3>Carlos M. <span className="profession">Gerontólogo</span></h3>
-              <p className="testimonial">
-                "CALMA me permitió especializarme en demencia senil. La plataforma conecta con familias que valoran mi expertise y me da herramientas para seguir creciendo."
+      {/* Nueva sección inferior con imagen */}
+      <section className={styles.iniciowebBottomImageSection}>
+        <div className={styles.iniciowebBottomImageContainer}>
+          <div className={styles.iniciowebBottomImageContent}>
+            <div className={styles.iniciowebBottomImageText}>
+              <h2>Tecnología al Servicio del Cuidado</h2>
+              <p>
+                Nuestra plataforma utiliza inteligencia artificial para hacer el mejor match entre cuidadores y
+                familias. Consideramos ubicación, especialidades, horarios disponibles y compatibilidad personal para
+                garantizar conexiones exitosas y duraderas.
               </p>
-              <div className="stats">
-                <div className="stat-item">
-                  <svg viewBox="0 0 24 24">
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                  </svg>
-                  <span>2 años en CALMA</span>
+              <div className={styles.iniciowebBottomImageFeatures}>
+                <div className={styles.iniciowebFeatureItem}>
+                  <div className={styles.iniciowebFeatureIcon}>🤖</div>
+                  <span>Matching inteligente</span>
                 </div>
-                <div className="stat-item">
-                  <svg viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
-                  </svg>
-                  <span>8 conexiones</span>
+                <div className={styles.iniciowebFeatureItem}>
+                  <div className={styles.iniciowebFeatureIcon}>📱</div>
+                  <span>App móvil intuitiva</span>
                 </div>
+                <div className={styles.iniciowebFeatureItem}>
+                  <div className={styles.iniciowebFeatureIcon}>🔒</div>
+                  <span>Datos seguros</span>
+                </div>
+              </div>
+            </div>
+            <div className={styles.iniciowebBottomImageWrapper}>
+              <img
+                src="https://i.pinimg.com/736x/86/31/1e/86311e975118f5d93dcb3dbc065bbb16.jpg"
+                alt="Tecnología en cuidado geriátrico"
+                className={styles.iniciowebBottomImage}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Nueva sección de información con estructura fija */}
+      <section className={styles.iniciowebInfoSection}>
+        <div className={styles.iniciowebInfoContainer}>
+          <div className={styles.iniciowebInfoHeader}>
+            <h2 className={styles.iniciowebInfoTitle}>Conoce más sobre CALMA</h2>
+            <p className={styles.iniciowebInfoSubtitle}>
+              Descubre cómo nuestra plataforma está transformando el cuidado geriátrico
+            </p>
+          </div>
+          <div className={styles.iniciowebInfoGrid}>
+            <div className={styles.iniciowebInfoCard}>
+              <div className={styles.iniciowebInfoImageContainer}>
+                <img
+                  src="https://i.pinimg.com/1200x/51/b6/31/51b6310805986c1f6de6ae4050c4eb30.jpg"
+                  alt="Cuidadores especializados"
+                  className={styles.iniciowebInfoImage}
+                />
+              </div>
+              <div className={styles.iniciowebInfoContent}>
+                <h3>Cuidadores Especializados</h3>
+                <p>
+                  Nuestros profesionales cuentan con certificaciones específicas en cuidado geriátrico y experiencia
+                  comprobada.
+                </p>
+              </div>
+            </div>
+            <div className={styles.iniciowebInfoCard}>
+              <div className={styles.iniciowebInfoImageContainer}>
+                <img
+                  src="https://i.pinimg.com/1200x/d4/9a/4a/d49a4a0818ee6ba87413d08cb30f2814.jpg"
+                  alt="Familias satisfechas"
+                  className={styles.iniciowebInfoImage}
+                />
+              </div>
+              <div className={styles.iniciowebInfoContent}>
+                <h3>Familias Satisfechas</h3>
+                <p>
+                  Miles de familias han encontrado el cuidador perfecto para sus seres queridos a través de nuestra
+                  plataforma.
+                </p>
+              </div>
+            </div>
+            <div className={styles.iniciowebInfoCard}>
+              <div className={styles.iniciowebInfoImageContainer}>
+                <img
+                  src="https://i.pinimg.com/1200x/c4/3b/5a/c43b5a2cf3da0a7523c16bd57021e2e9.jpg"
+                  alt="Tecnología avanzada"
+                  className={styles.iniciowebInfoImage}
+                />
+              </div>
+              <div className={styles.iniciowebInfoContent}>
+                <h3>Tecnología Avanzada</h3>
+                <p>Utilizamos algoritmos inteligentes para conectar a los cuidadores más adecuados con cada familia.</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Sección de características con animaciones */}
-      <section className="features-section">
-        <div className="floating-shapes">
-          <div className="shape circle"></div>
-          <div className="shape triangle"></div>
-          <div className="shape square"></div>
-        </div>
-
-        <div className="section-header">
-          <h2 className="section-title">
-            <span className="title-decoration"></span>
-            Por qué <span className="highlight-text">elegir CALMA</span>
-          </h2>
-          <p className="section-subtitle">
-            Plataforma diseñada para profesionales que buscan más que un empleo: crecimiento, reconocimiento y conexiones significativas.
-          </p>
-        </div>
-
-        <div className="features-grid">
-          <div className="feature-card feature-1">
-            <div className="feature-icon floating-animation">
-              <svg viewBox="0 0 24 24">
-                <path d="M12 3L1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z" />
-              </svg>
+      {/* Footer mejorado con más información */}
+      <footer className={styles.iniciowebFooter}>
+        <div className={styles.iniciowebFooterContent}>
+          <div className={styles.iniciowebFooterMain}>
+            <div className={styles.iniciowebFooterSection}>
+              <h3>CALMA</h3>
+              <p>
+                La plataforma líder en conexión de cuidadores geriátricos profesionales con familias que necesitan
+                atención especializada.
+              </p>
+              <div className={styles.iniciowebFooterSocial}>
+                <a href="#" className={styles.iniciowebSocialLink}>
+                  📘 Facebook
+                </a>
+                <a href="#" className={styles.iniciowebSocialLink}>
+                  📷 Instagram
+                </a>
+                <a href="#" className={styles.iniciowebSocialLink}>
+                  🐦 Twitter
+                </a>
+              </div>
             </div>
-            <h3>Red profesional especializada</h3>
-            <p>Conecta con familias y centros que valoran tu formación en geriatría. Accede a oportunidades que no encontrarás en portales generales.</p>
-            <div className="feature-link">
-              <span>Explorar red</span>
-              <svg viewBox="0 0 24 24">
-                <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
-              </svg>
+            <div className={styles.iniciowebFooterSection}>
+              <h4>Para Cuidadores</h4>
+              <ul className={styles.iniciowebFooterList}>
+                <li>
+                  <a href="#">Registrarse como cuidador</a>
+                </li>
+                <li>
+                  <a href="#">Buscar empleos</a>
+                </li>
+                <li>
+                  <a href="#">Certificaciones</a>
+                </li>
+                <li>
+                  <a href="#">Centro de ayuda</a>
+                </li>
+              </ul>
             </div>
-          </div>
-
-          <div className="feature-card feature-2">
-            <div className="feature-icon floating-animation">
-              <svg viewBox="0 0 24 24">
-                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
-              </svg>
+            <div className={styles.iniciowebFooterSection}>
+              <h4>Para Familias</h4>
+              <ul className={styles.iniciowebFooterList}>
+                <li>
+                  <a href="#">Buscar cuidadores</a>
+                </li>
+                <li>
+                  <a href="#">Publicar empleo</a>
+                </li>
+                <li>
+                  <a href="#">Precios</a>
+                </li>
+                <li>
+                  <a href="#">Testimonios</a>
+                </li>
+              </ul>
             </div>
-            <h3>Certificaciones reconocidas</h3>
-            <p>Accede a cursos de especialización avalados por asociaciones geriátricas que aumentarán tu valor profesional.</p>
-            <div className="feature-link">
-              <span>Ver certificaciones</span>
-              <svg viewBox="0 0 24 24">
-                <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
-              </svg>
-            </div>
-          </div>
-
-          <div className="feature-card feature-3">
-            <div className="feature-icon floating-animation">
-              <svg viewBox="0 0 24 24">
-                <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
-              </svg>
-            </div>
-            <h3>Contratos transparentes</h3>
-            <p>Acuerdos claros con condiciones laborales justas. Sabrás exactamente lo que ofrecen antes de contactar.</p>
-            <div className="feature-link">
-              <span>Conoce beneficios</span>
-              <svg viewBox="0 0 24 24">
-                <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
-              </svg>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Sección de estadísticas impactantes */}
-      <section className="stats-section">
-        <div className="stats-container">
-          <div className="stat-item">
-            <div className="stat-number" data-count="98">0</div>
-            <div className="stat-label">Satisfacción profesional</div>
-          </div>
-          <div className="stat-item">
-            <div className="stat-number" data-count="2500">0</div>
-            <div className="stat-label">Conexiones exitosas</div>
-          </div>
-          <div className="stat-item">
-            <div className="stat-number" data-count="120">0</div>
-            <div className="stat-label">Especialistas certificados</div>
-          </div>
-          <div className="stat-item">
-            <div className="stat-number" data-count="85">0</div>
-            <div className="stat-label">Retención anual</div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section con efecto parallax */}
-      <section className="cta-section">
-        <div className="parallax-background"></div>
-        <div className="cta-container">
-          <h2>Tu vocación merece <span className="highlight-text">el mejor escenario</span></h2>
-          <p>
-            Regístrate hoy y descubre cómo podemos ayudarte a encontrar oportunidades que valoren tu experiencia y compasión en el cuidado geriátrico.
-          </p>
-          <button className="btn-cta btn-hover-effect">
-            <span>Comienza ahora</span>
-            <svg className="btn-icon" viewBox="0 0 24 24">
-              <path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z" />
-            </svg>
-          </button>
-        </div>
-      </section>
-
-      {/* Footer premium */}
-      <footer className="footer">
-        <div className="footer-cta">
-          <div className="cta-content">
-            <h3>Únase a C A L M A hoy</h3>
-            <p>Empieza tu viaje hacia nuevas oportunidades y conexiones. Registrate ahora para explorar las posibilidades.</p>
-            <button className="btn-primary btn-hover-effect">
-              <span>Empezar</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="footer-separator"></div>
-
-        <div className="footer-links-container">
-          <div className="footer-links">
-            <div className="footer-column">
-              <h4>Sobre Nosotros</h4>
-            </div>
-            <div className="footer-column">
+            <div className={styles.iniciowebFooterSection}>
               <h4>Contacto</h4>
-            </div>
-            <div className="footer-column">
-              <h4>Políticas de Privacidad</h4>
-            </div>
-            <div className="footer-column">
-              <h4>Condiciones de servicio</h4>
+              <div className={styles.iniciowebContactInfo}>
+                <p>📞 +1 (555) 123-4567</p>
+                <p>✉️ info@calma.com</p>
+                <p>📍 Ciudad de México, México</p>
+                <p>🕒 Lun - Vie: 9:00 AM - 6:00 PM</p>
+              </div>
             </div>
           </div>
-        </div>
-
-        <div className="footer-bottom">
-          <div className="copyright">
-            ©2024 C A L M A. Reservados todos los derechos.
+          <div className={styles.iniciowebFooterBottom}>
+            <div className={styles.iniciowebFooterBottomContent}>
+              <p>©2024 CALMA. Todos los derechos reservados.</p>
+              <div className={styles.iniciowebFooterLinks}>
+                <a href="#">Términos de servicio</a>
+                <a href="#">Política de privacidad</a>
+                <a href="#">Cookies</a>
+              </div>
+            </div>
           </div>
         </div>
       </footer>
 
-      {/* Aquí insertamos la burbuja del chatbot */}
       <ChatBubble />
     </div>
-  );
-};
+  )
+}
 
-export default Inicio;
+export default Inicio
