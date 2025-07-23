@@ -207,8 +207,8 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
       erroresTemp.salarioEstimado = 'Campo obligatorio.';
     } else if (!soloNumeros.test(salarioEstimado)) {
       erroresTemp.salarioEstimado = 'El salario debe contener solo números.';
-    } else if (parseInt(salarioEstimado, 10) < 480) {
-      erroresTemp.salarioEstimado = 'El salario no puede ser menor a $480.';
+    } else if (parseInt(salarioEstimado, 10) < 230) {
+      erroresTemp.salarioEstimado = 'El salario no puede ser menor a $230.';
     }
 
     setErrores(erroresTemp);
