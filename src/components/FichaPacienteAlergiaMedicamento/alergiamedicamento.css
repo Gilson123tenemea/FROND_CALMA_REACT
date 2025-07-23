@@ -1,5 +1,6 @@
 /* Contenedor principal */
 .alergias-medicamentos-main-wrapper {
+  background-color: #ffffff;
   max-width: 1600px;
   margin: 0 auto;
   padding: 20px;
@@ -20,7 +21,7 @@
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 25px;
-  border-bottom: 2px solid #3498db;
+  border-bottom: 2px solid #ffffff;
   padding-bottom: 10px;
 }
 

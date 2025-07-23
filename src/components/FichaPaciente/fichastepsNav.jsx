@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import './fichanav.css';
 
 const FichaStepsNav = ({ id_ficha_paciente, currentStep }) => {
@@ -11,7 +11,7 @@ const FichaStepsNav = ({ id_ficha_paciente, currentStep }) => {
       icon: (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M20.59 22C20.59 18.13 16.74 15 12 15C7.26 15 3.41 18.13 3.41 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M20.59 22C20.59 22 20.59 18.13 16.74 15 12 15C7.26 15 3.41 18.13 3.41 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
       path: `/fichas/${id_ficha_paciente}` 
@@ -102,58 +102,91 @@ const FichaStepsNav = ({ id_ficha_paciente, currentStep }) => {
 
   // Icono de check para pasos completados
   const CheckIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z" fill="currentColor"/>
     </svg>
   );
 
+  const navigate = useNavigate();
+
+  const handleFinalizar = () => {
+    navigate('/moduloContratante');
+  };
+
+  // Verificar si estamos en el último paso
+  const isLastStep = currentStep === steps[steps.length - 1].id;
+
   return (
-    <nav className="ficha-steps-nav">
-      <ul>
-        {steps.map((step, index) => {
-          const status = getStepStatus(step.id, index);
-          const isClickable = id_ficha_paciente && id_ficha_paciente !== 'nueva';
-          
-          return (
-            <li key={step.id} className={`step-item ${status}`}>
-              {isClickable ? (
-                <Link to={step.path} className="step-content">
-                  <div className="step-icon">
-                    {status === 'completed' ? <CheckIcon /> : step.icon}
-                  </div>
-                  <div className="step-text">
-                    <div className="step-name">{step.label}</div>
-                    <div className="step-description">{step.description}</div>
-                  </div>
-                  {status === 'active' && (
-                    <div className="step-indicator">
-                      <div className="pulse"></div>
+    <div className="ficha-steps-wrapper">
+      <nav className="ficha-steps-nav">
+        <div className="steps-container">
+          {steps.map((step, index) => {
+            const status = getStepStatus(step.id, index);
+            const isClickable = id_ficha_paciente && id_ficha_paciente !== 'nueva';
+            
+            return (
+              <div key={step.id} className={`step-card ${status}`}>
+                {isClickable ? (
+                  <Link to={step.path} className="step-content">
+                    <div className="step-icon-container">
+                      <div className="step-icon">
+                        {status === 'completed' ? <CheckIcon /> : step.icon}
+                      </div>
+                      {status === 'active' && (
+                        <div className="step-pulse">
+                          <div className="pulse-ring"></div>
+                          <div className="pulse-ring pulse-ring-delay"></div>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </Link>
-              ) : (
-                <div className="step-content disabled">
-                  <div className="step-icon">
-                    {step.icon}
+                    <div className="step-text">
+                      <div className="step-name">{step.label}</div>
+                      <div className="step-description">{step.description}</div>
+                    </div>
+                  </Link>
+                ) : (
+                  <div className="step-content disabled">
+                    <div className="step-icon-container">
+                      <div className="step-icon">
+                        {step.icon}
+                      </div>
+                    </div>
+                    <div className="step-text">
+                      <div className="step-name">{step.label}</div>
+                      <div className="step-description">{step.description}</div>
+                    </div>
                   </div>
-                  <div className="step-text">
-                    <div className="step-name">{step.label}</div>
-                    <div className="step-description">{step.description}</div>
+                )}
+                
+                {/* Conector horizontal entre pasos */}
+                {index < steps.length - 1 && (
+                  <div className={`step-connector-horizontal ${status === 'completed' ? 'completed' : ''}`}>
+                    <div className="connector-line-horizontal"></div>
                   </div>
-                </div>
-              )}
-              
-              {/* Conector entre pasos */}
-              {index < steps.length - 1 && (
-                <div className={`step-connector ${status === 'completed' ? 'completed' : ''}`}>
-                  <div className="connector-line"></div>
-                </div>
-              )}
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </nav>
+
+      {/* Botón Finalizar - Solo aparece en el último paso */}
+      {isLastStep && (
+        <div className="finalizar-section">
+          <div className="finalizar-container">
+            <button 
+              onClick={handleFinalizar} 
+              className="btn-finalizar"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z" fill="currentColor"/>
+              </svg>
+              Finalizar
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

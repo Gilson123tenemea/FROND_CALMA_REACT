@@ -294,6 +294,7 @@
   background: linear-gradient(135deg, var(--background-black) 0%, var(--background-light) 100%);
   padding: 2rem 1rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #ffffff;
 }
 
 /* Spinner de carga */

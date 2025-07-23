@@ -4,6 +4,7 @@
   margin: 0 auto;
   padding: 20px;
   font-family: 'Arial', sans-serif;
+    background-color: #ffffff;
 }
 
 /* Sección del formulario */
@@ -20,7 +21,7 @@
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 25px;
-  border-bottom: 2px solid #3498db;
+  border-bottom: 2px solid #ffffff;
   padding-bottom: 10px;
 }
 
