@@ -102,9 +102,10 @@ const ListaPublicaciones = ({ refrescar, onEditar, userId: userIdProp }) => {
         />
       ) : (
         <div className="lista-publicaciones">
-          <h3 className="titulo">📋 Mis Publicaciones</h3>
+
 
           <div className="filtros-publicaciones">
+            <h3 className="titulo">Mis Publicaciones</h3>
             <input
               type="text"
               placeholder="🔍 Filtrar por título"
@@ -138,19 +139,25 @@ const ListaPublicaciones = ({ refrescar, onEditar, userId: userIdProp }) => {
                 return (
                   <li key={pub.id_genera} className="item-publicacion">
                     <div className="info-publicacion">
-                      <h4>💼 {empleo.titulo}</h4>
-                      <p>📝 <strong>Descripción:</strong> {empleo.descripcion}</p>
-                      <p>📅 <strong>Fecha publicación:</strong> {formatoLocal(pub.fechaPublicacion)}</p>
-                      <p>⏳ <strong>Fecha límite:</strong> {empleo.fecha_limite ? formatoLocal(empleo.fecha_limite) : 'N/A'}</p>
-                      <p>🕒 <strong>Jornada:</strong> {empleo.jornada || 'N/A'}</p>
-                      <p>💰 <strong>Salario:</strong> ${empleo.salario_estimado?.toLocaleString() || '0'}</p>
-                      <p>📍 <strong>Ubicación:</strong> {`${parroquia}, ${canton}, ${provincia}`}</p>
-                      <p>📊 <strong>Estado:</strong> {empleo.estado || 'N/A'}</p>
+                      <h4>{empleo.titulo}</h4>
+                      <div className="fila-info-basica">
+                        <span className="dato-ubicacion">| 📍 {`${parroquia}, ${canton}, ${provincia}`} </span>
+                        <span className="dato-jornada">| 🕒 {empleo.jornada || 'N/A'} </span>
+                        <span className="dato-salario">| 💰 ${empleo.salario_estimado?.toLocaleString() || '0'} </span>
+                      </div>
+                      <div className="fila-fechas-estado">
+                        <p>📅 <strong>Fecha publicación:</strong> {formatoLocal(pub.fechaPublicacion)}</p>
+                        <p>⏳ <strong>Fecha límite:</strong> {empleo.fecha_limite ? formatoLocal(empleo.fecha_limite) : 'N/A'}</p>
+                        <p>📊 <strong>Estado:</strong> {empleo.estado || 'N/A'}</p>
+                      </div>
+
+
                       <p>⚡ <strong>Disponibilidad inmediata:</strong> {empleo.disponibilidad_inmediata ? 'Sí' : 'No'}</p>
+                      <p>📝 <strong>Descripción:</strong> {empleo.descripcion}</p>
                     </div>
                     <div className="acciones-publicacion">
-                      <button className="btn btn-editar" onClick={() => handleEditar(pub.id_genera)}>✏️ Editar</button>
-                      <button className="btn btn-eliminar" onClick={() => handleEliminar(empleo.id_postulacion_empleo)}>🗑️ Eliminar</button>
+                      <button className="btn btn-editar" onClick={() => handleEditar(pub.id_genera)}>Editar</button>
+                      <button className="btn btn-eliminar" onClick={() => handleEliminar(empleo.id_postulacion_empleo)}>Eliminar</button>
                     </div>
                   </li>
                 );
