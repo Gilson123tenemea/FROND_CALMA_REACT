@@ -34,7 +34,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
   const [idPaciente, setIdPaciente] = useState('');
 
   const navigate = useNavigate();
-
+  const [isEditando, setIsEditando] = useState(false);
   const [errores, setErrores] = useState({});
   useEffect(() => {
     axios.get('http://localhost:8090/api/provincias')
@@ -120,16 +120,18 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
       setDisponibilidadInmediata(!!publicacionEditar.disponibilidad_inmediata);
       setActividadesRealizar(publicacionEditar.actividades_realizar || '');
 
-      const parroquia = publicacionEditar.parroquia;
-      if (parroquia) {
-        setIdProvincia(parroquia.canton.provincia.id_provincia);
-        setIdCanton(parroquia.canton.id_canton);
-        setIdParroquia(parroquia.id_parroquia);
-      } else {
-        setIdProvincia('');
-        setIdCanton('');
-        setIdParroquia('');
-      }
+    const parroquia = publicacionEditar.parroquia;
+    if (parroquia) {
+      setIdProvincia(parroquia.canton.provincia.id_provincia); // Esto disparará la carga de cantones
+      // Esperamos para setear canton/parroquia luego
+      setTimeout(() => {
+        setIdCanton(parroquia.canton.id_canton); // Dispara la carga de parroquias
+        setTimeout(() => {
+          setIdParroquia(parroquia.id_parroquia);
+          setIsEditando(false); // Ya terminamos
+        }, 200);
+      }, 200);
+    }
 
       setIdPaciente(publicacionEditar.id_paciente ? String(publicacionEditar.id_paciente) : '');
     } else {
