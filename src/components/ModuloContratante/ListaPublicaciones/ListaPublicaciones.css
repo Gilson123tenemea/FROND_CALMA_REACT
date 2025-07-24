@@ -497,6 +497,17 @@
 .fila-disponibilidad,
 .fila-disponibilidad strong,
 .fila-descripcion,
-.fila-descripcion strong {
+.fila-descripcion strong,
+.fila-requisitos,
+.fila-requisitos strong,
+.fila-turno,
+.fila-turno strong,
+.fila-actividades,
+.fila-actividades strong,
+.fila-id-paciente,
+.fila-id-paciente strong {
   color: #000 !important;
+  font-size: 0.95rem;
+  margin-top: 5px;
+  line-height: 1.5;
 }

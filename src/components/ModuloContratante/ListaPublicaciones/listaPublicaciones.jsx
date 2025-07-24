@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import './ListaPublicaciones.css';
 import HeaderContratante from '../HeaderContratante/HeaderContratante';
 import FormPublicacion from '../FormularioPublicacion/formularioPublicacion';
@@ -8,14 +11,13 @@ import FormPublicacion from '../FormularioPublicacion/formularioPublicacion';
 const ListaPublicaciones = ({ refrescar, onEditar, userId: userIdProp }) => {
   const location = useLocation();
   const query = new URLSearchParams(location.search);
-  const userId = userIdProp || query.get('userId'); // Manejo seguro desde props o URL
+  const userId = userIdProp || query.get('userId');
   console.log("userId en ListaPublicaciones:", userId);
 
   const [publicaciones, setPublicaciones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filtroFecha, setFiltroFecha] = useState('');
   const [filtroTitulo, setFiltroTitulo] = useState('');
-
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [publicacionEditar, setPublicacionEditar] = useState(null);
 
@@ -39,7 +41,7 @@ const ListaPublicaciones = ({ refrescar, onEditar, userId: userIdProp }) => {
     };
 
     fetchPublicaciones();
-  }, [userId, refrescar, mostrarFormulario]); // incluye mostrarFormulario para recargar al guardar
+  }, [userId, refrescar, mostrarFormulario]);
 
   const handleEditar = (idGenerar) => {
     const publicacionSeleccionada = publicaciones.find(pub => pub.id_genera === idGenerar);
@@ -49,18 +51,60 @@ const ListaPublicaciones = ({ refrescar, onEditar, userId: userIdProp }) => {
     }
   };
 
-  const handleEliminar = (idPublicacion) => {
-    if (window.confirm("¿Seguro que quieres eliminar esta publicación?")) {
-      axios.delete(`http://localhost:8090/api/publicacion_empleo/eliminar/${idPublicacion}`)
-        .then(res => {
-          alert(res.data);
-          setPublicaciones(prev => prev.filter(pub => pub.publicacionempleo.id_postulacion_empleo !== idPublicacion));
-        })
-        .catch(err => {
-          console.error("Error al eliminar publicación:", err);
-          alert("Ocurrió un error al eliminar la publicación.");
-        });
-    }
+  const mostrarConfirmacionEliminacion = (idPublicacion) => {
+    const toastId = toast.info(
+      <div>
+        <p>¿Seguro que deseas eliminar esta publicación?</p>
+        <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
+          <button
+            style={{
+              background: '#dc2626',
+              color: 'white',
+              border: 'none',
+              padding: '6px 10px',
+              borderRadius: '5px',
+              cursor: 'pointer'
+            }}
+            onClick={() => {
+              toast.dismiss(toastId);
+              axios.delete(`http://localhost:8090/api/publicacion_empleo/eliminar/${idPublicacion}`)
+                .then(res => {
+                  toast.error(res.data); // mantiene tu lógica de mostrar mensaje
+                  setPublicaciones(prev =>
+                    prev.filter(pub => pub.publicacionempleo.id_postulacion_empleo !== idPublicacion)
+                  );
+                })
+                .catch(err => {
+                  console.error("Error al eliminar publicación:", err);
+                  toast.error("❌ No se pudo eliminar. Revisa si hay postulaciones.");
+                });
+            }}
+          >
+            Eliminar
+          </button>
+          <button
+            style={{
+              background: '#6b7280',
+              color: 'white',
+              border: 'none',
+              padding: '6px 10px',
+              borderRadius: '5px',
+              cursor: 'pointer'
+            }}
+            onClick={() => toast.dismiss(toastId)}
+          >
+            Cancelar
+          </button>
+        </div>
+      </div>,
+      {
+        position: "top-center",
+        autoClose: false,
+        closeOnClick: false,
+        closeButton: false,
+        draggable: false
+      }
+    );
   };
 
   const formatoLocal = (fechaISO) => {
@@ -102,8 +146,6 @@ const ListaPublicaciones = ({ refrescar, onEditar, userId: userIdProp }) => {
         />
       ) : (
         <div className="lista-publicaciones">
-
-
           <div className="filtros-publicaciones">
             <h3 className="titulo">Mis Publicaciones</h3>
             <input
@@ -141,27 +183,34 @@ const ListaPublicaciones = ({ refrescar, onEditar, userId: userIdProp }) => {
                     <div className="info-publicacion">
                       <h4>{empleo.titulo}</h4>
                       <div className="fila-info-basica">
-                        <span className="dato-ubicacion">| 📍 {`${parroquia}, ${canton}, ${provincia}`} </span>
-                        <span className="dato-jornada">| 🕒 {empleo.jornada || 'N/A'} </span>
-                        <span className="dato-salario">| 💰 ${empleo.salario_estimado?.toLocaleString() || '0'} </span>
+                        <span className="dato-ubicacion">| 📍 {`${parroquia}, ${canton}, ${provincia}`}</span>
+                        <span className="dato-jornada">| 🕒 {empleo.jornada || 'N/A'}</span>
+                        <span className="dato-salario">| 💰 ${empleo.salario_estimado?.toLocaleString() || '0'}</span>
                       </div>
                       <div className="fila-fechas-estado">
                         <p>📅 <strong>Fecha publicación:</strong> {formatoLocal(pub.fechaPublicacion)}</p>
                         <p>⏳ <strong>Fecha límite:</strong> {empleo.fecha_limite ? formatoLocal(empleo.fecha_limite) : 'N/A'}</p>
                         <p>📊 <strong>Estado:</strong> {empleo.estado || 'N/A'}</p>
                       </div>
-
-
                       <p className="fila-disponibilidad">
                         ⚡ <strong>Disponibilidad inmediata:</strong> {empleo.disponibilidad_inmediata ? 'Sí' : 'No'}
                       </p>
                       <p className="fila-descripcion">
                         📝 <strong>Descripción:</strong> {empleo.descripcion}
-                      </p>                    
-                      </div>
+                      </p>
+                      <p className="fila-requisitos">
+                        📌 <strong>Requisitos:</strong> {empleo.requisitos || 'No especificado'}
+                      </p>
+                      <p className="fila-turno">
+                        🕔 <strong>Turno:</strong> {empleo.turno || 'No especificado'}
+                      </p>
+                      <p className="fila-actividades">
+                        🛠️ <strong>Actividades a realizar:</strong> {empleo.actividades_realizar || 'No especificado'}
+                      </p>
+                    </div>
                     <div className="acciones-publicacion">
                       <button className="btn btn-editar" onClick={() => handleEditar(pub.id_genera)}>Editar</button>
-                      <button className="btn btn-eliminar" onClick={() => handleEliminar(empleo.id_postulacion_empleo)}>Eliminar</button>
+                      <button className="btn btn-eliminar" onClick={() => mostrarConfirmacionEliminacion(empleo.id_postulacion_empleo)}>Eliminar</button>
                     </div>
                   </li>
                 );
@@ -170,6 +219,18 @@ const ListaPublicaciones = ({ refrescar, onEditar, userId: userIdProp }) => {
           )}
         </div>
       )}
+
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </>
   );
 };

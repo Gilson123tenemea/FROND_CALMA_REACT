@@ -120,18 +120,18 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
       setDisponibilidadInmediata(!!publicacionEditar.disponibilidad_inmediata);
       setActividadesRealizar(publicacionEditar.actividades_realizar || '');
 
-    const parroquia = publicacionEditar.parroquia;
-    if (parroquia) {
-      setIdProvincia(parroquia.canton.provincia.id_provincia); // Esto disparará la carga de cantones
-      // Esperamos para setear canton/parroquia luego
-      setTimeout(() => {
-        setIdCanton(parroquia.canton.id_canton); // Dispara la carga de parroquias
+      const parroquia = publicacionEditar.parroquia;
+      if (parroquia) {
+        setIdProvincia(parroquia.canton.provincia.id_provincia); // Esto disparará la carga de cantones
+        // Esperamos para setear canton/parroquia luego
         setTimeout(() => {
-          setIdParroquia(parroquia.id_parroquia);
-          setIsEditando(false); // Ya terminamos
+          setIdCanton(parroquia.canton.id_canton); // Dispara la carga de parroquias
+          setTimeout(() => {
+            setIdParroquia(parroquia.id_parroquia);
+            setIsEditando(false); // Ya terminamos
+          }, 200);
         }, 200);
-      }, 200);
-    }
+      }
 
       setIdPaciente(publicacionEditar.id_paciente ? String(publicacionEditar.id_paciente) : '');
     } else {
@@ -253,19 +253,31 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
       if (publicacionEditar) {
         const url = `http://localhost:8090/api/publicacion_empleo/actualizar/${publicacionEditar.id_postulacion_empleo}`;
         await axios.put(url, data);
+
         toast.success('Publicación actualizada correctamente');
+
+        // Esperar 1.5 segundos antes de redireccionar para que el usuario vea el toast
+        setTimeout(() => {
+          if (onSuccess) onSuccess();
+          navigate(`/moduloContratante/ListaPublicaciones?userId=${contratanteId}`);
+        }, 1500);
       } else {
         const url = `http://localhost:8090/api/publicacion_empleo/guardar?idParroquia=${idParroquia}&idContratante=${contratanteId}`;
         await axios.post(url, data);
+
         toast.success('Publicación creada correctamente');
         limpiarFormulario();
+
+        setTimeout(() => {
+          if (onSuccess) onSuccess();
+          navigate(`/moduloContratante/ListaPublicaciones?userId=${contratanteId}`);
+        }, 1500);
       }
-      if (onSuccess) onSuccess();
-      navigate(`/moduloContratante/ListaPublicaciones?userId=${contratanteId}`);
     } catch (error) {
       console.error(error);
       toast.error('Error al guardar la publicación');
     }
+
   };
   console.log('Estado actividadesRealizar:', actividadesRealizar);
   return (
