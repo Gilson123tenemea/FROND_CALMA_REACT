@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
 import './CardTrabajo.css';
+
 import {
   Building2,
   User2,
@@ -11,6 +13,7 @@ import {
   Clock,
   ClipboardCheck
 } from 'lucide-react';
+import { warning } from 'framer-motion';
 
 const CardTrabajo = ({ trabajo, idAspirante }) => {
   const {
@@ -51,16 +54,16 @@ const CardTrabajo = ({ trabajo, idAspirante }) => {
 
       if (response.ok) {
         setPostulado(true);
-        console.log('✅ ¡Postulación exitosa!');
+        toast.success('Postulación exitosa');
       } else if (response.status === 409) {
         setPostulado(true);
-        console.log('⚠️ Ya te has postulado a esta oferta.');
+        toast,warning(' Ya te has postulado a esta oferta.');
       } else {
         const texto = await response.text();
-        console.error('Error al postular:', texto);
+        toast.error('Error al postular', texto);
       }
     } catch (error) {
-      console.error('❌ Error inesperado al postular:', error);
+      toast.error('Error inesperado al postular', error);
     }
   };
 
@@ -158,7 +161,19 @@ const CardTrabajo = ({ trabajo, idAspirante }) => {
           </div>
         </div>
       )}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </>
+    
   );
 };
 

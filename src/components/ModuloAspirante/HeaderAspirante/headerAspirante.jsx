@@ -582,10 +582,6 @@ const HeaderAspirante = ({
               Trabajos
             </button>
 
-            <button onClick={() => handleNavigation(`/moduloAspirante/red?userId=${userId}`)} style={stylesInline.navLink} className="nav-item">
-              Mi Red
-            </button>
-
             <button onClick={() => handleNavigation(`/moduloAspirante/postulaciones/${userId}`)} style={stylesInline.navLink} className="nav-item">
               Mis Postulaciones
             </button>

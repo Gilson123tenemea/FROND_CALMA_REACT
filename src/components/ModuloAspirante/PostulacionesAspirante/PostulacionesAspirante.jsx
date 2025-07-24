@@ -320,13 +320,7 @@ const PostulacionesAspirante = () => {
                         <FaUserInjured className={styles.buttonIcon} />
                         <span>Ver datos del paciente</span>
                       </button>
-                      <button
-                        className={styles.actionButton}
-                        onClick={() => handleContactar(idPaciente)}
-                      >
-                        <FaEnvelope className={styles.buttonIcon} />
-                        <span>Contactarse</span>
-                      </button>
+                     
                     </div>
                   )}
                 </div>
