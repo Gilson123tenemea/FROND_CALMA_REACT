@@ -485,4 +485,18 @@
   flex: 1;                /* que cada uno tome espacio igual */
   text-align: left; /* ¡aquí forzamos alineación izquierda */
 }
-
+.lista-publicaciones .fila-fechas-estado p {
+  color: black !important;
+}
+.lista-publicaciones .fila-fechas-estado p {
+  color: black; /* Cambia el texto a negro */
+}
+.lista-publicaciones .fila-fechas-estado p strong {
+  color: black;
+}
+.fila-disponibilidad,
+.fila-disponibilidad strong,
+.fila-descripcion,
+.fila-descripcion strong {
+  color: #000 !important;
+}

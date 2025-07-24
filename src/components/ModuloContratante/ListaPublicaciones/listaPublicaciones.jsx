@@ -152,9 +152,13 @@ const ListaPublicaciones = ({ refrescar, onEditar, userId: userIdProp }) => {
                       </div>
 
 
-                      <p>⚡ <strong>Disponibilidad inmediata:</strong> {empleo.disponibilidad_inmediata ? 'Sí' : 'No'}</p>
-                      <p>📝 <strong>Descripción:</strong> {empleo.descripcion}</p>
-                    </div>
+                      <p className="fila-disponibilidad">
+                        ⚡ <strong>Disponibilidad inmediata:</strong> {empleo.disponibilidad_inmediata ? 'Sí' : 'No'}
+                      </p>
+                      <p className="fila-descripcion">
+                        📝 <strong>Descripción:</strong> {empleo.descripcion}
+                      </p>                    
+                      </div>
                     <div className="acciones-publicacion">
                       <button className="btn btn-editar" onClick={() => handleEditar(pub.id_genera)}>Editar</button>
                       <button className="btn btn-eliminar" onClick={() => handleEliminar(empleo.id_postulacion_empleo)}>Eliminar</button>
