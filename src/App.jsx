@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from "react"
 import { Client } from "@stomp/stompjs";
 import axios from 'axios';
 
-function App({ 
-  nombrePropio = "1", 
-  destinatarioProp = "2", 
+function App({
+  nombrePropio = "1",
+  destinatarioProp = "2",
   onCerrarChat,
   // 🆕 NUEVAS PROPS PARA MOSTRAR NOMBRES REALES
   nombreUsuarioActual = null,
@@ -27,6 +27,62 @@ function App({
     const parsed = parseInt(id, 10);
     return isNaN(parsed) ? id : parsed;
   }, []);
+
+  const validarYNormalizarIds = useCallback((nombrePropio, destinatarioProp, contexto = '') => {
+    console.log(`🔍 [${contexto}] VALIDACIÓN DE IDS`);
+    console.log(`🔍 [${contexto}] Input - nombrePropio:`, nombrePropio, typeof nombrePropio);
+    console.log(`🔍 [${contexto}] Input - destinatarioProp:`, destinatarioProp, typeof destinatarioProp);
+
+    const usuarioActualId = normalizarId(nombrePropio);
+    const destinatarioId = normalizarId(destinatarioProp);
+
+    console.log(`🔍 [${contexto}] IDs normalizados - Usuario: ${usuarioActualId}, Destinatario: ${destinatarioId}`);
+
+    // ✅ VALIDACIONES CRÍTICAS MEJORADAS
+    if (usuarioActualId === null || destinatarioId === null) {
+      return {
+        valido: false,
+        error: 'IDs no pueden ser nulos',
+        usuarioActualId: null,
+        destinatarioId: null
+      };
+    }
+
+    if (isNaN(usuarioActualId) || isNaN(destinatarioId)) {
+      return {
+        valido: false,
+        error: 'IDs deben ser números válidos',
+        usuarioActualId,
+        destinatarioId
+      };
+    }
+
+    if (usuarioActualId <= 0 || destinatarioId <= 0) {
+      return {
+        valido: false,
+        error: 'IDs deben ser positivos',
+        usuarioActualId,
+        destinatarioId
+      };
+    }
+
+    if (usuarioActualId === destinatarioId) {
+      return {
+        valido: false,
+        error: 'Usuario no puede chatear consigo mismo',
+        usuarioActualId,
+        destinatarioId
+      };
+    }
+
+    return {
+      valido: true,
+      usuarioActualId: Number(usuarioActualId), // 🆕 Asegurar tipo número
+      destinatarioId: Number(destinatarioId),  // 🆕 Asegurar tipo número
+      error: null
+    };
+  }, [normalizarId]);
+
 
   // OPTIMIZACIÓN: Memoizar IDs normalizados
   const usuarioActual = useMemo(() => normalizarId(nombrePropio), [nombrePropio, normalizarId]);
@@ -61,7 +117,7 @@ function App({
   }, [usuarioActual, destinatario]);
 
   // OPTIMIZACIÓN: Memoizar debug info
-  const debugInfo = useMemo(() => 
+  const debugInfo = useMemo(() =>
     `Chat: ${nombreMostrarUsuario} ↔ ${nombreMostrarDestinatario} | Mensajes: ${mensajes.length} | Conectado: ${conectado}`,
     [nombreMostrarUsuario, nombreMostrarDestinatario, mensajes.length, conectado]
   );
@@ -71,45 +127,68 @@ function App({
   // 🆕 FUNCIÓN PARA ENVIAR NOTIFICACIÓN DE MENSAJE
   const enviarNotificacionMensaje = useCallback(async (remitenteId, destinatarioId, contenido) => {
     try {
-      console.log('📤 [NOTIFICACIÓN] Enviando notificación de mensaje...');
-      console.log('📤 [NOTIFICACIÓN] Remitente:', remitenteId, 'Destinatario:', destinatarioId);
-      console.log('📤 [NOTIFICACIÓN] Contenido:', contenido.substring(0, 50) + '...');
-      
-      const response = await axios.post('http://localhost:8090/api/notificaciones/crear-notificacion-mensaje', {
-        remitenteId: parseInt(remitenteId),
-        destinatarioId: parseInt(destinatarioId),
-        contenido: contenido
-      }, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        timeout: 5000 // 5 segundos de timeout
-      });
-      
-      if (response.status === 200) {
-        console.log('✅ [NOTIFICACIÓN] Notificación de mensaje enviada exitosamente');
-        console.log('✅ [NOTIFICACIÓN] Respuesta del servidor:', response.data);
-      } else {
-        console.warn('⚠️ [NOTIFICACIÓN] Respuesta inesperada:', response.status, response.data);
+      console.log('📤 [NOTIFICACION] ===================');
+      console.log('📤 [NOTIFICACION] Remitente ID:', remitenteId, '(tipo:', typeof remitenteId, ')');
+      console.log('📤 [NOTIFICACION] Destinatario ID:', destinatarioId, '(tipo:', typeof destinatarioId, ')');
+
+      // ✅ VERIFICACIÓN MEJORADA DE TIPOS
+      if (typeof remitenteId !== 'number' || typeof destinatarioId !== 'number') {
+        throw new Error(`IDs deben ser números: remitente=${typeof remitenteId}, destinatario=${typeof destinatarioId}`);
       }
-      
+
+      // ✅ VALIDACIÓN DE ROLES (opcional, si tienes la información)
+      if (datosDestinatario?.rol) {
+        console.log('📤 [NOTIFICACION] Rol destinatario:', datosDestinatario.rol);
+      }
+
+      const payload = {
+        remitenteId: remitenteId,
+        destinatarioId: destinatarioId,
+        contenido: contenido,
+        // 🆕 Añadir tipo de notificación si es necesario
+        tipo: "MENSAJE_DIRECTO"
+      };
+
+      console.log('📤 [NOTIFICACION] Payload final:', payload);
+
+      const response = await axios.post(
+        'http://localhost:8090/api/notificaciones/crear-notificacion-mensaje',
+        payload,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}` // 🆕 Si usas autenticación
+          },
+          timeout: 10000
+        }
+      );
+
+      // ✅ VERIFICACIÓN MEJORADA DE RESPUESTA
+      if (response.status >= 200 && response.status < 300) {
+        console.log('✅ [NOTIFICACION] Enviada exitosamente. Respuesta:', response.data);
+        return true;
+      } else {
+        console.warn('⚠️ [NOTIFICACION] Respuesta inesperada:', {
+          status: response.status,
+          data: response.data
+        });
+        return false;
+      }
+
     } catch (error) {
-      console.error('❌ [NOTIFICACIÓN] Error al enviar notificación de mensaje:', {
-        error: error.message,
+      console.error('❌ [NOTIFICACION] Error detallado:', {
+        message: error.message,
         status: error.response?.status,
         data: error.response?.data,
-        remitenteId,
-        destinatarioId
+        stack: error.stack // 🆕 Para debugging más detallado
       });
-      
-      // Si hay error específico del servidor, mostrarlo
-      if (error.response?.data) {
-        console.error('❌ [NOTIFICACIÓN] Detalles del error:', error.response.data);
+
+      if (process.env.NODE_ENV === 'development') {
+        alert(`Error de notificación: ${error.message}`); // 🆕 Solo en desarrollo
       }
-      
-      // No fallar el envío del mensaje por un error de notificación
+      return false;
     }
-  }, []);
+  }, [datosDestinatario?.rol]); // 🆕 Dependencia opcional
 
   // Cargar historial - OPTIMIZADO
   useEffect(() => {
@@ -124,11 +203,11 @@ function App({
         const response = await fetch(
           `http://localhost:8090/api/chat/historial?aspiranteId=${usuarioActual}&contratistaId=${destinatario}`
         );
-        
+
         if (response.ok) {
           const data = await response.json();
           console.log("📥 Historial recibido:", data.length, "mensajes");
-          
+
           // Limpiar y procesar mensajes
           mensajesIds.current.clear();
           const mensajesUnicos = data.filter(m => {
@@ -137,7 +216,7 @@ function App({
             mensajesIds.current.add(m.id);
             return true;
           });
-          
+
           setMensajes(mensajesUnicos);
         } else {
           console.warn("⚠️ Error historial:", response.status);
@@ -176,7 +255,7 @@ function App({
     isConnecting.current = true;
     console.log(`🔌 Conectando WebSocket: ${usuarioActual} ↔ ${destinatario}`);
     console.log(`🔗 Canal objetivo: ${canalConversacion}`);
-    
+
     const cliente = new Client({
       brokerURL: "ws://localhost:8090/ws",
       debug: str => console.log("📡", str),
@@ -243,76 +322,82 @@ function App({
     };
   }, [usuarioActual, destinatario, canalConversacion]);
 
-  // 🆕 FUNCIÓN DE ENVÍO MODIFICADA CON NOTIFICACIONES COMPLETA
   const enviarMensaje = useCallback(async () => {
     const contenido = mensaje.trim();
     if (!stompRef.current?.connected || !contenido) {
-      console.log("❌ No se puede enviar mensaje");
-      if (!stompRef.current?.connected) {
-        console.log("❌ WebSocket no conectado");
-      }
-      if (!contenido) {
-        console.log("❌ Mensaje vacío");
-      }
+      console.log("❌ No se puede enviar mensaje - Conexión o contenido inválido");
       return;
     }
 
-    console.log("📤 [MENSAJE] Preparando envío de mensaje...");
-    console.log("📤 [MENSAJE] Remitente:", usuarioActual, "Destinatario:", destinatario);
-    console.log("📤 [MENSAJE] Contenido:", contenido);
+    // 🔍 VALIDACIÓN EXHAUSTIVA
+    const validacion = validarYNormalizarIds(nombrePropio, destinatarioProp, 'ENVIO_MENSAJE');
+    if (!validacion.valido) {
+      console.error(`❌ [ENVIO] Validación falló: ${validacion.error}`);
+      alert(`Error de validación: ${validacion.error}`); // 🆕 Feedback al usuario
+      return;
+    }
+
+    const { usuarioActualId, destinatarioId } = validacion;
+
+    console.log("🔍 [ENVIO] ===================");
+    console.log("🔍 [ENVIO] Usuario remitente:", usuarioActualId);
+    console.log("🔍 [ENVIO] Usuario destinatario:", destinatarioId);
+    console.log("🔍 [ENVIO] Contenido:", contenido.substring(0, 50));
+    console.log("🔍 [ENVIO] Datos destinatario:", datosDestinatario); // 🆕 Log adicional
+    console.log("🔍 [ENVIO] ===================");
 
     const mensajeData = {
-      nombre: String(usuarioActual),
+      nombre: String(usuarioActualId),
       contenido,
       color: "#1976d2",
-      aspiranteId: usuarioActual,
-      contratistaId: destinatario,
-      remitenteId: usuarioActual,
-      fechaEnvio: new Date().toISOString()
+      aspiranteId: usuarioActualId,
+      contratistaId: destinatarioId,
+      remitenteId: usuarioActualId,
+      fechaEnvio: new Date().toISOString(),
+      // 🆕 Campos adicionales para tracking
+      tipo: "MENSAJE_CHAT",
+      sessionId: sessionStorage.getItem('sessionId') // Opcional
     };
 
-    console.log("📤 [MENSAJE] Datos del mensaje:", mensajeData);
-    console.log("📤 [MENSAJE] Enviando a canal:", canalConversacion);
-
     try {
-      // 1. Enviar el mensaje por WebSocket
-      console.log("📤 [MENSAJE] Enviando por WebSocket...");
+      // 1. Enviar mensaje por WebSocket
+      console.log("📤 [ENVIO] Enviando mensaje por WebSocket...");
       stompRef.current.publish({
         destination: "/app/envio",
         body: JSON.stringify(mensajeData),
+        headers: {
+          'content-type': 'application/json',
+          'priority': 'high' // 🆕 Opcional
+        }
       });
-      console.log("✅ [MENSAJE] Mensaje enviado por WebSocket");
 
-      // 2. 🆕 ENVIAR NOTIFICACIÓN AL DESTINATARIO
-      console.log("📤 [NOTIFICACIÓN] Iniciando envío de notificación...");
-      await enviarNotificacionMensaje(usuarioActual, destinatario, contenido);
+      // 2. Enviar notificación
+      console.log("📤 [NOTIFICACION] Enviando notificación...");
+      const notificacionEnviada = await enviarNotificacionMensaje(
+        Number(usuarioActualId),
+        Number(destinatarioId),
+        contenido
+      );
 
-      // 3. Limpiar el campo de mensaje
-      setMensaje("");
-      console.log("✅ [MENSAJE] Proceso completo exitoso");
-      
-    } catch (e) {
-      console.error("❌ [MENSAJE] Error general en envío:", {
-        error: e.message,
-        stack: e.stack,
-        usuarioActual,
-        destinatario,
-        conectado
-      });
-      
-      // Intentar enviar solo el mensaje si la notificación falla
-      try {
-        stompRef.current.publish({
-          destination: "/app/envio",
-          body: JSON.stringify(mensajeData),
-        });
+      if (notificacionEnviada) {
         setMensaje("");
-        console.log("✅ [MENSAJE] Mensaje enviado sin notificación como fallback");
-      } catch (fallbackError) {
-        console.error("❌ [MENSAJE] Error en fallback:", fallbackError);
+        console.log("✅ [ENVIO] Mensaje y notificación enviados correctamente");
+      } else {
+        console.warn("⚠️ [ENVIO] Mensaje enviado pero notificación falló");
+        // 🆕 Puedes decidir si quieres limpiar el mensaje igualmente
       }
+
+    } catch (error) {
+      console.error("❌ [ENVIO] Error completo:", {
+        message: error.message,
+        stack: error.stack,
+        timestamp: new Date().toISOString()
+      });
+
+      // 🆕 Feedback al usuario
+      alert("Error al enviar el mensaje. Por favor intenta nuevamente.");
     }
-  }, [mensaje, usuarioActual, destinatario, canalConversacion, enviarNotificacionMensaje]);
+  }, [mensaje, nombrePropio, destinatarioProp, validarYNormalizarIds, enviarNotificacionMensaje, datosDestinatario]);
 
   const formatearFecha = useCallback((fecha) => {
     if (!fecha) return "";
@@ -334,7 +419,7 @@ function App({
   const obtenerNombreRemitente = useCallback((msg) => {
     const remitenteId = normalizarId(msg.remitenteId || msg.nombre);
     const esPropio = remitenteId === usuarioActual;
-    
+
     if (esPropio) {
       return nombreMostrarUsuario;
     } else {
@@ -347,28 +432,28 @@ function App({
     return mensajes.map((msg, index) => {
       const esPropio = normalizarId(msg.remitenteId || msg.nombre) === usuarioActual;
       const nombreRemitente = obtenerNombreRemitente(msg);
-      
+
       return (
-        <div 
-          key={`msg-${msg.id || index}`} 
+        <div
+          key={`msg-${msg.id || index}`}
           style={{
-            display: "flex", 
+            display: "flex",
             justifyContent: esPropio ? "flex-end" : "flex-start",
             marginBottom: "10px"
           }}
         >
           <div style={{
-            maxWidth: "75%", 
+            maxWidth: "75%",
             padding: "12px 16px",
             borderRadius: esPropio ? "18px 18px 5px 18px" : "18px 18px 18px 5px",
-            backgroundColor: esPropio ? "#1976d2" : "white", 
+            backgroundColor: esPropio ? "#1976d2" : "white",
             color: esPropio ? "white" : "black",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)", 
+            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
             border: esPropio ? "none" : "1px solid #e0e0e0",
             minHeight: "20px"
           }}>
-            <div style={{ 
-              fontWeight: "bold", fontSize: "12px", marginBottom: "5px", opacity: 0.8 
+            <div style={{
+              fontWeight: "bold", fontSize: "12px", marginBottom: "5px", opacity: 0.8
             }}>
               {esPropio ? "Tú" : nombreRemitente}
             </div>
@@ -387,11 +472,11 @@ function App({
   // 🆕 VALIDACIÓN MEJORADA DE PARÁMETROS
   if (!usuarioActual || !destinatario) {
     return (
-      <div style={{ 
-        padding: "20px", 
-        textAlign: "center", 
-        backgroundColor: "#fff3cd", 
-        border: "1px solid #ffeaa7", 
+      <div style={{
+        padding: "20px",
+        textAlign: "center",
+        backgroundColor: "#fff3cd",
+        border: "1px solid #ffeaa7",
         borderRadius: "8px",
         margin: "20px"
       }}>
@@ -418,12 +503,12 @@ function App({
   return (
     <div style={{
       position: "fixed", top: 0, left: 0, width: "100%", height: "100%",
-      backgroundColor: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "center", 
+      backgroundColor: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "center",
       alignItems: "center", zIndex: 9999
     }}>
       <div style={{
         width: "450px", height: "600px", backgroundColor: "white", borderRadius: "15px",
-        display: "flex", flexDirection: "column", boxShadow: "0 10px 30px rgba(0,0,0,0.3)", 
+        display: "flex", flexDirection: "column", boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
         overflow: "hidden"
       }}>
 
@@ -459,12 +544,12 @@ function App({
 
         {/* Mensajes */}
         <div style={{
-          flex: 1, padding: "15px", overflowY: "auto", backgroundColor: "#f5f5f5", 
+          flex: 1, padding: "15px", overflowY: "auto", backgroundColor: "#f5f5f5",
           display: "flex", flexDirection: "column", gap: "10px", minHeight: "400px"
         }}>
           {/* Debug info simplificado */}
           <div style={{
-            fontSize: "12px", padding: "8px 12px", backgroundColor: "#e3f2fd", 
+            fontSize: "12px", padding: "8px 12px", backgroundColor: "#e3f2fd",
             borderRadius: "8px", marginBottom: "10px", color: "#1565c0"
           }}>
             📊 {mensajes.length} mensajes | {conectado ? "🟢 Conectado" : "🔴 Desconectado"}
@@ -502,9 +587,9 @@ function App({
             }}
             maxLength={500}
             style={{
-              flex: 1, padding: "12px 16px", 
+              flex: 1, padding: "12px 16px",
               border: `2px solid ${conectado ? "#1976d2" : "#ccc"}`,
-              borderRadius: "20px", outline: "none", fontSize: "14px", 
+              borderRadius: "20px", outline: "none", fontSize: "14px",
               backgroundColor: conectado ? "white" : "#f5f5f5",
               transition: "all 0.2s ease"
             }}
@@ -513,9 +598,9 @@ function App({
             onClick={enviarMensaje}
             disabled={!mensaje.trim() || !conectado}
             style={{
-              padding: "12px 20px", 
+              padding: "12px 20px",
               backgroundColor: mensaje.trim() && conectado ? "#1976d2" : "#ccc",
-              color: "white", border: "none", borderRadius: "20px", 
+              color: "white", border: "none", borderRadius: "20px",
               cursor: mensaje.trim() && conectado ? "pointer" : "not-allowed",
               minWidth: "80px", fontWeight: "500",
               transition: "all 0.2s ease",

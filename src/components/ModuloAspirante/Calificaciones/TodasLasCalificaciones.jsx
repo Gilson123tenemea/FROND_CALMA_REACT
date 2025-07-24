@@ -13,104 +13,129 @@ const TodasLasCalificaciones = () => {
   const [filtroEstrella, setFiltroEstrella] = useState(0);
   const [resumen, setResumen] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [currentAspiranteId, setCurrentAspiranteId] = useState(null);
 
   useEffect(() => {
-    if (aspiranteId) {
-      // Verificar si este es el aspirante correcto
-      verificarAspiranteCorrect();
+    console.log('🔍 [TodasLasCalificaciones] aspiranteId desde URL:', aspiranteId);
+    
+    // Verificar localStorage para aspiranteId correcto
+    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    console.log('🔍 [TodasLasCalificaciones] userData:', userData);
+    
+    // Usar aspiranteId de la URL o del localStorage
+    const finalAspiranteId = aspiranteId || userData?.aspiranteId;
+    
+    if (!finalAspiranteId) {
+      console.error('❌ No se encontró aspiranteId');
+      setLoading(false);
+      return;
     }
-  }, [aspiranteId]);
+    
+    console.log('✅ [TodasLasCalificaciones] aspiranteId final:', finalAspiranteId);
+    setCurrentAspiranteId(finalAspiranteId);
+    
+    // Si el aspiranteId de la URL es diferente al del localStorage, redirigir
+    if (userData.aspiranteId && aspiranteId && userData.aspiranteId !== parseInt(aspiranteId)) {
+      console.log('🔄 [TodasLasCalificaciones] Redirigiendo al aspirante correcto');
+      navigate(`/aspirante/${userData.aspiranteId}/calificaciones`, { replace: true });
+      return;
+    }
+    
+    // Obtener userId correspondiente
+    obtenerUserId(finalAspiranteId);
+    
+  }, [aspiranteId, navigate]);
 
   useEffect(() => {
-    if (userId !== null) {
+    if (currentAspiranteId && userId !== null) {
+      console.log('✅ [TodasLasCalificaciones] Cargando datos con:', { currentAspiranteId, userId });
       cargarCalificaciones();
       cargarResumen();
     }
-  }, [userId]);
+  }, [currentAspiranteId, userId]);
 
   useEffect(() => {
     filtrarCalificaciones();
   }, [calificaciones, filtroEstrella]);
 
-  // Verificar y redirigir al aspirante correcto si es necesario
-  const verificarAspiranteCorrect = async () => {
+  const obtenerUserId = async (idAspirante) => {
     try {
-      // Verificar localStorage primero
-      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      console.log(`🔍 [TodasLasCalificaciones] Obteniendo userId para aspirante: ${idAspirante}`);
       
-      if (userData.aspiranteId && userData.aspiranteId !== parseInt(aspiranteId)) {
-        // Redirección silenciosa al aspirante correcto
-        navigate(`/aspirante/${userData.aspiranteId}/calificaciones`, { replace: true });
+      // Primero verificar localStorage
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      if (userData.usuarioId || userData.userId) {
+        const userIdFromStorage = userData.usuarioId || userData.userId;
+        console.log('✅ [TodasLasCalificaciones] UserId desde localStorage:', userIdFromStorage);
+        setUserId(userIdFromStorage);
         return;
       }
-
-      // Si es el aspirante correcto, obtener userId
-      await obtenerUserId();
       
-    } catch (error) {
-      console.error('Error verificando aspirante:', error);
-      setLoading(false);
-    }
-  };
-
-  const obtenerUserId = async () => {
-    try {
-      const response = await fetch(`http://localhost:8090/api/usuarios/buscar_aspirante/${aspiranteId}`);
+      // Si no está en localStorage, buscar en API
+      const response = await fetch(`http://localhost:8090/api/usuarios/buscar_aspirante/${idAspirante}`);
       
       if (response.ok) {
         const responseText = await response.text();
         
         if (responseText && responseText.trim() !== '') {
           const idUsuario = JSON.parse(responseText);
+          console.log('✅ [TodasLasCalificaciones] UserId desde API:', idUsuario);
           setUserId(idUsuario);
         } else {
-          console.error('No se encontró usuario para el aspirante:', aspiranteId);
-          setUserId(aspiranteId);
+          console.warn('⚠️ [TodasLasCalificaciones] No se encontró usuario, usando aspiranteId como fallback');
+          setUserId(idAspirante);
         }
       } else {
-        setUserId(aspiranteId);
+        console.warn('⚠️ [TodasLasCalificaciones] API falló, usando aspiranteId como fallback');
+        setUserId(idAspirante);
       }
     } catch (error) {
-      console.error('Error obteniendo userId:', error);
-      setUserId(aspiranteId);
+      console.error('❌ Error obteniendo userId:', error);
+      setUserId(idAspirante);
     }
   };
 
   const cargarCalificaciones = async () => {
     try {
-      const endpoint = `http://localhost:8090/api/calificaciones/aspirante/${aspiranteId}`;
+      console.log(`🔍 [TodasLasCalificaciones] Cargando calificaciones para aspirante: ${currentAspiranteId}`);
+      const endpoint = `http://localhost:8090/api/calificaciones/aspirante/${currentAspiranteId}`;
       const respuesta = await fetch(endpoint);
       
       if (respuesta.ok) {
         const datos = await respuesta.json();
         
         if (Array.isArray(datos)) {
+          console.log(`✅ [TodasLasCalificaciones] ${datos.length} calificaciones cargadas`);
           setCalificaciones(datos);
           return;
         }
       }
       
+      console.log('⚠️ [TodasLasCalificaciones] No se encontraron calificaciones');
       setCalificaciones([]);
       
     } catch (error) {
-      console.error('Error cargando calificaciones:', error);
+      console.error('❌ Error cargando calificaciones:', error);
       setCalificaciones([]);
     }
   };
 
   const cargarResumen = async () => {
     try {
-      const endpoint = `http://localhost:8090/api/calificaciones/aspirante/${aspiranteId}/resumen`;
+      console.log(`🔍 [TodasLasCalificaciones] Cargando resumen para aspirante: ${currentAspiranteId}`);
+      const endpoint = `http://localhost:8090/api/calificaciones/aspirante/${currentAspiranteId}/resumen`;
       const respuesta = await fetch(endpoint);
       
       if (respuesta.ok) {
         const datos = await respuesta.json();
+        console.log('✅ [TodasLasCalificaciones] Resumen cargado desde API');
         setResumen(datos);
         return;
       }
       
       // Fallback: calcular resumen desde calificaciones
       if (calificaciones.length > 0) {
+        console.log('⚠️ [TodasLasCalificaciones] Calculando resumen manualmente');
         const resumenCalculado = {
           totalCalificaciones: calificaciones.length,
           promedioCalificacion: (calificaciones.reduce((sum, cal) => sum + cal.puntaje, 0) / calificaciones.length).toFixed(1),
@@ -125,6 +150,7 @@ const TodasLasCalificaciones = () => {
         };
         setResumen(resumenCalculado);
       } else {
+        console.log('⚠️ [TodasLasCalificaciones] Sin calificaciones, resumen vacío');
         setResumen({
           totalCalificaciones: 0,
           promedioCalificacion: "0.0",
@@ -133,7 +159,7 @@ const TodasLasCalificaciones = () => {
         });
       }
     } catch (error) {
-      console.error('Error cargando resumen:', error);
+      console.error('❌ Error cargando resumen:', error);
     } finally {
       setLoading(false);
     }
@@ -173,13 +199,20 @@ const TodasLasCalificaciones = () => {
     navigate(-1);
   };
 
-  if (loading) {
+  // Mostrar loading mientras se obtienen los IDs
+  if (loading || !currentAspiranteId || userId === null) {
     return (
       <div className="calificaciones-page">
-        <HeaderAspirante />
+        <HeaderAspirante 
+          userId={userId} 
+          aspiranteId={currentAspiranteId}
+        />
         <div className="loading-container">
           <div className="loading-spinner"></div>
           <p>Cargando calificaciones...</p>
+          <div style={{ fontSize: '0.8rem', marginTop: '0.5rem', color: '#666' }}>
+            userId: {userId || 'cargando...'} | aspiranteId: {currentAspiranteId || 'cargando...'}
+          </div>
         </div>
       </div>
     );
@@ -187,7 +220,10 @@ const TodasLasCalificaciones = () => {
 
   return (
     <div className="calificaciones-page">
-      <HeaderAspirante />
+      <HeaderAspirante 
+        userId={userId} 
+        aspiranteId={currentAspiranteId}
+      />
       
       <div className="calificaciones-content">
         {/* Header */}

@@ -7,23 +7,27 @@ import styles from './Postulaciones.module.css';
 import HeaderContratante from "../HeaderContratante/HeaderContratante";
 
 const Postulaciones = () => {
-  const { userId } = useParams(); // userId es el id del CONTRATANTE
+  const { userId } = useParams();
   const [realizaciones, setRealizaciones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filtroTitulo, setFiltroTitulo] = useState('');
   const [filtroFecha, setFiltroFecha] = useState('');
-  const [procesandoEstados, setProcesandoEstados] = useState({}); // Para deshabilitar botones temporalmente
+  const [procesandoEstados, setProcesandoEstados] = useState({});
+  const [calificacionesStatus, setCalificacionesStatus] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
     const obtenerRealizaciones = async () => {
       try {
         const response = await axios.get(`http://localhost:8090/api/postulacion/${userId}/realizaciones`);
-        setRealizaciones(response.data);
+        // 🔥 ASEGURAR QUE SIEMPRE SEA UN ARRAY
+        setRealizaciones(Array.isArray(response.data) ? response.data : []);
       } catch (err) {
         console.error('Error axios:', err);
         setError(`❌ Error al cargar postulaciones: ${err.message}`);
+        // 🔥 ASEGURAR QUE SEA ARRAY EN CASO DE ERROR
+        setRealizaciones([]);
         toast.error('Error al cargar postulaciones', {
           position: "top-right",
           autoClose: 5000,
@@ -42,20 +46,18 @@ const Postulaciones = () => {
     }
   }, [userId]);
 
-  // 🔥 NUEVA FUNCIÓN: Verificar si existe una calificación
   const verificarCalificacion = async (idPostulacion, idContratante) => {
     try {
       const response = await axios.get(
         `http://localhost:8090/api/calificaciones/existe/${idPostulacion}/${idContratante}`
       );
-      return response.data; // Devuelve true/false
+      return response.data;
     } catch (error) {
       console.error('Error al verificar calificación:', error);
       return false;
     }
   };
 
-  // 🔥 NUEVA FUNCIÓN: Modal de confirmación elegante
   const mostrarModalConfirmacion = (aspiranteName, jobTitle) => {
     return new Promise((resolve) => {
       const modal = document.createElement('div');
@@ -185,7 +187,6 @@ const Postulaciones = () => {
       
       document.body.appendChild(modal);
       
-      // Agregar efectos hover
       const cancelarBtn = modal.querySelector('#cancelar');
       const continuarBtn = modal.querySelector('#continuar');
       
@@ -221,7 +222,6 @@ const Postulaciones = () => {
         }, 200);
       };
       
-      // Cerrar con ESC
       const handleEsc = (e) => {
         if (e.key === 'Escape') {
           cancelarBtn.click();
@@ -230,7 +230,6 @@ const Postulaciones = () => {
       };
       document.addEventListener('keydown', handleEsc);
       
-      // Añadir animación de salida
       const style = document.createElement('style');
       style.textContent = `
         @keyframes fadeOut {
@@ -243,11 +242,9 @@ const Postulaciones = () => {
   };
 
   const actualizarEstado = async (idPostulacion, idPostulacionEmpleo, nuevoEstado, idAspirante, aspiranteName, jobTitle) => {
-    // Marcar como procesando para deshabilitar botones
     setProcesandoEstados(prev => ({ ...prev, [idPostulacion]: true }));
     
     try {
-        // 🔥 VALIDACIÓN: Si se va a rechazar, verificar si tiene calificación
         if (nuevoEstado === false) {
           const tieneCalificacion = await verificarCalificacion(idPostulacion, userId);
           
@@ -255,7 +252,6 @@ const Postulaciones = () => {
             const confirmar = await mostrarModalConfirmacion(aspiranteName, jobTitle);
             
             if (!confirmar) {
-              // Usuario canceló la operación
               setProcesandoEstados(prev => ({ ...prev, [idPostulacion]: false }));
               toast.info('💭 Operación cancelada. La postulación mantiene su estado actual.', {
                 position: "top-right",
@@ -270,7 +266,6 @@ const Postulaciones = () => {
           }
         }
 
-        // Proceder con la actualización del estado
         await axios.put(
             `http://localhost:8090/api/postulacion/actualizar/${idPostulacion}/${userId}/${idAspirante}`,
             {
@@ -293,7 +288,6 @@ const Postulaciones = () => {
             ? 'success' 
             : 'error';
 
-        // Toast especial si se rechazó con calificación
         if (nuevoEstado === false) {
           const tieneCalificacion = await verificarCalificacion(idPostulacion, userId);
           if (tieneCalificacion) {
@@ -326,7 +320,6 @@ const Postulaciones = () => {
           });
         }
 
-        // Actualizar el estado en el frontend
         setRealizaciones(prev =>
             prev.map(r => {
                 if (r.postulacion?.id_postulacion === idPostulacion) {
@@ -342,7 +335,6 @@ const Postulaciones = () => {
             })
         );
 
-        // Actualizar status de calificaciones si se aceptó
         if (nuevoEstado === true) {
           setCalificacionesStatus(prev => ({ ...prev, [idPostulacion]: false }));
         }
@@ -358,7 +350,6 @@ const Postulaciones = () => {
           draggable: true,
         });
     } finally {
-        // Quitar el estado de procesando
         setProcesandoEstados(prev => ({ ...prev, [idPostulacion]: false }));
     }
   };
@@ -375,7 +366,8 @@ const Postulaciones = () => {
     return `${year}-${month}-${day}`;
   };
 
-  const filtradas = realizaciones.filter(r => {
+  // 🔥 PROTEGER EL FILTER CON VERIFICACIÓN DE ARRAY
+  const filtradas = Array.isArray(realizaciones) ? realizaciones.filter(r => {
     const titulo = r.postulacion?.postulacion_empleo?.titulo?.toLowerCase() || '';
     const fechaPostulacion = r.fecha ? formatoLocal(r.fecha) : '';
 
@@ -388,7 +380,7 @@ const Postulaciones = () => {
     }
 
     return true;
-  });
+  }) : [];
 
   const handleTituloChange = (e) => {
     setFiltroTitulo(e.target.value);
@@ -412,12 +404,9 @@ const Postulaciones = () => {
     return '❌ Rechazada';
   };
 
-  // 🔥 NUEVA FUNCIÓN: Verificar si una postulación tiene calificación para mostrar indicador visual
-  const [calificacionesStatus, setCalificacionesStatus] = useState({});
-
   useEffect(() => {
     const verificarCalificacionesExistentes = async () => {
-      if (realizaciones.length > 0) {
+      if (Array.isArray(realizaciones) && realizaciones.length > 0) {
         const status = {};
         for (const realizacion of realizaciones) {
           if (realizacion.postulacion?.id_postulacion) {
@@ -449,16 +438,82 @@ const Postulaciones = () => {
     </div>
   );
   
-  if (realizaciones.length === 0) return (
-    <div className={styles.postulacionesEmptyContainer}>
-      <div className={styles.postulacionesEmptyIcon}>📭</div>
-      <p className={styles.postulacionesEmptyText}>No hay postulaciones disponibles</p>
-    </div>
+  // 🔥 EMPTY STATE MEJORADO - VERIFICAR QUE SEA ARRAY Y ESTÉ VACÍO
+  if (!Array.isArray(realizaciones) || realizaciones.length === 0) return (
+    <>
+      <HeaderContratante userId={userId} />
+      <div className={styles.postulacionesMainWrapper}>
+        <div className={styles.postulacionesHeaderSection}>
+          <h2 className={styles.postulacionesMainTitle}>
+            <span className={styles.postulacionesTitleIcon}>📄</span>
+            Postulaciones del Contratante
+            <span className={styles.postulacionesUserBadge}>#{userId}</span>
+          </h2>
+          
+          <div className={styles.postulacionesStatsBar}>
+            <div className={styles.postulacionesStatItem}>
+              <span className={styles.postulacionesStatNumber}>0</span>
+              <span className={styles.postulacionesStatLabel}>Postulaciones</span>
+            </div>
+            <div className={styles.postulacionesStatItem}>
+              <span className={styles.postulacionesStatNumber}>0</span>
+              <span className={styles.postulacionesStatLabel}>Aceptadas</span>
+            </div>
+            <div className={styles.postulacionesStatItem}>
+              <span className={styles.postulacionesStatNumber}>0</span>
+              <span className={styles.postulacionesStatLabel}>Pendientes</span>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.postulacionesEmptyStateContainer}>
+          <div className={styles.postulacionesEmptyStateCard}>
+            <div className={styles.postulacionesEmptyIcon}>📭</div>
+            <h3 className={styles.postulacionesEmptyTitle}>
+              ¡No hay postulaciones aún!
+            </h3>
+            <p className={styles.postulacionesEmptyDescription}>
+              Parece que aún no has recibido postulaciones para tus ofertas laborales. 
+              Cuando los aspirantes se postulen a tus trabajos, aparecerán aquí.
+            </p>
+            
+            <div className={styles.postulacionesEmptyActions}>
+              <button 
+                className={styles.postulacionesEmptyActionBtn}
+                onClick={() => navigate(`/moduloContratante/ListaPublicaciones?userId=${userId}`)}
+              >
+                <i className="fas fa-briefcase"></i>
+                Ver mis ofertas
+              </button>
+              <button 
+                className={styles.postulacionesEmptyActionBtnSecondary}
+                onClick={() => window.location.reload()}
+              >
+                <i className="fas fa-refresh"></i>
+                Actualizar
+              </button>
+            </div>
+
+            <div className={styles.postulacionesEmptyTips}>
+              <h4 className={styles.postulacionesEmptyTipsTitle}>
+                💡 Consejos para atraer más postulaciones:
+              </h4>
+              <ul className={styles.postulacionesEmptyTipsList}>
+                <li>Asegúrate de que tus ofertas tengan descripciones claras</li>
+                <li>Incluye un salario competitivo</li>
+                <li>Revisa que la fecha límite sea suficiente</li>
+                <li>Publica en categorías relevantes</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
   );
 
   return (
     <>
-    <HeaderContratante userId={userId} />
+      <HeaderContratante userId={userId} />
       <div className={styles.postulacionesMainWrapper}>
         <div className={styles.postulacionesHeaderSection}>
           <h2 className={styles.postulacionesMainTitle}>
@@ -536,7 +591,6 @@ const Postulaciones = () => {
                     <div className={styles.postulacionesApplicantDetails}>
                       <h3 className={styles.postulacionesApplicantName}>
                         {usuario ? `${usuario.nombres} ${usuario.apellidos}` : 'No disponible'}
-                        {/* 🔥 INDICADOR VISUAL: Mostrar si tiene calificación */}
                         {tieneCalificacion && (
                           <span style={{
                             marginLeft: '10px',
@@ -629,7 +683,7 @@ const Postulaciones = () => {
                 </div>
 
                 <div className={styles.postulacionesCardActions}>
-                  {/* 🔥 BOTÓN ACEPTAR - Se bloquea si ya está aceptada */}
+                  {/* 🔥 BOTÓN ACEPTAR - CORREGIDO */}
                   <button
                     className={`${styles.postulacionesActionBtn} ${styles.postulacionesBtnAccept}`}
                     onClick={() =>
@@ -653,7 +707,7 @@ const Postulaciones = () => {
                     {estaProcesando ? 'Procesando...' : estaAceptada ? 'Ya Aceptada ✓' : 'Aceptar'}
                   </button>
                   
-                  {/* 🔥 BOTÓN RECHAZAR - Se bloquea si ya está aceptada */}
+                  {/* 🔥 BOTÓN RECHAZAR - CORREGIDO */}
                   <button
                     className={`${styles.postulacionesActionBtn} ${styles.postulacionesBtnReject}`}
                     onClick={() =>
@@ -680,6 +734,7 @@ const Postulaciones = () => {
                      tieneCalificacion ? 'Rechazar ⚠️' : 'Rechazar'}
                   </button>
                   
+                  {/* 🔥 BOTÓN VER CV */}
                   <button
                     className={`${styles.postulacionesActionBtn} ${styles.postulacionesBtnCv}`}
                     onClick={() => verCV(aspirante?.idAspirante)}

@@ -214,10 +214,10 @@
 .buttonIcon {
   font-size: 0.8rem;
 }
+
 /* Estados de carga y error */
 .loadingContainer,
-.errorContainer,
-.emptyContainer {
+.errorContainer {
   text-align: center;
   padding: 3rem;
   display: flex;
@@ -273,24 +273,276 @@
   background-color: #c0392b;
 }
 
+/* PANTALLA SIN POSTULACIONES MEJORADA */
 .emptyContainer {
-  color: #7f8c8d;
+  text-align: center;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 80px);
+  margin-top: 80px;
+  background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
+  position: relative;
+  overflow: hidden;
 }
 
-.emptyIcon {
+.emptyContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* ANIMACIÓN DEL ICONO */
+.emptyAnimation {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.emptyIconWrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #fff 0%, #f8f9ff 100%);
+  border-radius: 50%;
+  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+  animation: float 3s ease-in-out infinite;
+}
+
+.searchIcon {
   font-size: 3rem;
-  margin-bottom: 1rem;
+  animation: bounce 2s ease-in-out infinite;
 }
 
-.emptyContainer h2 {
-  color: #2c3e50;
+.documentIcon {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  font-size: 1.5rem;
+  background: #3b82f6;
+  border-radius: 50%;
+  padding: 0.5rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-5px); }
+  60% { transform: translateY(-3px); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* CONTENIDO PRINCIPAL */
+.emptyContent {
+  max-width: 600px;
+  position: relative;
+  z-index: 1;
+}
+
+.emptyTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1e293b;
   margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
 }
 
-.emptyContainer p {
-  margin-bottom: 1.5rem;
+.emptySubtitle {
+  font-size: 1.25rem;
+  color: #64748b;
+  margin-bottom: 2.5rem;
+  font-weight: 400;
 }
 
+/* PASOS */
+.emptySteps {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+  text-align: left;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border-left: 4px solid #3b82f6;
+}
+
+.step:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.stepNumber {
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.stepText h3 {
+  color: #1e293b;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.stepText p {
+  color: #64748b;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* BOTONES DE ACCIÓN */
+.emptyActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.primaryButton,
+.secondaryButton {
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.primaryButton {
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  color: white;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+}
+
+.primaryButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+}
+
+.primaryButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.primaryButton:hover::before {
+  left: 100%;
+}
+
+.secondaryButton {
+  background: white;
+  color: #3b82f6;
+  border: 2px solid #3b82f6;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.secondaryButton:hover {
+  background: #3b82f6;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(59, 130, 246, 0.3);
+}
+
+.buttonIcon {
+  font-size: 1.1rem;
+}
+
+/* MENSAJE DE ALIENTO */
+.encouragementMessage {
+  background: linear-gradient(135deg, #fef3e3 0%, #fde68a 100%);
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(251, 146, 60, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.encouragementMessage::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #f59e0b 0%, #f97316 100%);
+}
+
+.heartIcon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  animation: heartbeat 2s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0%, 50%, 100% { transform: scale(1); }
+  25%, 75% { transform: scale(1.1); }
+}
+
+.encouragementMessage p {
+  color: #92400e;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.encouragementMessage strong {
+  color: #78350f;
+}
+
+/* BOTÓN DE BÚSQUEDA ORIGINAL (por si acaso) */
 .searchButton {
   background-color: #3498db;
   color: white;
@@ -319,5 +571,57 @@
   
   .container {
     padding-top: 70px;
+  }
+
+  .emptyContainer {
+    padding: 1.5rem;
+  }
+  
+  .emptyTitle {
+    font-size: 2rem;
+  }
+  
+  .emptySubtitle {
+    font-size: 1.1rem;
+  }
+  
+  .emptyActions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+  }
+  
+  .emptySteps {
+    text-align: center;
+  }
+  
+  .step {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .emptyTitle {
+    font-size: 1.75rem;
+  }
+  
+  .emptyIconWrapper {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .searchIcon {
+    font-size: 2.5rem;
+  }
+  
+  .encouragementMessage {
+    padding: 1.5rem;
   }
 }

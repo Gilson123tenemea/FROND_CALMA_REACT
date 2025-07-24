@@ -270,6 +270,168 @@
   text-align: center;
 }
 
+/* ===== EMPTY STATE MEJORADO ===== */
+.postulacionesEmptyStateContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.postulacionesEmptyStateCard {
+  background: var(--off-white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 3rem 2rem;
+  text-align: center;
+  border: 1px solid var(--gray-200);
+  position: relative;
+  overflow: hidden;
+}
+
+.postulacionesEmptyStateCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+}
+
+.postulacionesEmptyStateCard .postulacionesEmptyIcon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  animation: postulacionesFloatAnimation 3s ease-in-out infinite;
+}
+
+@keyframes postulacionesFloatAnimation {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.postulacionesEmptyTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.postulacionesEmptyDescription {
+  font-size: 1.125rem;
+  color: var(--gray-600);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.postulacionesEmptyActions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.postulacionesEmptyActionBtn {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: var(--white);
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: var(--shadow-md);
+  text-decoration: none;
+}
+
+.postulacionesEmptyActionBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.postulacionesEmptyActionBtn:active {
+  transform: translateY(0);
+}
+
+.postulacionesEmptyActionBtnSecondary {
+  background: var(--white);
+  color: var(--gray-700);
+  border: 2px solid var(--gray-300);
+  padding: 1rem 2rem;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.postulacionesEmptyActionBtnSecondary:hover {
+  background: var(--gray-50);
+  border-color: var(--gray-400);
+  transform: translateY(-2px);
+}
+
+.postulacionesEmptyTips {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  text-align: left;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.postulacionesEmptyTipsTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.postulacionesEmptyTipsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.postulacionesEmptyTipsList li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--gray-600);
+  line-height: 1.5;
+}
+
+.postulacionesEmptyTipsList li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--success-color);
+  font-weight: 700;
+}
+
+.postulacionesEmptyTipsList li:last-child {
+  margin-bottom: 0;
+}
+
 /* ===== GRID DE TARJETAS ===== */
 .postulacionesCardsGrid {
   max-width: 1200px;
@@ -573,6 +735,35 @@
   
   .postulacionesCardActions {
     flex-direction: column;
+  }
+
+  /* Responsive para Empty State */
+  .postulacionesEmptyStateCard {
+    padding: 2rem 1rem;
+  }
+  
+  .postulacionesEmptyTitle {
+    font-size: 1.5rem;
+  }
+  
+  .postulacionesEmptyDescription {
+    font-size: 1rem;
+  }
+  
+  .postulacionesEmptyActions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .postulacionesEmptyActionBtn,
+  .postulacionesEmptyActionBtnSecondary {
+    width: 100%;
+    max-width: 250px;
+    justify-content: center;
+  }
+  
+  .postulacionesEmptyStateCard .postulacionesEmptyIcon {
+    font-size: 3rem;
   }
 }
 

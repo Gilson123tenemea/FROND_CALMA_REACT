@@ -6,48 +6,105 @@ import styles from './PostulacionesAspirante.module.css';
 import HeaderAspirante from '../HeaderAspirante/HeaderAspirante';
 import { useNavigate } from 'react-router-dom';
 
-
 const PostulacionesAspirante = () => {
   const { aspiranteId } = useParams();
   const [postulaciones, setPostulaciones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const userData = JSON.parse(localStorage.getItem("userData"));
-  const userAspiranteId = userData?.aspiranteId;
   const [pacientesIds, setPacientesIds] = useState([]);
+  const [userId, setUserId] = useState(null);
+  const [currentAspiranteId, setCurrentAspiranteId] = useState(null);
   const navigate = useNavigate();
-  
-
-  const currentAspiranteId = aspiranteId || userAspiranteId;
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+    console.log('🔍 [PostulacionesAspirante] aspiranteId desde URL:', aspiranteId);
+    
+    // Verificar localStorage
+    const userData = JSON.parse(localStorage.getItem("userData") || '{}');
+    console.log('🔍 [PostulacionesAspirante] userData:', userData);
+    
+    // Determinar el aspiranteId correcto
+    const finalAspiranteId = aspiranteId || userData?.aspiranteId;
+    
+    if (!finalAspiranteId) {
+      console.error('❌ No se encontró aspiranteId');
+      setError('No se pudo identificar al aspirante');
+      setLoading(false);
+      return;
+    }
+    
+    console.log('✅ [PostulacionesAspirante] aspiranteId final:', finalAspiranteId);
+    setCurrentAspiranteId(finalAspiranteId);
+    
+    // Obtener userId correspondiente
+    obtenerUserId(finalAspiranteId);
+    
+  }, [aspiranteId]);
 
-        const postulacionesResponse = await axios.get(`http://localhost:8090/api/realizar/aspirante/${currentAspiranteId}`);
+  useEffect(() => {
+    if (currentAspiranteId && userId !== null) {
+      console.log('✅ [PostulacionesAspirante] Cargando postulaciones con:', { currentAspiranteId, userId });
+      fetchData();
+    }
+  }, [currentAspiranteId, userId]);
 
-        if (postulacionesResponse.data && Array.isArray(postulacionesResponse.data)) {
-          setPostulaciones(postulacionesResponse.data);
-          const ids = postulacionesResponse.data.map(postulacion =>
-            postulacion.postulacion.postulacion_empleo.id_paciente
-          );
-          setPacientesIds(ids);
-        } else {
-          setPostulaciones([]);
-        }
-
-      } catch (err) {
-        console.error("Error al cargar postulaciones:", err);
-        setError('Error al cargar tus postulaciones. Por favor intenta nuevamente.');
-      } finally {
-        setLoading(false);
+  const obtenerUserId = async (idAspirante) => {
+    try {
+      console.log(`🔍 [PostulacionesAspirante] Obteniendo userId para aspirante: ${idAspirante}`);
+      
+      // Primero verificar localStorage
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      if (userData.usuarioId || userData.userId) {
+        const userIdFromStorage = userData.usuarioId || userData.userId;
+        console.log('✅ [PostulacionesAspirante] UserId desde localStorage:', userIdFromStorage);
+        setUserId(userIdFromStorage);
+        return;
       }
-    };
+      
+      // Si no está en localStorage, buscar en API
+      const response = await axios.get(`http://localhost:8090/api/usuarios/buscar_aspirante/${idAspirante}`);
+      
+      if (response.data !== null && response.data !== undefined) {
+        const idUsuario = response.data;
+        console.log('✅ [PostulacionesAspirante] UserId desde API:', idUsuario);
+        setUserId(idUsuario);
+      } else {
+        console.warn('⚠️ [PostulacionesAspirante] No se encontró usuario, usando aspiranteId como fallback');
+        setUserId(idAspirante);
+      }
+    } catch (error) {
+      console.error('❌ Error obteniendo userId:', error);
+      setUserId(idAspirante); // Fallback
+    }
+  };
 
-    if (currentAspiranteId) fetchData();
-  }, [currentAspiranteId]);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      console.log(`🔍 [PostulacionesAspirante] Cargando postulaciones para aspirante: ${currentAspiranteId}`);
+      const postulacionesResponse = await axios.get(`http://localhost:8090/api/realizar/aspirante/${currentAspiranteId}`);
+
+      if (postulacionesResponse.data && Array.isArray(postulacionesResponse.data)) {
+        console.log(`✅ [PostulacionesAspirante] ${postulacionesResponse.data.length} postulaciones cargadas`);
+        setPostulaciones(postulacionesResponse.data);
+        const ids = postulacionesResponse.data.map(postulacion =>
+          postulacion.postulacion.postulacion_empleo.id_paciente
+        );
+        setPacientesIds(ids);
+      } else {
+        console.log('⚠️ [PostulacionesAspirante] No se encontraron postulaciones');
+        setPostulaciones([]);
+      }
+
+    } catch (err) {
+      console.error("❌ Error al cargar postulaciones:", err);
+      setError('Error al cargar tus postulaciones. Por favor intenta nuevamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const formatoFecha = (fecha) => {
     if (!fecha) return 'Fecha no disponible';
@@ -65,20 +122,28 @@ const PostulacionesAspirante = () => {
   };
 
   const handleVerPaciente = (idPaciente) => {
-  navigate(`/moduloAspirante/ficha-paciente/${idPaciente}`);
-};
+    navigate(`/moduloAspirante/ficha-paciente/${idPaciente}`);
+  };
+
   const handleContactar = (idPaciente) => {
     console.log("Contactando al paciente con ID:", idPaciente);
     // Aquí puedes implementar la lógica de contacto
   };
 
-  if (loading) {
+  // Mostrar loading mientras se obtienen los IDs
+  if (loading || !currentAspiranteId || userId === null) {
     return (
       <>
-        <HeaderAspirante userId={currentAspiranteId} />
+        <HeaderAspirante 
+          userId={userId} 
+          aspiranteId={currentAspiranteId}
+        />
         <div className={styles.loadingContainer}>
           <div className={styles.spinner}></div>
           <p>Cargando tus postulaciones...</p>
+          <div style={{ fontSize: '0.8rem', marginTop: '0.5rem', color: '#666' }}>
+            userId: {userId || 'cargando...'} | aspiranteId: {currentAspiranteId || 'cargando...'}
+          </div>
         </div>
       </>
     );
@@ -87,7 +152,10 @@ const PostulacionesAspirante = () => {
   if (error) {
     return (
       <>
-        <HeaderAspirante userId={currentAspiranteId} />
+        <HeaderAspirante 
+          userId={userId} 
+          aspiranteId={currentAspiranteId}
+        />
         <div className={styles.errorContainer}>
           <div className={styles.errorIcon}>⚠️</div>
           <p>{error}</p>
@@ -102,14 +170,68 @@ const PostulacionesAspirante = () => {
   if (postulaciones.length === 0) {
     return (
       <>
-        <HeaderAspirante userId={currentAspiranteId} />
+        <HeaderAspirante 
+          userId={userId} 
+          aspiranteId={currentAspiranteId}
+        />
         <div className={styles.emptyContainer}>
-          <div className={styles.emptyIcon}>📭</div>
-          <h2>No has realizado ninguna postulación aún</h2>
-          <p>Explora las ofertas disponibles y aplica a las que coincidan con tu perfil</p>
-          <Link to={`/moduloAspirante/trabajos/${currentAspiranteId}`} className={styles.searchButton}>
-            Buscar trabajos disponibles
-          </Link>
+          <div className={styles.emptyAnimation}>
+            <div className={styles.emptyIconWrapper}>
+              <div className={styles.searchIcon}>🔍</div>
+              <div className={styles.documentIcon}>📄</div>
+            </div>
+          </div>
+          
+          <div className={styles.emptyContent}>
+            <h1 className={styles.emptyTitle}>¡Tu aventura laboral está por comenzar!</h1>
+            <h2 className={styles.emptySubtitle}>Aún no has realizado ninguna postulación</h2>
+            
+            <div className={styles.emptySteps}>
+              <div className={styles.step}>
+                <div className={styles.stepNumber}>1</div>
+                <div className={styles.stepText}>
+                  <h3>Explora oportunidades</h3>
+                  <p>Descubre trabajos de cuidado geriátrico perfectos para ti</p>
+                </div>
+              </div>
+              
+              <div className={styles.step}>
+                <div className={styles.stepNumber}>2</div>
+                <div className={styles.stepText}>
+                  <h3>Aplica con confianza</h3>
+                  <p>Envía tu perfil a familias que necesitan tu cuidado</p>
+                </div>
+              </div>
+              
+              <div className={styles.step}>
+                <div className={styles.stepNumber}>3</div>
+                <div className={styles.stepText}>
+                  <h3>Conecta y cuida</h3>
+                  <p>Inicia tu carrera ayudando a adultos mayores</p>
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.emptyActions}>
+              <Link to={`/moduloAspirante/trabajos?userId=${userId}`} className={styles.primaryButton}>
+                <span className={styles.buttonIcon}>🚀</span>
+                Explorar trabajos disponibles
+              </Link>
+              
+              <Link to={`/cv/${userId}`} className={styles.secondaryButton}>
+                <span className={styles.buttonIcon}>📝</span>
+                Completar mi perfil
+              </Link>
+            </div>
+
+            <div className={styles.encouragementMessage}>
+              <div className={styles.heartIcon}>💝</div>
+              <p>
+                <strong>¡Tu cuidado marca la diferencia!</strong><br/>
+                Miles de familias buscan a alguien especial como tú para cuidar a sus seres queridos.
+              </p>
+            </div>
+          </div>
         </div>
       </>
     );
@@ -122,7 +244,10 @@ const PostulacionesAspirante = () => {
 
   return (
     <>
-      <HeaderAspirante userId={currentAspiranteId} />
+      <HeaderAspirante 
+        userId={userId} 
+        aspiranteId={currentAspiranteId}
+      />
       <div className={styles.container}>
         <header className={styles.header}>
           <h1>Mis Postulaciones</h1>
@@ -162,7 +287,7 @@ const PostulacionesAspirante = () => {
                   </div>
                   <div className={styles.detailItem}>
                     <FaMoneyBillWave className={styles.detailIcon} />
-                    <span><strong>Salario:</strong> {empleo.salario_estimado ? `$${empleo.salario_estimado.toFixed(2)}` : 'No especificado'}</span>
+                    <span><strong>Salario:</strong> {empleo.salario_estimado ? `${empleo.salario_estimado.toFixed(2)}` : 'No especificado'}</span>
                   </div>
                   <div className={styles.detailItem}>
                     <FaClock className={styles.detailIcon} />
@@ -213,6 +338,5 @@ const PostulacionesAspirante = () => {
     </>
   );
 };
-
 
 export default PostulacionesAspirante;

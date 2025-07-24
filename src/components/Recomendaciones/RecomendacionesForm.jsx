@@ -7,18 +7,59 @@ import {
   deleteRecomendacion,
   downloadRecomendacionFile
 } from "../../servicios/recomendacionesService";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import styles from './RecomendacionesForm.module.css';
 import CVStepsNav from "../ModuloAspirante/CV/CVStepsNav";
-import { FaUserTie, FaBriefcase, FaBuilding, FaPhone, FaEnvelope, FaLink, FaCalendarAlt, FaPaperclip, FaEdit, FaTrash, FaDownload, FaHeartbeat } from "react-icons/fa";
+import { FaUserTie, FaBriefcase, FaBuilding, FaPhone, FaEnvelope, FaLink, FaCalendarAlt, FaPaperclip, FaEdit, FaTrash, FaDownload, FaHeartbeat, FaExclamationTriangle } from "react-icons/fa";
 import { useLocation } from 'react-router-dom';
 import { useFormPersistence } from '../../hooks/useFormPersistence';
+
+// Componente Modal de Confirmación
+const ConfirmModal = ({ isOpen, onConfirm, onCancel, title, message, confirmText = "Confirmar", cancelText = "Cancelar" }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className={styles["modal-overlay"]}>
+      <div className={styles["modal-content"]}>
+        <div className={styles["modal-header"]}>
+          <FaExclamationTriangle className={styles["modal-icon"]} />
+          <h3>{title}</h3>
+        </div>
+        <div className={styles["modal-body"]}>
+          <p>{message}</p>
+        </div>
+        <div className={styles["modal-footer"]}>
+          <button 
+            className={styles["modal-cancel-btn"]} 
+            onClick={onCancel}
+          >
+            {cancelText}
+          </button>
+          <button 
+            className={styles["modal-confirm-btn"]} 
+            onClick={onConfirm}
+          >
+            {confirmText}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const RecomendacionesForm = () => {
   const { idCV } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Estado para el modal de confirmación
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    onConfirm: null
+  });
 
   const [formulario, setFormulario] = useState({
     id_recomendacion: null,
@@ -40,7 +81,27 @@ const RecomendacionesForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useFormPersistence(idCV, formulario, setFormulario, 'recomendaciones');
+  // Configurar persistencia solo para campos que no sean archivo ni estado de edición
+  const formularioParaPersistencia = {
+    nombre_recomendador: formulario.nombre_recomendador,
+    cargo: formulario.cargo,
+    empresa: formulario.empresa,
+    telefono: formulario.telefono,
+    email: formulario.email,
+    relacion: formulario.relacion,
+    fecha: formulario.fecha
+  };
+
+  const setFormularioDesdeLocal = (data) => {
+    if (!formulario.isEditing) { // Solo aplicar persistencia si no estamos editando
+      setFormulario(prev => ({
+        ...prev,
+        ...data
+      }));
+    }
+  };
+
+  useFormPersistence(idCV, formularioParaPersistencia, setFormularioDesdeLocal, 'recomendaciones');
 
   useEffect(() => {
     const loadRecomendaciones = async () => {
@@ -119,12 +180,18 @@ const RecomendacionesForm = () => {
       email: recomendacion.email,
       relacion: recomendacion.relacion,
       fecha: recomendacion.fecha,
-      archivo: null,
-      archivoNombre: "",
+      archivo: null, // Mantener null para el nuevo archivo
+      archivoNombre: "", // Vacío hasta que se seleccione nuevo archivo
       archivoExistente: recomendacion.tiene_archivo,
       nombreArchivoExistente: recomendacion.nombre_archivo || "",
       isEditing: true
     });
+
+    // Limpiar el input de archivo
+    const fileInput = document.querySelector(`.${styles["file-input"]}`);
+    if (fileInput) {
+      fileInput.value = '';
+    }
 
     document.querySelector(`.${styles["form-recomendaciones"]}`).scrollIntoView({ behavior: 'smooth' });
   };
@@ -138,37 +205,61 @@ const RecomendacionesForm = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("¿Estás seguro de que deseas eliminar esta recomendación profesional?")) {
-      try {
-        await deleteRecomendacion(id);
-        setRecomendaciones(recomendaciones.filter(rec => rec.id_recomendacion !== id));
+  // Función para mostrar modal de confirmación personalizado
+  const showConfirmModal = (title, message, onConfirmAction) => {
+    setConfirmModal({
+      isOpen: true,
+      title,
+      message,
+      onConfirm: onConfirmAction
+    });
+  };
 
-        toast.success(
-          <div className={styles["custom-toast"]}>
-            <div>Recomendación profesional eliminada correctamente</div>
-          </div>,
-          {
+  // Función para cerrar modal
+  const closeConfirmModal = () => {
+    setConfirmModal({
+      isOpen: false,
+      title: "",
+      message: "",
+      onConfirm: null
+    });
+  };
+
+  // Función de eliminación con modal personalizado
+  const handleDelete = async (id) => {
+    const recomendacion = recomendaciones.find(rec => rec.id_recomendacion === id);
+    
+    showConfirmModal(
+      "Eliminar Recomendación",
+      `¿Estás seguro de que deseas eliminar la recomendación de ${recomendacion?.nombre_recomendador || 'este profesional'}? Esta acción no se puede deshacer.`,
+      async () => {
+        try {
+          await deleteRecomendacion(id);
+          setRecomendaciones(recomendaciones.filter(rec => rec.id_recomendacion !== id));
+          
+          toast.success("Recomendación profesional eliminada correctamente", {
             position: "top-right",
             autoClose: 3000,
             hideProgressBar: false,
-            closeButton: false,
-          }
-        );
-      } catch (error) {
-        toast.error(
-          <div className={styles["custom-toast"]}>
-            <div>Error al eliminar la recomendación profesional</div>
-          </div>,
-          {
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        } catch (error) {
+          toast.error("Error al eliminar la recomendación profesional", {
             position: "top-right",
             autoClose: 3000,
             hideProgressBar: false,
-            closeButton: false,
-          }
-        );
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        }
+        closeConfirmModal();
       }
-    }
+    );
   };
 
   const handleSubmit = async (e) => {
@@ -197,25 +288,23 @@ const RecomendacionesForm = () => {
       relacion: formulario.relacion,
       fecha: formulario.fecha,
       cv: { id_cv: Number(idCV) },
-      conservarArchivo: formulario.isEditing && !formulario.archivo
+      // Conservar archivo solo si estamos editando Y no hay archivo nuevo Y había archivo existente
+      conservarArchivo: formulario.isEditing && !formulario.archivo && formulario.archivoExistente
     };
 
     const formData = new FormData();
     if (formulario.archivo) {
       formData.append("archivo", formulario.archivo);
     }
-    formData.append(
-      "recomendacion",
-      new Blob([JSON.stringify(recomendacionData)], {
-        type: "application/json",
-      })
-    );
+    formData.append("recomendacion", JSON.stringify(recomendacionData));
 
     try {
       let nuevaRecomendacion;
 
       if (formulario.isEditing) {
         nuevaRecomendacion = await updateRecomendacion(formulario.id_recomendacion, formData);
+        
+        // Actualizar la lista de recomendaciones con la lógica correcta de archivos
         setRecomendaciones(recomendaciones.map(rec =>
           rec.id_recomendacion === formulario.id_recomendacion ? {
             ...rec,
@@ -226,12 +315,21 @@ const RecomendacionesForm = () => {
             email: formulario.email,
             relacion: formulario.relacion,
             fecha: formulario.fecha,
+            // Solo actualizar info del archivo si se subió uno nuevo
             nombre_archivo: formulario.archivo ? formulario.archivo.name : rec.nombre_archivo,
             tiene_archivo: formulario.archivo ? true : rec.tiene_archivo
           } : rec
         ));
 
-        toast.success("Recomendación profesional actualizada correctamente");
+        toast.success("Recomendación profesional actualizada correctamente", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       } else {
         nuevaRecomendacion = await createRecomendacion(formData);
         setRecomendaciones(prev => [...prev, {
@@ -240,13 +338,29 @@ const RecomendacionesForm = () => {
           nombre_archivo: formulario.archivo?.name || ''
         }]);
 
-        toast.success("Recomendación profesional guardada correctamente");
+        toast.success("Recomendación profesional guardada correctamente", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       }
 
       resetFormulario();
     } catch (error) {
       console.error("Error al guardar:", error);
-      toast.error(error.response?.data?.message || error.message || "Error al registrar la recomendación profesional");
+      toast.error(error.response?.data?.message || error.message || "Error al registrar la recomendación profesional", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -285,7 +399,7 @@ const RecomendacionesForm = () => {
       <CVStepsNav idCV={idCV} currentStep="Recomendaciones" />
 
       <div className={styles["recomendaciones-content"]}>
-        <form onSubmit={handleSubmit} className={styles["recomendaciones-form"]}>
+        <form onSubmit={handleSubmit} className={`${styles["recomendaciones-form"]} ${styles["form-recomendaciones"]}`}>
           <h2>
             {formulario.isEditing ? 'Editar Recomendación Profesional' : 'Agregar Recomendación Profesional'}
           </h2>
@@ -410,27 +524,31 @@ const RecomendacionesForm = () => {
                 <button
                   type="button"
                   className={styles["clear-file-btn"]}
-                  onClick={() => setFormulario({
-                    ...formulario,
-                    archivo: null,
-                    archivoNombre: ""
-                  })}
+                  onClick={() => {
+                    setFormulario({
+                      ...formulario,
+                      archivo: null,
+                      archivoNombre: ""
+                    });
+                    const fileInput = document.querySelector(`.${styles["file-input"]}`);
+                    if (fileInput) {
+                      fileInput.value = '';
+                    }
+                  }}
                 >
                   Limpiar
                 </button>
               </div>
-            ) : formulario.nombreArchivoExistente && (
+            ) : formulario.nombreArchivoExistente && formulario.isEditing && (
               <div className={styles["file-info"]}>
                 Carta actual: {formulario.nombreArchivoExistente}
-                {formulario.isEditing && (
-                  <button
-                    type="button"
-                    className={styles["download-link"]}
-                    onClick={() => handleDownload(formulario.id_recomendacion, formulario.nombreArchivoExistente)}
-                  >
-                    <FaDownload /> Descargar
-                  </button>
-                )}
+                <button
+                  type="button"
+                  className={styles["download-link"]}
+                  onClick={() => handleDownload(formulario.id_recomendacion, formulario.nombreArchivoExistente)}
+                >
+                  <FaDownload /> Descargar
+                </button>
               </div>
             )}
           </div>
@@ -537,6 +655,31 @@ const RecomendacionesForm = () => {
           )}
         </div>
       </div>
+
+      {/* Modal de Confirmación Personalizado */}
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        onConfirm={confirmModal.onConfirm}
+        onCancel={closeConfirmModal}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+      />
+
+      {/* Contenedor de notificaciones Toast */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 };
