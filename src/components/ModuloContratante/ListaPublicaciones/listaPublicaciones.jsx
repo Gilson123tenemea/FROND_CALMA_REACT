@@ -69,15 +69,18 @@ const ListaPublicaciones = ({ refrescar, onEditar, userId: userIdProp }) => {
               toast.dismiss(toastId);
               axios.delete(`http://localhost:8090/api/publicacion_empleo/eliminar/${idPublicacion}`)
                 .then(res => {
-                  toast.error(res.data); // mantiene tu lógica de mostrar mensaje
-                  setPublicaciones(prev =>
-                    prev.filter(pub => pub.publicacionempleo.id_postulacion_empleo !== idPublicacion)
-                  );
+                  const mensaje = res.data.toLowerCase();
+                  if (mensaje.includes('correctamente')) {
+                    toast.success(res.data);
+                    setPublicaciones(prev =>
+                      prev.filter(pub => pub.publicacionempleo.id_postulacion_empleo !== idPublicacion)
+                    );
+                  } else if (mensaje.includes('no se puede') || mensaje.includes('error') || mensaje.includes('no encontrada')) {
+                    toast.error(res.data);
+                  } else {
+                    toast.info(res.data);
+                  }
                 })
-                .catch(err => {
-                  console.error("Error al eliminar publicación:", err);
-                  toast.error("❌ No se pudo eliminar. Revisa si hay postulaciones.");
-                });
             }}
           >
             Eliminar
