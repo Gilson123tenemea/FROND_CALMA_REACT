@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './Calificacion.module.css';
+import HeaderContratante from '../ModuloContratante/HeaderContratante/HeaderContratante';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -196,6 +197,7 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
     <div className={styles.calificacionFormContainer}>
       <ToastContainer />
       
+      <HeaderContratante/>
       <div className={styles.calificacionContent}>
         {/* Header con información del aspirante y botón volver */}
         <div className={styles.calificacionHeader}>
@@ -208,9 +210,7 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
               <h2>
                 {isViewMode ? 'Calificación de' : 'Calificar a'}: {aspiranteNombre}
               </h2>
-              <p className={styles.idPostulacion}>
-                Postulación ID: {idPostulacionParam}
-              </p>
+
             </div>
           )}
         </div>

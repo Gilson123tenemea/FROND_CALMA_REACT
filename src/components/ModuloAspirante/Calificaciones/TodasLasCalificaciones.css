@@ -1,7 +1,6 @@
 /* TodasLasCalificaciones.css */
 .calificaciones-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .calificaciones-content {
@@ -18,27 +17,8 @@
   margin-bottom: 2rem;
 }
 
-.btn-volver {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background: white;
-  color: #667eea;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-volver:hover {
-  background: #f8fafc;
-  transform: translateX(-2px);
-}
-
 .page-header h1 {
-  color: white;
+  color: #667eea;
   margin: 0;
   font-size: 2.5rem;
   font-weight: 700;

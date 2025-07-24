@@ -228,9 +228,7 @@ const TodasLasCalificaciones = () => {
       <div className="calificaciones-content">
         {/* Header */}
         <div className="page-header">
-          <button onClick={volver} className="btn-volver">
-            <FaArrowLeft /> Volver
-          </button>
+          
           <h1>Mis Calificaciones</h1>
         </div>
 
