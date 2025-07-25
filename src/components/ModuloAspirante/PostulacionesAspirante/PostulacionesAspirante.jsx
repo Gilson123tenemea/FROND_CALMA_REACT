@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
-import { FaCalendarAlt, FaBuilding, FaMapMarkerAlt, FaMoneyBillWave, FaClock, FaSun, FaClipboardList, FaCheckCircle, FaTimesCircle, FaHourglassHalf, FaUserInjured, FaEnvelope } from 'react-icons/fa';
+import { FaCalendarAlt, FaBuilding, FaMapMarkerAlt, FaMoneyBillWave, FaClock, FaSun, FaClipboardList, FaCheckCircle, FaTimesCircle, FaHourglassHalf, FaUserInjured, FaEnvelope, FaRobot } from 'react-icons/fa';
 import styles from './PostulacionesAspirante.module.css';
 import HeaderAspirante from '../HeaderAspirante/HeaderAspirante';
+import ChatbotInteligente from './ChatbotInteligente'; // Importar el nuevo componente
 import { useNavigate } from 'react-router-dom';
 
 const PostulacionesAspirante = () => {
@@ -14,6 +15,7 @@ const PostulacionesAspirante = () => {
   const [pacientesIds, setPacientesIds] = useState([]);
   const [userId, setUserId] = useState(null);
   const [currentAspiranteId, setCurrentAspiranteId] = useState(null);
+  const [chatbotAbierto, setChatbotAbierto] = useState(false); // Estado para el chatbot
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -130,6 +132,10 @@ const PostulacionesAspirante = () => {
     // Aquí puedes implementar la lógica de contacto
   };
 
+  const toggleChatbot = () => {
+    setChatbotAbierto(!chatbotAbierto);
+  };
+
   // Mostrar loading mientras se obtienen los IDs
   if (loading || !currentAspiranteId || userId === null) {
     return (
@@ -233,6 +239,13 @@ const PostulacionesAspirante = () => {
             </div>
           </div>
         </div>
+        
+        {/* Chatbot también disponible en pantalla vacía */}
+        <ChatbotInteligente 
+          aspiranteId={currentAspiranteId}
+          isOpen={chatbotAbierto}
+          onToggle={toggleChatbot}
+        />
       </>
     );
   }
@@ -320,7 +333,14 @@ const PostulacionesAspirante = () => {
                         <FaUserInjured className={styles.buttonIcon} />
                         <span>Ver datos del paciente</span>
                       </button>
-                     
+                      
+                      <button
+                        className={styles.actionButton}
+                        onClick={() => handleContactar(idPaciente)}
+                      >
+                        <FaEnvelope className={styles.buttonIcon} />
+                        <span>Contactar familia</span>
+                      </button>
                     </div>
                   )}
                 </div>
@@ -329,6 +349,13 @@ const PostulacionesAspirante = () => {
           })}
         </div>
       </div>
+
+      {/* Componente del Chatbot Inteligente */}
+      <ChatbotInteligente 
+        aspiranteId={currentAspiranteId}
+        isOpen={chatbotAbierto}
+        onToggle={toggleChatbot}
+      />
     </>
   );
 };
