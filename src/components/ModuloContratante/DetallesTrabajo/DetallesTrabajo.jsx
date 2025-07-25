@@ -202,17 +202,7 @@ const DetallesTrabajo = () => {
                   </span>
                 </div>
                 
-              <div className={styles.campoGrid}>
-                <div className={styles.campo}>
-                  <label>Ubicación:</label>
-                  <span>No disponible en este momento</span>
-                </div>
-                
-                <div className={styles.campo}>
-                  <label>ID Paciente:</label>
-                  <span>{detalles.postulacion?.empleo?.id_paciente || 'No asignado'}</span>
-                </div>
-              </div>
+           
               </div>
             </div>
           </div>
@@ -292,17 +282,7 @@ const DetallesTrabajo = () => {
               <h2>📝 Información de la Postulación</h2>
             </div>
             <div className={styles.seccionContent}>
-              <div className={styles.campoGrid}>
-                <div className={styles.campo}>
-                  <label>ID de Postulación:</label>
-                  <span>#{detalles.postulacion?.id_postulacion}</span>
-                </div>
-                
-                <div className={styles.campo}>
-                  <label>Fecha de postulación:</label>
-                  <span>{formatearFecha(detalles.postulacion?.fecha_postulacion)}</span>
-                </div>
-              </div>
+          
               
               <div className={styles.campoGrid}>
                 <div className={styles.campo}>
