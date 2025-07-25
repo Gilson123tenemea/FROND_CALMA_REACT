@@ -44,7 +44,6 @@ const FichaPacienteForm = ({ editMode = false }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Configuración personalizada para toast
   const showSuccessToast = (message) => {
     toast.success(message, {
       position: "top-right",
@@ -137,7 +136,7 @@ const FichaPacienteForm = ({ editMode = false }) => {
   };
 
   const validarTextoGeneral = (texto) => {
-    const regex = /^[\p{L}\p{M}\p{N}\s.,;:()\-_]+$/u;
+    const regex = /^[\p{L}\p{M}\p{N}\s().,;:]+$/u;
     return regex.test(texto) || texto === '';
   };
 
@@ -147,7 +146,7 @@ const FichaPacienteForm = ({ editMode = false }) => {
   };
 
   const validarTextoMedico = (texto) => {
-    const regex = /^[\p{L}\p{M}\p{N}\s°%+]+$/u;
+    const regex = /^[\p{L}\p{M}\p{N}\s.,;:°%+]+$/u;
     return regex.test(texto) || texto === '';
   };
 
