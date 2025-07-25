@@ -279,6 +279,7 @@ const validarTextoGeneral = (texto) => {
  useEffect(() => {
   const loadFichaData = async () => {
    
+    
     if (idPaciente && !id_ficha_paciente) {
       setFormulario(prev => ({
         ...prev,

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import {
@@ -28,6 +28,8 @@ const AlergiaMedicamento = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [validationError, setValidationError] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [alergiaToDelete, setAlergiaToDelete] = useState(null);
 
   // Constantes para validación
   const MIN_LENGTH = 2;
@@ -105,15 +107,15 @@ const AlergiaMedicamento = () => {
       
       // Mensajes de error específicos para carga
       if (error.response?.status === 404) {
-        toast.error("No se encontraron alergias a medicamentos para este paciente");
+        toast.info("ℹ No se encontraron alergias a medicamentos registradas para este paciente");
       } else if (error.response?.status === 403) {
-        toast.error("No tienes permisos para acceder a esta información");
+        toast.error(" No tienes permisos para acceder a esta información");
       } else if (error.response?.status >= 500) {
-        toast.error("Error del servidor. Por favor, intenta más tarde");
+        toast.error(" Error del servidor. Por favor, intenta más tarde");
       } else if (error.name === 'NetworkError' || !error.response) {
-        toast.error("Error de conexión. Verifica tu conexión a internet");
+        toast.error(" Error de conexión. Verifica tu conexión a internet");
       } else {
-        toast.error("Error inesperado al cargar las alergias a medicamentos");
+        toast.error(" Error inesperado al cargar las alergias a medicamentos");
       }
     } finally {
       setIsLoading(false);
@@ -133,16 +135,16 @@ const AlergiaMedicamento = () => {
         
         // Mensajes de error específicos para carga individual
         if (error.response?.status === 404) {
-          toast.error("La alergia seleccionada no existe o ha sido eliminada");
+          toast.error(" La alergia seleccionada no existe o ha sido eliminada");
           navigate(`/fichas/${id_ficha_paciente}/alergias-medicamentos/nuevo`);
         } else if (error.response?.status === 403) {
-          toast.error("No tienes permisos para editar esta alergia");
+          toast.error(" No tienes permisos para editar esta alergia");
         } else if (error.response?.status >= 500) {
-          toast.error("Error del servidor al cargar la alergia");
+          toast.error(" Error del servidor al cargar la alergia");
         } else if (error.name === 'NetworkError' || !error.response) {
-          toast.error("Error de conexión al cargar la alergia");
+          toast.error(" Error de conexión al cargar la alergia");
         } else {
-          toast.error("No se pudo cargar la información de la alergia");
+          toast.error(" No se pudo cargar la información de la alergia");
         }
       } finally {
         setIsLoading(false);
@@ -188,7 +190,7 @@ const AlergiaMedicamento = () => {
     const validationError = validateInput(alergia.nombremedicamento);
     if (validationError) {
       setValidationError(validationError);
-      toast.error(`Error de validación: ${validationError}`);
+      toast.error(` ${validationError}`);
       return;
     }
 
@@ -196,7 +198,7 @@ const AlergiaMedicamento = () => {
     if (checkDuplicateMedicamento(alergia.nombremedicamento)) {
       const errorMsg = 'Esta alergia a medicamento ya está registrada para este paciente';
       setValidationError(errorMsg);
-      toast.error(errorMsg);
+      toast.error(` ${errorMsg}`);
       return;
     }
 
@@ -204,10 +206,10 @@ const AlergiaMedicamento = () => {
     try {
       if (isEditing) {
         await updateAlergiaMedicamento(id_alergiamed, alergia);
-        toast.success("💊 Alergia a medicamento actualizada exitosamente");
+        toast.success(` Alergia a medicamento "${alergia.nombremedicamento}" actualizada exitosamente`);
       } else {
         await createAlergiaMedicamento(alergia);
-        toast.success("💊 Nueva alergia a medicamento registrada correctamente");
+        toast.success(` Alergia a medicamento "${alergia.nombremedicamento}" registrada exitosamente`);
       }
       await loadAlergias();
       setAlergia({ nombremedicamento: '', fichaPaciente: { id_ficha_paciente } });
@@ -219,19 +221,19 @@ const AlergiaMedicamento = () => {
       
       // Mensajes de error específicos para guardar
       if (error.response?.status === 400) {
-        toast.error("Datos inválidos. Por favor, verifica la información ingresada");
+        toast.error(" Datos inválidos. Por favor, verifica la información ingresada");
       } else if (error.response?.status === 409) {
-        toast.error("Esta alergia a medicamento ya existe para este paciente");
+        toast.error(" Esta alergia a medicamento ya existe para este paciente");
       } else if (error.response?.status === 403) {
-        toast.error("No tienes permisos para realizar esta acción");
+        toast.error(" No tienes permisos para realizar esta acción");
       } else if (error.response?.status === 413) {
-        toast.error("El nombre del medicamento es demasiado largo");
+        toast.error(" El nombre del medicamento es demasiado largo");
       } else if (error.response?.status >= 500) {
-        toast.error("Error del servidor. No se pudo guardar la alergia");
+        toast.error(" Error del servidor. No se pudo guardar la alergia");
       } else if (error.name === 'NetworkError' || !error.response) {
-        toast.error("Error de conexión. Verifica tu internet e intenta nuevamente");
+        toast.error(" Error de conexión. Verifica tu internet e intenta nuevamente");
       } else {
-        toast.error(`Error inesperado al ${isEditing ? 'actualizar' : 'guardar'} la alergia`);
+        toast.error(` Error inesperado al ${isEditing ? 'actualizar' : 'guardar'} la alergia a medicamento`);
       }
     } finally {
       setIsSubmitting(false);
@@ -245,36 +247,58 @@ const AlergiaMedicamento = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("⚠️ ¿Estás seguro de que deseas eliminar esta alergia?\n\nEsta acción no se puede deshacer.")) {
-      try {
-        await deleteAlergiaMedicamento(id);
-        toast.success("🗑️ Alergia a medicamento eliminada correctamente");
-        await loadAlergias();
-        if (id === id_alergiamed) {
-          setAlergia({ nombremedicamento: '', fichaPaciente: { id_ficha_paciente } });
-          setIsEditing(false);
-          setValidationError('');
-        }
-      } catch (error) {
-        console.error("Error al eliminar:", error);
-        
-        // Mensajes de error específicos para eliminación
-        if (error.response?.status === 404) {
-          toast.error("La alergia que intentas eliminar ya no existe");
-          loadAlergias(); // Recargar para actualizar la lista
-        } else if (error.response?.status === 403) {
-          toast.error("No tienes permisos para eliminar esta alergia");
-        } else if (error.response?.status === 409) {
-          toast.error("No se puede eliminar la alergia porque está siendo utilizada");
-        } else if (error.response?.status >= 500) {
-          toast.error("Error del servidor. No se pudo eliminar la alergia");
-        } else if (error.name === 'NetworkError' || !error.response) {
-          toast.error("Error de conexión. No se pudo eliminar la alergia");
-        } else {
-          toast.error("Error inesperado al eliminar la alergia");
-        }
+    // Encontrar el nombre del medicamento para mostrarlo en los mensajes
+    const alergiaAEliminar = alergias.find(a => a.id_alergiamed === id);
+    const nombreMedicamento = alergiaAEliminar?.nombremedicamento || 'el medicamento';
+
+    // Mostrar modal de confirmación personalizado
+    setAlergiaToDelete({ id, nombre: nombreMedicamento });
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!alergiaToDelete) return;
+
+    setShowDeleteModal(false);
+    setIsSubmitting(true);
+
+    try {
+      await deleteAlergiaMedicamento(alergiaToDelete.id);
+      toast.success(` Alergia a medicamento "${alergiaToDelete.nombre}" eliminada exitosamente`);
+      await loadAlergias();
+      
+      if (alergiaToDelete.id === id_alergiamed) {
+        setAlergia({ nombremedicamento: '', fichaPaciente: { id_ficha_paciente } });
+        setIsEditing(false);
+        setValidationError('');
       }
+    } catch (error) {
+      console.error("Error al eliminar:", error);
+      
+      // Mensajes de error específicos para eliminación
+      if (error.response?.status === 404) {
+        toast.error(` La alergia a "${alergiaToDelete.nombre}" ya no existe o fue eliminada previamente`);
+        loadAlergias(); // Recargar para actualizar la lista
+      } else if (error.response?.status === 403) {
+        toast.error(` No tienes permisos para eliminar la alergia a "${alergiaToDelete.nombre}"`);
+      } else if (error.response?.status === 409) {
+        toast.error(` No se puede eliminar la alergia a "${alergiaToDelete.nombre}" porque está siendo utilizada en otros registros`);
+      } else if (error.response?.status >= 500) {
+        toast.error(` Error del servidor. No se pudo eliminar la alergia a "${alergiaToDelete.nombre}"`);
+      } else if (error.name === 'NetworkError' || !error.response) {
+        toast.error(` Error de conexión. No se pudo eliminar la alergia a "${alergiaToDelete.nombre}"`);
+      } else {
+        toast.error(`Error inesperado al eliminar la alergia a "${alergiaToDelete.nombre}"`);
+      }
+    } finally {
+      setIsSubmitting(false);
+      setAlergiaToDelete(null);
     }
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false);
+    setAlergiaToDelete(null);
   };
 
   const handleCancel = () => {
@@ -335,7 +359,7 @@ const AlergiaMedicamento = () => {
               </div>
             )}
             <small style={{ color: '#6c757d', fontSize: '0.875rem', marginTop: '0.25rem', display: 'block' }}>
-              💡  Solo letras • Mínimo {MIN_LENGTH} caracteres • Máximo {MAX_LENGTH} caracteres
+              💡 Letras, números y caracteres especiales permitidos • Mínimo {MIN_LENGTH} caracteres • Máximo {MAX_LENGTH} caracteres
             </small>
           </div>
 
@@ -363,7 +387,7 @@ const AlergiaMedicamento = () => {
                 disabled={isSubmitting}
                 title="Eliminar esta alergia permanentemente"
               >
-                 Eliminar
+                🗑️ Eliminar
               </button>
             )}
             <button
@@ -372,7 +396,7 @@ const AlergiaMedicamento = () => {
               onClick={handleCancel}
               disabled={isSubmitting}
             >
-              Cancelar
+              🚫 Cancelar
             </button>
           </div>
         </form>
@@ -412,7 +436,7 @@ const AlergiaMedicamento = () => {
                         className="alergias-medicamentos-remove-btn"
                         title={`Eliminar alergia a ${item.nombremedicamento}`}
                       >
-                       Eliminar
+                        Eliminar
                       </button>
                     </td>
                   </tr>
@@ -422,6 +446,163 @@ const AlergiaMedicamento = () => {
           </div>
         )}
       </div>
+
+      {/* Modal de confirmación para eliminar */}
+      {showDeleteModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: '#fff',
+            borderRadius: '12px',
+            padding: '24px',
+            maxWidth: '400px',
+            width: '90%',
+            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
+            border: '1px solid #e9ecef'
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              marginBottom: '16px',
+              color: '#dc3545'
+            }}>
+              <span style={{ fontSize: '24px', marginRight: '12px' }}>⚠️</span>
+              <h3 style={{ margin: 0, color: '#dc3545', fontSize: '18px' }}>
+                Confirmar Eliminación
+              </h3>
+            </div>
+            
+            <p style={{ 
+              margin: '0 0 20px 0', 
+              color: '#495057',
+              lineHeight: '1.5',
+              fontSize: '14px'
+            }}>
+              ¿Estás seguro de que deseas eliminar la alergia a medicamento{' '}
+              <strong style={{ color: '#dc3545' }}>"{alergiaToDelete?.nombre}"</strong>?
+            </p>
+            
+            <div style={{
+              backgroundColor: '#fff3cd',
+              border: '1px solid #ffeaa7',
+              borderRadius: '6px',
+              padding: '12px',
+              marginBottom: '20px'
+            }}>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center',
+                fontSize: '13px',
+                color: '#856404'
+              }}>
+                <span style={{ marginRight: '8px' }}>💡</span>
+                <strong>Esta acción no se puede deshacer.</strong>
+              </div>
+            </div>
+
+            <div style={{
+              display: 'flex',
+              gap: '12px',
+              justifyContent: 'flex-end'
+            }}>
+              <button
+                type="button"
+                onClick={cancelDelete}
+                disabled={isSubmitting}
+                style={{
+                  padding: '10px 20px',
+                  border: '1px solid #6c757d',
+                  backgroundColor: '#fff',
+                  color: '#6c757d',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = '#6c757d';
+                  e.target.style.color = '#fff';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = '#fff';
+                  e.target.style.color = '#6c757d';
+                }}
+              >
+                🚫 Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={confirmDelete}
+                disabled={isSubmitting}
+                style={{
+                  padding: '10px 20px',
+                  border: '1px solid #dc3545',
+                  backgroundColor: '#dc3545',
+                  color: '#fff',
+                  borderRadius: '6px',
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  opacity: isSubmitting ? 0.7 : 1,
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseOver={(e) => {
+                  if (!isSubmitting) {
+                    e.target.style.backgroundColor = '#c82333';
+                    e.target.style.borderColor = '#c82333';
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (!isSubmitting) {
+                    e.target.style.backgroundColor = '#dc3545';
+                    e.target.style.borderColor = '#dc3545';
+                  }
+                }}
+              >
+                {isSubmitting ? (
+                  <>⏳ Eliminando...</>
+                ) : (
+                  <> Eliminar</>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Configuración del ToastContainer */}
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        style={{
+          fontSize: '14px',
+          fontWeight: '500'
+        }}
+        toastStyle={{
+          borderRadius: '8px',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+          border: '1px solid rgba(0, 0, 0, 0.1)'
+        }}
+      />
     </div>
   );
 };

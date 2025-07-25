@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate  } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getFichasByPaciente } from '../../servicios/ficha';
 import './ver.css';
 
@@ -7,6 +7,7 @@ const FichaPacienteVer = () => {
     const { idPaciente } = useParams();
     const [fichas, setFichas] = useState([]);
     const [currentStep, setCurrentStep] = useState(0);
+
 
     const steps = [
         { id: 0, label: 'Información Médica', icon: '🏥' },
@@ -44,29 +45,29 @@ const FichaPacienteVer = () => {
         }
     };
     const navigate = useNavigate();
-
+    const handleActualizarFicha = (idFicha) => {
+        navigate(`/fichaPacienteForm/${idFicha}`);
+    };
 
     const renderStepNavigation = () => (
         <div className="fpv-steps-navigation">
             <div className="fpv-steps-container">
                 {steps.map((step, index) => (
                     <React.Fragment key={step.id}>
-                        <div 
+                        <div
                             className={`fpv-step-item ${currentStep === step.id ? 'active' : ''}`}
                             onClick={() => handleStepClick(step.id)}
                         >
-                            <div className={`fpv-step-circle ${
-                                currentStep === step.id ? 'active' : 
+                            <div className={`fpv-step-circle ${currentStep === step.id ? 'active' :
                                 currentStep > step.id ? 'completed' : ''
-                            }`}>
+                                }`}>
                                 {step.icon}
                             </div>
                             <span className="fpv-step-label">{step.label}</span>
                         </div>
                         {index < steps.length - 1 && (
-                            <div className={`fpv-step-connector ${
-                                currentStep > step.id ? 'completed' : ''
-                            }`}></div>
+                            <div className={`fpv-step-connector ${currentStep > step.id ? 'completed' : ''
+                                }`}></div>
                         )}
                     </React.Fragment>
                 ))}
@@ -93,8 +94,8 @@ const FichaPacienteVer = () => {
                     </div>
                     <div className="fpv-info-item">
                         <span className="fpv-label">Rutina Médica:</span>
-                         <div className="fpv-value fpv-large-text">{ficha.rutina_medica}</div>
-                      
+                        <div className="fpv-value fpv-large-text">{ficha.rutina_medica}</div>
+
                     </div>
                     <div className="fpv-info-item">
                         <span className="fpv-label">Riesgo de caídas:</span>
@@ -325,34 +326,49 @@ const FichaPacienteVer = () => {
                     </div>
 
                     <div className="fpv-navigation-buttons">
-                        <button 
-                            className="fpv-nav-button" 
+
+
+
+                        <button
+                            className="fpv-nav-button"
                             onClick={prevStep}
                             disabled={currentStep === 0}
                         >
                             ← Anterior
                         </button>
-                        
+                        <button
+                            onClick={() => navigate(`/fichas/${ficha.id_ficha_paciente}`)}
+                            className="fpv-nav-button"
+                        >
+                            Actualizar Ficha
+                        </button>
+
+
+
+
                         <div className="fpv-step-indicator">
                             {currentStep + 1} de {steps.length}
                         </div>
-                        
-{currentStep === steps.length - 1 ? (
-    <button
-        className="fpv-nav-button"
-        onClick={() => navigate('/moduloContratante')}
-    >
-        Finalizar
-    </button>
-) : (
-    <button 
-        className="fpv-nav-button" 
-        onClick={nextStep}
-    >
-        Siguiente →
-    </button>
-)}
+
+
+
+                        {currentStep === steps.length - 1 ? (
+                            <button
+                                className="fpv-nav-button"
+                                onClick={() => navigate('/moduloContratante')}
+                            >
+                                Finalizar
+                            </button>
+                        ) : (
+                            <button
+                                className="fpv-nav-button"
+                                onClick={nextStep}
+                            >
+                                Siguiente →
+                            </button>
+                        )}
                     </div>
+
                 </div>
             ))}
         </div>
@@ -360,4 +376,3 @@ const FichaPacienteVer = () => {
 };
 
 export default FichaPacienteVer;
-                
