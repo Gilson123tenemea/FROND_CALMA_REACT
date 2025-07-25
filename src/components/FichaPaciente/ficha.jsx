@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   getFichaById,
@@ -37,15 +37,61 @@ const FichaPacienteForm = ({ editMode = false }) => {
     observaciones: '',
     fecha_registro: new Date().toISOString().split('T')[0],
     paciente: { id_paciente: Number(idPaciente) },
-   
-
-    
   });
 
   const [errores, setErrores] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Configuración personalizada para toast
+  const showSuccessToast = (message) => {
+    toast.success(message, {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  };
+
+  const showErrorToast = (message) => {
+    toast.error(message, {
+      position: "top-right",
+      autoClose: 4000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  };
+
+  const showWarningToast = (message) => {
+    toast.warn(message, {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  };
+
+  const showInfoToast = (message) => {
+    toast.info(message, {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  };
 
   // Opciones para los combos
   const opcionesEstadoAnimo = [
@@ -60,8 +106,6 @@ const FichaPacienteForm = ({ editMode = false }) => {
     { value: 'apático', label: 'Apático' },
     { value: 'normal', label: 'Normal' }
   ];
-
-  
 
   const opcionesTipoDieta = [
     { value: '', label: 'Seleccione tipo de dieta' },
@@ -81,8 +125,6 @@ const FichaPacienteForm = ({ editMode = false }) => {
     { value: 'baja', label: 'Baja' }
   ];
 
- 
-
   const validarLongitudMinima = (texto, minLength = 3) => {
     return texto.trim().length >= minLength;
   };
@@ -94,29 +136,20 @@ const FichaPacienteForm = ({ editMode = false }) => {
     return fechaIngresada <= fechaActual;
   };
 
-  
-
-const validarTextoGeneral = (texto) => {
-    
+  const validarTextoGeneral = (texto) => {
     const regex = /^[\p{L}\p{M}\p{N}\s.,;:()\-_]+$/u;
     return regex.test(texto) || texto === '';
   };
 
-
- 
   const validarTextoConNumeros = (texto) => {
-  const regex = /^[\p{L}\p{M}\p{N}\s]+$/u;
-  return regex.test(texto) || texto === '';
-};
-
-
+    const regex = /^[\p{L}\p{M}\p{N}\s]+$/u;
+    return regex.test(texto) || texto === '';
+  };
 
   const validarTextoMedico = (texto) => {
-  const regex = /^[\p{L}\p{M}\p{N}\s°%+]+$/u;
-  return regex.test(texto) || texto === '';
-};
-
-
+    const regex = /^[\p{L}\p{M}\p{N}\s°%+]+$/u;
+    return regex.test(texto) || texto === '';
+  };
 
   const limpiarTexto = (texto) => {
     return texto.replace(/\s+/g, ' ').trim();
@@ -136,7 +169,6 @@ const validarTextoGeneral = (texto) => {
     return diferencia >= 1;
   };
 
-  
   const validarCampoEnTiempoReal = (name, value) => {
     let esValido = true;
     
@@ -275,109 +307,100 @@ const validarTextoGeneral = (texto) => {
     return Object.keys(nuevosErrores).length === 0;
   };
 
-
- useEffect(() => {
-  const loadFichaData = async () => {
-   
-    
-    if (idPaciente && !id_ficha_paciente) {
-      setFormulario(prev => ({
-        ...prev,
-        paciente: { id_paciente: idPaciente },
-       
-        fecha_registro: new Date().toISOString().split('T')[0]
-      }));
-      setIsEditing(false);
-      return;
-    }
-
-   
-    
-    if (id_ficha_paciente) {
-      setIsLoading(true);
-      try {
-        const fichaData = await getFichaById(id_ficha_paciente);
-        
-       
-        if (!fichaData) {
-          toast.error("Ficha no encontrada");
-          navigate('/fichas');
-          return;
-        }
-
-      
-        if (idPaciente && fichaData.paciente?.id_paciente !== idPaciente) {
-          toast.warn("Estás editando una ficha existente para otro paciente");
-        }
-
-        setFormulario({
-          diagnostico_me_actual: fichaData.diagnostico_me_actual || '',
-          condiciones_fisicas: fichaData.condiciones_fisicas || '',
-          estado_animo: fichaData.estado_animo || '',
-          comunicacion: fichaData.comunicacion || false,
-          otras_comunicaciones: fichaData.otras_comunicaciones || '',
-          caidas: fichaData.caidas || '',
-          tipo_dieta: fichaData.tipo_dieta || '',
-          alimentacion_asistida: fichaData.alimentacion_asistida || '',
-          hora_levantarse: fichaData.hora_levantarse || '',
-          hora_acostarse: fichaData.hora_acostarse || '',
-          frecuencia_siestas: fichaData.frecuencia_siestas || '',
-          frecuencia_baño: fichaData.frecuencia_baño || '',
-          rutina_medica: fichaData.rutina_medica || '',
-          usapanal: fichaData.usapanal || false,
-          acompañado: fichaData.acompañado || false,
-          observaciones: fichaData.observaciones || '',
-          fecha_registro: fichaData.fecha_registro?.split('T')[0] || new Date().toISOString().split('T')[0],
-          paciente: {
-            id_paciente: fichaData.paciente?.id_paciente || idPaciente || ''
-          }
-        });
-        
-        setIsEditing(true);
-      } catch (error) {
-        console.error("Error al cargar ficha:", error);
-        toast.error("Error al cargar la ficha");
-        navigate('/fichas');
-      } finally {
-        setIsLoading(false);
+  useEffect(() => {
+    const loadFichaData = async () => {
+      if (idPaciente && !id_ficha_paciente) {
+        setFormulario(prev => ({
+          ...prev,
+          paciente: { id_paciente: idPaciente },
+          fecha_registro: new Date().toISOString().split('T')[0]
+        }));
+        setIsEditing(false);
+        return;
       }
-    }
+      
+      if (id_ficha_paciente) {
+        setIsLoading(true);
+        try {
+          showInfoToast("Cargando información de la ficha...");
+          
+          const fichaData = await getFichaById(id_ficha_paciente);
+          
+          if (!fichaData) {
+            showErrorToast("Ficha no encontrada");
+            navigate('/fichas');
+            return;
+          }
 
-    
-    if (!idPaciente && !id_ficha_paciente) {
-      setFormulario(prev => ({
-        ...prev,
-        fecha_registro: new Date().toISOString().split('T')[0],
-        paciente: { id_paciente: '' }
-      }));
-      setIsEditing(false);
-    }
-  };
+          if (idPaciente && fichaData.paciente?.id_paciente !== idPaciente) {
+            showWarningToast("Estás editando una ficha existente para otro paciente");
+          }
 
-  loadFichaData();
-}, [id_ficha_paciente, idPaciente, location.key, navigate]);
+          setFormulario({
+            diagnostico_me_actual: fichaData.diagnostico_me_actual || '',
+            condiciones_fisicas: fichaData.condiciones_fisicas || '',
+            estado_animo: fichaData.estado_animo || '',
+            comunicacion: fichaData.comunicacion || false,
+            otras_comunicaciones: fichaData.otras_comunicaciones || '',
+            caidas: fichaData.caidas || '',
+            tipo_dieta: fichaData.tipo_dieta || '',
+            alimentacion_asistida: fichaData.alimentacion_asistida || '',
+            hora_levantarse: fichaData.hora_levantarse || '',
+            hora_acostarse: fichaData.hora_acostarse || '',
+            frecuencia_siestas: fichaData.frecuencia_siestas || '',
+            frecuencia_baño: fichaData.frecuencia_baño || '',
+            rutina_medica: fichaData.rutina_medica || '',
+            usapanal: fichaData.usapanal || false,
+            acompañado: fichaData.acompañado || false,
+            observaciones: fichaData.observaciones || '',
+            fecha_registro: fichaData.fecha_registro?.split('T')[0] || new Date().toISOString().split('T')[0],
+            paciente: {
+              id_paciente: fichaData.paciente?.id_paciente || idPaciente || ''
+            }
+          });
+          
+          setIsEditing(true);
+          showSuccessToast("Ficha cargada correctamente");
+          
+        } catch (error) {
+          console.error("Error al cargar ficha:", error);
+          showErrorToast("Error al cargar la ficha. Intente nuevamente.");
+          navigate('/fichas');
+        } finally {
+          setIsLoading(false);
+        }
+      }
+
+      if (!idPaciente && !id_ficha_paciente) {
+        setFormulario(prev => ({
+          ...prev,
+          fecha_registro: new Date().toISOString().split('T')[0],
+          paciente: { id_paciente: '' }
+        }));
+        setIsEditing(false);
+      }
+    };
+
+    loadFichaData();
+  }, [id_ficha_paciente, idPaciente, location.key, navigate]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     
     let newValue = value;
     
-    
-   if (type === 'text' || type === 'textarea') {
-  
-if (value && !validarCampoEnTiempoReal(name, value)) {
-  return;
-}
-
-newValue = value;
-}
+    if (type === 'text' || type === 'textarea') {
+      if (value && !validarCampoEnTiempoReal(name, value)) {
+        return;
+      }
+      newValue = value;
+    }
     
     setFormulario(prev => ({
       ...prev,
       [name]: type === "checkbox" ? checked : newValue
     }));
 
-   
     if (errores[name]) {
       setErrores(prev => ({
         ...prev,
@@ -405,13 +428,13 @@ newValue = value;
     e.preventDefault();
     
     if (!validarCamposObligatorios()) {
-      toast.error("Por favor, corrija los errores en el formulario");
+      showErrorToast("Por favor, corrija los errores en el formulario antes de continuar");
       return;
     }
 
     setIsSubmitting(true);
+   
 
-  
     const dataToSend = { ...formulario };
     if (!dataToSend.paciente.id_paciente) {
       dataToSend.paciente = null;
@@ -421,31 +444,48 @@ newValue = value;
     try {
       if (isEditing) {
         await updateFicha(id_ficha_paciente, dataToSend);
-        toast.success("Ficha actualizada correctamente");
+        showSuccessToast(" Ficha actualizada exitosamente");
+        
+        // Opcional: navegar después de un delay para que el usuario vea el mensaje
+        setTimeout(() => {
+          navigate(`/fichas/${id_ficha_paciente}/medicamentos`);
+        }, 1500);
+        
       } else {
         const nuevaFicha = await createFicha(dataToSend);
-        toast.success("Ficha creada correctamente");
-        navigate(`/fichas/${nuevaFicha.id_ficha_paciente}/medicamentos`);
+        showSuccessToast(" Ficha creada exitosamente. Redirigiendo...");
+        
+        // Delay para mostrar el mensaje antes de navegar
+        setTimeout(() => {
+          navigate(`/fichas/${nuevaFicha.id_ficha_paciente}/medicamentos`);
+        }, 1500);
       }
     } catch (error) {
       console.error("Error al guardar ficha:", error);
-      toast.error(error.message || "Error al guardar la ficha");
+      const errorMessage = error.response?.data?.message || error.message || "Error inesperado al guardar la ficha";
+      showErrorToast(`❌ ${errorMessage}`);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleDelete = async () => {
-    const confirmacion = window.confirm("¿Estás seguro que deseas eliminar esta ficha?");
+    const confirmacion = window.confirm("¿Estás seguro que deseas eliminar esta ficha? Esta acción no se puede deshacer.");
     if (!confirmacion) return;
 
     try {
+      showInfoToast("Eliminando ficha...");
       await deleteFicha(id_ficha_paciente);
-      toast.success("Ficha eliminada correctamente");
-      navigate("/fichas");
+      showSuccessToast("✅ Ficha eliminada correctamente");
+      
+      setTimeout(() => {
+        navigate("/fichas");
+      }, 1500);
+      
     } catch (error) {
       console.error("Error al eliminar ficha:", error);
-      toast.error("Hubo un error al eliminar la ficha");
+      const errorMessage = error.response?.data?.message || error.message || "Error inesperado al eliminar la ficha";
+      showErrorToast(`❌ ${errorMessage}`);
     }
   };
 
@@ -460,12 +500,26 @@ newValue = value;
 
   return (
     <div className="ficha-paciente-page-wrapper">
+      {/* Contenedor de Toast */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        style={{ zIndex: 9999 }}
+      />
+      
       <FichaStepsNav id_ficha_paciente={id_ficha_paciente} currentStep="ficha" />
 
       <div className="ficha-paciente-form-container">
         <div className="ficha-paciente-header-actions">
           <h2>{isEditing ? 'Editar Ficha de Paciente' : 'Crear Nueva Ficha'}</h2>
-          
         </div>
 
         <form onSubmit={handleSubmit} className="ficha-paciente-form">
@@ -768,9 +822,15 @@ newValue = value;
               className="ficha-paciente-btn-primary"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Guardando...' : isEditing ? 'Actualizar Ficha' : 'Guardar y Continuar'}
+              {isSubmitting ? (
+                <>
+                  <span className="spinner"></span>
+                  {isEditing ? 'Actualizando...' : 'Guardando...'}
+                </>
+              ) : (
+                isEditing ? ' Actualizar Ficha' : ' Guardar y Continuar'
+              )}
             </button>
-         
           </div>
         </form>
       </div>
