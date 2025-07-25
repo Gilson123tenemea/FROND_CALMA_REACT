@@ -770,16 +770,7 @@ newValue = value;
             >
               {isSubmitting ? 'Guardando...' : isEditing ? 'Actualizar Ficha' : 'Guardar y Continuar'}
             </button>
-            {isEditing && (
-            <button
-              className="ficha-paciente-btn-delete"
-              onClick={handleDelete}
-              style={{ marginLeft: '12px', height: '60px', alignSelf: 'center' }}
-              type="button"
-            >
-               Eliminar Ficha
-            </button>
-          )}
+         
           </div>
         </form>
       </div>
