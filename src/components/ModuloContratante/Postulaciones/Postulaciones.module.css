@@ -399,7 +399,7 @@
 .postulacionesEmptyTipsTitle {
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--gray-900);
+  color: var(--white);
   margin-bottom: 1rem;
   display: flex;
   align-items: center;

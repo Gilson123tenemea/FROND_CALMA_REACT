@@ -691,7 +691,7 @@ const ModuloAspirante = () => {
                             borderBottom: '2px solid #0ea5e9',
                           }}
                         >
-                          ayuda@calma.com
+                          calmasoporte2025@gmail .com
                         </a>{' '}
                         o accede a nuestro centro de soporte desde tu panel.
                       </p>

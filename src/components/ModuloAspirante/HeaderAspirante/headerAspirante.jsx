@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from '../Notificaciones.module.css';
 import App from '../../../App';
-
+import logo from '../../../assets/logo.jpeg';
 const HeaderAspirante = ({
   userId: userIdProp,
   aspiranteId: aspiranteIdProp, // 🆕 NUEVA PROP
@@ -569,12 +569,10 @@ const HeaderAspirante = ({
 
         <div style={stylesInline.leftSection}>
           <div style={stylesInline.brandLogo} className="brand-logo">
-            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style={stylesInline.logoIcon}>
-              <circle cx="24" cy="24" r="20" fill="#4F46E5" opacity="0.1" />
-              <path d="M24 8C15.163 8 8 15.163 8 24s7.163 16 16 16 16-7.163 16-16S32.837 8 24 8zm0 28c-6.627 0-12-5.373-12-12S17.373 12 24 12s12 5.373 12 12-5.373 12-12 12z" fill="#4F46E5" />
-              <path d="M28 20h-8v8h8v-8z" fill="#4F46E5" />
-            </svg>
-            <h2 style={stylesInline.brandName}>C A L M A</h2>
+              <div className="logo-icon">
+                        <img src={logo} alt="Logo de Calma" className="logo-img" />
+                      </div>
+            <h2 style={stylesInline.brandName}>CALMA</h2>
           </div>
 
           <nav style={stylesInline.primaryNavigation}>
@@ -583,19 +581,19 @@ const HeaderAspirante = ({
             </button>
 
             <button onClick={() => handleNavigation(`/moduloAspirante/postulaciones/${userId}`)} style={stylesInline.navLink} className="nav-item">
-              Mis Postulaciones
+              Postulaciones
             </button>
 
             <button onClick={() => handleNavigation(`/moduloAspirante/cv?userId=${userId}`)} style={stylesInline.navLink} className="nav-item">
-              CV
+              Editar Hoja de Vida
             </button>
 
             <button onClick={() => handleNavigation(`/ver-cv/${userId}`)} style={stylesInline.navLink} className="nav-item">
-              Ver CV
+              Hoja de Vida
             </button>
 
             <button onClick={() => handleNavigation(`/aspirante/${aspiranteId}/calificaciones`)} style={stylesInline.navLink} className="nav-item">
-              Mis Calificaciones
+              Calificaciones
             </button>
 
             <button onClick={handleMensajesClick} style={stylesInline.messagesButton} className="nav-item">

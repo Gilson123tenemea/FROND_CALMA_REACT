@@ -218,7 +218,7 @@ const PostulacionesAspirante = () => {
                 Explorar trabajos disponibles
               </Link>
               
-              <Link to={`/cv/${userId}`} className={styles.secondaryButton}>
+              <Link to={`/moduloAspirante/perfilAspirante?userId=${userId}`} className={styles.secondaryButton}>
                 <span className={styles.buttonIcon}>📝</span>
                 Completar mi perfil
               </Link>

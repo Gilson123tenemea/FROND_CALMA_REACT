@@ -946,7 +946,7 @@ const ModuloContratante = () => {
                       transition: 'all 0.3s ease',
                     }}
                   >
-                    soporte@calma.com
+                    calmasoporte2025@gmail .com
                   </a>{' '}
                   o visita el centro de ayuda en tu panel de usuario.
                 </p>

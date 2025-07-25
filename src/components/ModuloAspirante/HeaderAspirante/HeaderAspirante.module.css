@@ -12,6 +12,36 @@
   z-index: 1000;
   min-height: 70px;
 }
+.logo-container {
+  flex-shrink: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0; /* o simplemente elimínala */
+}
+
+.logo-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: #3b82f6;
+}
+
+.logo-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  color: #034c74;
+  font-family: inherit;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
 
 /* ===== SECCIÓN IZQUIERDA ===== */
 .leftSection {
@@ -41,12 +71,17 @@
 }
 
 .brandName {
-  font-size: 1.5rem;
+   background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  color: #034c74;
+  font-family: inherit;
+  font-size: 1.125rem;
   font-weight: 700;
-  color: #4F46E5;
   letter-spacing: 0.1em;
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* ===== NAVEGACIÓN PRINCIPAL ===== */

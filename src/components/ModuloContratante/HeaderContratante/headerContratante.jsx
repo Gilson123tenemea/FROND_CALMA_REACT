@@ -4,6 +4,7 @@ import axios from 'axios';
 import styles from './HeaderContratante.module.css';
 import notificationStyles from '../NotificacionesContratante.module.css';
 import App from '../../../App'; // Ajusta la ruta según tu estructura
+import logo from '../../../assets/logo.jpeg';
 
 const HeaderContratante = ({
   userId,
@@ -268,17 +269,8 @@ const HeaderContratante = ({
               to={`/moduloContratante`} 
               style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}
             >
-              <svg
-                viewBox="0 0 48 48"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className={styles.logoIcon}
-              >
-                <circle cx="24" cy="24" r="20" fill="#2563eb" opacity="0.1" />
-                <path d="M24 8C15.163 8 8 15.163 8 24s7.163 16 16 16 16-7.163 16-16S32.837 8 24 8zm0 28c-6.627 0-12-5.373-12-12S17.373 12 24 12s12 5.373 12 12-5.373 12-12 12z" fill="#2563eb" />
-                <path d="M28 20h-8v8h8v-8z" fill="#2563eb" />
-              </svg>
-              <h2 className={styles.brandName}>C A L M A</h2>
+              <img src={logo} alt="Logo de Calma" className="logo-img" />
+              <h1 className={styles.brandName}>CALMA</h1>
             </Link>
           </div>
 
