@@ -5,6 +5,7 @@ import { Users, Target, Eye, Heart, Lightbulb, Shield, ArrowRight, CheckCircle, 
 import { FaFacebook, FaInstagram, FaTiktok, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa"
 import styles from "./SobreNosotros.module.css"
 import Navbar from "../Shared/Navbar"
+import ChatBubble from "../chatbot/ChatBubble"
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
@@ -403,6 +404,8 @@ const SobreNosotros = () => {
           </div>
         </div>
       </footer>
+      <ChatBubble />
+
     </div>
   )
 }

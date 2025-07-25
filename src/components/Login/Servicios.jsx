@@ -5,7 +5,8 @@ import { ArrowRight, CheckCircle, Heart } from "lucide-react"
 import { FaFacebook, FaInstagram, FaTiktok, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa"
 import styles from "./Servicios.module.css"
 import Navbar from "../Shared/Navbar"
-import { useNavigate } from "react-router-dom"; 
+import ChatBubble from "../chatbot/ChatBubble"
+import { useNavigate } from "react-router-dom";
 
 const Servicios = () => {
   const navigate = useNavigate();
@@ -73,8 +74,8 @@ const Servicios = () => {
                   <strong>CALMA</strong> es una plataforma que conecta a personas apasionadas por el cuidado con
                   familias que necesitan apoyo para el bienestar de sus adultos mayores.
                 </p>
-               <button 
-                  className={styles.serviciosHeroCta} 
+                <button
+                  className={styles.serviciosHeroCta}
                   onClick={() => navigate('/login')}
                 >
                   Descubre nuestros servicios
@@ -243,6 +244,8 @@ const Servicios = () => {
           </div>
         </div>
       </footer>
+      <ChatBubble />
+
     </div>
   )
 }

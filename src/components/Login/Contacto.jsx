@@ -5,6 +5,8 @@ import { FaFacebook, FaInstagram, FaTiktok, FaPhoneAlt, FaEnvelope, FaMapMarkerA
 import emailjs from "@emailjs/browser"
 import styles from "./Contacto.module.css"
 import Navbar from "../Shared/Navbar"
+import ChatBubble from "../chatbot/ChatBubble"
+
 
 const Contacto = () => {
   const [formData, setFormData] = useState({
@@ -538,8 +540,12 @@ const Contacto = () => {
           </div>
         </div>
       </footer>
+       <ChatBubble />
     </div>
+
+
   )
+
 }
 
 export default Contacto
