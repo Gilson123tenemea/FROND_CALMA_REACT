@@ -1,4 +1,3 @@
-// src/components/chatbot/ChatBubble.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import './ChatBubble.css';
@@ -13,7 +12,7 @@ const ChatBubble = () => {
   const toggleChat = () => {
     setAbierto(!abierto);
     if (!abierto && conversacion.length === 0) {
-      // Agrega mensaje de bienvenida al abrir el chat por primera vez
+      // Mensaje bienvenida al abrir chat por primera vez
       setConversacion([
         {
           from: 'bot',
@@ -33,13 +32,16 @@ const ChatBubble = () => {
     setError(null);
 
     try {
-      // Verifica si la pregunta es sobre cómo postularse
-      if (pregunta.toLowerCase().includes('postular') || pregunta.toLowerCase().includes('registrar')) {
+      if (
+        pregunta.toLowerCase().includes('postular') ||
+        pregunta.toLowerCase().includes('registrar')
+      ) {
         setConversacion((prev) => [
           ...prev,
           {
             from: 'bot',
-            text: 'Para postularte a Calma, primero debes registrarte en nuestra plataforma. Puedes hacerlo desde aquí 👉 <a href="/registro" target="_blank">Ir al registro</a>',
+            text:
+              'Para postularte a Calma, primero debes registrarte en nuestra plataforma. Puedes hacerlo desde aquí 👉 <a href="/registro" target="_blank" rel="noopener noreferrer">Ir al registro</a>',
           },
         ]);
       } else {
@@ -68,6 +70,43 @@ const ChatBubble = () => {
     enviarPregunta();
   };
 
+  // Animación "Escribiendo..."
+  const TypingIndicator = () => (
+    <div className="chat-message bot typing-indicator">
+      🤖 Está escribiendo<span className="dots"><span>.</span><span>.</span><span>.</span></span>
+    </div>
+  );
+
+  // Renderizado especial para mensajes de bot con ofertas
+  const renderBotMessage = (text) => {
+    if (text.includes('━━━━━━━━━━━━━━━━━━━━━━')) {
+      const ofertas = text.split('━━━━━━━━━━━━━━━━━━━━━━').filter((o) => o.trim() !== '');
+      return (
+        <>
+          <div className="bot-intro-bubble">🤖 Estas son algunas oportunidades activas hoy:</div>
+          {ofertas.map((oferta, idx) => (
+            <div
+              key={idx}
+              className="chat-message bot oferta-bubble"
+              dangerouslySetInnerHTML={{ __html: oferta.trim().replace(/\n/g, '<br />') }}
+            />
+          ))}
+        </>
+      );
+    }
+    // Render con links en texto plano
+    return (
+      <span
+        dangerouslySetInnerHTML={{
+          __html: text.replace(
+            /\[(.*?)\]\((.*?)\)/g,
+            '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
+          ),
+        }}
+      />
+    );
+  };
+
   return (
     <>
       <button className="chat-bubble" onClick={toggleChat} aria-label="Abrir chat">
@@ -84,6 +123,10 @@ const ChatBubble = () => {
           </div>
 
           <div className="chat-messages">
+            {conversacion.length === 0 && (
+              <p className="chat-placeholder">Haz una pregunta sobre empleos temporales.</p>
+            )}
+
             {conversacion.map((msg, idx) => {
               if (msg.type === 'welcome') {
                 return (
@@ -106,22 +149,16 @@ const ChatBubble = () => {
                 );
               }
 
-              return (
-                <div key={idx} className={`chat-message ${msg.from}`}>
-                  {msg.from === 'user' ? '👤' : '🤖'}{' '}
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html: msg.text.replace(
-                        /\[(.*?)\]\((.*?)\)/g,
-                        '<a href="$2" target="_blank">$1</a>'
-                      ),
-                    }}
-                  />
+              return msg.from === 'user' ? (
+                <div key={idx} className="chat-message user">
+                  👤 {msg.text}
                 </div>
+              ) : (
+                <div key={idx} className="bot-message-wrapper">{renderBotMessage(msg.text)}</div>
               );
             })}
 
-            {cargando && <div className="chat-message bot">🤖 Escribiendo...</div>}
+            {cargando && <TypingIndicator />}
           </div>
 
           <form onSubmit={handleSubmit} className="chat-form">
