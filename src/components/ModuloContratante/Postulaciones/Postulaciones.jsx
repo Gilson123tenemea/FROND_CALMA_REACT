@@ -5,6 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from './Postulaciones.module.css';
 import HeaderContratante from "../HeaderContratante/HeaderContratante";
+import RecomendacionAspirantes from './RecomendacionAspirantes'; // Ajusta la ruta según tu estructura
 
 const Postulaciones = () => {
   const { userId } = useParams();
@@ -15,7 +16,20 @@ const Postulaciones = () => {
   const [filtroFecha, setFiltroFecha] = useState('');
   const [procesandoEstados, setProcesandoEstados] = useState({});
   const [calificacionesStatus, setCalificacionesStatus] = useState({});
+  
+  // 🤖 NUEVOS ESTADOS PARA IA - SIMPLIFICADO
+  const [mostrarRecomendaciones, setMostrarRecomendaciones] = useState(false);
+  
   const navigate = useNavigate();
+
+  // 🤖 FUNCIONES PARA MANEJAR RECOMENDACIONES IA - SIMPLIFICADO
+  const abrirRecomendaciones = () => {
+    setMostrarRecomendaciones(true);
+  };
+
+  const cerrarRecomendaciones = () => {
+    setMostrarRecomendaciones(false);
+  };
 
   useEffect(() => {
     const obtenerRealizaciones = async () => {
@@ -519,9 +533,9 @@ const Postulaciones = () => {
           <h2 className={styles.postulacionesMainTitle}>
             <span className={styles.postulacionesTitleIcon}>📄</span>
             Postulaciones del Contratante
-            <span className={styles.postulacionesUserBadge}>#{userId}</span>
           </h2>
           
+          {/* 🤖 ESTADÍSTICAS CON BOTÓN IA MEJORADO */}
           <div className={styles.postulacionesStatsBar}>
             <div className={styles.postulacionesStatItem}>
               <span className={styles.postulacionesStatNumber}>{filtradas.length}</span>
@@ -539,6 +553,60 @@ const Postulaciones = () => {
               </span>
               <span className={styles.postulacionesStatLabel}>Pendientes</span>
             </div>
+            
+            {/* 🤖 BOTÓN IA PRINCIPAL MEJORADO */}
+            {filtradas.length > 0 && (
+              <div className={styles.postulacionesStatItem} style={{flexBasis: 'auto'}}>
+                <button
+                  onClick={abrirRecomendaciones}
+                  className={styles.postulacionesAIButton}
+                  style={{
+                    background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 25%, #a855f7 50%, #9333ea 75%, #8b5cf6 100%)',
+                    backgroundSize: '300% 300%',
+                    animation: 'gradientFlow 4s ease infinite, aiButtonPulse 3s ease infinite',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '12px',
+                    padding: '12px 20px',
+                    fontSize: '15px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    boxShadow: '0 4px 15px rgba(139, 92, 246, 0.4)',
+                    textShadow: '0 1px 2px rgba(0,0,0,0.2)',
+                    position: 'relative',
+                    overflow: 'hidden'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'translateY(-3px) scale(1.02)';
+                    e.target.style.boxShadow = '0 8px 25px rgba(139, 92, 246, 0.6)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0) scale(1)';
+                    e.target.style.boxShadow = '0 4px 15px rgba(139, 92, 246, 0.4)';
+                  }}
+                >
+                  <i className="fas fa-robot" style={{
+                    fontSize: '18px',
+                    animation: 'robotBounce 2s ease infinite'
+                  }}></i>
+                  <span>🧠 Recomendación IA</span>
+                  {/* Efecto de brillo */}
+                  <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: '-100%',
+                    width: '100%',
+                    height: '100%',
+                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
+                    animation: 'shimmer 3s ease infinite'
+                  }}></div>
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -625,33 +693,35 @@ const Postulaciones = () => {
                     <p className={styles.postulacionesJobDescription}>
                       {publicacion?.descripcion || 'Sin descripción'}
                     </p>
+
+                    {/* Indicador de candidatos mejorado */}
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      marginTop: '12px'
+                    }}>
+                      <span style={{
+                        background: 'linear-gradient(135deg, #e8f2ff 0%, #dbeafe 100%)',
+                        color: '#1e40af',
+                        padding: '6px 12px',
+                        borderRadius: '16px',
+                        fontSize: '12px',
+                        fontWeight: '700',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        border: '1px solid rgba(30, 64, 175, 0.2)',
+                        transition: 'all 0.3s ease'
+                      }}>
+                        👥 {filtradas.filter(r => 
+                          r.postulacion?.postulacion_empleo?.id_postulacion_empleo === publicacion?.id_postulacion_empleo
+                        ).length} candidatos
+                      </span>
+                    </div>
                   </div>
 
                   <div className={styles.postulacionesDetailsGrid}>
-                    <div className={styles.postulacionesDetailItem}>
-                      <i className={`${styles.postulacionesDetailIcon} fas fa-calendar-plus`}></i>
-                      <span className={styles.postulacionesDetailLabel}>Postulado:</span>
-                      <span className={styles.postulacionesDetailValue}>
-                        {fecha ? new Date(fecha).toLocaleDateString() : 'N/D'}
-                      </span>
-                    </div>
-                    
-                    <div className={styles.postulacionesDetailItem}>
-                      <i className={`${styles.postulacionesDetailIcon} fas fa-calendar-times`}></i>
-                      <span className={styles.postulacionesDetailLabel}>Fecha límite:</span>
-                      <span className={styles.postulacionesDetailValue}>
-                        {publicacion?.fecha_limite ? new Date(publicacion.fecha_limite).toLocaleDateString() : 'N/D'}
-                      </span>
-                    </div>
-                    
-                    <div className={styles.postulacionesDetailItem}>
-                      <i className={`${styles.postulacionesDetailIcon} fas fa-clock`}></i>
-                      <span className={styles.postulacionesDetailLabel}>Jornada:</span>
-                      <span className={styles.postulacionesDetailValue}>
-                        {publicacion?.jornada || 'N/D'}
-                      </span>
-                    </div>
-                    
                     <div className={styles.postulacionesDetailItem}>
                       <i className={`${styles.postulacionesDetailIcon} fas fa-dollar-sign`}></i>
                       <span className={styles.postulacionesDetailLabel}>Salario:</span>
@@ -682,8 +752,9 @@ const Postulaciones = () => {
                   )}
                 </div>
 
+                {/* 🤖 ACCIONES SIN BOTÓN IA INDIVIDUAL */}
                 <div className={styles.postulacionesCardActions}>
-                  {/* 🔥 BOTÓN ACEPTAR - CORREGIDO */}
+                  {/* 🔥 BOTÓN ACEPTAR */}
                   <button
                     className={`${styles.postulacionesActionBtn} ${styles.postulacionesBtnAccept}`}
                     onClick={() =>
@@ -707,7 +778,7 @@ const Postulaciones = () => {
                     {estaProcesando ? 'Procesando...' : estaAceptada ? 'Ya Aceptada ✓' : 'Aceptar'}
                   </button>
                   
-                  {/* 🔥 BOTÓN RECHAZAR - CORREGIDO */}
+                  {/* 🔥 BOTÓN RECHAZAR */}
                   <button
                     className={`${styles.postulacionesActionBtn} ${styles.postulacionesBtnReject}`}
                     onClick={() =>
@@ -749,6 +820,14 @@ const Postulaciones = () => {
         </div>
       </div>
 
+      {/* 🤖 MODAL DE RECOMENDACIONES IA SIMPLIFICADO */}
+      {mostrarRecomendaciones && (
+        <RecomendacionAspirantes
+          userId={userId}
+          onClose={cerrarRecomendaciones}
+        />
+      )}
+
       {/* Contenedor de notificaciones Toast */}
       <ToastContainer
         position="top-right"
@@ -763,6 +842,56 @@ const Postulaciones = () => {
         theme="light"
         className="postulacionesToastContainer"
       />
+      
+      {/* 🎨 ESTILOS ADICIONALES PARA ANIMACIONES */}
+      <style>{`
+        @keyframes gradientFlow {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+        
+        @keyframes aiButtonPulse {
+          0%, 100% { 
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+          }
+          50% { 
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.6);
+          }
+        }
+        
+        @keyframes robotBounce {
+          0%, 20%, 60%, 100% {
+            transform: translateY(0);
+          }
+          40% {
+            transform: translateY(-4px);
+          }
+          80% {
+            transform: translateY(-2px);
+          }
+        }
+        
+        @keyframes shimmer {
+          0% { left: -100%; }
+          50%, 100% { left: 100%; }
+        }
+        
+        .postulacionesAIButton::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+        
+        .postulacionesAIButton:hover::before {
+          opacity: 1;
+        }
+      `}</style>
     </>
   );
 };

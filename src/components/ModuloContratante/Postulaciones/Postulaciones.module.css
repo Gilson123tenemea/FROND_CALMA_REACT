@@ -22,6 +22,14 @@
   --danger-light: #FDEAEA;
   --danger-dark: #D35A5A;
   
+  /* 🤖 COLORES ESPECIALES PARA IA */
+  --ai-primary: #8b5cf6;
+  --ai-secondary: #7c3aed;
+  --ai-tertiary: #a855f7;
+  --ai-quaternary: #9333ea;
+  --ai-glow: rgba(139, 92, 246, 0.4);
+  --ai-glow-hover: rgba(139, 92, 246, 0.6);
+  
   /* Grises suaves */
   --gray-50: #FAFBFC;
   --gray-100: #F4F6F8;
@@ -43,6 +51,11 @@
   --shadow-md: 0 4px 6px -1px rgba(139, 157, 195, 0.12), 0 2px 4px -1px rgba(139, 157, 195, 0.08);
   --shadow-lg: 0 10px 15px -3px rgba(139, 157, 195, 0.15), 0 4px 6px -2px rgba(139, 157, 195, 0.08);
   --shadow-xl: 0 20px 25px -5px rgba(139, 157, 195, 0.18), 0 10px 10px -5px rgba(139, 157, 195, 0.08);
+  
+  /* 🤖 SOMBRAS ESPECIALES PARA IA */
+  --ai-shadow: 0 4px 15px var(--ai-glow);
+  --ai-shadow-hover: 0 8px 25px var(--ai-glow-hover);
+  --ai-shadow-active: 0 12px 35px var(--ai-glow-hover);
   
   /* Bordes y transiciones */
   --border-radius: 12px;
@@ -134,6 +147,131 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+/* 🤖 ===== BOTÓN IA PRINCIPAL MEJORADO ===== */
+.postulacionesAIButton {
+  background: linear-gradient(135deg, var(--ai-primary) 0%, var(--ai-secondary) 25%, var(--ai-tertiary) 50%, var(--ai-quaternary) 75%, var(--ai-primary) 100%) !important;
+  background-size: 300% 300% !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 12px 20px !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  transition: var(--transition) !important;
+  box-shadow: var(--ai-shadow) !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  animation: aiGradientFlow 4s ease infinite, aiButtonPulse 3s ease infinite !important;
+  min-width: 180px !important;
+  justify-content: center !important;
+}
+
+.postulacionesAIButton:hover {
+  transform: translateY(-3px) scale(1.02) !important;
+  box-shadow: var(--ai-shadow-hover) !important;
+  animation: aiGradientFlow 2s ease infinite, aiButtonPulseHover 1s ease infinite !important;
+}
+
+.postulacionesAIButton:active {
+  transform: translateY(-1px) scale(1.01) !important;
+  box-shadow: var(--ai-shadow-active) !important;
+}
+
+/* Efecto de partículas en el botón IA */
+.postulacionesAIButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.15) 0%, transparent 50%), 
+              radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%), 
+              radial-gradient(circle at 40% 80%, rgba(255,255,255,0.12) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.postulacionesAIButton:hover::before {
+  opacity: 1;
+}
+
+/* Efecto de brillo deslizante */
+.postulacionesAIButton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+
+.postulacionesAIButton:hover::after {
+  left: 100%;
+}
+
+/* ===== ANIMACIONES PARA IA ===== */
+@keyframes aiGradientFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes aiButtonPulse {
+  0%, 100% { 
+    box-shadow: var(--ai-shadow);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: var(--ai-shadow-hover);
+    transform: scale(1.01);
+  }
+}
+
+@keyframes aiButtonPulseHover {
+  0%, 100% { 
+    box-shadow: var(--ai-shadow-hover);
+  }
+  50% { 
+    box-shadow: var(--ai-shadow-active);
+  }
+}
+
+@keyframes aiRobotBounce {
+  0%, 20%, 60%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  40% {
+    transform: translateY(-4px) rotate(5deg);
+  }
+  80% {
+    transform: translateY(-2px) rotate(-2deg);
+  }
+}
+
+@keyframes aiShimmer {
+  0% { left: -100%; opacity: 0; }
+  50% { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+
+/* Aplicar animación al ícono del robot */
+.postulacionesAIButton i.fa-robot {
+  animation: aiRobotBounce 2s ease infinite;
+}
+
+.postulacionesAIButton:hover i.fa-robot {
+  animation: aiRobotBounce 0.6s ease infinite;
 }
 
 /* ===== SECCIÓN DE FILTROS ===== */
@@ -399,7 +537,7 @@
 .postulacionesEmptyTipsTitle {
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--white);
+  color: var(--gray-900);
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
@@ -764,6 +902,48 @@
   
   .postulacionesEmptyStateCard .postulacionesEmptyIcon {
     font-size: 3rem;
+  }
+
+  /* 🤖 Responsive para botón IA */
+  .postulacionesAIButton {
+    min-width: 150px !important;
+    padding: 10px 16px !important;
+    font-size: 14px !important;
+  }
+
+  .postulacionesAIButton span {
+    display: none;
+  }
+
+  .postulacionesAIButton::after {
+    content: ' IA';
+  }
+}
+
+@media (max-width: 480px) {
+  .postulacionesStatsBar {
+    gap: 1rem;
+  }
+
+  .postulacionesStatItem {
+    padding: 1rem 1.5rem;
+    min-width: 100px;
+  }
+
+  .postulacionesStatNumber {
+    font-size: 1.5rem;
+  }
+
+  .postulacionesStatLabel {
+    font-size: 0.75rem;
+  }
+
+  /* Botón IA más compacto en móviles */
+  .postulacionesAIButton {
+    min-width: 120px !important;
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+    gap: 6px !important;
   }
 }
 
