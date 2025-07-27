@@ -1,5 +1,5 @@
 import styles from "./Inicio.module.css"
-import ChatBubble from "../chatbot/ChatBubble"
+import ChatBubble from "../ChatBot/ChatBubble.jsx"
 import imagenInicio from "./imagenes/imageninicio-removebg-preview.png"
 import Navbar from '../Shared/Navbar';
 import { useNavigate } from 'react-router-dom';

@@ -5,7 +5,7 @@ import { ArrowRight, CheckCircle, Heart } from "lucide-react"
 import { FaFacebook, FaInstagram, FaTiktok, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa"
 import styles from "./Servicios.module.css"
 import Navbar from "../Shared/Navbar"
-import ChatBubble from "../chatbot/ChatBubble"
+import ChatBubble from "../ChatBot/ChatBubble"
 import { useNavigate } from "react-router-dom";
 
 const Servicios = () => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaStar, FaArrowLeft, FaUser, FaBriefcase, FaFilter } from 'react-icons/fa';
-import HeaderAspirante from '../HeaderAspirante/HeaderAspirante';
+import HeaderAspirante from '../HeaderAspirante/headerAspirante';
 import './TodasLasCalificaciones.css';
 
 const TodasLasCalificaciones = () => {

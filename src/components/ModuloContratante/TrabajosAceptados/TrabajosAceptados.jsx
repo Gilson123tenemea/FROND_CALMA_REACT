@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import HeaderContratante from '../HeaderContratante/HeaderContratante';
+import HeaderContratante from '../HeaderContratante/headerContratante';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from './TrabajosAceptados.module.css';

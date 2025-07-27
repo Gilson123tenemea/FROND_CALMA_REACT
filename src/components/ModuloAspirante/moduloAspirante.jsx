@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useLocation, Routes, Route } from 'react-router-dom';
-import HeaderAspirante from './HeaderAspirante/HeaderAspirante';
+import HeaderAspirante from './HeaderAspirante/headerAspirante';
 import ListaTrabajos from './ListaTrabajos/listaTrabajos';
 import axios from 'axios';
-import './ModuloAspirante.css';
+import './moduloAspirante.css';
 
 const ModuloAspirante = () => {
   const location = useLocation();

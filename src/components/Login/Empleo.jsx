@@ -3,7 +3,7 @@ import { CheckCircle, Shield, Users, Award, Clock, Heart, ArrowRight } from "luc
 import { FaFacebook, FaInstagram, FaTiktok, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa"
 import styles from "./Empleo.module.css"
 import Navbar from "../Shared/Navbar"
-import ChatBubble from "../chatbot/ChatBubble"
+import ChatBubble from "../ChatBot/ChatBubble"
 import { useNavigate } from 'react-router-dom';
 
 const Empleo = () => {

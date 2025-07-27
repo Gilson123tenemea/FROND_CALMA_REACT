@@ -9,7 +9,7 @@ import {
   FaPlane, FaBusinessTime
 } from 'react-icons/fa';
 import { useParams } from "react-router-dom";
-import HeaderAspirante from "../HeaderAspirante/HeaderAspirante";
+import HeaderAspirante from "../HeaderAspirante/headerAspirante";
 import CalificacionesCV from './CalificacionesCV/CalificacionesCV';
 import styles from './CVView.module.css';
 

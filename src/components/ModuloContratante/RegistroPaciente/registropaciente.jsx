@@ -4,11 +4,11 @@ import {
   FaCalendarAlt, FaLock, FaTint, FaHeartbeat
 } from 'react-icons/fa';
 import { registrarPaciente } from "../../../servicios/registrarService";
-import { getProvincias } from '../../../servicios/ProvinciaService';
-import { getCantonesByProvinciaId } from '../../../servicios/CantonService';
+import { getProvincias } from '../../../servicios/provinciaService';
+import { getCantonesByProvinciaId } from '../../../servicios/cantonService';
 import { getParroquiasByCantonId } from "../../../servicios/parroquiaService";
 import styles from './registropaciente.module.css';
-import HeaderContratante from "../HeaderContratante/HeaderContratante";
+import HeaderContratante from "../HeaderContratante/headerContratante";
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

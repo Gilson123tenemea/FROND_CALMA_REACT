@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Clock, Home, Phone, DollarSign, Users, Heart, X, ArrowRight, CheckCircle, Star } from "lucide-react"
 import styles from "./Soluciones.module.css"
 import Navbar from "../Shared/Navbar"
-import ChatBubble from "../chatbot/ChatBubble"
+import ChatBubble from "../ChatBot/ChatBubble"
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { FaFacebook, FaInstagram, FaTiktok } from 'react-icons/fa';

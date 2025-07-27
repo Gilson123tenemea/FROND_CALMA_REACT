@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 import './FormularioPublicacion.css';
-import HeaderContratante from '../HeaderContratante/HeaderContratante';
+import HeaderContratante from '../HeaderContratante/headerContratante';
 import { ToastContainer, toast } from 'react-toastify';
 import { FaUser, FaRegCalendarAlt, FaRegFileAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';

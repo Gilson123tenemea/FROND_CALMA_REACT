@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
-import HeaderContratante from "../HeaderContratante/HeaderContratante";
+import HeaderContratante from "../HeaderContratante/headerContratante";
 import styles from './visualizarpaciente.module.css';
 
 const VisualizarPacientes = () => {

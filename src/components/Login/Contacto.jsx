@@ -5,7 +5,7 @@ import { FaFacebook, FaInstagram, FaTiktok, FaPhoneAlt, FaEnvelope, FaMapMarkerA
 import emailjs from "@emailjs/browser"
 import styles from "./Contacto.module.css"
 import Navbar from "../Shared/Navbar"
-import ChatBubble from "../chatbot/ChatBubble"
+import ChatBubble from "../ChatBot/ChatBubble"
 
 
 const Contacto = () => {

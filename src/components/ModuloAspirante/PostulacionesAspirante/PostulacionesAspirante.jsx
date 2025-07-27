@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
 import { FaCalendarAlt, FaBuilding, FaMapMarkerAlt, FaMoneyBillWave, FaClock, FaSun, FaClipboardList, FaCheckCircle, FaTimesCircle, FaHourglassHalf, FaUserInjured, FaEnvelope, FaRobot } from 'react-icons/fa';
 import styles from './PostulacionesAspirante.module.css';
-import HeaderAspirante from '../HeaderAspirante/HeaderAspirante';
+import HeaderAspirante from '../HeaderAspirante/headerAspirante';
 import ChatbotInteligente from './ChatbotInteligente'; // Importar el nuevo componente
 import { useNavigate } from 'react-router-dom';
 

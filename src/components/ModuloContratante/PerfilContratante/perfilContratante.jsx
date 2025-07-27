@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './perfilContratante.module.css';
-import HeaderContratante from "../HeaderContratante/HeaderContratante";
+import HeaderContratante from "../HeaderContratante/headerContratante";
 import { useSearchParams } from 'react-router-dom';
-import { getProvincias } from "../../../servicios/ProvinciaService";
-import { getCantonesByProvinciaId } from "../../../servicios/CantonService";
+import { getProvincias } from "../../../servicios/provinciaService";
+import { getCantonesByProvinciaId } from "../../../servicios/cantonService";
 import { getParroquiasByCantonId } from "../../../servicios/parroquiaService";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

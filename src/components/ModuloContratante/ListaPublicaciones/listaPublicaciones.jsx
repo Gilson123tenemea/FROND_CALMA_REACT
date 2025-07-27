@@ -5,7 +5,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import './ListaPublicaciones.css';
-import HeaderContratante from '../HeaderContratante/HeaderContratante';
+import HeaderContratante from '../HeaderContratante/headerContratante';
 import FormPublicacion from '../FormularioPublicacion/formularioPublicacion';
 
 const ListaPublicaciones = ({ refrescar, onEditar, userId: userIdProp }) => {

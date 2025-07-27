@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './Calificacion.module.css';
-import HeaderContratante from '../ModuloContratante/HeaderContratante/HeaderContratante';
+import HeaderContratante from '../ModuloContratante/HeaderContratante/headerContratante';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

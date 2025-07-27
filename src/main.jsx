@@ -8,16 +8,15 @@ import RequireCV from './components/ModuloAspirante/CV/RequireCV';
 
 // Importación de componentes
 import FormularioPublicacion from './components/ModuloContratante/FormularioPublicacion/formularioPublicacion';
-import ListaPublicaciones from './components/ModuloContratante/ListaPublicaciones/ListaPublicaciones';
+import ListaPublicaciones from './components/ModuloContratante/ListaPublicaciones/listaPublicaciones'; // ← PUNTO Y COMA AGREGADO
 import Inicio from './components/Inicio/Inicio';
 import Login from './components/Login/Login';
-import Registro from './components/Registro/Registro';
+import Registro from './components/Registro/registro';
 import ResetPassword from './components/Login/ResetPassword';
 
 // Módulos principales
-import ModuloAspirante from './components/ModuloAspirante/ModuloAspirante';
-import ModuloContratante from './components/ModuloContratante/ModuloContratante';
-
+import ModuloAspirante from './components/ModuloAspirante/moduloAspirante';
+import ModuloContratante from './components/ModuloContratante/moduloContratante';
 
 // Componentes varios
 import RegistroPaciente from './components/ModuloContratante/RegistroPaciente/registropaciente';
@@ -60,8 +59,6 @@ import Calificacionescv from './components/ModuloAspirante/CV/CalificacionesCV/C
 import VerFichaAceptada from './components/ModuloAspirante/PostulacionesAspirante/verfcihaaceptada';
 //Politicas de privacidad
 import PoliticasDePrivacidad from './components/Inicio/PoliticasDePrivacidad';
-
-
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -119,8 +116,6 @@ createRoot(document.getElementById('root')).render(
 
         <Route path="/aspirante/:aspiranteId/calificaciones" element={<TodasLasCalificaciones />} />
         <Route path="/politicas-de-privacidad" element={<PoliticasDePrivacidad />} />
-
-
 
         {/* Rutas de CV */}
         <Route path="/moduloAspirante/cv" element={<CVForm />} />

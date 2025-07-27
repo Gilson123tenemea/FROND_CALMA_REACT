@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from './Postulaciones.module.css';
-import HeaderContratante from "../HeaderContratante/HeaderContratante";
+import HeaderContratante from "../HeaderContratante/headerContratante";
 import RecomendacionAspirantes from './RecomendacionAspirantes'; // Ajusta la ruta según tu estructura
 
 const Postulaciones = () => {
