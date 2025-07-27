@@ -6,6 +6,7 @@ import HeaderContratante from '../HeaderContratante/headerContratante';
 import { ToastContainer, toast } from 'react-toastify';
 import { FaUser, FaRegCalendarAlt, FaRegFileAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+
 const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -36,6 +37,24 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
   const navigate = useNavigate();
   const [isEditando, setIsEditando] = useState(false);
   const [errores, setErrores] = useState({});
+
+  // Función para obtener la fecha mínima (fecha actual de Ecuador)
+  const obtenerFechaMinima = () => {
+    const ahora = new Date();
+    
+    // Convertir a fecha de Ecuador (UTC-5)
+    const offsetEcuador = -5;
+    const utc = ahora.getTime() + (ahora.getTimezoneOffset() * 60000);
+    const fechaEcuador = new Date(utc + (offsetEcuador * 3600000));
+    
+    // Formatear para input date (YYYY-MM-DD)
+    const year = fechaEcuador.getFullYear();
+    const month = String(fechaEcuador.getMonth() + 1).padStart(2, '0');
+    const day = String(fechaEcuador.getDate()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
+  };
+
   useEffect(() => {
     axios.get('http://localhost:8090/api/provincias')
       .then(res => setProvincias(res.data))
@@ -59,7 +78,6 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
     setIdPaciente('');
     setErrores({});
   };
-
 
   useEffect(() => {
     if (idProvincia) {
@@ -100,14 +118,13 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
       setTitulo(publicacionEditar.titulo || '');
       setDescripcion(publicacionEditar.descripcion || '');
 
+      // Manejar solo fecha (sin hora)
       if (publicacionEditar.fecha_limite) {
         const fecha = new Date(publicacionEditar.fecha_limite);
         const yyyy = fecha.getFullYear();
         const mm = String(fecha.getMonth() + 1).padStart(2, '0');
         const dd = String(fecha.getDate()).padStart(2, '0');
-        const hh = String(fecha.getHours()).padStart(2, '0');
-        const min = String(fecha.getMinutes()).padStart(2, '0');
-        setFechaLimite(`${yyyy}-${mm}-${dd}T${hh}:${min}`);
+        setFechaLimite(`${yyyy}-${mm}-${dd}`); // Solo fecha
       } else {
         setFechaLimite('');
       }
@@ -122,19 +139,19 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
 
       const parroquia = publicacionEditar.parroquia;
       if (parroquia) {
-        setIdProvincia(parroquia.canton.provincia.id_provincia); // Esto disparará la carga de cantones
-        // Esperamos para setear canton/parroquia luego
+        setIdProvincia(parroquia.canton.provincia.id_provincia);
         setTimeout(() => {
-          setIdCanton(parroquia.canton.id_canton); // Dispara la carga de parroquias
+          setIdCanton(parroquia.canton.id_canton);
           setTimeout(() => {
             setIdParroquia(parroquia.id_parroquia);
-            setIsEditando(false); // Ya terminamos
+            setIsEditando(false);
           }, 200);
         }, 200);
       }
 
       setIdPaciente(publicacionEditar.id_paciente ? String(publicacionEditar.id_paciente) : '');
     } else {
+      // Limpiar todos los campos
       setTitulo('');
       setDescripcion('');
       setFechaLimite('');
@@ -181,8 +198,26 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
     if (!idCanton) erroresTemp.idCanton = 'Debe seleccionar un cantón.';
     if (!idParroquia) erroresTemp.idParroquia = 'Debe seleccionar una parroquia.';
     if (!estado) erroresTemp.estado = 'Debe seleccionar el estado.';
+    
+    // Validación de fecha límite (solo fecha, sin hora)
     if (!fechaLimite) {
       erroresTemp.fechaLimite = 'Debe ingresar la fecha límite.';
+    } else {
+      const fechaSeleccionada = new Date(fechaLimite + 'T00:00:00');
+      const ahora = new Date();
+      
+      // Convertir a fecha de Ecuador
+      const offsetEcuador = -5;
+      const utc = ahora.getTime() + (ahora.getTimezoneOffset() * 60000);
+      const fechaEcuador = new Date(utc + (offsetEcuador * 3600000));
+      
+      // Comparar solo fechas (sin hora)
+      const fechaHoyStr = fechaEcuador.toISOString().split('T')[0];
+      const fechaSeleccionadaStr = fechaLimite;
+      
+      if (fechaSeleccionadaStr < fechaHoyStr) {
+        erroresTemp.fechaLimite = 'La fecha límite no puede ser anterior a la fecha actual.';
+      }
     }
 
     if (!jornada) {
@@ -215,7 +250,6 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
 
     setErrores(erroresTemp);
 
-
     if (Object.keys(erroresTemp).length > 0) {
       const form = document.querySelector('.form-publicacion');
       if (form) form.scrollIntoView({ behavior: 'smooth' });
@@ -224,6 +258,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
     return Object.keys(erroresTemp).length === 0;
   };
 
+  // Actualizar el handleSubmit para enviar solo fecha
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -232,7 +267,8 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
       return;
     }
 
-    const fechaEnviar = fechaLimite || null;
+    // Convertir fecha a Date con hora 00:00:00
+    const fechaEnviar = fechaLimite ? new Date(fechaLimite + 'T00:00:00') : null;
 
     const data = {
       titulo,
@@ -256,7 +292,6 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
 
         toast.success('Publicación actualizada correctamente');
 
-        // Esperar 1.5 segundos antes de redireccionar para que el usuario vea el toast
         setTimeout(() => {
           if (onSuccess) onSuccess();
           navigate(`/moduloContratante/ListaPublicaciones?userId=${contratanteId}`);
@@ -277,9 +312,10 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
       console.error(error);
       toast.error('Error al guardar la publicación');
     }
-
   };
+
   console.log('Estado actividadesRealizar:', actividadesRealizar);
+  
   return (
     <>
       <HeaderContratante userId={contratanteId} />
@@ -323,15 +359,20 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
             {errores.titulo && <p className="error-text-paci">{errores.titulo}</p>}
           </label>
 
-          {/* Fecha límite */}
+          {/* Fecha límite - ACTUALIZADA */}
           <label>
             Fecha Límite
             <input
-              type="datetime-local"
+              type="date"
               value={fechaLimite}
               onChange={e => setFechaLimite(e.target.value)}
+              min={obtenerFechaMinima()}
+              required
             />
             {errores.fechaLimite && <p className="error-text-paci">{errores.fechaLimite}</p>}
+            <small style={{ color: '#666', fontSize: '0.8em', display: 'block', marginTop: '4px' }}>
+              La fecha no puede ser anterior a la fecha actual
+            </small>
           </label>
         </div>
 
@@ -381,8 +422,6 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
             {errores.estado && <p className="error-text-paci">{errores.estado}</p>}
           </label>
         </div>
-
-
 
         <div className="fila-horizontal">
           {/* Provincia */}
@@ -442,7 +481,6 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
           </label>
         </div>
 
-
         <div className="fila-horizontal-salario-disponibilidad">
           {/* Salario debajo de Jornada */}
           <label className="salario-label">
@@ -471,7 +509,6 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
             />
           </label>
         </div>
-
 
         {/* Descripción */}
         <label>
@@ -506,7 +543,6 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
           />
           {errores.requisitos && <p className="error-text-paci">{errores.requisitos}</p>}
         </label>
-
 
         {/* Botones */}
         <div style={{ marginTop: '1rem' }}>
