@@ -488,19 +488,29 @@ const RegistroPaciente = () => {
 
     console.log(formulario.foto.length)
 
+    // Encuentra esta sección en tu código (aproximadamente línea 450-470)
+    // Y reemplaza la parte del try-catch con esto:
+
+    // Modificar la sección del try-catch en handleSubmit
+    // Reemplaza aproximadamente desde la línea 450-500
+
     try {
       if (idPaciente) {
         // ACTUALIZAR paciente
         const res = await axios.put(`http://localhost:8090/api/registro/paciente/${idPaciente}`, payload);
         if (res.data.success) {
           toast.success('✅ Paciente actualizado exitosamente');
-          navigate(`/fichas/nueva?idPaciente=${idPaciente}`);
-          // Opcional: redirigir o actualizar estado aquí
+
+          // ✅ NUEVA LÓGICA: Redirigir a visualizar pacientes después de actualizar
+          setTimeout(() => {
+            navigate(`/moduloContratante/visualizarpaciente?userId=${userId}`);
+          }, 1500); // Delay para que el usuario vea el mensaje de éxito
+
         } else {
           toast.error(res.data.message || '❌ No se pudo actualizar el paciente.');
         }
       } else {
-        // CREAR paciente (igual que antes)
+        // CREAR paciente (mantener la redirección actual)
         const payloadPost = {
           ...payload,
           tipo_sangre: payload.tipoSangre,
@@ -509,11 +519,14 @@ const RegistroPaciente = () => {
         delete payloadPost.tipoSangre;
         delete payloadPost.contactoEmergencia;
 
-
         const data = await registrarPaciente(payloadPost);
         if (data.success) {
           toast.success('✅ Paciente registrado exitosamente');
+
+          // ✅ MANTENER REDIRECCIÓN ACTUAL: Va a crear ficha
           navigate(`/fichas/nueva?idPaciente=${data.paciente.id_paciente}&userId=${userId}`);
+
+          // Limpiar formulario después de registro
           setFormulario({
             nombres: '',
             apellidos: '',

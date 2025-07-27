@@ -232,25 +232,25 @@ const MedicamentoForm = () => {
 
     // Validaciones adicionales de rangos lógicos
     const numero = parseFloat(valor.match(/[0-9]+(\.[0-9]+)?/)[0]);
-    
+
     // Validar que los números no sean excesivamente altos o bajos
     if (numero <= 0) {
       return 'La dosis debe ser mayor a 0';
     }
-    
+
     // Validaciones específicas de rangos por unidad
     if (valor.toLowerCase().includes('tableta') || valor.toLowerCase().includes('cápsula') || valor.toLowerCase().includes('comprimido')) {
       if (numero > 20) {
         return 'Número de tabletas/cápsulas parece excesivo (máximo recomendado: 20)';
       }
     }
-    
+
     if (valor.toLowerCase().includes('ml')) {
       if (numero > 1000) {
         return 'Volumen en ml parece excesivo (máximo recomendado: 1000ml)';
       }
     }
-    
+
     if (valor.toLowerCase().includes('mg')) {
       if (numero > 10000) {
         return 'Dosis en mg parece excesiva (máximo recomendado: 10000mg)';
@@ -273,19 +273,54 @@ const MedicamentoForm = () => {
 
     const regex = new RegExp(
       '^(' +
+      // Cada X tiempo
       'cada\\s+\\d+\\s+(hora|horas|día|días|semana|semanas|mes|meses)' +
       '|' +
-      '(una|dos|tres|[1-9])\\s+veces?\\s+(al|por)\\s+(día|semana|mes)' +
+      // X veces por período
+      '(una|dos|tres|cuatro|cinco|seis|[1-9]\\d*)\\s+veces?\\s+(al|por)\\s+(día|semana|mes)' +
       '|' +
-      'una\\s+vez\\s+en\\s+la\\s+(mañana|tarde|noche)' +
+      // Una vez en momento específico
+      'una\\s+vez\\s+(en\\s+la\\s+(mañana|tarde|noche)|al\\s+(día|semana|mes))' +
       '|' +
-      '(antes\\s+de\\s+dormir|después\\s+de\\s+comer|en\\s+ayunas|solo\\s+cuando\\s+(sea\\s+)?necesario|según\\s+indicación\\s+médica)' +
+      // Combinaciones con horarios específicos como "1 vez al día por la noche"
+      '(una|[1-9]\\d*)\\s+vez\\s+al\\s+día\\s+(por\\s+la\\s+(mañana|tarde|noche)|en\\s+la\\s+(mañana|tarde|noche))' +
+      '|' +
+      // "una vez cada X horas/días"
+      'una\\s+vez\\s+cada\\s+\\d+\\s+(hora|horas|día|días)' +
+      '|' +
+      // Con las comidas - muy común en tercera edad
+      '(una|dos|tres|[1-9]\\d*)\\s+(vez|veces)\\s+(con\\s+cada\\s+comida|con\\s+las\\s+comidas|antes\\s+de\\s+cada\\s+comida|después\\s+de\\s+cada\\s+comida)' +
+      '|' +
+      // Horarios específicos del día
+      '(al\\s+despertar|cuando\\s+se\\s+despierte|al\\s+levantarse)' +
+      '|' +
+      '(antes\\s+de\\s+dormir|cuando\\s+se\\s+duerma|al\\s+acostarse)' +
+      '|' +
+      // Combinaciones con números específicos en diferentes momentos
+      '\\d+\\s+(al\\s+despertar|cuando\\s+se\\s+despierte)\\s+y\\s+\\d+\\s+(al\\s+dormir|cuando\\s+se\\s+duerma|antes\\s+de\\s+dormir)' +
+      '|' +
+      '\\d+\\s+(por\\s+la\\s+mañana|en\\s+la\\s+mañana)\\s+y\\s+\\d+\\s+(por\\s+la\\s+noche|en\\s+la\\s+noche)' +
+      '|' +
+      // Instrucciones relacionadas con alimentos
+      '(con\\s+el\\s+desayuno|con\\s+el\\s+almuerzo|con\\s+la\\s+cena)' +
+      '|' +
+      '(antes\\s+del\\s+desayuno|después\\s+del\\s+desayuno|antes\\s+del\\s+almuerzo|después\\s+del\\s+almuerzo|antes\\s+de\\s+la\\s+cena|después\\s+de\\s+la\\s+cena)' +
+      '|' +
+      // Instrucciones especiales comunes
+      '(en\\s+ayunas|con\\s+el\\s+estómago\\s+vacío)' +
+      '|' +
+      '(solo\\s+cuando\\s+(sea\\s+)?necesario|según\\s+indicación\\s+médica|según\\s+necesidad)' +
+      '|' +
+      // Frecuencias específicas para tercera edad
+      '(media\\s+hora\\s+antes\\s+de\\s+(comer|las\\s+comidas)|30\\s+minutos\\s+antes\\s+de\\s+(comer|las\\s+comidas))' +
+      '|' +
+      '(una\\s+hora\\s+después\\s+de\\s+(comer|las\\s+comidas)|60\\s+minutos\\s+después\\s+de\\s+(comer|las\\s+comidas))' +
       ')$',
       'i'
     );
 
     if (!regex.test(valor)) {
-      return 'Formato inválido. Ejemplos: cada 8 horas, una vez al día, en ayunas, antes de dormir';
+      return 'Formato inválido. Ejemplos: cada 8 horas, 2 veces con cada comida, 1 al despertar y 2 al dormir, con el desayuno, antes de dormir, en ayunas, según necesidad';
     }
 
     return '';
@@ -575,7 +610,7 @@ const MedicamentoForm = () => {
             <div className="fila-formulario">
               <div className="grupo-formulario">
                 <label className="etiqueta-campo">
-                  Dosis * 
+                  Dosis *
                   {medicamento.via_administracion && (
                     <small style={{ display: 'block', color: '#666', fontSize: '12px', marginTop: '4px' }}>
                       {medicamento.via_administracion === 'oral' && 'Ej: 1 tableta, 2 cápsulas, 10ml, 5 gotas, 500mg'}
@@ -596,9 +631,9 @@ const MedicamentoForm = () => {
                   disabled={!medicamento.medicacion}
                   className={errores.dosis_med ? 'campo-error' : ''}
                   placeholder={
-                    !medicamento.via_administracion 
+                    !medicamento.via_administracion
                       ? "Primero seleccione la vía de administración"
-                      : medicamento.via_administracion === 'oral' 
+                      : medicamento.via_administracion === 'oral'
                         ? "Ej: 1 tableta"
                         : medicamento.via_administracion === 'intravenosa'
                           ? "Ej: 10ml"
