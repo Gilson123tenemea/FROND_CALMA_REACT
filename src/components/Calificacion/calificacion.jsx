@@ -30,7 +30,7 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
 
   const cargarCalificaciones = async () => {
     try {
-      const respuesta = await fetch('http://3.129.59.126:8090/api/calificaciones');
+      const respuesta = await fetch('http://3.133.11.0:8090/api/calificaciones');
       if (respuesta.ok) {
         const datos = await respuesta.json();
 
@@ -80,7 +80,7 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
     console.log("Calificación enviada:", nuevaCalificacion);
 
     try {
-      const respuesta = await fetch('http://3.129.59.126:8090/api/calificaciones', {
+      const respuesta = await fetch('http://3.133.11.0:8090/api/calificaciones', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(nuevaCalificacion),
@@ -132,7 +132,7 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
 
   const guardarEdicion = async (id) => {
     try {
-      const respuesta = await fetch(`http://3.129.59.126:8090/api/calificaciones/${id}`, {
+      const respuesta = await fetch(`http://3.133.11.0:8090/api/calificaciones/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -160,7 +160,7 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
   const eliminarCalificacion = async (id) => {
     if (window.confirm('¿Estás seguro de que deseas eliminar esta calificación?')) {
       try {
-        const respuesta = await fetch(`http://3.129.59.126:8090/api/calificaciones/${id}`, {
+        const respuesta = await fetch(`http://3.133.11.0:8090/api/calificaciones/${id}`, {
           method: 'DELETE',
         });
 

@@ -72,7 +72,7 @@ const TodasLasCalificaciones = () => {
       }
 
       // Si no está en localStorage, buscar en API
-      const response = await fetch(`http://3.129.59.126:8090/api/usuarios/buscar_aspirante/${idAspirante}`);
+      const response = await fetch(`http://3.133.11.0:8090/api/usuarios/buscar_aspirante/${idAspirante}`);
 
       if (response.ok) {
         const responseText = await response.text();
@@ -98,7 +98,7 @@ const TodasLasCalificaciones = () => {
   const cargarCalificaciones = async () => {
     try {
       console.log(`🔍 [TodasLasCalificaciones] Cargando calificaciones para aspirante: ${currentAspiranteId}`);
-      const endpoint = `http://3.129.59.126:8090/api/calificaciones/aspirante/${currentAspiranteId}`;
+      const endpoint = `http://3.133.11.0:8090/api/calificaciones/aspirante/${currentAspiranteId}`;
       const respuesta = await fetch(endpoint);
 
       if (respuesta.ok) {
@@ -123,7 +123,7 @@ const TodasLasCalificaciones = () => {
   const cargarResumen = async () => {
     try {
       console.log(`🔍 [TodasLasCalificaciones] Cargando resumen para aspirante: ${currentAspiranteId}`);
-      const endpoint = `http://3.129.59.126:8090/api/calificaciones/aspirante/${currentAspiranteId}/resumen`;
+      const endpoint = `http://3.133.11.0:8090/api/calificaciones/aspirante/${currentAspiranteId}/resumen`;
       const respuesta = await fetch(endpoint);
 
       if (respuesta.ok) {
