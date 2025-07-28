@@ -152,7 +152,7 @@ function App({
       console.log('📤 [NOTIFICACION] Payload final:', payload);
 
       const response = await axios.post(
-        'http://localhost:8090/api/notificaciones/crear-notificacion-mensaje',
+        'http://3.129.59.126:8090/api/notificaciones/crear-notificacion-mensaje',
         payload,
         {
           headers: {
@@ -201,7 +201,7 @@ function App({
       try {
         console.log(`📥 Cargando historial: ${usuarioActual} ↔ ${destinatario}`);
         const response = await fetch(
-          `http://localhost:8090/api/chat/historial?aspiranteId=${usuarioActual}&contratistaId=${destinatario}`
+          `http://3.129.59.126:8090/api/chat/historial?aspiranteId=${usuarioActual}&contratistaId=${destinatario}`
         );
 
         if (response.ok) {
@@ -257,7 +257,7 @@ function App({
     console.log(`🔗 Canal objetivo: ${canalConversacion}`);
 
     const cliente = new Client({
-      brokerURL: "ws://localhost:8090/ws",
+      brokerURL: "ws://3.129.59.126:8090/ws",
       debug: str => console.log("📡", str),
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,

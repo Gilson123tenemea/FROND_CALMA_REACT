@@ -280,7 +280,7 @@ const ModuloContratante = () => {
     try {
       console.log(`🔍 [ModuloContratante] Abriendo notificaciones para contratante: ${contratanteId}`);
       await axios.put(`http://3.129.59.126:8090/api/notificaciones/contratante/marcar-leidas/${contratanteId}`);
-const response = await axios.get(`http://3.129.59.126:8090/api/notificaciones/contratante/${contratanteId}`);
+      const response = await axios.get(`http://3.129.59.126:8090/api/notificaciones/contratante/${contratanteId}`);
       // 🆕 ORDENAR NOTIFICACIONES: más recientes primero
       const notificacionesOrdenadas = response.data.sort((a, b) => {
         // Ordenar por fecha: más reciente primero

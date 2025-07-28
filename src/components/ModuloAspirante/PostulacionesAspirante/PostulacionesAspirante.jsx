@@ -86,8 +86,7 @@ const PostulacionesAspirante = () => {
       setError(null);
 
       console.log(`🔍 [PostulacionesAspirante] Cargando postulaciones para aspirante: ${currentAspiranteId}`);
-      const postulacionesResponse = await axios.get(`http://localhost:8090/api/realizar/aspirante/${currentAspiranteId}`);
-
+      const postulacionesResponse = await axios.get(`http://3.129.59.126:8090/api/realizar/aspirante/${currentAspiranteId}`);
       if (postulacionesResponse.data && Array.isArray(postulacionesResponse.data)) {
         console.log(`✅ [PostulacionesAspirante] ${postulacionesResponse.data.length} postulaciones cargadas`);
         setPostulaciones(postulacionesResponse.data);
