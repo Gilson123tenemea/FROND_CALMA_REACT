@@ -55,6 +55,26 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
     return `${year}-${month}-${day}`;
   };
 
+  // Función para obtener la fecha máxima (20 días después de hoy)
+  const obtenerFechaMaxima = () => {
+    const ahora = new Date();
+    
+    // Convertir a fecha de Ecuador (UTC-5)
+    const offsetEcuador = -5;
+    const utc = ahora.getTime() + (ahora.getTimezoneOffset() * 60000);
+    const fechaEcuador = new Date(utc + (offsetEcuador * 3600000));
+    
+    // Agregar 20 días
+    fechaEcuador.setDate(fechaEcuador.getDate() + 20);
+    
+    // Formatear para input date (YYYY-MM-DD)
+    const year = fechaEcuador.getFullYear();
+    const month = String(fechaEcuador.getMonth() + 1).padStart(2, '0');
+    const day = String(fechaEcuador.getDate()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
+  };
+
   useEffect(() => {
     axios.get('http://localhost:8090/api/provincias')
       .then(res => setProvincias(res.data))
@@ -199,7 +219,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
     if (!idParroquia) erroresTemp.idParroquia = 'Debe seleccionar una parroquia.';
     if (!estado) erroresTemp.estado = 'Debe seleccionar el estado.';
     
-    // Validación de fecha límite (solo fecha, sin hora)
+    // Validación de fecha límite con rango de 20 días
     if (!fechaLimite) {
       erroresTemp.fechaLimite = 'Debe ingresar la fecha límite.';
     } else {
@@ -211,12 +231,19 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
       const utc = ahora.getTime() + (ahora.getTimezoneOffset() * 60000);
       const fechaEcuador = new Date(utc + (offsetEcuador * 3600000));
       
+      // Fecha máxima (20 días después)
+      const fechaMaxima = new Date(fechaEcuador);
+      fechaMaxima.setDate(fechaMaxima.getDate() + 20);
+      
       // Comparar solo fechas (sin hora)
       const fechaHoyStr = fechaEcuador.toISOString().split('T')[0];
+      const fechaMaximaStr = fechaMaxima.toISOString().split('T')[0];
       const fechaSeleccionadaStr = fechaLimite;
       
       if (fechaSeleccionadaStr < fechaHoyStr) {
         erroresTemp.fechaLimite = 'La fecha límite no puede ser anterior a la fecha actual.';
+      } else if (fechaSeleccionadaStr > fechaMaximaStr) {
+        erroresTemp.fechaLimite = 'La fecha límite no puede ser mayor a 20 días desde hoy.';
       }
     }
 
@@ -359,7 +386,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
             {errores.titulo && <p className="error-text-paci">{errores.titulo}</p>}
           </label>
 
-          {/* Fecha límite - ACTUALIZADA */}
+          {/* Fecha límite - ACTUALIZADA CON RANGO DE 20 DÍAS */}
           <label>
             Fecha Límite
             <input
@@ -367,11 +394,12 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
               value={fechaLimite}
               onChange={e => setFechaLimite(e.target.value)}
               min={obtenerFechaMinima()}
+              max={obtenerFechaMaxima()}
               required
             />
             {errores.fechaLimite && <p className="error-text-paci">{errores.fechaLimite}</p>}
             <small style={{ color: '#666', fontSize: '0.8em', display: 'block', marginTop: '4px' }}>
-              La fecha no puede ser anterior a la fecha actual
+              Puedes seleccionar una fecha entre hoy y los próximos 20 días
             </small>
           </label>
         </div>
