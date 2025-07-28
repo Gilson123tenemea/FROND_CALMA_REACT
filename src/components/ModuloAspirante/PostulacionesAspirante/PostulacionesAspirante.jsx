@@ -334,13 +334,6 @@ const PostulacionesAspirante = () => {
                         <span>Ver datos del paciente</span>
                       </button>
                       
-                      <button
-                        className={styles.actionButton}
-                        onClick={() => handleContactar(idPaciente)}
-                      >
-                        <FaEnvelope className={styles.buttonIcon} />
-                        <span>Contactar familia</span>
-                      </button>
                     </div>
                   )}
                 </div>
