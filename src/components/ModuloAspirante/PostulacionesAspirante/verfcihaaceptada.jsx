@@ -11,7 +11,7 @@ const VerFichaAceptada = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentStep, setCurrentStep] = useState(0);
-    
+
     // Estados para IA
     const [mostrarIA, setMostrarIA] = useState(false);
     const [tipoConsulta, setTipoConsulta] = useState('recomendaciones');
@@ -52,26 +52,26 @@ const VerFichaAceptada = () => {
 
     const consultarIA = async () => {
         if (!ficha) return;
-        
+
         setCargandoIA(true);
         setRespuestaIA('');
-        
+
         try {
             let endpoint = '';
             let payload = {
                 idPaciente: parseInt(idPaciente)
             };
-            
+
             if (tipoConsulta === 'recomendaciones') {
                 endpoint = '/api/chatbot/recomendaciones-cuidado';
                 payload.pregunta = preguntaPersonalizada || '¿Qué cuidados generales debo proporcionar?';
             } else if (tipoConsulta === 'riesgos') {
                 endpoint = '/api/chatbot/evaluacion-riesgos';
             }
-            
+
             const response = await axios.post(`http://localhost:8090${endpoint}`, payload);
             setRespuestaIA(response.data.respuesta);
-            
+
         } catch (error) {
             console.error('Error al consultar IA:', error);
             setRespuestaIA('❌ Error al obtener recomendaciones. Por favor intenta nuevamente.');
@@ -156,8 +156,8 @@ const VerFichaAceptada = () => {
                     <div className="ai-response-header">
                         <FaRobot className="response-icon" />
                         <h3>
-                            {tipoConsulta === 'recomendaciones' 
-                                ? 'Recomendaciones Personalizadas' 
+                            {tipoConsulta === 'recomendaciones'
+                                ? 'Recomendaciones Personalizadas'
                                 : 'Evaluación de Riesgos'}
                         </h3>
                     </div>
@@ -168,7 +168,7 @@ const VerFichaAceptada = () => {
                     </div>
                     <div className="ai-disclaimer">
                         <small>
-                            ⚠️ <strong>Importante:</strong> Estas recomendaciones son orientativas. 
+                            ⚠️ <strong>Importante:</strong> Estas recomendaciones son orientativas.
                             Siempre consulta con profesionales médicos para decisiones importantes de salud.
                         </small>
                     </div>
@@ -230,27 +230,27 @@ const VerFichaAceptada = () => {
                 </div>
 
                 <div className="detail-item">
-                    <div>
+                    <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", gap: "8px" }}>
                         <span className="detail-label">Cédula:</span>
                         <span className="detail-value">{ficha.paciente?.cedula || 'No disponible'}</span>
                     </div>
-                    <div>
+                    <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", gap: "8px" }}>
                         <span className="detail-label">Dirección:</span>
                         <span className="detail-value">{ficha.paciente?.direccion || 'No disponible'}</span>
                     </div>
-                    <div>
+                    <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", gap: "8px" }}>
                         <span className="detail-label">Contacto de emergencia:</span>
                         <span className="detail-value">{ficha.paciente?.contacto_emergencia || 'No disponible'}</span>
                     </div>
-                    <div>
+                    <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", gap: "8px" }}>
                         <span className="detail-label">Parentesco:</span>
                         <span className="detail-value">{ficha.paciente?.parentesco || 'No especificado'}</span>
                     </div>
-                    <div>
+                    <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", gap: "8px" }}>
                         <span className="detail-label">Alergias conocidas:</span>
                         <span className="detail-value">{ficha.paciente?.alergia || 'Ninguna registrada'}</span>
                     </div>
-                    <div>
+                    <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", gap: "8px" }}>
                         <span className="detail-label">Ubicación:</span>
                         <span className="detail-value">
                             {ficha.paciente?.parroquia?.nombre
@@ -260,9 +260,10 @@ const VerFichaAceptada = () => {
                     </div>
                 </div>
 
+
                 {ficha.paciente?.contratante?.usuario && (
                     <div className="contratante-info">
-                        <h4>Información del Contratante</h4>
+                        <h4 style={{ color: "white" }}>Información del Contratante</h4>
                         <p><strong>Nombre:</strong> {ficha.paciente.contratante.usuario.nombres} {ficha.paciente.contratante.usuario.apellidos}</p>
                         <p><strong>Contacto:</strong> {ficha.paciente.contratante.usuario.correo || 'No disponible'}</p>
                         <p><strong>Ocupación:</strong> {ficha.paciente.contratante.ocupacion || 'No disponible'}</p>
@@ -324,7 +325,7 @@ const VerFichaAceptada = () => {
                     <div className="medication-list">
                         {ficha.medicamentos.map((med, index) => (
                             <div key={index} className="medication-item">
-                                <h4>{med.nombremedicamento}</h4>
+                                <h4 style={{ color: 'white' }}>{med.nombremedicamento}</h4>
                                 <div className="medication-details">
                                     <span><strong>Dosis:</strong> {med.dosis_med}</span>
                                     <span><strong>Frecuencia:</strong> {med.frecuencia_med}</span>
@@ -346,7 +347,7 @@ const VerFichaAceptada = () => {
             <h3 className="section-title"><FaAllergies /> Alergias</h3>
 
             <div className="allergy-section">
-                <h4>Alergias Alimentarias</h4>
+                <h4 style={{ color: 'white' }}>Alergias Alimentarias</h4>
                 {ficha.alergiasAlimentarias?.length > 0 ? (
                     <div className="allergy-list">
                         {ficha.alergiasAlimentarias.map((alergia, index) => (
@@ -361,7 +362,7 @@ const VerFichaAceptada = () => {
             </div>
 
             <div className="allergy-section">
-                <h4>Alergias a Medicamentos</h4>
+                <h4 style={{ color: 'white' }}>Alergias a Medicamentos</h4>
                 {ficha.alergiasMedicamentos?.length > 0 ? (
                     <div className="allergy-list">
                         {ficha.alergiasMedicamentos.map((alergia, index) => (
@@ -382,7 +383,7 @@ const VerFichaAceptada = () => {
             <h3 className="section-title"><FaHeart /> Intereses y Preferencias</h3>
 
             <div className="interest-section">
-                <h4>Temas de Conversación</h4>
+                <h4 style={{ color: 'white' }}>Temas de Conversación</h4>
                 {ficha.temasConversacion?.length > 0 ? (
                     <div className="interest-list">
                         {ficha.temasConversacion.map((tema, index) => (
@@ -397,7 +398,7 @@ const VerFichaAceptada = () => {
             </div>
 
             <div className="interest-section">
-                <h4>Intereses Personales</h4>
+                <h4 style={{ color: 'white' }}>Intereses Personales</h4>
                 {ficha.interesesPersonales?.length > 0 ? (
                     <div className="interest-list">
                         {ficha.interesesPersonales.map((interes, index) => (
