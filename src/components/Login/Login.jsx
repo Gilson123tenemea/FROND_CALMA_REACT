@@ -156,12 +156,12 @@ const Login = () => {
     setRecoveryLoading(true);
 
     try {
-      const resUsuario = await fetch(`http://localhost:8090/api/usuarios/por-correo?correo=${recoveryEmail}`);
+      const resUsuario = await fetch(`http://3.129.59.126:8090/api/usuarios/por-correo?correo=${recoveryEmail}`);
       if (!resUsuario.ok) throw new Error('Correo no registrado');
 
       const { userId, userType } = await resUsuario.json();
 
-      const resToken = await fetch(`http://localhost:8090/api/password/request-reset`, {
+      const resToken = await fetch(`http://3.129.59.126:8090/api/password/request-reset`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

@@ -23,8 +23,7 @@ const TrabajosAceptados = () => {
   const cargarTrabajosAceptados = async () => {
     try {
       setLoading(true);
-      const respuesta = await fetch(`http://localhost:8090/api/calificaciones/trabajos-aceptados/${userId}`);
-
+      const respuesta = await fetch(`http://3.129.59.126:8090/api/calificaciones/trabajos-aceptados/${userId}`);
       if (respuesta.ok) {
         const datos = await respuesta.json();
         console.log('Trabajos cargados:', datos);
@@ -51,7 +50,7 @@ const TrabajosAceptados = () => {
     for (const trabajo of trabajos) {
       try {
         const respuesta = await fetch(
-          `http://localhost:8090/api/calificaciones/existe/${trabajo.postulacion.id_postulacion}/${userId}`
+          `http://3.129.59.126:8090/api/calificaciones/existe/${trabajo.postulacion.id_postulacion}/${userId}`
         );
         if (respuesta.ok) {
           const existe = await respuesta.json();
@@ -124,7 +123,7 @@ const TrabajosAceptados = () => {
                 : trabajo.aspirante?.nombre || 'Aspirante';
 
               const emailAspirante = trabajo.aspirante?.usuario?.correo || trabajo.aspirante?.correo || 'Sin email';
-              
+
               return (
                 <div key={trabajo.id_realizar} className={styles.trabajoCard}>
                   <div className={styles.trabajoHeader}>

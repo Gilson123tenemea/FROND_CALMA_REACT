@@ -8,15 +8,15 @@ import 'react-toastify/dist/ReactToastify.css';
 const Calificacion = ({ id_postulacion, idContratante }) => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  
+
   const userId = searchParams.get('userId');
   const idPostulacionParam = searchParams.get('idPostulacion');
   const aspiranteNombre = searchParams.get('aspirante');
   const isViewMode = searchParams.get('view') === 'true';
-  
+
   const [puntaje, setPuntaje] = useState(0);
   const [comentario, setComentario] = useState('');
-  
+
   // Estados para los comentarios
   const [calificaciones, setCalificaciones] = useState([]);
   const [editandoId, setEditandoId] = useState(null);
@@ -30,18 +30,18 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
 
   const cargarCalificaciones = async () => {
     try {
-      const respuesta = await fetch('http://localhost:8090/api/calificaciones');
+      const respuesta = await fetch('http://3.129.59.126:8090/api/calificaciones');
       if (respuesta.ok) {
         const datos = await respuesta.json();
-        
+
         // Si estamos en modo vista específica, filtrar por postulación
         let datosFiltrados = datos;
         if (idPostulacionParam && isViewMode) {
-          datosFiltrados = datos.filter(cal => 
+          datosFiltrados = datos.filter(cal =>
             cal.postulacion.id_postulacion === parseInt(idPostulacionParam)
           );
         }
-        
+
         // Ordenar por fecha descendente (más reciente primero)
         const datosOrdenados = datosFiltrados.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
         setCalificaciones(datosOrdenados);
@@ -53,7 +53,7 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
 
   const manejarEnvio = async (e) => {
     e.preventDefault();
-    
+
     if (!userId) {
       toast.error('Error: No se encontró el ID del usuario.');
       return;
@@ -80,7 +80,7 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
     console.log("Calificación enviada:", nuevaCalificacion);
 
     try {
-      const respuesta = await fetch('http://localhost:8090/api/calificaciones', {
+      const respuesta = await fetch('http://3.129.59.126:8090/api/calificaciones', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(nuevaCalificacion),
@@ -91,7 +91,7 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
         setPuntaje(0);
         setComentario('');
         cargarCalificaciones(); // Recargar comentarios
-        
+
         // Redirigir de vuelta a trabajos aceptados después de 2 segundos
         setTimeout(() => {
           navigate(`/trabajos-aceptados?userId=${userId}`);
@@ -132,7 +132,7 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
 
   const guardarEdicion = async (id) => {
     try {
-      const respuesta = await fetch(`http://localhost:8090/api/calificaciones/${id}`, {
+      const respuesta = await fetch(`http://3.129.59.126:8090/api/calificaciones/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -160,7 +160,7 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
   const eliminarCalificacion = async (id) => {
     if (window.confirm('¿Estás seguro de que deseas eliminar esta calificación?')) {
       try {
-        const respuesta = await fetch(`http://localhost:8090/api/calificaciones/${id}`, {
+        const respuesta = await fetch(`http://3.129.59.126:8090/api/calificaciones/${id}`, {
           method: 'DELETE',
         });
 
@@ -183,9 +183,9 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
 
   const formatearFecha = (fecha) => {
     const fechaObj = new Date(fecha);
-    const opciones = { 
-      year: 'numeric', 
-      month: 'short', 
+    const opciones = {
+      year: 'numeric',
+      month: 'short',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
@@ -196,15 +196,15 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
   return (
     <div className={styles.calificacionFormContainer}>
       <ToastContainer />
-      
-      <HeaderContratante/>
+
+      <HeaderContratante />
       <div className={styles.calificacionContent}>
         {/* Header con información del aspirante y botón volver */}
         <div className={styles.calificacionHeader}>
           <button onClick={manejarVolver} className={styles.btnVolver}>
             ← Volver a Trabajos Aceptados
           </button>
-          
+
           {aspiranteNombre && (
             <div className={styles.infoAspirante}>
               <h2>
@@ -258,8 +258,8 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
             {calificaciones.length === 0 ? (
               <div className={styles.noComentarios}>
                 <p>
-                  {isViewMode 
-                    ? 'No hay calificaciones para esta postulación' 
+                  {isViewMode
+                    ? 'No hay calificaciones para esta postulación'
                     : 'No hay comentarios aún'
                   }
                 </p>
@@ -267,8 +267,8 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
               </div>
             ) : (
               calificaciones.map((calificacion, index) => (
-                <div 
-                  key={calificacion.id_calificacion} 
+                <div
+                  key={calificacion.id_calificacion}
                   className={`${styles.comentarioItem} ${index === 0 && !isViewMode ? styles.comentarioReciente : ''}`}
                 >
                   <div className={styles.comentarioHeader}>
@@ -379,7 +379,7 @@ const Calificacion = ({ id_postulacion, idContratante }) => {
                         )}
                       </div>
                     )}
-                    
+
                     {!puedeEditar(calificacion.fecha) && (
                       <span className={styles.comentarioPermanente}>
                         <span className={styles.iconoPermanente}>🔒</span>

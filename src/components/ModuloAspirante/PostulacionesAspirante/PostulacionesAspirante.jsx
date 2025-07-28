@@ -20,27 +20,27 @@ const PostulacionesAspirante = () => {
 
   useEffect(() => {
     console.log('🔍 [PostulacionesAspirante] aspiranteId desde URL:', aspiranteId);
-    
+
     // Verificar localStorage
     const userData = JSON.parse(localStorage.getItem("userData") || '{}');
     console.log('🔍 [PostulacionesAspirante] userData:', userData);
-    
+
     // Determinar el aspiranteId correcto
     const finalAspiranteId = aspiranteId || userData?.aspiranteId;
-    
+
     if (!finalAspiranteId) {
       console.error('❌ No se encontró aspiranteId');
       setError('No se pudo identificar al aspirante');
       setLoading(false);
       return;
     }
-    
+
     console.log('✅ [PostulacionesAspirante] aspiranteId final:', finalAspiranteId);
     setCurrentAspiranteId(finalAspiranteId);
-    
+
     // Obtener userId correspondiente
     obtenerUserId(finalAspiranteId);
-    
+
   }, [aspiranteId]);
 
   useEffect(() => {
@@ -53,7 +53,7 @@ const PostulacionesAspirante = () => {
   const obtenerUserId = async (idAspirante) => {
     try {
       console.log(`🔍 [PostulacionesAspirante] Obteniendo userId para aspirante: ${idAspirante}`);
-      
+
       // Primero verificar localStorage
       const userData = JSON.parse(localStorage.getItem('userData') || '{}');
       if (userData.usuarioId || userData.userId) {
@@ -62,10 +62,10 @@ const PostulacionesAspirante = () => {
         setUserId(userIdFromStorage);
         return;
       }
-      
+
       // Si no está en localStorage, buscar en API
-      const response = await axios.get(`http://localhost:8090/api/usuarios/buscar_aspirante/${idAspirante}`);
-      
+      const response = await axios.get(`http://3.129.59.126:8090/api/usuarios/buscar_aspirante/${idAspirante}`);
+
       if (response.data !== null && response.data !== undefined) {
         const idUsuario = response.data;
         console.log('✅ [PostulacionesAspirante] UserId desde API:', idUsuario);
@@ -140,8 +140,8 @@ const PostulacionesAspirante = () => {
   if (loading || !currentAspiranteId || userId === null) {
     return (
       <>
-        <HeaderAspirante 
-          userId={userId} 
+        <HeaderAspirante
+          userId={userId}
           aspiranteId={currentAspiranteId}
         />
         <div className={styles.loadingContainer}>
@@ -158,8 +158,8 @@ const PostulacionesAspirante = () => {
   if (error) {
     return (
       <>
-        <HeaderAspirante 
-          userId={userId} 
+        <HeaderAspirante
+          userId={userId}
           aspiranteId={currentAspiranteId}
         />
         <div className={styles.errorContainer}>
@@ -176,8 +176,8 @@ const PostulacionesAspirante = () => {
   if (postulaciones.length === 0) {
     return (
       <>
-        <HeaderAspirante 
-          userId={userId} 
+        <HeaderAspirante
+          userId={userId}
           aspiranteId={currentAspiranteId}
         />
         <div className={styles.emptyContainer}>
@@ -187,11 +187,11 @@ const PostulacionesAspirante = () => {
               <div className={styles.documentIcon}>📄</div>
             </div>
           </div>
-          
+
           <div className={styles.emptyContent}>
             <h1 className={styles.emptyTitle}>¡Tu aventura laboral está por comenzar!</h1>
             <h2 className={styles.emptySubtitle}>Aún no has realizado ninguna postulación</h2>
-            
+
             <div className={styles.emptySteps}>
               <div className={styles.step}>
                 <div className={styles.stepNumber}>1</div>
@@ -200,7 +200,7 @@ const PostulacionesAspirante = () => {
                   <p>Descubre trabajos de cuidado geriátrico perfectos para ti</p>
                 </div>
               </div>
-              
+
               <div className={styles.step}>
                 <div className={styles.stepNumber}>2</div>
                 <div className={styles.stepText}>
@@ -208,7 +208,7 @@ const PostulacionesAspirante = () => {
                   <p>Envía tu perfil a familias que necesitan tu cuidado</p>
                 </div>
               </div>
-              
+
               <div className={styles.step}>
                 <div className={styles.stepNumber}>3</div>
                 <div className={styles.stepText}>
@@ -223,7 +223,7 @@ const PostulacionesAspirante = () => {
                 <span className={styles.buttonIcon}>🚀</span>
                 Explorar trabajos disponibles
               </Link>
-              
+
               <Link to={`/moduloAspirante/perfilAspirante?userId=${userId}`} className={styles.secondaryButton}>
                 <span className={styles.buttonIcon}>📝</span>
                 Completar mi perfil
@@ -233,15 +233,15 @@ const PostulacionesAspirante = () => {
             <div className={styles.encouragementMessage}>
               <div className={styles.heartIcon}>💝</div>
               <p>
-                <strong>¡Tu cuidado marca la diferencia!</strong><br/>
+                <strong>¡Tu cuidado marca la diferencia!</strong><br />
                 Miles de familias buscan a alguien especial como tú para cuidar a sus seres queridos.
               </p>
             </div>
           </div>
         </div>
-        
+
         {/* Chatbot también disponible en pantalla vacía */}
-        <ChatbotInteligente 
+        <ChatbotInteligente
           aspiranteId={currentAspiranteId}
           isOpen={chatbotAbierto}
           onToggle={toggleChatbot}
@@ -257,8 +257,8 @@ const PostulacionesAspirante = () => {
 
   return (
     <>
-      <HeaderAspirante 
-        userId={userId} 
+      <HeaderAspirante
+        userId={userId}
         aspiranteId={currentAspiranteId}
       />
       <div className={styles.container}>
@@ -333,7 +333,7 @@ const PostulacionesAspirante = () => {
                         <FaUserInjured className={styles.buttonIcon} />
                         <span>Ver datos del paciente</span>
                       </button>
-                      
+
                     </div>
                   )}
                 </div>
@@ -344,7 +344,7 @@ const PostulacionesAspirante = () => {
       </div>
 
       {/* Componente del Chatbot Inteligente */}
-      <ChatbotInteligente 
+      <ChatbotInteligente
         aspiranteId={currentAspiranteId}
         isOpen={chatbotAbierto}
         onToggle={toggleChatbot}

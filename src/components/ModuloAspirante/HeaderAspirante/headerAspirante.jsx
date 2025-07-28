@@ -55,9 +55,9 @@ const HeaderAspirante = ({
     // 4. Desde localStorage
     const userData = JSON.parse(localStorage.getItem('userData') || '{}');
     if (userData.aspiranteId || userData.usuarioId) {
-      return { 
-        userId: userData.usuarioId || userData.aspiranteId, 
-        aspiranteId: userData.aspiranteId 
+      return {
+        userId: userData.usuarioId || userData.aspiranteId,
+        aspiranteId: userData.aspiranteId
       };
     }
 
@@ -67,11 +67,11 @@ const HeaderAspirante = ({
   // 🆕 INICIALIZACIÓN ROBUSTA
   useEffect(() => {
     const { userId: extractedUserId, aspiranteId: extractedAspiranteId } = extraerIdsUsuario();
-    
+
     if (extractedUserId) {
       console.log(`✅ HeaderAspirante inicializado - userId: ${extractedUserId}, aspiranteId: ${extractedAspiranteId}`);
       setUserId(extractedUserId);
-      
+
       if (extractedAspiranteId) {
         // Tenemos ambos IDs
         setAspiranteId(extractedAspiranteId);
@@ -99,15 +99,15 @@ const HeaderAspirante = ({
 
       // Si no está en localStorage, buscar en la API
       console.log('🔍 [HeaderAspirante] Buscando aspiranteId para usuario:', idUsuario);
-      
+
       // Buscar todas las relaciones y encontrar el aspirante del usuario
-      const response = await axios.get('http://localhost:8090/api/calificaciones/debug/relaciones');
-      
+      const response = await axios.get('http://3.129.59.126:8090/api/calificaciones/debug/relaciones');
+
       if (response.data && response.data.relacionesCalificaciones) {
         // Buscar en las relaciones existentes
         const relaciones = response.data.relacionesCalificaciones;
         const relacionUsuario = relaciones.find(rel => rel.contratanteId === idUsuario);
-        
+
         if (relacionUsuario && relacionUsuario.aspiranteId) {
           console.log('✅ [HeaderAspirante] AspiranteId encontrado via relaciones:', relacionUsuario.aspiranteId);
           setAspiranteId(relacionUsuario.aspiranteId);
@@ -115,12 +115,12 @@ const HeaderAspirante = ({
           return;
         }
       }
-      
+
       // Fallback: usar el userId como aspiranteId
       console.log('⚠️ [HeaderAspirante] No se encontró aspiranteId, usando userId como fallback');
       setAspiranteId(idUsuario);
       cargarNotificacionesNoLeidas(idUsuario);
-      
+
     } catch (error) {
       console.error('❌ Error al obtener aspiranteId:', error);
       setAspiranteId(idUsuario); // Fallback
@@ -130,7 +130,7 @@ const HeaderAspirante = ({
   // 🆕 CARGAR DATOS DEL USUARIO (SIMPLIFICADO)
   const cargarDatosUsuario = async (idUsuario) => {
     if (!idUsuario) return;
-    
+
     try {
       // Datos iniciales desde localStorage
       const userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -144,7 +144,7 @@ const HeaderAspirante = ({
 
       // Intentar cargar desde API
       try {
-        const response = await axios.get(`http://localhost:8090/api/usuarios/${idUsuario}`);
+        const response = await axios.get(`http://3.129.59.126:8090/api/usuarios/${idUsuario}`);
         if (response.data) {
           setDatosUsuario({
             nombres: response.data.nombres || userData?.nombres || 'Aspirante',
@@ -166,14 +166,14 @@ const HeaderAspirante = ({
       console.warn('⚠️ [HeaderAspirante] No se puede cargar notificaciones sin aspiranteId');
       return;
     }
-    
+
     try {
       console.log(`🔍 [HeaderAspirante] Cargando notificaciones para aspirante: ${idAspirante}`);
-      const response = await axios.get(`http://localhost:8090/api/notificaciones/aspirante/noleidas/${idAspirante}`);
+      const response = await axios.get(`http://3.129.59.126:8090/api/notificaciones/aspirante/noleidas/${idAspirante}`);
       const nuevasCantidad = response.data.length;
-      
+
       console.log(`✅ [HeaderAspirante] ${nuevasCantidad} notificaciones no leídas encontradas`);
-      
+
       // Usar el valor externo si existe, si no el propio
       const cantidadFinal = notificacionesNoLeidas > 0 ? notificacionesNoLeidas : nuevasCantidad;
       setCantidadNoLeidas(cantidadFinal);
@@ -200,7 +200,7 @@ const HeaderAspirante = ({
   // 🆕 MANEJADORES DE EVENTOS (CENTRALIZADOS)
   const handleMensajesClick = async (e) => {
     e.preventDefault();
-    
+
     if (onOpenMensajes) {
       onOpenMensajes(userId);
     } else {
@@ -210,7 +210,7 @@ const HeaderAspirante = ({
 
   const handleNotificacionesClick = async (e) => {
     e.preventDefault();
-    
+
     if (onOpenNotificaciones) {
       onOpenNotificaciones();
     } else {
@@ -231,13 +231,13 @@ const HeaderAspirante = ({
 
     // Intentar múltiples endpoints
     const endpoints = [
-      `http://localhost:8090/api/postulacion/aspirante/${aspiranteId}/contratantes-para-chat`,
-      `http://localhost:8090/api/postulacion/aspirante/${aspiranteId}/contratistas-para-chat`,
-      `http://localhost:8090/api/chat/aspirante/${aspiranteId}/contactos`
+      `http://3.129.59.126:8090/api/postulacion/aspirante/${aspiranteId}/contratantes-para-chat`,
+      `http://3.129.59.126:8090/api/postulacion/aspirante/${aspiranteId}/contratistas-para-chat`,
+      `http://3.129.59.126:8090/api/chat/aspirante/${aspiranteId}/contactos`
     ];
 
     let contratantes = [];
-    
+
     for (const endpoint of endpoints) {
       try {
         console.log(`🔍 [HeaderAspirante] Probando endpoint: ${endpoint}`);
@@ -280,9 +280,9 @@ const HeaderAspirante = ({
 
     try {
       console.log(`🔍 [HeaderAspirante] Abriendo notificaciones para aspirante: ${aspiranteId}`);
-      await axios.put(`http://localhost:8090/api/notificaciones/aspirante/marcar-leidas/${aspiranteId}`);
-      const response = await axios.get(`http://localhost:8090/api/notificaciones/aspirante/${aspiranteId}`);
-      
+      await axios.put(`http://3.129.59.126:8090/api/notificaciones/aspirante/marcar-leidas/${aspiranteId}`);
+      const response = await axios.get(`http://3.129.59.126:8090/api/notificaciones/aspirante/${aspiranteId}`);
+
       // 🆕 ORDENAR NOTIFICACIONES: más recientes primero
       const notificacionesOrdenadas = response.data.sort((a, b) => {
         // Ordenar por fecha: más reciente primero
@@ -290,7 +290,7 @@ const HeaderAspirante = ({
         const fechaB = new Date(b.fecha);
         return fechaB - fechaA; // Orden descendente (más reciente primero)
       });
-      
+
       setNotificaciones(notificacionesOrdenadas);
       setCantidadNoLeidas(0);
       setShowPanelNotificaciones(true);
@@ -356,7 +356,7 @@ const HeaderAspirante = ({
 
   const usuariosFiltrados = usuariosEncontrados.filter(usuario => {
     if (!searchTerm.trim()) return true;
-    
+
     const nombreCompleto = `${usuario.nombres || ''} ${usuario.apellidos || ''}`.toLowerCase();
     const correo = (usuario.correo || '').toLowerCase();
     const termino = searchTerm.toLowerCase();
@@ -569,9 +569,9 @@ const HeaderAspirante = ({
 
         <div style={stylesInline.leftSection}>
           <div style={stylesInline.brandLogo} className="brand-logo">
-              <div className="logo-icon">
-                        <img src={logo} alt="Logo de Calma" className="logo-img" />
-                      </div>
+            <div className="logo-icon">
+              <img src={logo} alt="Logo de Calma" className="logo-img" />
+            </div>
             <h2 style={stylesInline.brandName}>CALMA</h2>
           </div>
 
@@ -674,7 +674,7 @@ const HeaderAspirante = ({
       </header>
 
       {/* 🆕 PANELES SIEMPRE DISPONIBLES */}
-      
+
       {/* Panel de usuarios para chat */}
       {showPanelUsuarios && (
         <div style={{
@@ -778,7 +778,7 @@ const HeaderAspirante = ({
       {/* Panel de notificaciones */}
       {showPanelNotificaciones && (
         <>
-          <div 
+          <div
             style={{
               position: 'fixed',
               top: 0,
@@ -790,7 +790,7 @@ const HeaderAspirante = ({
             }}
             onClick={handleCerrarNotificaciones}
           />
-          
+
           <div style={{
             position: 'fixed',
             top: '80px',
@@ -813,7 +813,7 @@ const HeaderAspirante = ({
               <h3 style={{ margin: 0 }}>Notificaciones</h3>
               <button onClick={handleCerrarNotificaciones} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer' }}>✕</button>
             </div>
-            
+
             <div style={{ maxHeight: '500px', overflowY: 'auto', padding: '10px' }}>
               {notificaciones.length === 0 ? (
                 <div style={{ textAlign: 'center', color: '#666', padding: '40px' }}>
@@ -824,7 +824,7 @@ const HeaderAspirante = ({
                   const type = getNotificationType(noti.descripcion);
                   const timeAgo = getTimeAgo(noti.fecha);
                   const icon = getNotificationIcon(noti.descripcion);
-                  
+
                   return (
                     <div
                       key={noti.id_notificaciones}
@@ -843,13 +843,13 @@ const HeaderAspirante = ({
                         <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                           {noti.descripcion}
                           {noti.leida === false && (
-                            <span style={{ 
-                              marginLeft: '10px', 
-                              backgroundColor: '#ef4444', 
-                              color: 'white', 
-                              padding: '2px 6px', 
-                              borderRadius: '10px', 
-                              fontSize: '10px' 
+                            <span style={{
+                              marginLeft: '10px',
+                              backgroundColor: '#ef4444',
+                              color: 'white',
+                              padding: '2px 6px',
+                              borderRadius: '10px',
+                              fontSize: '10px'
                             }}>
                               ● Nueva
                             </span>

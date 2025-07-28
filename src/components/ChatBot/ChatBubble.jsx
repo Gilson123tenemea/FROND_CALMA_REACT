@@ -45,8 +45,7 @@ const ChatBubble = () => {
           },
         ]);
       } else {
-        const res = await axios.post('http://localhost:8090/api/chatbot/preguntar', { pregunta });
-
+        const res = await axios.post('http://3.129.59.126:8090/api/chatbot/preguntar', { pregunta });
         if (res.data && res.data.respuesta) {
           setConversacion((prev) => [...prev, { from: 'bot', text: res.data.respuesta }]);
         } else {

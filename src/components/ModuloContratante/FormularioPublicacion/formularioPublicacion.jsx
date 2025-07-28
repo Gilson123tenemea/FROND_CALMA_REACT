@@ -41,42 +41,42 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
   // Función para obtener la fecha mínima (fecha actual de Ecuador)
   const obtenerFechaMinima = () => {
     const ahora = new Date();
-    
+
     // Convertir a fecha de Ecuador (UTC-5)
     const offsetEcuador = -5;
     const utc = ahora.getTime() + (ahora.getTimezoneOffset() * 60000);
     const fechaEcuador = new Date(utc + (offsetEcuador * 3600000));
-    
+
     // Formatear para input date (YYYY-MM-DD)
     const year = fechaEcuador.getFullYear();
     const month = String(fechaEcuador.getMonth() + 1).padStart(2, '0');
     const day = String(fechaEcuador.getDate()).padStart(2, '0');
-    
+
     return `${year}-${month}-${day}`;
   };
 
   // Función para obtener la fecha máxima (20 días después de hoy)
   const obtenerFechaMaxima = () => {
     const ahora = new Date();
-    
+
     // Convertir a fecha de Ecuador (UTC-5)
     const offsetEcuador = -5;
     const utc = ahora.getTime() + (ahora.getTimezoneOffset() * 60000);
     const fechaEcuador = new Date(utc + (offsetEcuador * 3600000));
-    
+
     // Agregar 20 días
     fechaEcuador.setDate(fechaEcuador.getDate() + 20);
-    
+
     // Formatear para input date (YYYY-MM-DD)
     const year = fechaEcuador.getFullYear();
     const month = String(fechaEcuador.getMonth() + 1).padStart(2, '0');
     const day = String(fechaEcuador.getDate()).padStart(2, '0');
-    
+
     return `${year}-${month}-${day}`;
   };
 
   useEffect(() => {
-    axios.get('http://localhost:8090/api/provincias')
+    axios.get('http://3.129.59.126:8090/api/provincias')
       .then(res => setProvincias(res.data))
       .catch(() => setProvincias([]));
   }, []);
@@ -101,7 +101,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
 
   useEffect(() => {
     if (idProvincia) {
-      axios.get(`http://localhost:8090/api/cantones/provincia/${idProvincia}`)
+      axios.get(`http://3.129.59.126:8090/api/cantones/provincia/${idProvincia}`)
         .then(res => setCantones(res.data))
         .catch(() => setCantones([]));
     } else {
@@ -114,7 +114,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
 
   useEffect(() => {
     if (idCanton) {
-      axios.get(`http://localhost:8090/api/parroquias/canton/${idCanton}`)
+      axios.get(`http://3.129.59.126:8090/api/parroquias/canton/${idCanton}`)
         .then(res => setParroquias(res.data))
         .catch(() => setParroquias([]));
     } else {
@@ -125,7 +125,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
 
   useEffect(() => {
     if (contratanteId) {
-      axios.get(`http://localhost:8090/api/publicacion_empleo/pacientes/contratante/${contratanteId}`)
+      axios.get(`http://3.129.59.126:8090/api/publicacion_empleo/pacientes/contratante/${contratanteId}`)
         .then(res => setPacientes(res.data))
         .catch(() => setPacientes([]));
     }
@@ -218,28 +218,28 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
     if (!idCanton) erroresTemp.idCanton = 'Debe seleccionar un cantón.';
     if (!idParroquia) erroresTemp.idParroquia = 'Debe seleccionar una parroquia.';
     if (!estado) erroresTemp.estado = 'Debe seleccionar el estado.';
-    
+
     // Validación de fecha límite con rango de 20 días
     if (!fechaLimite) {
       erroresTemp.fechaLimite = 'Debe ingresar la fecha límite.';
     } else {
       const fechaSeleccionada = new Date(fechaLimite + 'T00:00:00');
       const ahora = new Date();
-      
+
       // Convertir a fecha de Ecuador
       const offsetEcuador = -5;
       const utc = ahora.getTime() + (ahora.getTimezoneOffset() * 60000);
       const fechaEcuador = new Date(utc + (offsetEcuador * 3600000));
-      
+
       // Fecha máxima (20 días después)
       const fechaMaxima = new Date(fechaEcuador);
       fechaMaxima.setDate(fechaMaxima.getDate() + 20);
-      
+
       // Comparar solo fechas (sin hora)
       const fechaHoyStr = fechaEcuador.toISOString().split('T')[0];
       const fechaMaximaStr = fechaMaxima.toISOString().split('T')[0];
       const fechaSeleccionadaStr = fechaLimite;
-      
+
       if (fechaSeleccionadaStr < fechaHoyStr) {
         erroresTemp.fechaLimite = 'La fecha límite no puede ser anterior a la fecha actual.';
       } else if (fechaSeleccionadaStr > fechaMaximaStr) {
@@ -314,7 +314,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
 
     try {
       if (publicacionEditar) {
-        const url = `http://localhost:8090/api/publicacion_empleo/actualizar/${publicacionEditar.id_postulacion_empleo}`;
+        const url = `http://3.129.59.126:8090/api/publicacion_empleo/actualizar/${publicacionEditar.id_postulacion_empleo}`;
         await axios.put(url, data);
 
         toast.success('Publicación actualizada correctamente');
@@ -324,7 +324,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
           navigate(`/moduloContratante/ListaPublicaciones?userId=${contratanteId}`);
         }, 1500);
       } else {
-        const url = `http://localhost:8090/api/publicacion_empleo/guardar?idParroquia=${idParroquia}&idContratante=${contratanteId}`;
+        const url = `http://3.129.59.126:8090/api/publicacion_empleo/guardar?idParroquia=${idParroquia}&idContratante=${contratanteId}`;
         await axios.post(url, data);
 
         toast.success('Publicación creada correctamente');
@@ -342,7 +342,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
   };
 
   console.log('Estado actividadesRealizar:', actividadesRealizar);
-  
+
   return (
     <>
       <HeaderContratante userId={contratanteId} />

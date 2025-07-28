@@ -16,7 +16,7 @@ const HeaderContratante = ({
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isCalificacionDropdownOpen, setIsCalificacionDropdownOpen] = useState(false);
   const [isPublicacionDropdownOpen, setIsPublicacionDropdownOpen] = useState(false);
-  
+
   // 🆕 ESTADOS GLOBALES PARA CHAT Y NOTIFICACIONES
   const [showPanelUsuarios, setShowPanelUsuarios] = useState(false);
   const [showPanelNotificaciones, setShowPanelNotificaciones] = useState(false);
@@ -25,7 +25,7 @@ const HeaderContratante = ({
   const [usuarioChat, setUsuarioChat] = useState(null);
   const [notificaciones, setNotificaciones] = useState([]);
   const [cantidadNoLeidas, setCantidadNoLeidas] = useState(0);
-  
+
   // 🆕 ESTADO PARA DATOS DEL USUARIO ACTUAL
   const [datosUsuario, setDatosUsuario] = useState({
     nombres: 'Usuario',
@@ -47,7 +47,7 @@ const HeaderContratante = ({
   const cargarDatosUsuario = async () => {
     try {
       console.log('🔍 [HEADER] Cargando datos del usuario...');
-      
+
       // Primero intentar desde localStorage
       const userData = JSON.parse(localStorage.getItem('userData'));
       if (userData) {
@@ -60,8 +60,8 @@ const HeaderContratante = ({
 
       // 🆕 INTENTAR CARGAR DESDE EL ENDPOINT DE PERFIL DEL CONTRATANTE
       try {
-        const response = await axios.get(`http://localhost:8090/api/registro/contratante/detalle/${userId}`);
-        
+        const response = await axios.get(`http://3.129.59.126:8090/api/registro/contratante/detalle/${userId}`);
+
         if (response.data && response.data.success && response.data.contratante) {
           const contratante = response.data.contratante;
           setDatosUsuario({
@@ -73,10 +73,10 @@ const HeaderContratante = ({
         }
       } catch (apiError) {
         console.log('ℹ️ [HEADER] API de perfil no disponible, usando datos de localStorage');
-        
+
         // Fallback a endpoint alternativo si existe
         try {
-          const response2 = await axios.get(`http://localhost:8090/api/usuarios/buscar_contratante/${userId}`);
+          const response2 = await axios.get(`http://3.129.59.126:8090/api/usuarios/buscar_contratante/${userId}`);
           if (response2.data) {
             setDatosUsuario({
               nombres: response2.data.nombres || userData?.nombres || 'Usuario',
@@ -96,7 +96,7 @@ const HeaderContratante = ({
   // 🆕 CARGAR NOTIFICACIONES NO LEÍDAS
   const cargarNotificacionesNoLeidas = async () => {
     try {
-      const response = await axios.get(`http://localhost:8090/api/notificaciones/contratante/noleidas/${userId}`);
+      const response = await axios.get(`http://3.129.59.126:8090/api/notificaciones/contratante/noleidas/${userId}`);
       setCantidadNoLeidas(response.data.length);
     } catch (error) {
       console.error('❌ Error al cargar notificaciones:', error);
@@ -107,7 +107,7 @@ const HeaderContratante = ({
   const handleMessagesClick = async (e) => {
     e.preventDefault();
     console.log("🔍 [HEADER] Abriendo panel de mensajes...");
-    
+
     // Si hay función externa, usarla; si no, manejar localmente
     if (onOpenMensajes) {
       onOpenMensajes(userId);
@@ -119,7 +119,7 @@ const HeaderContratante = ({
   const handleNotificationsClick = async (e) => {
     e.preventDefault();
     console.log("🔍 [HEADER] Abriendo panel de notificaciones...");
-    
+
     // Si hay función externa, usarla; si no, manejar localmente
     if (onOpenNotificaciones) {
       onOpenNotificaciones();
@@ -134,7 +134,7 @@ const HeaderContratante = ({
     setSearchTerm('');
 
     try {
-      const response = await axios.get(`http://localhost:8090/api/postulacion/contratista/${userId}/aspirantes-para-chat`);
+      const response = await axios.get(`http://3.129.59.126:8090/api/postulacion/contratista/${userId}/aspirantes-para-chat`);
       setUsuariosEncontrados(response.data);
     } catch (error) {
       console.error('❌ Error al cargar aspirantes para chat:', error);
@@ -158,12 +158,11 @@ const HeaderContratante = ({
   };
 
   // 🆕 LÓGICA LOCAL DE NOTIFICACIONES
- const handleAbrirNotificaciones = async () => {
+  const handleAbrirNotificaciones = async () => {
     try {
       console.log(`🔍 [HeaderContratante] Abriendo notificaciones para contratante: ${userId}`);
-      await axios.put(`http://localhost:8090/api/notificaciones/contratante/marcar-leidas/${userId}`);
-      const response = await axios.get(`http://localhost:8090/api/notificaciones/contratante/${userId}`);
-      
+      await axios.put(`http://3.129.59.126:8090/api/notificaciones/contratante/marcar-leidas/${userId}`);
+      const response = await axios.get(`http://3.129.59.126:8090/api/notificaciones/contratante/${userId}`);
       // 🆕 ORDENAR NOTIFICACIONES: más recientes primero
       const notificacionesOrdenadas = response.data.sort((a, b) => {
         // Ordenar por fecha: más reciente primero
@@ -171,7 +170,7 @@ const HeaderContratante = ({
         const fechaB = new Date(b.fecha);
         return fechaB - fechaA; // Orden descendente (más reciente primero)
       });
-      
+
       setNotificaciones(notificacionesOrdenadas);
       setCantidadNoLeidas(0);
       setShowPanelNotificaciones(true);
@@ -265,8 +264,8 @@ const HeaderContratante = ({
       <header className={styles.contractorHeader}>
         <div className={styles.leftSection}>
           <div className={styles.brandLogo}>
-            <Link 
-              to={`/moduloContratante`} 
+            <Link
+              to={`/moduloContratante`}
               style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}
             >
               <img src={logo} alt="Logo de Calma" className="logo-img" />
@@ -583,7 +582,7 @@ const HeaderContratante = ({
       {/* Panel de notificaciones */}
       {showPanelNotificaciones && (
         <>
-          <div 
+          <div
             style={{
               position: 'fixed',
               top: 0,
@@ -595,7 +594,7 @@ const HeaderContratante = ({
             }}
             onClick={handleCerrarNotificaciones}
           />
-          
+
           <div style={{
             position: 'fixed',
             top: '80px',
@@ -618,7 +617,7 @@ const HeaderContratante = ({
               <h3 style={{ margin: 0 }}>Notificaciones</h3>
               <button onClick={handleCerrarNotificaciones} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer' }}>✕</button>
             </div>
-            
+
             <div style={{ maxHeight: '500px', overflowY: 'auto', padding: '10px' }}>
               {notificaciones.length === 0 ? (
                 <div style={{ textAlign: 'center', color: '#666', padding: '40px' }}>
@@ -629,7 +628,7 @@ const HeaderContratante = ({
                   const type = getNotificationType(noti.descripcion);
                   const timeAgo = getTimeAgo(noti.fecha);
                   const icon = getNotificationIcon(noti.descripcion);
-                  
+
                   return (
                     <div
                       key={noti.id_notificaciones}
@@ -648,13 +647,13 @@ const HeaderContratante = ({
                         <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                           {noti.descripcion}
                           {noti.leida === false && (
-                            <span style={{ 
-                              marginLeft: '10px', 
-                              backgroundColor: '#ef4444', 
-                              color: 'white', 
-                              padding: '2px 6px', 
-                              borderRadius: '10px', 
-                              fontSize: '10px' 
+                            <span style={{
+                              marginLeft: '10px',
+                              backgroundColor: '#ef4444',
+                              color: 'white',
+                              padding: '2px 6px',
+                              borderRadius: '10px',
+                              fontSize: '10px'
                             }}>
                               ● Nueva
                             </span>

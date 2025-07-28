@@ -34,8 +34,8 @@ const ChatbotInteligente = ({ aspiranteId, isOpen, onToggle }) => {
     const cargarPacientesDisponibles = async () => {
         try {
             // Obtener las postulaciones aceptadas del aspirante
-            const response = await axios.get(`http://localhost:8090/api/realizar/aspirante/${aspiranteId}`);
-            
+            const response = await axios.get(`http://3.129.59.126:8090/api/realizar/aspirante/${aspiranteId}`);
+
             if (response.data && Array.isArray(response.data)) {
                 const pacientes = response.data
                     .filter(postulacion => postulacion.postulacion.estado === true)
@@ -44,7 +44,7 @@ const ChatbotInteligente = ({ aspiranteId, isOpen, onToggle }) => {
                         nombre: postulacion.postulacion.postulacion_empleo.titulo,
                         empleo: postulacion.postulacion.postulacion_empleo
                     }));
-                
+
                 setPacientesDisponibles(pacientes);
             }
         } catch (error) {
@@ -66,23 +66,23 @@ const ChatbotInteligente = ({ aspiranteId, isOpen, onToggle }) => {
 
         try {
             let respuesta = '';
-            
+
             if (tipoConsulta === 'general') {
                 // Consulta general sobre Calma
-                const response = await axios.post('http://localhost:8090/api/chatbot/preguntar', {
+                const response = await axios.post('http://3.129.59.126:8090/api/chatbot/preguntar', {
                     pregunta: mensajeActual
                 });
                 respuesta = response.data.respuesta;
             } else if (tipoConsulta === 'recomendaciones' && pacienteSeleccionado) {
                 // Recomendaciones específicas del paciente
-                const response = await axios.post('http://localhost:8090/api/chatbot/recomendaciones-cuidado', {
+                const response = await axios.post('http://3.129.59.126:8090/api/chatbot/recomendaciones-cuidado', {
                     idPaciente: pacienteSeleccionado.id,
                     pregunta: mensajeActual
                 });
                 respuesta = response.data.respuesta;
             } else if (tipoConsulta === 'riesgos' && pacienteSeleccionado) {
                 // Evaluación de riesgos
-                const response = await axios.post('http://localhost:8090/api/chatbot/evaluacion-riesgos', {
+                const response = await axios.post('http://3.129.59.126:8090/api/chatbot/evaluacion-riesgos', {
                     idPaciente: pacienteSeleccionado.id
                 });
                 respuesta = response.data.respuesta;
@@ -115,7 +115,7 @@ const ChatbotInteligente = ({ aspiranteId, isOpen, onToggle }) => {
     const cambiarTipoConsulta = (tipo) => {
         setTipoConsulta(tipo);
         let mensaje = '';
-        
+
         if (tipo === 'general') {
             mensaje = '💬 Modo general activado. Pregúntame sobre Calma, cómo funciona, requisitos, etc.';
         } else if (tipo === 'recomendaciones') {
@@ -141,9 +141,9 @@ const ChatbotInteligente = ({ aspiranteId, isOpen, onToggle }) => {
     };
 
     const formatearHora = (timestamp) => {
-        return timestamp.toLocaleTimeString('es-ES', { 
-            hour: '2-digit', 
-            minute: '2-digit' 
+        return timestamp.toLocaleTimeString('es-ES', {
+            hour: '2-digit',
+            minute: '2-digit'
         });
     };
 
@@ -250,7 +250,7 @@ const ChatbotInteligente = ({ aspiranteId, isOpen, onToggle }) => {
                         </div>
                     </div>
                 ))}
-                
+
                 {cargando && (
                     <div className="message bot">
                         <div className="message-avatar">
@@ -273,10 +273,10 @@ const ChatbotInteligente = ({ aspiranteId, isOpen, onToggle }) => {
                     onChange={(e) => setMensajeActual(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder={
-                        tipoConsulta === 'general' 
-                            ? "Pregúntame sobre Calma..." 
-                            : pacienteSeleccionado 
-                                ? "Haz tu consulta médica..." 
+                        tipoConsulta === 'general'
+                            ? "Pregúntame sobre Calma..."
+                            : pacienteSeleccionado
+                                ? "Haz tu consulta médica..."
                                 : "Selecciona un paciente primero..."
                     }
                     rows="2"

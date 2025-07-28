@@ -40,7 +40,7 @@ const ResetPassword = () => {
     }
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:8090/api/password/reset", {
+      const response = await fetch("http://3.129.59.126:8090/api/password/reset", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, nuevaPassword: newPassword }),

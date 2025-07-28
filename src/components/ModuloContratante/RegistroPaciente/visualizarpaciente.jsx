@@ -16,7 +16,7 @@ const VisualizarPacientes = () => {
 
   useEffect(() => {
     if (idContratante) {
-      axios.get(`http://localhost:8090/api/registro/paciente/contratante/${idContratante}`)
+      axios.get(`http://3.129.59.126:8090/api/registro/paciente/contratante/${idContratante}`)
         .then(res => {
           if (res.data.success) {
             setPacientes(res.data.pacientes);
@@ -41,7 +41,7 @@ const VisualizarPacientes = () => {
               {/* Contenedor de la imagen */}
               <div className={styles["paciente-foto-container"]}>
                 <img
-                  src={`http://localhost:8090/api/registro/${paciente.foto}`}
+                  src={`http://3.129.59.126:8090/api/registro/${paciente.foto}`}
                   alt="foto"
                   className={styles["paciente-foto-vistavisu"]}
                 />
@@ -53,14 +53,14 @@ const VisualizarPacientes = () => {
                 {/* Nombre */}
                 <div className={styles["paciente-nombre-container"]}>
                   <h4>{paciente.nombres} {paciente.apellidos}</h4>
-                  
+
                 </div>
-                 <Link
-                    to={`/moduloContratante/ficha/${paciente.idPaciente}`}
-                    className={styles["btn-ver-ficha-vistavisu"]}
-                  >
-                    Ver Ficha Clínica
-                  </Link>
+                <Link
+                  to={`/moduloContratante/ficha/${paciente.idPaciente}`}
+                  className={styles["btn-ver-ficha-vistavisu"]}
+                >
+                  Ver Ficha Clínica
+                </Link>
 
                 {/* Datos en cuadrícula elegante */}
                 <div className={styles["paciente-datos-container"]}>
@@ -124,7 +124,7 @@ const VisualizarPacientes = () => {
                   >
                     Editar
                   </Link>
-                 
+
 
                 </div>
               </div>

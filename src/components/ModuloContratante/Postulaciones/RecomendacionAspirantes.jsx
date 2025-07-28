@@ -11,7 +11,7 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
   const [totalCandidatos, setTotalCandidatos] = useState(0);
   const [estadisticas, setEstadisticas] = useState(null);
   const [loadingEstadisticas, setLoadingEstadisticas] = useState(false);
-  
+
   // Estados para trabajos
   const [trabajosDisponibles, setTrabajosDisponibles] = useState([]);
   const [trabajoSeleccionado, setTrabajoSeleccionado] = useState('');
@@ -36,13 +36,13 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
   const cargarTrabajosDisponibles = async () => {
     setLoadingTrabajos(true);
     try {
-      const response = await axios.get(`http://localhost:8090/api/postulacion/${userId}/realizaciones`);
+      const response = await axios.get(`http://3.129.59.126:8090/api/postulacion/${userId}/realizaciones`);
       const realizaciones = Array.isArray(response.data) ? response.data : [];
-      
+
       // Extraer trabajos únicos
       const trabajosUnicos = [];
       const trabajosVistos = new Set();
-      
+
       realizaciones.forEach(r => {
         const publicacion = r.postulacion?.postulacion_empleo;
         if (publicacion && !trabajosVistos.has(publicacion.id_postulacion_empleo)) {
@@ -51,15 +51,15 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
             id: publicacion.id_postulacion_empleo,
             titulo: publicacion.titulo,
             descripcion: publicacion.descripcion,
-            candidatos: realizaciones.filter(r2 => 
+            candidatos: realizaciones.filter(r2 =>
               r2.postulacion?.postulacion_empleo?.id_postulacion_empleo === publicacion.id_postulacion_empleo
             ).length
           });
         }
       });
-      
+
       setTrabajosDisponibles(trabajosUnicos);
-      
+
       // Seleccionar automáticamente el primer trabajo si existe
       if (trabajosUnicos.length > 0) {
         setTrabajoSeleccionado(trabajosUnicos[0].id);
@@ -74,10 +74,10 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
 
   const cargarEstadisticas = async () => {
     if (!trabajoSeleccionado) return;
-    
+
     setLoadingEstadisticas(true);
     try {
-      const response = await axios.post('http://localhost:8090/api/chatbot/estadisticas-candidatos', {
+      const response = await axios.post('http://3.129.59.126:8090/api/chatbot/estadisticas-candidatos', {
         idPublicacion: trabajoSeleccionado
       });
       setEstadisticas(response.data);
@@ -99,7 +99,7 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
     setRecomendacion('');
 
     try {
-      const response = await axios.post('http://localhost:8090/api/chatbot/recomendar-aspirante', {
+      const response = await axios.post('http://3.129.59.126:8090/api/chatbot/recomendar-aspirante', {
         idPublicacion: trabajoSeleccionado,
         criterios: criteriosPersonalizados.trim() || null
       });
@@ -120,7 +120,7 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
 
   const formatearRespuesta = (texto) => {
     if (!texto) return '';
-    
+
     return texto
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/🏆 (.*?)(?=\n)/g, '<div style="background: linear-gradient(135deg, #059669, #047857); color: white; padding: 12px; border-radius: 8px; margin: 10px 0; font-weight: bold;"><span style="font-size: 18px;">🏆</span> $1</div>')
@@ -189,7 +189,7 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
           <FaChartBar style={{ color: '#8b5cf6' }} />
           Resumen de Candidatos
         </h4>
-        
+
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
@@ -209,7 +209,7 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
               Total Candidatos
             </div>
           </div>
-          
+
           <div style={{
             backgroundColor: '#f8fafc',
             padding: '15px',
@@ -224,7 +224,7 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
               Con Experiencia
             </div>
           </div>
-          
+
           <div style={{
             backgroundColor: '#f8fafc',
             padding: '15px',
@@ -239,7 +239,7 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
               Calificación Promedio
             </div>
           </div>
-          
+
           <div style={{
             backgroundColor: '#f8fafc',
             padding: '15px',
@@ -255,11 +255,11 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
             </div>
           </div>
         </div>
-        
+
         {estadisticas.totalCandidatos > 0 && (
-          <div style={{ 
-            marginTop: '15px', 
-            fontSize: '13px', 
+          <div style={{
+            marginTop: '15px',
+            fontSize: '13px',
             color: '#64748b',
             backgroundColor: '#f8fafc',
             padding: '12px',
@@ -332,7 +332,7 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
             background: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 50%), radial-gradient(circle at 40% 80%, rgba(255,255,255,0.08) 0%, transparent 50%)',
             pointerEvents: 'none'
           }}></div>
-          
+
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px', zIndex: 1 }}>
             <div style={{
               backgroundColor: 'rgba(255, 255, 255, 0.2)',
@@ -346,17 +346,17 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
               <FaBrain size={28} />
             </div>
             <div>
-              <h2 style={{ 
-                margin: 0, 
-                fontSize: '28px', 
+              <h2 style={{
+                margin: 0,
+                fontSize: '28px',
                 fontWeight: 'bold',
                 textShadow: '0 2px 4px rgba(0,0,0,0.3)'
               }}>
                 🤖 Recomendación IA de Aspirantes
               </h2>
-              <p style={{ 
-                margin: '8px 0 0 0', 
-                opacity: 0.95, 
+              <p style={{
+                margin: '8px 0 0 0',
+                opacity: 0.95,
                 fontSize: '15px',
                 textShadow: '0 1px 2px rgba(0,0,0,0.2)'
               }}>
@@ -414,7 +414,7 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
               <FaSearch style={{ color: '#8b5cf6' }} />
               Selecciona el trabajo a analizar
             </label>
-            
+
             {loadingTrabajos ? (
               <div style={{
                 display: 'flex',
@@ -486,7 +486,7 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
                 }} />
               </div>
             )}
-            
+
             {trabajoActual && (
               <div style={{
                 marginTop: '12px',
@@ -495,23 +495,23 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
                 border: '1px solid #bfdbfe',
                 borderRadius: '10px'
               }}>
-                <h5 style={{ 
-                  margin: '0 0 8px 0', 
-                  color: '#1e40af', 
+                <h5 style={{
+                  margin: '0 0 8px 0',
+                  color: '#1e40af',
                   fontSize: '16px',
                   fontWeight: '600'
                 }}>
                   📋 {trabajoActual.titulo}
                 </h5>
-                <p style={{ 
-                  margin: 0, 
-                  color: '#3730a3', 
+                <p style={{
+                  margin: 0,
+                  color: '#3730a3',
                   fontSize: '14px',
                   lineHeight: '1.5'
                 }}>
                   {trabajoActual.descripcion || 'Sin descripción disponible'}
                 </p>
-                <div style={{ 
+                <div style={{
                   marginTop: '8px',
                   display: 'flex',
                   alignItems: 'center',
@@ -584,7 +584,7 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
               borderRadius: '8px',
               border: '1px solid #e2e8f0'
             }}>
-              💡 <strong>Tip:</strong> Puedes especificar habilidades, experiencia, disponibilidad horaria o cualquier 
+              💡 <strong>Tip:</strong> Puedes especificar habilidades, experiencia, disponibilidad horaria o cualquier
               criterio importante. Si no especificas nada, la IA evaluará según los requisitos generales del trabajo.
             </p>
           </div>
@@ -599,8 +599,8 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
                   ? 'linear-gradient(135deg, #9ca3af 0%, #6b7280 100%)'
                   : 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 25%, #a855f7 50%, #9333ea 75%, #8b5cf6 100%)',
                 backgroundSize: '300% 300%',
-                animation: (!loading && trabajoSeleccionado && !(estadisticas && estadisticas.totalCandidatos === 0)) 
-                  ? 'gradientFlow 3s ease infinite, buttonPulse 2s ease infinite' 
+                animation: (!loading && trabajoSeleccionado && !(estadisticas && estadisticas.totalCandidatos === 0))
+                  ? 'gradientFlow 3s ease infinite, buttonPulse 2s ease infinite'
                   : 'none',
                 color: 'white',
                 border: 'none',
@@ -699,7 +699,7 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
                 background: 'radial-gradient(circle at center, rgba(139, 92, 246, 0.1) 0%, transparent 70%)',
                 animation: 'pulse 2s ease-in-out infinite'
               }}></div>
-              
+
               <div style={{
                 display: 'inline-block',
                 width: '70px',
@@ -712,8 +712,8 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
                 position: 'relative',
                 zIndex: 1
               }}></div>
-              <h3 style={{ 
-                color: '#8b5cf6', 
+              <h3 style={{
+                color: '#8b5cf6',
                 margin: '0 0 15px 0',
                 fontSize: '20px',
                 fontWeight: '700',
@@ -727,8 +727,8 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
                 <FaRobot style={{ fontSize: '24px', animation: 'bounce 1s ease infinite' }} />
                 🧠 IA Analizando Candidatos
               </h3>
-              <p style={{ 
-                color: '#64748b', 
+              <p style={{
+                color: '#64748b',
                 fontSize: '15px',
                 lineHeight: '1.6',
                 maxWidth: '400px',
@@ -736,10 +736,10 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
                 position: 'relative',
                 zIndex: 1
               }}>
-                🔍 Estamos evaluando perfiles, experiencia, calificaciones y compatibilidad 
+                🔍 Estamos evaluando perfiles, experiencia, calificaciones y compatibilidad
                 de cada aspirante con los requisitos del trabajo seleccionado...
               </p>
-              
+
               {/* Indicador de progreso visual */}
               <div style={{
                 display: 'flex',
@@ -803,22 +803,22 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
                   </span>
                 )}
               </div>
-              
+
               <div style={{
                 padding: '30px',
                 maxHeight: '450px',
                 overflowY: 'auto',
                 backgroundColor: '#fafbff'
               }}>
-                <div 
+                <div
                   style={{
                     fontSize: '16px',
                     lineHeight: '1.8',
                     color: '#1f2937',
                     whiteSpace: 'pre-wrap'
                   }}
-                  dangerouslySetInnerHTML={{ 
-                    __html: formatearRespuesta(recomendacion) 
+                  dangerouslySetInnerHTML={{
+                    __html: formatearRespuesta(recomendacion)
                   }}
                 />
               </div>
@@ -880,7 +880,7 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
           </div>
         )}
       </div>
-      
+
       {/* Estilos CSS en línea para las animaciones */}
       <style>{`
         @keyframes fadeIn {

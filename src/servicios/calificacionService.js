@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8090/api/calificaciones';
+const API_URL = 'http://3.129.59.126:8090/api/calificaciones';
 
 // GET all
 export const getCalificaciones = async () => {

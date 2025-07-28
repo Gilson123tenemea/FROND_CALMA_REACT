@@ -32,7 +32,7 @@ const VerFichaAceptada = () => {
             try {
                 setLoading(true);
                 setError(null);
-                const response = await axios.get(`http://localhost:8090/api/fichas/paciente/${idPaciente}`);
+                const response = await axios.get(`http://3.129.59.126:8090/api/fichas/paciente/${idPaciente}`);
 
                 if (!response.data || !response.data.length) {
                     throw new Error('No se recibieron datos del servidor');
@@ -69,7 +69,7 @@ const VerFichaAceptada = () => {
                 endpoint = '/api/chatbot/evaluacion-riesgos';
             }
 
-            const response = await axios.post(`http://localhost:8090${endpoint}`, payload);
+            const response = await axios.post(`http://3.129.59.126:8090${endpoint}`, payload);
             setRespuestaIA(response.data.respuesta);
 
         } catch (error) {
@@ -203,12 +203,12 @@ const VerFichaAceptada = () => {
                 <div className="patient-header">
                     {ficha.paciente?.foto ? (
                         <img
-                            src={`http://localhost:8090/api/registro/${ficha.paciente.foto}`}
+                            src={`http://3.129.59.126:8090/api/registro/${ficha.paciente.foto}`}
                             alt="Foto del paciente"
                             className="patient-photo"
                             onError={(e) => {
                                 e.target.onerror = null;
-                                e.target.src = `http://localhost:8090/uploads/${ficha.paciente.foto}`;
+                                e.target.src = `http://3.129.59.126:8090/uploads/${ficha.paciente.foto}`;
                                 e.target.onerror = () => {
                                     e.target.style.display = 'none';
                                     const placeholder = e.target.parentNode.querySelector('.patient-photo-placeholder');

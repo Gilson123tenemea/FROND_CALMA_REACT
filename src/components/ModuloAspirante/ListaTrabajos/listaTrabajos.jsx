@@ -23,7 +23,7 @@ const ListaTrabajos = ({ idAspirante }) => {
         setError(null);
 
         // Petición usando el idAspirante para traer sólo trabajos NO postulados
-        const res = await axios.get(`http://localhost:8090/api/generar/publicaciones-no-postuladas/${idAspirante}`);
+        const res = await axios.get(`http://3.129.59.126:8090/api/generar/publicaciones-no-postuladas/${idAspirante}`);
         console.log('Datos recibidos backend:', res.data);
 
         const trabajosData = res.data.map(item => {

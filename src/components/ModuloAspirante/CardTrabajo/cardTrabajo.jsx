@@ -48,7 +48,7 @@ const CardTrabajo = ({ trabajo, idAspirante }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:8090/api/realizar/postular?idAspirante=${idAspirante}&idPublicacionEmpleo=${id}`,
+        `http://3.129.59.126:8090/api/realizar/postular?idAspirante=${idAspirante}&idPublicacionEmpleo=${id}`,
         { method: 'POST' }
       );
 
@@ -57,7 +57,7 @@ const CardTrabajo = ({ trabajo, idAspirante }) => {
         toast.success('Postulación exitosa');
       } else if (response.status === 409) {
         setPostulado(true);
-        toast,warning(' Ya te has postulado a esta oferta.');
+        toast, warning(' Ya te has postulado a esta oferta.');
       } else {
         const texto = await response.text();
         toast.error('Error al postular', texto);
@@ -173,7 +173,7 @@ const CardTrabajo = ({ trabajo, idAspirante }) => {
         pauseOnHover
       />
     </>
-    
+
   );
 };
 

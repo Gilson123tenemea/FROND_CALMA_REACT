@@ -16,10 +16,10 @@ const Postulaciones = () => {
   const [filtroFecha, setFiltroFecha] = useState('');
   const [procesandoEstados, setProcesandoEstados] = useState({});
   const [calificacionesStatus, setCalificacionesStatus] = useState({});
-  
+
   // 🤖 NUEVOS ESTADOS PARA IA - SIMPLIFICADO
   const [mostrarRecomendaciones, setMostrarRecomendaciones] = useState(false);
-  
+
   const navigate = useNavigate();
 
   // 🤖 FUNCIONES PARA MANEJAR RECOMENDACIONES IA - SIMPLIFICADO
@@ -34,7 +34,7 @@ const Postulaciones = () => {
   useEffect(() => {
     const obtenerRealizaciones = async () => {
       try {
-        const response = await axios.get(`http://localhost:8090/api/postulacion/${userId}/realizaciones`);
+        const response = await axios.get(`http://3.129.59.126:8090/api/postulacion/${userId}/realizaciones`);
         // 🔥 ASEGURAR QUE SIEMPRE SEA UN ARRAY
         setRealizaciones(Array.isArray(response.data) ? response.data : []);
       } catch (err) {
@@ -63,7 +63,7 @@ const Postulaciones = () => {
   const verificarCalificacion = async (idPostulacion, idContratante) => {
     try {
       const response = await axios.get(
-        `http://localhost:8090/api/calificaciones/existe/${idPostulacion}/${idContratante}`
+        `http://3.129.59.126:8090/api/calificaciones/existe/${idPostulacion}/${idContratante}`
       );
       return response.data;
     } catch (error) {
@@ -89,7 +89,7 @@ const Postulaciones = () => {
         backdrop-filter: blur(4px);
         animation: fadeIn 0.3s ease-out;
       `;
-      
+
       modal.innerHTML = `
         <div style="
           background: white;
@@ -198,12 +198,12 @@ const Postulaciones = () => {
           }
         </style>
       `;
-      
+
       document.body.appendChild(modal);
-      
+
       const cancelarBtn = modal.querySelector('#cancelar');
       const continuarBtn = modal.querySelector('#continuar');
-      
+
       cancelarBtn.onmouseenter = () => {
         cancelarBtn.style.background = '#E5E7EB';
         cancelarBtn.style.borderColor = '#9CA3AF';
@@ -212,14 +212,14 @@ const Postulaciones = () => {
         cancelarBtn.style.background = '#F3F4F6';
         cancelarBtn.style.borderColor = '#D1D5DB';
       };
-      
+
       continuarBtn.onmouseenter = () => {
         continuarBtn.style.background = '#B91C1C';
       };
       continuarBtn.onmouseleave = () => {
         continuarBtn.style.background = '#DC2626';
       };
-      
+
       cancelarBtn.onclick = () => {
         modal.style.animation = 'fadeOut 0.2s ease-in forwards';
         setTimeout(() => {
@@ -227,7 +227,7 @@ const Postulaciones = () => {
           resolve(false);
         }, 200);
       };
-      
+
       continuarBtn.onclick = () => {
         modal.style.animation = 'fadeOut 0.2s ease-in forwards';
         setTimeout(() => {
@@ -235,7 +235,7 @@ const Postulaciones = () => {
           resolve(true);
         }, 200);
       };
-      
+
       const handleEsc = (e) => {
         if (e.key === 'Escape') {
           cancelarBtn.click();
@@ -243,7 +243,7 @@ const Postulaciones = () => {
         }
       };
       document.addEventListener('keydown', handleEsc);
-      
+
       const style = document.createElement('style');
       style.textContent = `
         @keyframes fadeOut {
@@ -257,64 +257,17 @@ const Postulaciones = () => {
 
   const actualizarEstado = async (idPostulacion, idPostulacionEmpleo, nuevoEstado, idAspirante, aspiranteName, jobTitle) => {
     setProcesandoEstados(prev => ({ ...prev, [idPostulacion]: true }));
-    
+
     try {
-        if (nuevoEstado === false) {
-          const tieneCalificacion = await verificarCalificacion(idPostulacion, userId);
-          
-          if (tieneCalificacion) {
-            const confirmar = await mostrarModalConfirmacion(aspiranteName, jobTitle);
-            
-            if (!confirmar) {
-              setProcesandoEstados(prev => ({ ...prev, [idPostulacion]: false }));
-              toast.info('💭 Operación cancelada. La postulación mantiene su estado actual.', {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-              });
-              return;
-            }
-          }
-        }
+      if (nuevoEstado === false) {
+        const tieneCalificacion = await verificarCalificacion(idPostulacion, userId);
 
-        await axios.put(
-            `http://localhost:8090/api/postulacion/actualizar/${idPostulacion}/${userId}/${idAspirante}`,
-            {
-                estado: nuevoEstado,
-                postulacion_empleo: {
-                    id_postulacion_empleo: idPostulacionEmpleo
-                }
-            }
-        );
+        if (tieneCalificacion) {
+          const confirmar = await mostrarModalConfirmacion(aspiranteName, jobTitle);
 
-        const mensaje = nuevoEstado === null 
-          ? '🟡 Postulación marcada como pendiente' 
-          : nuevoEstado 
-            ? '✅ Postulación aceptada correctamente' 
-            : '❌ Postulación rechazada correctamente';
-
-        const tipoToast = nuevoEstado === null 
-          ? 'info' 
-          : nuevoEstado 
-            ? 'success' 
-            : 'error';
-
-        if (nuevoEstado === false) {
-          const tieneCalificacion = await verificarCalificacion(idPostulacion, userId);
-          if (tieneCalificacion) {
-            toast.warning('⚠️ Postulación rechazada. La calificación existente se mantiene en el sistema.', {
-              position: "top-right",
-              autoClose: 6000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-            });
-          } else {
-            toast[tipoToast](mensaje, {
+          if (!confirmar) {
+            setProcesandoEstados(prev => ({ ...prev, [idPostulacion]: false }));
+            toast.info('💭 Operación cancelada. La postulación mantiene su estado actual.', {
               position: "top-right",
               autoClose: 3000,
               hideProgressBar: false,
@@ -322,7 +275,44 @@ const Postulaciones = () => {
               pauseOnHover: true,
               draggable: true,
             });
+            return;
           }
+        }
+      }
+
+      await axios.put(
+        `http://3.129.59.126:8090/api/postulacion/actualizar/${idPostulacion}/${userId}/${idAspirante}`,
+        {
+          estado: nuevoEstado,
+          postulacion_empleo: {
+            id_postulacion_empleo: idPostulacionEmpleo
+          }
+        }
+      );
+
+      const mensaje = nuevoEstado === null
+        ? '🟡 Postulación marcada como pendiente'
+        : nuevoEstado
+          ? '✅ Postulación aceptada correctamente'
+          : '❌ Postulación rechazada correctamente';
+
+      const tipoToast = nuevoEstado === null
+        ? 'info'
+        : nuevoEstado
+          ? 'success'
+          : 'error';
+
+      if (nuevoEstado === false) {
+        const tieneCalificacion = await verificarCalificacion(idPostulacion, userId);
+        if (tieneCalificacion) {
+          toast.warning('⚠️ Postulación rechazada. La calificación existente se mantiene en el sistema.', {
+            position: "top-right",
+            autoClose: 6000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
         } else {
           toast[tipoToast](mensaje, {
             position: "top-right",
@@ -333,38 +323,48 @@ const Postulaciones = () => {
             draggable: true,
           });
         }
-
-        setRealizaciones(prev =>
-            prev.map(r => {
-                if (r.postulacion?.id_postulacion === idPostulacion) {
-                    return {
-                        ...r,
-                        postulacion: {
-                            ...r.postulacion,
-                            estado: nuevoEstado
-                        }
-                    };
-                }
-                return r;
-            })
-        );
-
-        if (nuevoEstado === true) {
-          setCalificacionesStatus(prev => ({ ...prev, [idPostulacion]: false }));
-        }
-
-    } catch (error) {
-        console.error('Error al actualizar el estado:', error);
-        toast.error('❌ Error al actualizar la postulación', {
+      } else {
+        toast[tipoToast](mensaje, {
           position: "top-right",
-          autoClose: 5000,
+          autoClose: 3000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
         });
+      }
+
+      setRealizaciones(prev =>
+        prev.map(r => {
+          if (r.postulacion?.id_postulacion === idPostulacion) {
+            return {
+              ...r,
+              postulacion: {
+                ...r.postulacion,
+                estado: nuevoEstado
+              }
+            };
+          }
+          return r;
+        })
+      );
+
+      if (nuevoEstado === true) {
+        setCalificacionesStatus(prev => ({ ...prev, [idPostulacion]: false }));
+      }
+
+    } catch (error) {
+      console.error('Error al actualizar el estado:', error);
+      toast.error('❌ Error al actualizar la postulación', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
     } finally {
-        setProcesandoEstados(prev => ({ ...prev, [idPostulacion]: false }));
+      setProcesandoEstados(prev => ({ ...prev, [idPostulacion]: false }));
     }
   };
 
@@ -425,7 +425,7 @@ const Postulaciones = () => {
         for (const realizacion of realizaciones) {
           if (realizacion.postulacion?.id_postulacion) {
             const tieneCalificacion = await verificarCalificacion(
-              realizacion.postulacion.id_postulacion, 
+              realizacion.postulacion.id_postulacion,
               userId
             );
             status[realizacion.postulacion.id_postulacion] = tieneCalificacion;
@@ -444,14 +444,14 @@ const Postulaciones = () => {
       <p className={styles.postulacionesLoadingText}>⏳ Cargando postulaciones...</p>
     </div>
   );
-  
+
   if (error) return (
     <div className={styles.postulacionesErrorContainer}>
       <div className={styles.postulacionesErrorIcon}>⚠️</div>
       <p className={styles.postulacionesErrorText}>{error}</p>
     </div>
   );
-  
+
   // 🔥 EMPTY STATE MEJORADO - VERIFICAR QUE SEA ARRAY Y ESTÉ VACÍO
   if (!Array.isArray(realizaciones) || realizaciones.length === 0) return (
     <>
@@ -463,7 +463,7 @@ const Postulaciones = () => {
             Postulaciones del Contratante
             <span className={styles.postulacionesUserBadge}>#{userId}</span>
           </h2>
-          
+
           <div className={styles.postulacionesStatsBar}>
             <div className={styles.postulacionesStatItem}>
               <span className={styles.postulacionesStatNumber}>0</span>
@@ -487,19 +487,19 @@ const Postulaciones = () => {
               ¡No hay postulaciones aún!
             </h3>
             <p className={styles.postulacionesEmptyDescription}>
-              Parece que aún no has recibido postulaciones para tus ofertas laborales. 
+              Parece que aún no has recibido postulaciones para tus ofertas laborales.
               Cuando los aspirantes se postulen a tus trabajos, aparecerán aquí.
             </p>
-            
+
             <div className={styles.postulacionesEmptyActions}>
-              <button 
+              <button
                 className={styles.postulacionesEmptyActionBtn}
                 onClick={() => navigate(`/moduloContratante/ListaPublicaciones?userId=${userId}`)}
               >
                 <i className="fas fa-briefcase"></i>
                 Ver mis ofertas
               </button>
-              <button 
+              <button
                 className={styles.postulacionesEmptyActionBtnSecondary}
                 onClick={() => window.location.reload()}
               >
@@ -534,7 +534,7 @@ const Postulaciones = () => {
             <span className={styles.postulacionesTitleIcon}>📄</span>
             Postulaciones del Contratante
           </h2>
-          
+
           {/* 🤖 ESTADÍSTICAS CON BOTÓN IA MEJORADO */}
           <div className={styles.postulacionesStatsBar}>
             <div className={styles.postulacionesStatItem}>
@@ -553,10 +553,10 @@ const Postulaciones = () => {
               </span>
               <span className={styles.postulacionesStatLabel}>Pendientes</span>
             </div>
-            
+
             {/* 🤖 BOTÓN IA PRINCIPAL MEJORADO */}
             {filtradas.length > 0 && (
-              <div className={styles.postulacionesStatItem} style={{flexBasis: 'auto'}}>
+              <div className={styles.postulacionesStatItem} style={{ flexBasis: 'auto' }}>
                 <button
                   onClick={abrirRecomendaciones}
                   className={styles.postulacionesAIButton}
@@ -624,7 +624,7 @@ const Postulaciones = () => {
                 />
               </div>
             </div>
-            
+
             <div className={styles.postulacionesDateGroup}>
               <div className={styles.postulacionesInputContainer}>
                 <i className={`${styles.postulacionesInputIcon} fas fa-calendar-alt`}></i>
@@ -714,7 +714,7 @@ const Postulaciones = () => {
                         border: '1px solid rgba(30, 64, 175, 0.2)',
                         transition: 'all 0.3s ease'
                       }}>
-                        👥 {filtradas.filter(r => 
+                        👥 {filtradas.filter(r =>
                           r.postulacion?.postulacion_empleo?.id_postulacion_empleo === publicacion?.id_postulacion_empleo
                         ).length} candidatos
                       </span>
@@ -729,7 +729,7 @@ const Postulaciones = () => {
                         {publicacion?.salario_estimado ? `${publicacion.salario_estimado.toLocaleString()}` : 'N/D'}
                       </span>
                     </div>
-                    
+
                     <div className={styles.postulacionesDetailItem}>
                       <i className={`${styles.postulacionesDetailIcon} fas fa-sun`}></i>
                       <span className={styles.postulacionesDetailLabel}>Turno:</span>
@@ -777,7 +777,7 @@ const Postulaciones = () => {
                     <i className={`${styles.postulacionesBtnIcon} ${estaProcesando ? 'fas fa-spinner fa-spin' : 'fas fa-check'}`}></i>
                     {estaProcesando ? 'Procesando...' : estaAceptada ? 'Ya Aceptada ✓' : 'Aceptar'}
                   </button>
-                  
+
                   {/* 🔥 BOTÓN RECHAZAR */}
                   <button
                     className={`${styles.postulacionesActionBtn} ${styles.postulacionesBtnReject}`}
@@ -800,11 +800,11 @@ const Postulaciones = () => {
                     }}
                   >
                     <i className={`${styles.postulacionesBtnIcon} ${estaProcesando ? 'fas fa-spinner fa-spin' : 'fas fa-times'}`}></i>
-                    {estaProcesando ? 'Procesando...' : 
-                     estaAceptada ? 'Bloqueado' : 
-                     tieneCalificacion ? 'Rechazar ⚠️' : 'Rechazar'}
+                    {estaProcesando ? 'Procesando...' :
+                      estaAceptada ? 'Bloqueado' :
+                        tieneCalificacion ? 'Rechazar ⚠️' : 'Rechazar'}
                   </button>
-                  
+
                   {/* 🔥 BOTÓN VER CV */}
                   <button
                     className={`${styles.postulacionesActionBtn} ${styles.postulacionesBtnCv}`}
@@ -842,7 +842,7 @@ const Postulaciones = () => {
         theme="light"
         className="postulacionesToastContainer"
       />
-      
+
       {/* 🎨 ESTILOS ADICIONALES PARA ANIMACIONES */}
       <style>{`
         @keyframes gradientFlow {

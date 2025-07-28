@@ -17,33 +17,33 @@ const TodasLasCalificaciones = () => {
 
   useEffect(() => {
     console.log('🔍 [TodasLasCalificaciones] aspiranteId desde URL:', aspiranteId);
-    
+
     // Verificar localStorage para aspiranteId correcto
     const userData = JSON.parse(localStorage.getItem('userData') || '{}');
     console.log('🔍 [TodasLasCalificaciones] userData:', userData);
-    
+
     // Usar aspiranteId de la URL o del localStorage
     const finalAspiranteId = aspiranteId || userData?.aspiranteId;
-    
+
     if (!finalAspiranteId) {
       console.error('❌ No se encontró aspiranteId');
       setLoading(false);
       return;
     }
-    
+
     console.log('✅ [TodasLasCalificaciones] aspiranteId final:', finalAspiranteId);
     setCurrentAspiranteId(finalAspiranteId);
-    
+
     // Si el aspiranteId de la URL es diferente al del localStorage, redirigir
     if (userData.aspiranteId && aspiranteId && userData.aspiranteId !== parseInt(aspiranteId)) {
       console.log('🔄 [TodasLasCalificaciones] Redirigiendo al aspirante correcto');
       navigate(`/aspirante/${userData.aspiranteId}/calificaciones`, { replace: true });
       return;
     }
-    
+
     // Obtener userId correspondiente
     obtenerUserId(finalAspiranteId);
-    
+
   }, [aspiranteId, navigate]);
 
   useEffect(() => {
@@ -61,7 +61,7 @@ const TodasLasCalificaciones = () => {
   const obtenerUserId = async (idAspirante) => {
     try {
       console.log(`🔍 [TodasLasCalificaciones] Obteniendo userId para aspirante: ${idAspirante}`);
-      
+
       // Primero verificar localStorage
       const userData = JSON.parse(localStorage.getItem('userData') || '{}');
       if (userData.usuarioId || userData.userId) {
@@ -70,13 +70,13 @@ const TodasLasCalificaciones = () => {
         setUserId(userIdFromStorage);
         return;
       }
-      
+
       // Si no está en localStorage, buscar en API
-      const response = await fetch(`http://localhost:8090/api/usuarios/buscar_aspirante/${idAspirante}`);
-      
+      const response = await fetch(`http://3.129.59.126:8090/api/usuarios/buscar_aspirante/${idAspirante}`);
+
       if (response.ok) {
         const responseText = await response.text();
-        
+
         if (responseText && responseText.trim() !== '') {
           const idUsuario = JSON.parse(responseText);
           console.log('✅ [TodasLasCalificaciones] UserId desde API:', idUsuario);
@@ -98,22 +98,22 @@ const TodasLasCalificaciones = () => {
   const cargarCalificaciones = async () => {
     try {
       console.log(`🔍 [TodasLasCalificaciones] Cargando calificaciones para aspirante: ${currentAspiranteId}`);
-      const endpoint = `http://localhost:8090/api/calificaciones/aspirante/${currentAspiranteId}`;
+      const endpoint = `http://3.129.59.126:8090/api/calificaciones/aspirante/${currentAspiranteId}`;
       const respuesta = await fetch(endpoint);
-      
+
       if (respuesta.ok) {
         const datos = await respuesta.json();
-        
+
         if (Array.isArray(datos)) {
           console.log(`✅ [TodasLasCalificaciones] ${datos.length} calificaciones cargadas`);
           setCalificaciones(datos);
           return;
         }
       }
-      
+
       console.log('⚠️ [TodasLasCalificaciones] No se encontraron calificaciones');
       setCalificaciones([]);
-      
+
     } catch (error) {
       console.error('❌ Error cargando calificaciones:', error);
       setCalificaciones([]);
@@ -123,16 +123,16 @@ const TodasLasCalificaciones = () => {
   const cargarResumen = async () => {
     try {
       console.log(`🔍 [TodasLasCalificaciones] Cargando resumen para aspirante: ${currentAspiranteId}`);
-      const endpoint = `http://localhost:8090/api/calificaciones/aspirante/${currentAspiranteId}/resumen`;
+      const endpoint = `http://3.129.59.126:8090/api/calificaciones/aspirante/${currentAspiranteId}/resumen`;
       const respuesta = await fetch(endpoint);
-      
+
       if (respuesta.ok) {
         const datos = await respuesta.json();
         console.log('✅ [TodasLasCalificaciones] Resumen cargado desde API');
         setResumen(datos);
         return;
       }
-      
+
       // Fallback: calcular resumen desde calificaciones
       if (calificaciones.length > 0) {
         console.log('⚠️ [TodasLasCalificaciones] Calculando resumen manualmente');
@@ -203,8 +203,8 @@ const TodasLasCalificaciones = () => {
   if (loading || !currentAspiranteId || userId === null) {
     return (
       <div className="calificaciones-page">
-        <HeaderAspirante 
-          userId={userId} 
+        <HeaderAspirante
+          userId={userId}
           aspiranteId={currentAspiranteId}
         />
         <div className="loading-container">
@@ -220,15 +220,15 @@ const TodasLasCalificaciones = () => {
 
   return (
     <div className="calificaciones-page">
-      <HeaderAspirante 
-        userId={userId} 
+      <HeaderAspirante
+        userId={userId}
         aspiranteId={currentAspiranteId}
       />
-      
+
       <div className="calificaciones-content">
         {/* Header */}
         <div className="page-header">
-          
+
           <h1>Mis Calificaciones</h1>
         </div>
 
@@ -243,25 +243,25 @@ const TodasLasCalificaciones = () => {
                 </div>
                 <p>{resumen.totalCalificaciones} calificaciones en total</p>
               </div>
-              
+
               <div className="distribucion-detallada">
                 {[5, 4, 3, 2, 1].map(estrella => {
                   const cantidad = resumen.distribucionEstrellas?.[estrella] || 0;
-                  const porcentaje = resumen.totalCalificaciones > 0 
-                    ? (cantidad / resumen.totalCalificaciones) * 100 
+                  const porcentaje = resumen.totalCalificaciones > 0
+                    ? (cantidad / resumen.totalCalificaciones) * 100
                     : 0;
-                  
+
                   return (
                     <div key={estrella} className="fila-distribucion-detalle">
-                      <button 
+                      <button
                         className={`filtro-estrella ${filtroEstrella === estrella ? 'activo' : ''}`}
                         onClick={() => setFiltroEstrella(filtroEstrella === estrella ? 0 : estrella)}
                       >
                         <span>{estrella}</span>
                         <FaStar />
                         <div className="barra-progreso-detalle">
-                          <div 
-                            className="barra-relleno-detalle" 
+                          <div
+                            className="barra-relleno-detalle"
                             style={{ width: `${porcentaje}%` }}
                           ></div>
                         </div>
@@ -283,14 +283,14 @@ const TodasLasCalificaciones = () => {
               <span>Filtrar por calificación:</span>
             </div>
             <div className="botones-filtro">
-              <button 
+              <button
                 className={`btn-filtro ${filtroEstrella === 0 ? 'activo' : ''}`}
                 onClick={() => setFiltroEstrella(0)}
               >
                 Todas
               </button>
               {[5, 4, 3, 2, 1].map(estrella => (
-                <button 
+                <button
                   key={estrella}
                   className={`btn-filtro ${filtroEstrella === estrella ? 'activo' : ''}`}
                   onClick={() => setFiltroEstrella(estrella)}
@@ -307,9 +307,9 @@ const TodasLasCalificaciones = () => {
           {calificacionesFiltradas.length === 0 ? (
             <div className="sin-calificaciones-filtro">
               <p>
-                {filtroEstrella > 0 
+                {filtroEstrella > 0
                   ? `No hay calificaciones de ${filtroEstrella} estrella${filtroEstrella > 1 ? 's' : ''}`
-                  : calificaciones.length === 0 
+                  : calificaciones.length === 0
                     ? '⭐ Aún no tienes calificaciones. ¡Completa algunos trabajos para empezar a recibir valoraciones!'
                     : 'No hay calificaciones para este filtro'
                 }
@@ -327,7 +327,7 @@ const TodasLasCalificaciones = () => {
                       {formatearFecha(calificacion.fecha)}
                     </span>
                   </div>
-                  
+
                   <div className="info-derecha">
                     {calificacion.contratante && (
                       <div className="info-contratante-completa">
@@ -386,8 +386,8 @@ const TodasLasCalificaciones = () => {
               </div>
               <div className="stat-item">
                 <span className="stat-numero">
-                  {calificaciones.length > 0 && calificaciones.some(c => c.fecha) 
-                    ? new Date(Math.max(...calificaciones.filter(c => c.fecha).map(c => new Date(c.fecha)))).toLocaleDateString('es-ES', {month: 'short', year: 'numeric'})
+                  {calificaciones.length > 0 && calificaciones.some(c => c.fecha)
+                    ? new Date(Math.max(...calificaciones.filter(c => c.fecha).map(c => new Date(c.fecha)))).toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })
                     : 'N/A'
                   }
                 </span>

@@ -10,7 +10,7 @@ const DetallesTrabajo = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const userId = searchParams.get('userId');
-  
+
   const [detalles, setDetalles] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -24,8 +24,8 @@ const DetallesTrabajo = () => {
     try {
       setLoading(true);
       // Usar el endpoint con la URL corregida: idRealizar/idContratante
-      const respuesta = await fetch(`http://localhost:8090/api/calificaciones/trabajo-completo/${idRealizar}/${userId}`);
-      
+      const respuesta = await fetch(`http://3.129.59.126:8090/api/calificaciones/trabajo-completo/${idRealizar}/${userId}`);
+
       if (respuesta.ok) {
         const datos = await respuesta.json();
         setDetalles(datos);
@@ -75,10 +75,10 @@ const DetallesTrabajo = () => {
   };
 
   const manejarCalificar = () => {
-    const nombreAspirante = detalles.aspirante 
+    const nombreAspirante = detalles.aspirante
       ? `${detalles.aspirante.nombres || ''} ${detalles.aspirante.apellidos || ''}`.trim()
       : 'Aspirante';
-    
+
     navigate(`/Calificacion/calificacion?userId=${userId}&idPostulacion=${detalles.postulacion.id_postulacion}&aspirante=${encodeURIComponent(nombreAspirante)}`);
   };
 
@@ -116,7 +116,7 @@ const DetallesTrabajo = () => {
     <div className={styles.container}>
       <HeaderContratante userId={userId} />
       <ToastContainer />
-      
+
       <div className={styles.content}>
         {/* Header */}
         <div className={styles.header}>
@@ -139,14 +139,14 @@ const DetallesTrabajo = () => {
                   {detalles.postulacion?.empleo?.titulo || 'Sin título'}
                 </span>
               </div>
-              
+
               <div className={styles.campo}>
                 <label>Descripción:</label>
                 <p className={styles.descripcion}>
                   {detalles.postulacion?.empleo?.descripcion || 'Sin descripción disponible'}
                 </p>
               </div>
-              
+
               <div className={styles.campoGrid}>
                 <div className={styles.campo}>
                   <label>Salario estimado:</label>
@@ -154,19 +154,19 @@ const DetallesTrabajo = () => {
                     {formatearSalario(detalles.postulacion?.empleo?.salario_estimado)}
                   </span>
                 </div>
-                
+
                 <div className={styles.campo}>
                   <label>Jornada:</label>
                   <span>{detalles.postulacion?.empleo?.jornada || 'No especificada'}</span>
                 </div>
               </div>
-              
+
               <div className={styles.campoGrid}>
                 <div className={styles.campo}>
                   <label>Turno:</label>
                   <span>{detalles.postulacion?.empleo?.turno || 'No especificado'}</span>
                 </div>
-                
+
                 <div className={styles.campo}>
                   <label>Estado del empleo:</label>
                   <span className={`${styles.estado} ${detalles.postulacion?.empleo?.estado_empleo === 'activo' ? styles.activo : styles.inactivo}`}>
@@ -174,26 +174,26 @@ const DetallesTrabajo = () => {
                   </span>
                 </div>
               </div>
-              
+
               <div className={styles.campo}>
                 <label>Fecha límite:</label>
                 <span>{formatearFecha(detalles.postulacion?.empleo?.fecha_limite)}</span>
               </div>
-              
+
               <div className={styles.campo}>
                 <label>Requisitos:</label>
                 <p className={styles.descripcion}>
                   {detalles.postulacion?.empleo?.requisitos || 'No especificados'}
                 </p>
               </div>
-              
+
               <div className={styles.campo}>
                 <label>Actividades a realizar:</label>
                 <p className={styles.descripcion}>
                   {detalles.postulacion?.empleo?.actividades_realizar || 'No especificadas'}
                 </p>
               </div>
-              
+
               <div className={styles.campoGrid}>
                 <div className={styles.campo}>
                   <label>Disponibilidad inmediata:</label>
@@ -201,8 +201,8 @@ const DetallesTrabajo = () => {
                     {detalles.postulacion?.empleo?.disponibilidad_inmediata ? 'Sí' : 'No'}
                   </span>
                 </div>
-                
-           
+
+
               </div>
             </div>
           </div>
@@ -224,14 +224,14 @@ const DetallesTrabajo = () => {
                       {`${detalles.aspirante?.nombres || ''} ${detalles.aspirante?.apellidos || ''}`.trim() || 'No disponible'}
                     </span>
                   </div>
-                  
+
                   <div className={styles.campo}>
                     <label>Email:</label>
                     <span className={styles.email}>
                       {detalles.aspirante?.email || 'No disponible'}
                     </span>
                   </div>
-                  
+
                   <div className={styles.campoGrid}>
                     <div className={styles.campo}>
                       <label>Aspiración salarial:</label>
@@ -239,13 +239,13 @@ const DetallesTrabajo = () => {
                         {formatearSalario(detalles.aspirante?.aspiracion_salarial)}
                       </span>
                     </div>
-                    
+
                     <div className={styles.campo}>
                       <label>Tipo de contrato:</label>
                       <span>{detalles.aspirante?.tipo_contrato || 'No especificado'}</span>
                     </div>
                   </div>
-                  
+
                   <div className={styles.campoGrid}>
                     <div className={styles.campo}>
                       <label>Disponibilidad:</label>
@@ -253,19 +253,19 @@ const DetallesTrabajo = () => {
                         {detalles.aspirante?.disponibilidad ? 'Disponible' : 'No disponible'}
                       </span>
                     </div>
-                    
+
                     <div className={styles.campo}>
                       <label>Ubicación:</label>
                       <span>No disponible en este momento</span>
                     </div>
                   </div>
-                  
+
                   <div className={styles.campoGrid}>
                     <div className={styles.campo}>
                       <label>Cédula:</label>
                       <span>{detalles.aspirante?.cedula || 'No disponible'}</span>
                     </div>
-                    
+
                     <div className={styles.campo}>
                       <label>Género:</label>
                       <span>{detalles.aspirante?.genero || 'No especificado'}</span>
@@ -282,8 +282,8 @@ const DetallesTrabajo = () => {
               <h2>📝 Información de la Postulación</h2>
             </div>
             <div className={styles.seccionContent}>
-          
-              
+
+
               <div className={styles.campoGrid}>
                 <div className={styles.campo}>
                   <label>Fecha de aceptación:</label>
@@ -291,7 +291,7 @@ const DetallesTrabajo = () => {
                     {formatearFecha(detalles.fecha_aceptacion)}
                   </span>
                 </div>
-                
+
                 <div className={styles.campo}>
                   <label>Estado de postulación:</label>
                   <span className={`${styles.estado} ${detalles.postulacion?.estado ? styles.activo : styles.inactivo}`}>
@@ -314,7 +314,7 @@ const DetallesTrabajo = () => {
                     <span className={styles.iconoCompletado}>✅</span>
                     <span className={styles.textoCompletado}>Trabajo calificado</span>
                   </div>
-                  
+
                   {detalles.calificacion && (
                     <div className={styles.detallesCalificacion}>
                       <div className={styles.campo}>
@@ -326,14 +326,14 @@ const DetallesTrabajo = () => {
                           </span>
                         </div>
                       </div>
-                      
+
                       <div className={styles.campo}>
                         <label>Comentario:</label>
                         <p className={styles.comentario}>
                           {detalles.calificacion.comentario}
                         </p>
                       </div>
-                      
+
                       <div className={styles.campo}>
                         <label>Fecha de calificación:</label>
                         <span>{formatearFecha(detalles.calificacion.fecha)}</span>
@@ -359,14 +359,14 @@ const DetallesTrabajo = () => {
         {/* Acciones */}
         <div className={styles.acciones}>
           {detalles.tiene_calificacion ? (
-            <button 
+            <button
               onClick={manejarVerCalificacion}
               className={styles.btnVerCalificacion}
             >
               👁️ Ver Calificación Completa
             </button>
           ) : (
-            <button 
+            <button
               onClick={manejarCalificar}
               className={styles.btnCalificar}
             >
