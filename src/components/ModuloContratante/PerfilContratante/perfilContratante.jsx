@@ -138,7 +138,7 @@ const PerfilContratante = () => {
       if (!idContratante) return;
 
       try {
-        const resContratante = await fetch(`http://3.133.11.0:8090/api/registro/contratante/detalle/${idContratante}`);
+        const resContratante = await fetch(`http://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/api/registro/contratante/detalle/${idContratante}`);
         const jsonContratante = await resContratante.json();
 
         if (jsonContratante.success) {
@@ -166,7 +166,7 @@ const PerfilContratante = () => {
 
           // Imagen del usuario (foto)
           if (data.foto) {
-            setFoto(`http://3.133.11.0:8090/api/registro/${data.foto}`);
+            setFoto(`http://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/api/registro/${data.foto}`);
           } else {
             setFoto(null);
           }
@@ -175,7 +175,7 @@ const PerfilContratante = () => {
         }
 
         // Carga datos empresa relacionado al contratante
-        const resEmpresa = await fetch(`http://3.133.11.0:8090/api/registro/empresa/contratante/${idContratante}`);
+        const resEmpresa = await fetch(`http://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/api/registro/empresa/contratante/${idContratante}`);
         const jsonEmpresa = await resEmpresa.json();
         if (jsonEmpresa.success) {
           const empresa = jsonEmpresa.empresa;
@@ -355,7 +355,7 @@ const PerfilContratante = () => {
     }
 
     try {
-      const response = await fetch(`http://3.133.11.0:8090/api/registro/contratante/${idContratante}`, {
+      const response = await fetch(`http://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/api/registro/contratante/${idContratante}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',  // importante: JSON
@@ -368,7 +368,7 @@ const PerfilContratante = () => {
       if (result.success) {
         toast.success('Datos actualizados con éxito!');
         setModoEdicion(false);
-        const resContratante = await fetch(`http://3.133.11.0:8090/api/registro/contratante/detalle/${idContratante}`);
+        const resContratante = await fetch(`http://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/api/registro/contratante/detalle/${idContratante}`);
         const jsonContratante = await resContratante.json();
         if (jsonContratante.success) {
           const fotoNombre = jsonContratante.contratante.foto;

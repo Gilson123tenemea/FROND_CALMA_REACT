@@ -76,7 +76,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
   };
 
   useEffect(() => {
-    axios.get('http://3.133.11.0:8090/api/provincias')
+    axios.get('http://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/api/provincias')
       .then(res => setProvincias(res.data))
       .catch(() => setProvincias([]));
   }, []);
@@ -101,7 +101,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
 
   useEffect(() => {
     if (idProvincia) {
-      axios.get(`http://3.133.11.0:8090/api/cantones/provincia/${idProvincia}`)
+      axios.get(`http://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/api/cantones/provincia/${idProvincia}`)
         .then(res => setCantones(res.data))
         .catch(() => setCantones([]));
     } else {
@@ -114,7 +114,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
 
   useEffect(() => {
     if (idCanton) {
-      axios.get(`http://3.133.11.0:8090/api/parroquias/canton/${idCanton}`)
+      axios.get(`http://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/api/parroquias/canton/${idCanton}`)
         .then(res => setParroquias(res.data))
         .catch(() => setParroquias([]));
     } else {
@@ -125,7 +125,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
 
   useEffect(() => {
     if (contratanteId) {
-      axios.get(`http://3.133.11.0:8090/api/publicacion_empleo/pacientes/contratante/${contratanteId}`)
+      axios.get(`http://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/api/publicacion_empleo/pacientes/contratante/${contratanteId}`)
         .then(res => setPacientes(res.data))
         .catch(() => setPacientes([]));
     }
@@ -314,7 +314,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
 
     try {
       if (publicacionEditar) {
-        const url = `http://3.133.11.0:8090/api/publicacion_empleo/actualizar/${publicacionEditar.id_postulacion_empleo}`;
+        const url = `http://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/api/publicacion_empleo/actualizar/${publicacionEditar.id_postulacion_empleo}`;
         await axios.put(url, data);
 
         toast.success('Publicación actualizada correctamente');
@@ -324,7 +324,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
           navigate(`/moduloContratante/ListaPublicaciones?userId=${contratanteId}`);
         }, 1500);
       } else {
-        const url = `http://3.133.11.0:8090/api/publicacion_empleo/guardar?idParroquia=${idParroquia}&idContratante=${contratanteId}`;
+        const url = `http://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/api/publicacion_empleo/guardar?idParroquia=${idParroquia}&idContratante=${contratanteId}`;
         await axios.post(url, data);
 
         toast.success('Publicación creada correctamente');

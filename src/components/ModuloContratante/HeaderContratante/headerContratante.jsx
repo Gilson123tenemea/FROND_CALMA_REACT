@@ -60,7 +60,7 @@ const HeaderContratante = ({
 
       // 🆕 INTENTAR CARGAR DESDE EL ENDPOINT DE PERFIL DEL CONTRATANTE
       try {
-        const response = await axios.get(`http://3.133.11.0:8090/api/registro/contratante/detalle/${userId}`);
+        const response = await axios.get(`http://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/api/registro/contratante/detalle/${userId}`);
 
         if (response.data && response.data.success && response.data.contratante) {
           const contratante = response.data.contratante;
@@ -76,7 +76,7 @@ const HeaderContratante = ({
 
         // Fallback a endpoint alternativo si existe
         try {
-          const response2 = await axios.get(`http://3.133.11.0:8090/api/usuarios/buscar_contratante/${userId}`);
+          const response2 = await axios.get(`http://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/api/usuarios/buscar_contratante/${userId}`);
           if (response2.data) {
             setDatosUsuario({
               nombres: response2.data.nombres || userData?.nombres || 'Usuario',
@@ -96,7 +96,7 @@ const HeaderContratante = ({
   // 🆕 CARGAR NOTIFICACIONES NO LEÍDAS
   const cargarNotificacionesNoLeidas = async () => {
     try {
-      const response = await axios.get(`http://3.133.11.0:8090/api/notificaciones/contratante/noleidas/${userId}`);
+      const response = await axios.get(`http://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/api/notificaciones/contratante/noleidas/${userId}`);
       setCantidadNoLeidas(response.data.length);
     } catch (error) {
       console.error('❌ Error al cargar notificaciones:', error);
@@ -134,7 +134,7 @@ const HeaderContratante = ({
     setSearchTerm('');
 
     try {
-      const response = await axios.get(`http://3.133.11.0:8090/api/postulacion/contratista/${userId}/aspirantes-para-chat`);
+      const response = await axios.get(`http://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/api/postulacion/contratista/${userId}/aspirantes-para-chat`);
       setUsuariosEncontrados(response.data);
     } catch (error) {
       console.error('❌ Error al cargar aspirantes para chat:', error);
@@ -161,8 +161,8 @@ const HeaderContratante = ({
   const handleAbrirNotificaciones = async () => {
     try {
       console.log(`🔍 [HeaderContratante] Abriendo notificaciones para contratante: ${userId}`);
-      await axios.put(`http://3.133.11.0:8090/api/notificaciones/contratante/marcar-leidas/${userId}`);
-      const response = await axios.get(`http://3.133.11.0:8090/api/notificaciones/contratante/${userId}`);
+      await axios.put(`http://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/api/notificaciones/contratante/marcar-leidas/${userId}`);
+      const response = await axios.get(`http://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/api/notificaciones/contratante/${userId}`);
       // 🆕 ORDENAR NOTIFICACIONES: más recientes primero
       const notificacionesOrdenadas = response.data.sort((a, b) => {
         // Ordenar por fecha: más reciente primero
