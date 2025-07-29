@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://3.133.11.0:8090/api/fichas';
+const API_URL = 'http://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/api/fichas';
 
 export const getFichas = async () => {
   try {
