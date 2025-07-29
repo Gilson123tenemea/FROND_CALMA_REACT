@@ -257,7 +257,7 @@ function App({
     console.log(`🔗 Canal objetivo: ${canalConversacion}`);
 
     const cliente = new Client({
-      brokerURL: "ws://3.129.59.126:8090/ws",
+      brokerURL: "ws://3.133.11.0:8090/ws",
       debug: str => console.log("📡", str),
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
