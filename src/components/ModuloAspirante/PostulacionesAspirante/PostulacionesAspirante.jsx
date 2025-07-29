@@ -64,7 +64,7 @@ const PostulacionesAspirante = () => {
       }
 
       // Si no está en localStorage, buscar en API
-      const response = await axios.get(`http://softwave.online:8090/api/usuarios/buscar_aspirante/${idAspirante}`);
+      const response = await axios.get(`http://3.133.11.0:8090/api/usuarios/buscar_aspirante/${idAspirante}`);
 
       if (response.data !== null && response.data !== undefined) {
         const idUsuario = response.data;
@@ -86,7 +86,7 @@ const PostulacionesAspirante = () => {
       setError(null);
 
       console.log(`🔍 [PostulacionesAspirante] Cargando postulaciones para aspirante: ${currentAspiranteId}`);
-      const postulacionesResponse = await axios.get(`http://softwave.online:8090/api/realizar/aspirante/${currentAspiranteId}`);
+      const postulacionesResponse = await axios.get(`http://3.133.11.0:8090/api/realizar/aspirante/${currentAspiranteId}`);
       if (postulacionesResponse.data && Array.isArray(postulacionesResponse.data)) {
         console.log(`✅ [PostulacionesAspirante] ${postulacionesResponse.data.length} postulaciones cargadas`);
         setPostulaciones(postulacionesResponse.data);
