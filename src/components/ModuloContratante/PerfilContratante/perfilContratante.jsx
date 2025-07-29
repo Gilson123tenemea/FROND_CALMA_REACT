@@ -355,7 +355,7 @@ const PerfilContratante = () => {
     }
 
     try {
-      const response = await fetch(`http://3.133.11.0:8090/api/registro/contratante/${idContratante}`, {
+      const response = await fetch(`http://softwave.online:8090/api/registro/contratante/${idContratante}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',  // importante: JSON
@@ -368,7 +368,7 @@ const PerfilContratante = () => {
       if (result.success) {
         toast.success('Datos actualizados con éxito!');
         setModoEdicion(false);
-        const resContratante = await fetch(`http://3.133.11.0:8090/api/registro/contratante/detalle/${idContratante}`);
+        const resContratante = await fetch(`http://softwave.online:8090/api/registro/contratante/detalle/${idContratante}`);
         const jsonContratante = await resContratante.json();
         if (jsonContratante.success) {
           const fotoNombre = jsonContratante.contratante.foto;

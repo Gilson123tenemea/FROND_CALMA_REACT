@@ -314,7 +314,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
 
     try {
       if (publicacionEditar) {
-        const url = `http://3.133.11.0:8090/api/publicacion_empleo/actualizar/${publicacionEditar.id_postulacion_empleo}`;
+        const url = `http://softwave.online:8090/api/publicacion_empleo/actualizar/${publicacionEditar.id_postulacion_empleo}`;
         await axios.put(url, data);
 
         toast.success('Publicación actualizada correctamente');
@@ -324,7 +324,7 @@ const FormPublicacion = ({ userId, publicacionEditar, onCancel, onSuccess }) => 
           navigate(`/moduloContratante/ListaPublicaciones?userId=${contratanteId}`);
         }, 1500);
       } else {
-        const url = `http://3.133.11.0:8090/api/publicacion_empleo/guardar?idParroquia=${idParroquia}&idContratante=${contratanteId}`;
+        const url = `http://softwave.online:8090/api/publicacion_empleo/guardar?idParroquia=${idParroquia}&idContratante=${contratanteId}`;
         await axios.post(url, data);
 
         toast.success('Publicación creada correctamente');

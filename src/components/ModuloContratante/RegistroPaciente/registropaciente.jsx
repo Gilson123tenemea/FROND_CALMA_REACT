@@ -138,7 +138,7 @@ const RegistroPaciente = () => {
   console.log("idPaciente:", idPaciente);
   useEffect(() => {
     if (idPaciente) {
-      axios.get(`http://3.133.11.0:8090/api/registro/paciente/detalle/${idPaciente}`)
+      axios.get(`http://softwave.online:8090/api/registro/paciente/detalle/${idPaciente}`)
         .then(async (res) => {
           console.log("Respuesta API:", res.data);
           if (res.data.success) {
@@ -159,7 +159,7 @@ const RegistroPaciente = () => {
               parroquia: p.idParroquia || '',
               contrasena: '',
               confirmarContrasena: '',
-              foto: p.foto ? `http://3.133.11.0:8090/api/registro/${p.foto}` : ''
+              foto: p.foto ? `http://softwave.online:8090/api/registro/${p.foto}` : ''
             });
 
             console.log("Contenido de p.foto:", p.foto);
@@ -213,7 +213,7 @@ const RegistroPaciente = () => {
   useEffect(() => {
     const cargarCedulasRegistradas = async () => {
       try {
-        const res = await axios.get('http://3.133.11.0:8090/api/registro/paciente/cedulas');
+        const res = await axios.get('http://softwave.online:8090/api/registro/paciente/cedulas');
         setCedulasRegistradas(new Set(res.data.cedulas));
       } catch (error) {
         console.error("Error al obtener cédulas registradas:", error);
@@ -297,7 +297,7 @@ const RegistroPaciente = () => {
 
 
   const handleActualizar = () => {
-    axios.put(`http://3.133.11.0:8090/api/registro/paciente/${idPaciente}`, formData)
+    axios.put(`http://softwave.online:8090/api/registro/paciente/${idPaciente}`, formData)
       .then(res => {
         if (res.data.success) {
           alert("Paciente actualizado correctamente");
@@ -497,7 +497,7 @@ const RegistroPaciente = () => {
     try {
       if (idPaciente) {
         // ACTUALIZAR paciente
-        const res = await axios.put(`http://3.133.11.0:8090/api/registro/paciente/${idPaciente}`, payload);
+        const res = await axios.put(`http://softwave.online:8090/api/registro/paciente/${idPaciente}`, payload);
         if (res.data.success) {
           toast.success('✅ Paciente actualizado exitosamente');
 
