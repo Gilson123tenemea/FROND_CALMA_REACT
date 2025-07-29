@@ -257,7 +257,7 @@ function App({
     console.log(`🔗 Canal objetivo: ${canalConversacion}`);
 
     const cliente = new Client({
-      brokerURL: "ws://http://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/ws",
+      brokerURL: "ws://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/ws",
       debug: str => console.log("📡", str),
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
