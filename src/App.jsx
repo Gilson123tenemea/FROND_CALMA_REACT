@@ -152,7 +152,7 @@ function App({
       console.log('📤 [NOTIFICACION] Payload final:', payload);
 
       const response = await axios.post(
-        'http://3.129.59.126:8090/api/notificaciones/crear-notificacion-mensaje',
+        'http://3.133.11.0:8090/api/notificaciones/crear-notificacion-mensaje',
         payload,
         {
           headers: {
@@ -201,7 +201,7 @@ function App({
       try {
         console.log(`📥 Cargando historial: ${usuarioActual} ↔ ${destinatario}`);
         const response = await fetch(
-          `http://3.129.59.126:8090/api/chat/historial?aspiranteId=${usuarioActual}&contratistaId=${destinatario}`
+          `http://3.133.11.0:8090/api/chat/historial?aspiranteId=${usuarioActual}&contratistaId=${destinatario}`
         );
 
         if (response.ok) {

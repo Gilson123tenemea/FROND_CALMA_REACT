@@ -31,7 +31,7 @@ const ListaPublicaciones = ({ refrescar, onEditar, userId: userIdProp }) => {
     const fetchPublicaciones = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`http://3.129.59.126:8090/api/generar/contratante/${userId}`);
+        const res = await axios.get(`http://3.133.11.0:8090/api/generar/contratante/${userId}`);
         setPublicaciones(res.data);
       } catch (err) {
         console.error("Error al cargar publicaciones:", err);
@@ -67,7 +67,7 @@ const ListaPublicaciones = ({ refrescar, onEditar, userId: userIdProp }) => {
             }}
             onClick={() => {
               toast.dismiss(toastId);
-              axios.delete(`http://3.129.59.126:8090/api/publicacion_empleo/eliminar/${idPublicacion}`)
+              axios.delete(`http://3.133.11.0:8090/api/publicacion_empleo/eliminar/${idPublicacion}`)
                 .then(res => {
                   const mensaje = res.data.toLowerCase();
                   if (mensaje.includes('correctamente')) {

@@ -24,7 +24,7 @@ const DetallesTrabajo = () => {
     try {
       setLoading(true);
       // Usar el endpoint con la URL corregida: idRealizar/idContratante
-      const respuesta = await fetch(`http://3.129.59.126:8090/api/calificaciones/trabajo-completo/${idRealizar}/${userId}`);
+      const respuesta = await fetch(`http://3.133.11.0:8090/api/calificaciones/trabajo-completo/${idRealizar}/${userId}`);
 
       if (respuesta.ok) {
         const datos = await respuesta.json();

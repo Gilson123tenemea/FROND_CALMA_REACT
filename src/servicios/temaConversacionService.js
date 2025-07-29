@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://3.129.59.126:8090/api/temas';
+const API_URL = 'http://3.133.11.0:8090/api/temas';
 
 export const getTemasConversacion = async () => {
   try {

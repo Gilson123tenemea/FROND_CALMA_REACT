@@ -30,7 +30,7 @@ navigator.mediaDevices.getUserMedia({ video: true, audio: true })
 
 // Conexión STOMP
 function conectarWebSocket() {
-  const socket = new SockJS("http://localhost:8080/ws");
+  const socket = new SockJS("http://3.133.11.0:8080/ws");
   stompClient = Stomp.over(socket);
 
   stompClient.connect({}, () => {
