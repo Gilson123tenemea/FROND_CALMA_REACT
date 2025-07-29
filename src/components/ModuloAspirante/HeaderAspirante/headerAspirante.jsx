@@ -101,7 +101,7 @@ const HeaderAspirante = ({
       console.log('🔍 [HeaderAspirante] Buscando aspiranteId para usuario:', idUsuario);
 
       // Buscar todas las relaciones y encontrar el aspirante del usuario
-      const response = await axios.get('http://softwave.online:8090/api/calificaciones/debug/relaciones');
+      const response = await axios.get('http://3.133.11.0:8090/api/calificaciones/debug/relaciones');
 
       if (response.data && response.data.relacionesCalificaciones) {
         // Buscar en las relaciones existentes
@@ -144,7 +144,7 @@ const HeaderAspirante = ({
 
       // Intentar cargar desde API
       try {
-        const response = await axios.get(`http://softwave.online:8090/api/usuarios/${idUsuario}`);
+        const response = await axios.get(`http://3.133.11.0:8090/api/usuarios/${idUsuario}`);
         if (response.data) {
           setDatosUsuario({
             nombres: response.data.nombres || userData?.nombres || 'Aspirante',
@@ -169,7 +169,7 @@ const HeaderAspirante = ({
 
     try {
       console.log(`🔍 [HeaderAspirante] Cargando notificaciones para aspirante: ${idAspirante}`);
-      const response = await axios.get(`http://softwave.online:8090/api/notificaciones/aspirante/noleidas/${idAspirante}`);
+      const response = await axios.get(`http://3.133.11.0:8090/api/notificaciones/aspirante/noleidas/${idAspirante}`);
       const nuevasCantidad = response.data.length;
 
       console.log(`✅ [HeaderAspirante] ${nuevasCantidad} notificaciones no leídas encontradas`);
@@ -231,9 +231,9 @@ const HeaderAspirante = ({
 
     // Intentar múltiples endpoints
     const endpoints = [
-      `http://softwave.online:8090/api/postulacion/aspirante/${aspiranteId}/contratantes-para-chat`,
-      `http://softwave.online:8090/api/postulacion/aspirante/${aspiranteId}/contratistas-para-chat`,
-      `http://softwave.online:8090/api/chat/aspirante/${aspiranteId}/contactos`
+      `http://3.133.11.0:8090/api/postulacion/aspirante/${aspiranteId}/contratantes-para-chat`,
+      `http://3.133.11.0:8090/api/postulacion/aspirante/${aspiranteId}/contratistas-para-chat`,
+      `http://3.133.11.0:8090/api/chat/aspirante/${aspiranteId}/contactos`
     ];
 
     let contratantes = [];
@@ -280,8 +280,8 @@ const HeaderAspirante = ({
 
     try {
       console.log(`🔍 [HeaderAspirante] Abriendo notificaciones para aspirante: ${aspiranteId}`);
-      await axios.put(`http://softwave.online:8090/api/notificaciones/aspirante/marcar-leidas/${aspiranteId}`);
-      const response = await axios.get(`http://softwave.online:8090/api/notificaciones/aspirante/${aspiranteId}`);
+      await axios.put(`http://3.133.11.0:8090/api/notificaciones/aspirante/marcar-leidas/${aspiranteId}`);
+      const response = await axios.get(`http://3.133.11.0:8090/api/notificaciones/aspirante/${aspiranteId}`);
 
       // 🆕 ORDENAR NOTIFICACIONES: más recientes primero
       const notificacionesOrdenadas = response.data.sort((a, b) => {

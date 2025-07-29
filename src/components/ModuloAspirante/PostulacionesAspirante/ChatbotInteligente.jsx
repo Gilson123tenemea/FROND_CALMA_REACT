@@ -34,7 +34,7 @@ const ChatbotInteligente = ({ aspiranteId, isOpen, onToggle }) => {
     const cargarPacientesDisponibles = async () => {
         try {
             // Obtener las postulaciones aceptadas del aspirante
-            const response = await axios.get(`http://softwave.online:8090/api/realizar/aspirante/${aspiranteId}`);
+            const response = await axios.get(`http://3.133.11.0:8090/api/realizar/aspirante/${aspiranteId}`);
 
             if (response.data && Array.isArray(response.data)) {
                 const pacientes = response.data
@@ -69,20 +69,20 @@ const ChatbotInteligente = ({ aspiranteId, isOpen, onToggle }) => {
 
             if (tipoConsulta === 'general') {
                 // Consulta general sobre Calma
-                const response = await axios.post('http://softwave.online:8090/api/chatbot/preguntar', {
+                const response = await axios.post('http://3.133.11.0:8090/api/chatbot/preguntar', {
                     pregunta: mensajeActual
                 });
                 respuesta = response.data.respuesta;
             } else if (tipoConsulta === 'recomendaciones' && pacienteSeleccionado) {
                 // Recomendaciones específicas del paciente
-                const response = await axios.post('http://softwave.online:8090/api/chatbot/recomendaciones-cuidado', {
+                const response = await axios.post('http://3.133.11.0:8090/api/chatbot/recomendaciones-cuidado', {
                     idPaciente: pacienteSeleccionado.id,
                     pregunta: mensajeActual
                 });
                 respuesta = response.data.respuesta;
             } else if (tipoConsulta === 'riesgos' && pacienteSeleccionado) {
                 // Evaluación de riesgos
-                const response = await axios.post('http://softwave.online:8090/api/chatbot/evaluacion-riesgos', {
+                const response = await axios.post('http://3.133.11.0:8090/api/chatbot/evaluacion-riesgos', {
                     idPaciente: pacienteSeleccionado.id
                 });
                 respuesta = response.data.respuesta;

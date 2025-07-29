@@ -17,7 +17,7 @@ const CalificacionesCV = ({ aspiranteId, showDetailed = false }) => {
   const cargarCalificaciones = async () => {
     try {
       setLoading(true);
-      const respuesta = await fetch(`http://softwave.online:8090/api/cvs/aspirante/${aspiranteId}/calificaciones/resumen`);
+      const respuesta = await fetch(`http://3.133.11.0:8090/api/cvs/aspirante/${aspiranteId}/calificaciones/resumen`);
       
       if (respuesta.ok) {
         const datos = await respuesta.json();
