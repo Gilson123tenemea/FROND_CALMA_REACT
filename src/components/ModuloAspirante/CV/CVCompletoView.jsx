@@ -28,7 +28,7 @@ const CVCompletoView = () => {
           throw new Error("No se pudo identificar al usuario");
         }
 
-        const response = await fetch(`http://3.133.11.0:8090/api/cvs/por-aspirante/${aspiranteId}`);
+        const response = await fetch(`http://softwave.online:8090/api/cvs/por-aspirante/${aspiranteId}`);
 
         if (!response.ok) {
           const errorData = await response.json();
@@ -62,7 +62,7 @@ const CVCompletoView = () => {
 
   const downloadFile = async (endpoint, id, fileName) => {
     try {
-      const response = await fetch(`http://3.133.11.0:8090/api/${endpoint}/${id}/descargar`, {
+      const response = await fetch(`http://softwave.online:8090/api/${endpoint}/${id}/descargar`, {
         method: 'GET',
       });
 
@@ -152,7 +152,7 @@ const CVCompletoView = () => {
               <div className={styles.cvPhotoContainer}>
                 {cvData.aspirante.foto ? (
                   <img
-                    src={`http://3.133.11.0:8090/api/images/${cvData.aspirante.foto}`}
+                    src={`http://softwave.online:8090/api/images/${cvData.aspirante.foto}`}
                     alt="Foto del aspirante"
                     className={styles.cvPhoto}
                   />

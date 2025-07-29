@@ -12,7 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const PerfilAspirante = () => {
   const navigate = useNavigate();
   const inputFileRef = useRef(null);
-  const BASE_URL = "http://3.133.11.0:8090/api/registro/";
+  const BASE_URL = "http://softwave.online:8090/api/registro/";
   const IMAGEN_POR_DEFECTO = "https://cdn.shopify.com/s/files/1/0229/0839/articles/bancos_de_imagenes_gratis.jpg";
   const [urlImagen, setUrlImagen] = useState(IMAGEN_POR_DEFECTO);
   const [mostrarContrasena, setMostrarContrasena] = useState(false);
@@ -199,7 +199,7 @@ const PerfilAspirante = () => {
           aspiracionSalarial: aspirante.aspiracionSalarial || null,
           tipo_contrato: aspirante.tipoContrato || '',
           foto: aspirante.foto && aspirante.foto.trim() !== ""
-            ? `http://3.133.11.0:8090/api/registro/${aspirante.foto}`
+            ? `http://softwave.online:8090/api/registro/${aspirante.foto}`
             : null
         };
 
@@ -306,7 +306,7 @@ const PerfilAspirante = () => {
         tipo_contrato: editData.tipo_contrato,
       };
 
-      const response = await fetch(`http://3.133.11.0:8090/api/registro/aspirante/${aspiranteId}`, {
+      const response = await fetch(`http://softwave.online:8090/api/registro/aspirante/${aspiranteId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToSend),

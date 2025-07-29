@@ -36,7 +36,7 @@ const ModuloAspirante = () => {
     setIdAspirante(aspiranteId);
 
     // Obtener userId asociado
-    axios.get(`http://3.133.11.0:8090/api/usuarios/buscar_aspirante/${aspiranteId}`)
+    axios.get(`http://softwave.online:8090/api/usuarios/buscar_aspirante/${aspiranteId}`)
       .then((response) => {
         const idUsuario = response.data?.id || response.data?.idUsuario || response.data;
         console.log(`✅ Aspirante ${aspiranteId} → Usuario ${idUsuario}`);
