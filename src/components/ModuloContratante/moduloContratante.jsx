@@ -130,7 +130,7 @@ const ModuloContratante = () => {
       console.log('🔍 [CONTRATANTE] Cargando datos del usuario actual...');
 
       // ✅ USAR EL ENDPOINT QUE SÍ EXISTE: /api/usuarios/{id}
-      const response = await axios.get(`http://softwave.online:8090/api/usuarios/${contratistaId}`);
+      const response = await axios.get(`http://3.133.11.0:8090/api/usuarios/${contratistaId}`);
 
       if (response.data) {
         console.log('✅ [CONTRATANTE] Datos del usuario cargados:', response.data);
@@ -162,7 +162,7 @@ const ModuloContratante = () => {
       if (!contratanteId) return; // ✅ CORREGIDO: usar contratanteId
 
       try {
-        const endpoint = `http://softwave.online:8090/api/notificaciones/contratante/noleidas/${contratanteId}`;
+        const endpoint = `http://3.133.11.0:8090/api/notificaciones/contratante/noleidas/${contratanteId}`;
 
         const res = await axios.get(endpoint);
         const nuevasCantidad = res.data.length;
@@ -211,7 +211,7 @@ const ModuloContratante = () => {
     // 🔧 NUEVA LÓGICA: Cargar aspirantes con los que puedes chatear
     try {
       console.log('🔍 [CONTRATISTA] Cargando aspirantes para chat...');
-      const response = await axios.get(`http://softwave.online:8090/api/postulacion/contratista/${contratanteId}/aspirantes-para-chat`);
+      const response = await axios.get(`http://3.133.11.0:8090/api/postulacion/contratista/${contratanteId}/aspirantes-para-chat`);
 
       console.log('✅ [CONTRATISTA] Aspirantes disponibles para chat:', response.data.length);
       console.log('📋 [CONTRATISTA] Lista:', response.data);
@@ -241,7 +241,7 @@ const ModuloContratante = () => {
     try {
       // 🔧 NUEVA LÓGICA: Buscar solo entre aspirantes con los que puedes chatear
       console.log('🔍 [CONTRATISTA] Buscando entre aspirantes para chat...');
-      const response = await axios.get(`http://softwave.online:8090/api/postulacion/contratista/${contratanteId}/aspirantes-para-chat`);
+      const response = await axios.get(`http://3.133.11.0:8090/api/postulacion/contratista/${contratanteId}/aspirantes-para-chat`);
 
       // Filtrar por término de búsqueda
       const usuariosFiltrados = response.data.filter(usuario => {
@@ -279,8 +279,8 @@ const ModuloContratante = () => {
 
     try {
       console.log(`🔍 [ModuloContratante] Abriendo notificaciones para contratante: ${contratanteId}`);
-      await axios.put(`http://softwave.online:8090/api/notificaciones/contratante/marcar-leidas/${contratanteId}`);
-      const response = await axios.get(`http://softwave.online:8090/api/notificaciones/contratante/${contratanteId}`);
+      await axios.put(`http://3.133.11.0:8090/api/notificaciones/contratante/marcar-leidas/${contratanteId}`);
+      const response = await axios.get(`http://3.133.11.0:8090/api/notificaciones/contratante/${contratanteId}`);
       // 🆕 ORDENAR NOTIFICACIONES: más recientes primero
       const notificacionesOrdenadas = response.data.sort((a, b) => {
         // Ordenar por fecha: más reciente primero

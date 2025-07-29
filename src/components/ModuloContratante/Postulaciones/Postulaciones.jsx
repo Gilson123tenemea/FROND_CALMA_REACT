@@ -34,7 +34,7 @@ const Postulaciones = () => {
   useEffect(() => {
     const obtenerRealizaciones = async () => {
       try {
-        const response = await axios.get(`http://softwave.online:8090/api/postulacion/${userId}/realizaciones`);
+        const response = await axios.get(`http://3.133.11.0:8090/api/postulacion/${userId}/realizaciones`);
         // 🔥 ASEGURAR QUE SIEMPRE SEA UN ARRAY
         setRealizaciones(Array.isArray(response.data) ? response.data : []);
       } catch (err) {
@@ -63,7 +63,7 @@ const Postulaciones = () => {
   const verificarCalificacion = async (idPostulacion, idContratante) => {
     try {
       const response = await axios.get(
-        `http://softwave.online:8090/api/calificaciones/existe/${idPostulacion}/${idContratante}`
+        `http://3.133.11.0:8090/api/calificaciones/existe/${idPostulacion}/${idContratante}`
       );
       return response.data;
     } catch (error) {
@@ -281,7 +281,7 @@ const Postulaciones = () => {
       }
 
       await axios.put(
-        `http://softwave.online:8090/api/postulacion/actualizar/${idPostulacion}/${userId}/${idAspirante}`,
+        `http://3.133.11.0:8090/api/postulacion/actualizar/${idPostulacion}/${userId}/${idAspirante}`,
         {
           estado: nuevoEstado,
           postulacion_empleo: {

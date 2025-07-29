@@ -36,7 +36,7 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
   const cargarTrabajosDisponibles = async () => {
     setLoadingTrabajos(true);
     try {
-      const response = await axios.get(`http://softwave.online:8090/api/postulacion/${userId}/realizaciones`);
+      const response = await axios.get(`http://3.133.11.0:8090/api/postulacion/${userId}/realizaciones`);
       const realizaciones = Array.isArray(response.data) ? response.data : [];
 
       // Extraer trabajos únicos
@@ -77,7 +77,7 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
 
     setLoadingEstadisticas(true);
     try {
-      const response = await axios.post('http://softwave.online:8090/api/chatbot/estadisticas-candidatos', {
+      const response = await axios.post('http://3.133.11.0:8090/api/chatbot/estadisticas-candidatos', {
         idPublicacion: trabajoSeleccionado
       });
       setEstadisticas(response.data);
@@ -99,7 +99,7 @@ const RecomendacionAspirantes = ({ userId, onClose }) => {
     setRecomendacion('');
 
     try {
-      const response = await axios.post('http://softwave.online:8090/api/chatbot/recomendar-aspirante', {
+      const response = await axios.post('http://3.133.11.0:8090/api/chatbot/recomendar-aspirante', {
         idPublicacion: trabajoSeleccionado,
         criterios: criteriosPersonalizados.trim() || null
       });

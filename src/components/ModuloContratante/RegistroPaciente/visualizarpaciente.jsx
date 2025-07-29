@@ -16,7 +16,7 @@ const VisualizarPacientes = () => {
 
   useEffect(() => {
     if (idContratante) {
-      axios.get(`http://softwave.online:8090/api/registro/paciente/contratante/${idContratante}`)
+      axios.get(`http://3.133.11.0:8090/api/registro/paciente/contratante/${idContratante}`)
         .then(res => {
           if (res.data.success) {
             setPacientes(res.data.pacientes);
@@ -41,7 +41,7 @@ const VisualizarPacientes = () => {
               {/* Contenedor de la imagen */}
               <div className={styles["paciente-foto-container"]}>
                 <img
-                  src={`http://softwave.online:8090/api/registro/${paciente.foto}`}
+                  src={`http://3.133.11.0:8090/api/registro/${paciente.foto}`}
                   alt="foto"
                   className={styles["paciente-foto-vistavisu"]}
                 />

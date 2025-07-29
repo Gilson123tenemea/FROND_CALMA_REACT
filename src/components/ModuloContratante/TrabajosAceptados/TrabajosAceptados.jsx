@@ -23,7 +23,7 @@ const TrabajosAceptados = () => {
   const cargarTrabajosAceptados = async () => {
     try {
       setLoading(true);
-      const respuesta = await fetch(`http://softwave.online:8090/api/calificaciones/trabajos-aceptados/${userId}`);
+      const respuesta = await fetch(`http://3.133.11.0:8090/api/calificaciones/trabajos-aceptados/${userId}`);
       if (respuesta.ok) {
         const datos = await respuesta.json();
         console.log('Trabajos cargados:', datos);
@@ -50,7 +50,7 @@ const TrabajosAceptados = () => {
     for (const trabajo of trabajos) {
       try {
         const respuesta = await fetch(
-          `http://softwave.online:8090/api/calificaciones/existe/${trabajo.postulacion.id_postulacion}/${userId}`
+          `http://3.133.11.0:8090/api/calificaciones/existe/${trabajo.postulacion.id_postulacion}/${userId}`
         );
         if (respuesta.ok) {
           const existe = await respuesta.json();
