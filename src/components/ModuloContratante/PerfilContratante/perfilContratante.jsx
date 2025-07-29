@@ -138,7 +138,7 @@ const PerfilContratante = () => {
       if (!idContratante) return;
 
       try {
-        const resContratante = await fetch(`http://softwave.online:8090/api/registro/contratante/detalle/${idContratante}`);
+        const resContratante = await fetch(`http://3.133.11.0:8090/api/registro/contratante/detalle/${idContratante}`);
         const jsonContratante = await resContratante.json();
 
         if (jsonContratante.success) {
@@ -166,7 +166,7 @@ const PerfilContratante = () => {
 
           // Imagen del usuario (foto)
           if (data.foto) {
-            setFoto(`http://softwave.online:8090/api/registro/${data.foto}`);
+            setFoto(`http://3.133.11.0:8090/api/registro/${data.foto}`);
           } else {
             setFoto(null);
           }
@@ -175,7 +175,7 @@ const PerfilContratante = () => {
         }
 
         // Carga datos empresa relacionado al contratante
-        const resEmpresa = await fetch(`http://softwave.online:8090/api/registro/empresa/contratante/${idContratante}`);
+        const resEmpresa = await fetch(`http://3.133.11.0:8090/api/registro/empresa/contratante/${idContratante}`);
         const jsonEmpresa = await resEmpresa.json();
         if (jsonEmpresa.success) {
           const empresa = jsonEmpresa.empresa;
