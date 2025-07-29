@@ -48,7 +48,7 @@ const CardTrabajo = ({ trabajo, idAspirante }) => {
 
     try {
       const response = await fetch(
-        `http://3.133.11.0:8090/api/realizar/postular?idAspirante=${idAspirante}&idPublicacionEmpleo=${id}`,
+        `http://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/api/realizar/postular?idAspirante=${idAspirante}&idPublicacionEmpleo=${id}`,
         { method: 'POST' }
       );
 

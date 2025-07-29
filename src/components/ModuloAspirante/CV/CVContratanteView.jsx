@@ -22,7 +22,7 @@ const CVContratanteView = () => {
   useEffect(() => {
     const cargarDatos = async () => {
       try {
-        const response = await fetch(`http://3.133.11.0:8090/api/cvs/por-aspirante/${idAspirante}`);
+        const response = await fetch(`http://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/api/cvs/por-aspirante/${idAspirante}`);
 
         if (!response.ok) {
           const errorData = await response.json();
@@ -49,7 +49,7 @@ const CVContratanteView = () => {
 
   const downloadFile = async (endpoint, id, fileName) => {
     try {
-      const response = await fetch(`http://3.133.11.0:8090/api/${endpoint}/${id}/descargar`, {
+      const response = await fetch(`http://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/api/${endpoint}/${id}/descargar`, {
         method: 'GET',
       });
 
@@ -147,7 +147,7 @@ const CVContratanteView = () => {
             <div className={styles.cvPhotoContainer}>
               {cvData.aspirante.foto ? (
                 <img
-                  src={`http://3.133.11.0:8090/api/images/${cvData.aspirante.foto}`}
+                  src={`http://backend-alb-283290471.us-east-2.elb.amazonaws.com:8090/api/images/${cvData.aspirante.foto}`}
                   alt="Foto del aspirante"
                   className={styles.cvPhoto}
                 />
